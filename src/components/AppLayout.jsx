@@ -17,7 +17,6 @@ import {
   Vote,
   Send,
   LayoutDashboard,
-  Download,
   Menu,
   X,
 } from 'lucide-react';
@@ -181,8 +180,8 @@ function AppLayout({
     team.members?.some(m => m.id === user?.id)
   );
 
-  // Find user's callsign from their team membership
-  const userCallsign = userTeam?.members?.find(m => m.id === user?.id)?.callsign;
+  // Find user's callsign - prefer user profile, fall back to team membership
+  const userCallsign = user?.callsign || userTeam?.members?.find(m => m.id === user?.id)?.callsign;
 
   // Get nav items based on user role and event phase
   const navItems = getNavItems(user?.role, eventPhase);
@@ -512,47 +511,6 @@ function AppLayout({
                 </div>
               </div>
 
-              {/* Your Allegiance */}
-              <div
-                className={`p-4 border-2 ${allegianceStyle?.borderRadius || 'rounded-lg'}`}
-                style={{ borderColor: allegianceStyle?.borderColor }}
-              >
-                <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">
-                  Your Allegiance
-                </div>
-                <div className="flex gap-2 mb-3">
-                  <div
-                    className={`flex-1 p-3 border-2 rounded-xl text-center transition-all
-                      ${user?.allegiance === 'human' 
-                        ? 'border-green-500 bg-green-50' 
-                        : 'border-gray-200'}`}
-                  >
-                    <Heart className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'human' ? 'text-green-600' : 'text-gray-300'}`} />
-                    <div className={`text-xs font-bold ${user?.allegiance === 'human' ? 'text-green-600' : 'text-gray-400'}`}>
-                      Human
-                    </div>
-                  </div>
-                  <div
-                    className={`flex-1 p-3 border-2 text-center transition-all
-                      ${user?.allegiance === 'ai' 
-                        ? 'border-cyan-500 bg-cyan-50 border-dashed' 
-                        : 'border-gray-200'}`}
-                  >
-                    <Cpu className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-300'}`} />
-                    <div className={`text-xs font-bold font-mono ${user?.allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-400'}`}>
-                      AI
-                    </div>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="w-full py-2 px-3 border-2 border-gray-200 text-gray-600 text-xs font-bold
-                             hover:border-gray-400 transition-all flex items-center justify-center gap-2"
-                >
-                  <Download className="w-3 h-3" />
-                  Download Avatar
-                </button>
-              </div>
             </div>
           </aside>
         )}

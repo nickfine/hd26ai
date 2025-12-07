@@ -318,6 +318,7 @@ export type Database = {
           emoji: string | null
           eventId: string
           id: string
+          isAutoCreated: boolean
           isPublic: boolean
           lookingFor: string | null
           maxSize: number
@@ -332,6 +333,7 @@ export type Database = {
           emoji?: string | null
           eventId: string
           id: string
+          isAutoCreated?: boolean
           isPublic?: boolean
           lookingFor?: string | null
           maxSize?: number
@@ -346,6 +348,7 @@ export type Database = {
           emoji?: string | null
           eventId?: string
           id?: string
+          isAutoCreated?: boolean
           isPublic?: boolean
           lookingFor?: string | null
           maxSize?: number
@@ -408,6 +411,7 @@ export type Database = {
       }
       User: {
         Row: {
+          autoAssignOptIn: boolean
           bio: string | null
           createdAt: string
           email: string | null
@@ -423,6 +427,7 @@ export type Database = {
           updatedAt: string
         }
         Insert: {
+          autoAssignOptIn?: boolean
           bio?: string | null
           createdAt?: string
           email?: string | null
@@ -438,6 +443,7 @@ export type Database = {
           updatedAt: string
         }
         Update: {
+          autoAssignOptIn?: boolean
           bio?: string | null
           createdAt?: string
           email?: string | null

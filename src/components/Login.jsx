@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User, UserPlus, UsersRound, Code, Send, Vote, Scale, Trophy } from 'lucide-react';
+import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User, UserPlus, UsersRound, Code, Send, Vote, Scale, Trophy, Sparkles } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
 
 // Event phases for demo mode
@@ -35,9 +35,9 @@ const GoogleIcon = () => (
   </svg>
 );
 
-function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, authError }) {
+function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSignIn, authLoading, authError }) {
   const [showDemoMode, setShowDemoMode] = useState(false);
-  const [selectedPhase, setSelectedPhase] = useState('hacking');
+  const [selectedPhase, setSelectedPhase] = useState('team_formation');
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -167,6 +167,33 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                 </div>
                 
                 <div className="space-y-3">
+                  {/* New User - Goes to Onboarding */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (onDemoOnboarding) {
+                        onDemoOnboarding(selectedPhase);
+                      } else {
+                        onDemoLogin({
+                          id: Date.now(),
+                          name: '',
+                          email: 'new.user@company.com',
+                          skills: [],
+                          allegiance: 'neutral',
+                          role: 'participant',
+                          phase: selectedPhase,
+                        });
+                        onNavigate('onboarding');
+                      }
+                    }}
+                    className="w-full py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white font-bold
+                               hover:from-pink-600 hover:to-orange-600 transition-colors text-sm
+                               flex items-center justify-center gap-2"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    New User (Onboarding)
+                  </button>
+                  
                   {/* Participant / Team Member */}
                   <button
                     type="button"

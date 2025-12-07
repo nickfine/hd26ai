@@ -1,28 +1,93 @@
 import { useState } from 'react';
-import { ArrowLeft, Cpu, Heart, Scale, Check } from 'lucide-react';
+import { ArrowLeft, Cpu, Heart, Scale, Check, X, Plus, Users, Zap } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
 import { SKILLS, ALLEGIANCE_CONFIG } from '../data/mockData';
 
-function Onboarding({ user, updateUser, onNavigate }) {
+// Max skills allowed
+const MAX_SKILLS = 5;
+
+// Validation for custom skill
+const validateCustomSkill = (value, existingSkills) => {
+  const trimmed = value.trim();
+  if (trimmed.length < 2) return 'Min 2 characters';
+  if (trimmed.length > 30) return 'Max 30 characters';
+  if (existingSkills.some(s => s.toLowerCase() === trimmed.toLowerCase())) return 'Already added';
+  return null;
+};
+
+function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
   const [name, setName] = useState(user?.name || '');
   const [selectedSkills, setSelectedSkills] = useState(user?.skills || []);
   const [allegiance, setAllegiance] = useState(user?.allegiance || 'neutral');
+  const [customSkillInput, setCustomSkillInput] = useState('');
+  const [customSkillError, setCustomSkillError] = useState(null);
+  const [autoAssignEnabled, setAutoAssignEnabled] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Toggle predefined skill selection
   const toggleSkill = (skill) => {
-    setSelectedSkills((prev) =>
-      prev.includes(skill)
-        ? prev.filter((s) => s !== skill)
-        : [...prev, skill]
-    );
+    if (selectedSkills.includes(skill)) {
+      setSelectedSkills(prev => prev.filter(s => s !== skill));
+    } else if (selectedSkills.length < MAX_SKILLS) {
+      setSelectedSkills(prev => [...prev, skill]);
+    }
   };
 
-  const handleSubmit = () => {
-    updateUser({
+  // Add custom skill
+  const handleAddCustomSkill = () => {
+    const trimmed = customSkillInput.trim();
+    const error = validateCustomSkill(trimmed, selectedSkills);
+    if (error) {
+      setCustomSkillError(error);
+      return;
+    }
+    if (selectedSkills.length >= MAX_SKILLS) {
+      setCustomSkillError(`Max ${MAX_SKILLS} skills`);
+      return;
+    }
+    setSelectedSkills(prev => [...prev, trimmed]);
+    setCustomSkillInput('');
+    setCustomSkillError(null);
+  };
+
+  // Handle Enter key for custom skill
+  const handleCustomSkillKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleAddCustomSkill();
+    }
+  };
+
+  // Remove skill
+  const removeSkill = (skill) => {
+    setSelectedSkills(prev => prev.filter(s => s !== skill));
+  };
+
+  const handleSubmit = async () => {
+    setIsSubmitting(true);
+    
+    // First update the user profile
+    await updateUser({
       name,
       skills: selectedSkills,
       allegiance,
     });
-    onNavigate('dashboard');
+    
+    // If auto-assign is enabled and user has a side, trigger auto-assignment
+    if (autoAssignEnabled && allegiance !== 'neutral' && onAutoAssign) {
+      const result = await onAutoAssign(true);
+      if (result?.success && result?.teamId) {
+        // User was assigned to a team, go to dashboard
+        onNavigate('dashboard');
+      } else {
+        // Assignment failed, still go to dashboard
+        onNavigate('dashboard');
+      }
+    } else {
+      onNavigate('dashboard');
+    }
+    
+    setIsSubmitting(false);
   };
 
   const config = ALLEGIANCE_CONFIG[allegiance];
@@ -74,7 +139,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your callsign"
+                  placeholder="Enter your name"
                   className="w-full px-4 py-3 border-2 border-gray-200 
                              focus:border-gray-900 focus:outline-none
                              text-gray-900 placeholder:text-gray-400
@@ -84,33 +149,98 @@ function Onboarding({ user, updateUser, onNavigate }) {
 
               {/* Skills */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
-                  Areas of Interest
-                  <span className="font-normal text-gray-400 ml-2 block sm:inline mt-1 sm:mt-0">
-                    (Select all that apply)
+                <div className="flex items-center gap-2 mb-3">
+                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                    Areas of Interest
+                  </label>
+                  <span className="text-xs text-gray-400">
+                    ({selectedSkills.length}/{MAX_SKILLS})
                   </span>
-                </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {SKILLS.map((skill) => (
+                </div>
+
+                {/* Selected Skills as Tags */}
+                {selectedSkills.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mb-4">
+                    {selectedSkills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-gray-900 text-white rounded"
+                      >
+                        {skill}
+                        <button
+                          type="button"
+                          onClick={() => removeSkill(skill)}
+                          className="ml-1 hover:bg-gray-700 rounded-full p-0.5"
+                        >
+                          <X className="w-3 h-3" />
+                        </button>
+                      </span>
+                    ))}
+                  </div>
+                )}
+
+                {/* Predefined Skills */}
+                <div className="mb-4">
+                  <p className="text-xs text-gray-500 mb-2">
+                    Suggested skills (click to add)
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {SKILLS.filter(s => !selectedSkills.includes(s)).map((skill) => (
+                      <button
+                        type="button"
+                        key={skill}
+                        onClick={() => toggleSkill(skill)}
+                        disabled={selectedSkills.length >= MAX_SKILLS}
+                        className={`px-3 py-1.5 text-sm border-2 transition-all rounded
+                          ${selectedSkills.length >= MAX_SKILLS
+                            ? 'border-gray-100 text-gray-300 cursor-not-allowed'
+                            : 'border-gray-200 text-gray-700 hover:border-gray-400'
+                          }`}
+                      >
+                        <span className="flex items-center gap-1">
+                          <Plus className="w-3 h-3" />
+                          {skill}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Custom Skill Input */}
+                <div>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Or add your own
+                  </p>
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      value={customSkillInput}
+                      onChange={(e) => {
+                        setCustomSkillInput(e.target.value);
+                        setCustomSkillError(null);
+                      }}
+                      onKeyDown={handleCustomSkillKeyDown}
+                      placeholder="Type a skill and press Enter"
+                      maxLength={30}
+                      disabled={selectedSkills.length >= MAX_SKILLS}
+                      className={`flex-1 px-3 py-2 border-2 focus:outline-none text-sm transition-colors rounded
+                        ${customSkillError 
+                          ? 'border-red-300 focus:border-red-500' 
+                          : 'border-gray-200 focus:border-gray-900'}
+                        ${selectedSkills.length >= MAX_SKILLS ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+                    />
                     <button
                       type="button"
-                      key={skill}
-                      onClick={() => toggleSkill(skill)}
-                      className={`px-3 py-2 text-sm text-left border-2 transition-all
-                        ${
-                          selectedSkills.includes(skill)
-                            ? 'border-gray-900 bg-gray-900 text-white'
-                            : 'border-gray-200 text-gray-700 hover:border-gray-400'
-                        }`}
+                      onClick={handleAddCustomSkill}
+                      disabled={selectedSkills.length >= MAX_SKILLS || !customSkillInput.trim()}
+                      className="px-4 py-2 text-sm font-medium bg-gray-900 text-white transition-colors disabled:opacity-50 rounded hover:bg-gray-800"
                     >
-                      <span className="flex items-center gap-2">
-                        {selectedSkills.includes(skill) && (
-                          <Check className="w-4 h-4 flex-shrink-0" />
-                        )}
-                        {skill}
-                      </span>
+                      Add
                     </button>
-                  ))}
+                  </div>
+                  {customSkillError && (
+                    <p className="text-xs text-red-500 mt-1">{customSkillError}</p>
+                  )}
                 </div>
               </div>
 
@@ -151,7 +281,10 @@ function Onboarding({ user, updateUser, onNavigate }) {
                   {/* Neutral */}
                   <button
                     type="button"
-                    onClick={() => setAllegiance('neutral')}
+                    onClick={() => {
+                      setAllegiance('neutral');
+                      setAutoAssignEnabled(false); // Disable auto-assign when neutral
+                    }}
                     className={`p-3 sm:p-4 border-2 transition-all duration-200 rounded-lg
                       ${
                         allegiance === 'neutral'
@@ -206,17 +339,110 @@ function Onboarding({ user, updateUser, onNavigate }) {
                 </div>
               </div>
 
+              {/* Auto-Assign Toggle */}
+              <div>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
+                  Team Assignment
+                </label>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (allegiance !== 'neutral') {
+                      setAutoAssignEnabled(!autoAssignEnabled);
+                    }
+                  }}
+                  disabled={allegiance === 'neutral'}
+                  className={`w-full p-4 border-2 transition-all duration-200 text-left
+                    ${allegiance === 'neutral' 
+                      ? 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-60'
+                      : autoAssignEnabled
+                        ? allegiance === 'ai'
+                          ? 'border-cyan-500 bg-cyan-50 border-dashed'
+                          : 'border-green-500 bg-green-50 rounded-xl'
+                        : 'border-gray-200 hover:border-gray-400 rounded-lg'
+                    }`}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0
+                      ${allegiance === 'neutral'
+                        ? 'border-gray-300'
+                        : autoAssignEnabled
+                          ? allegiance === 'ai'
+                            ? 'border-cyan-500 bg-cyan-500'
+                            : 'border-green-500 bg-green-500'
+                          : 'border-gray-300'
+                      }`}
+                    >
+                      {autoAssignEnabled && allegiance !== 'neutral' && (
+                        <Check className="w-3 h-3 text-white" />
+                      )}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2">
+                        <Zap className={`w-4 h-4 ${
+                          allegiance === 'neutral'
+                            ? 'text-gray-400'
+                            : autoAssignEnabled
+                              ? allegiance === 'ai' ? 'text-cyan-600' : 'text-green-600'
+                              : 'text-gray-500'
+                        }`} />
+                        <span className={`font-bold text-sm ${
+                          allegiance === 'neutral'
+                            ? 'text-gray-400'
+                            : autoAssignEnabled
+                              ? allegiance === 'ai' ? 'text-cyan-700' : 'text-green-700'
+                              : 'text-gray-700'
+                        }`}>
+                          Auto-assign me to a team
+                        </span>
+                      </div>
+                      <p className={`text-xs mt-1 ${
+                        allegiance === 'neutral' ? 'text-gray-400' : 'text-gray-500'
+                      }`}>
+                        {allegiance === 'neutral'
+                          ? 'Choose Human or AI side to enable auto-assignment'
+                          : `Join an existing ${allegiance === 'ai' ? 'AI' : 'Human'} team automatically, or start a new one if none are available`
+                        }
+                      </p>
+                    </div>
+                    <Users className={`w-5 h-5 flex-shrink-0 ${
+                      allegiance === 'neutral'
+                        ? 'text-gray-300'
+                        : autoAssignEnabled
+                          ? allegiance === 'ai' ? 'text-cyan-500' : 'text-green-500'
+                          : 'text-gray-400'
+                    }`} />
+                  </div>
+                </button>
+              </div>
+
               {/* Submit */}
               <button
                 type="button"
                 onClick={handleSubmit}
-                disabled={!name.trim()}
-                className="w-full py-3 sm:py-4 bg-gray-900 text-white font-bold
-                           hover:bg-gray-800 transition-colors
-                           border-2 border-gray-900
-                           disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={!name.trim() || isSubmitting}
+                className={`w-full py-3 sm:py-4 font-bold transition-colors border-2
+                           disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2
+                           ${autoAssignEnabled && allegiance !== 'neutral'
+                             ? allegiance === 'ai'
+                               ? 'bg-cyan-600 border-cyan-600 text-white hover:bg-cyan-700'
+                               : 'bg-green-600 border-green-600 text-white hover:bg-green-700'
+                             : 'bg-gray-900 border-gray-900 text-white hover:bg-gray-800'
+                           }`}
               >
-                JOIN AS FREE AGENT
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                    {autoAssignEnabled && allegiance !== 'neutral' ? 'FINDING YOUR TEAM...' : 'JOINING...'}
+                  </>
+                ) : autoAssignEnabled && allegiance !== 'neutral' ? (
+                  <>
+                    <Zap className="w-4 h-4" />
+                    AUTO-JOIN A TEAM
+                  </>
+                ) : (
+                  'JOIN AS FREE AGENT'
+                )}
               </button>
 
               {/* DEV SKIP BUTTON - REMOVE BEFORE LIVE */}

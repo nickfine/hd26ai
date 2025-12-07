@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3 } from 'lucide-react';
+import { Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3, ArrowRightLeft } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
 import AppLayout from './AppLayout';
 
@@ -8,6 +8,12 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
   const [isEditingMoreInfo, setIsEditingMoreInfo] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestMessage, setRequestMessage] = useState('');
+  const [showTransferModal, setShowTransferModal] = useState(false);
+  const [memberToTransfer, setMemberToTransfer] = useState(null);
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [teamNameInput, setTeamNameInput] = useState(team.name || '');
+  const [isEditingDescription, setIsEditingDescription] = useState(false);
+  const [descriptionInput, setDescriptionInput] = useState(team.description || '');
   
   // Check if current user is the captain (for demo, we'll check by matching user id or name)
   const isCaptain = user?.id === team.captainId;
@@ -42,6 +48,51 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
     setTimeout(() => {
       onNavigate('dashboard');
     }, 800);
+  };
+
+  // Handle captain transfer
+  const handleTransferCaptain = () => {
+    if (!memberToTransfer || !isCaptain) return;
+    
+    onUpdateTeam(team.id, { captainId: memberToTransfer.id });
+    setShowTransferModal(false);
+    setMemberToTransfer(null);
+  };
+
+  // Open transfer modal
+  const openTransferModal = (member) => {
+    setMemberToTransfer(member);
+    setShowTransferModal(true);
+  };
+
+  // Handle team name save
+  const handleSaveTeamName = () => {
+    const trimmedName = teamNameInput.trim();
+    if (trimmedName.length >= 3 && trimmedName !== team.name) {
+      onUpdateTeam(team.id, { name: trimmedName });
+    }
+    setIsEditingName(false);
+  };
+
+  // Handle team name cancel
+  const handleCancelTeamName = () => {
+    setTeamNameInput(team.name || '');
+    setIsEditingName(false);
+  };
+
+  // Handle description save
+  const handleSaveDescription = () => {
+    const trimmedDesc = descriptionInput.trim();
+    if (trimmedDesc.length >= 10 && trimmedDesc !== team.description) {
+      onUpdateTeam(team.id, { description: trimmedDesc });
+    }
+    setIsEditingDescription(false);
+  };
+
+  // Handle description cancel
+  const handleCancelDescription = () => {
+    setDescriptionInput(team.description || '');
+    setIsEditingDescription(false);
   };
   const teamConfig = ALLEGIANCE_CONFIG[team.side];
   const TeamIcon = team.side === 'ai' ? Cpu : Heart;
@@ -84,7 +135,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           style={{ borderColor: teamConfig.borderColor }}
         >
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="flex items-center gap-3 sm:gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
               <div
                 className={`w-12 sm:w-16 h-12 sm:h-16 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
                 style={{ backgroundColor: teamConfig.bgColor }}
@@ -94,14 +145,33 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   style={{ color: teamConfig.color }}
                 />
               </div>
-              <div className="min-w-0">
-                <h1
-                  className={`text-xl sm:text-2xl font-black text-gray-900 ${
-                    team.side === 'ai' ? 'font-mono' : ''
-                  }`}
-                >
-                  {team.name}
-                </h1>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h1
+                    className={`text-xl sm:text-2xl font-black text-gray-900 ${
+                      team.side === 'ai' ? 'font-mono' : ''
+                    }`}
+                  >
+                    {team.name}
+                  </h1>
+                  {isCaptain && !isEditingName && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setTeamNameInput(team.name);
+                        setIsEditingName(true);
+                      }}
+                      className="text-xs font-medium px-3 py-1 rounded transition-colors"
+                      style={{
+                        color: teamConfig.color,
+                        backgroundColor: teamConfig.bgColor,
+                        border: `1px solid ${teamConfig.borderColor}`,
+                      }}
+                    >
+                      Edit
+                    </button>
+                  )}
+                </div>
                 <span
                   className="text-sm font-bold uppercase"
                   style={{ color: teamConfig.color }}
@@ -110,7 +180,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 </span>
               </div>
             </div>
-            <div className="flex items-center gap-2 text-gray-500">
+            <div className="flex items-center gap-2 text-gray-500 flex-shrink-0">
               <Users className="w-5 h-5" />
               <span className="text-lg font-bold">
                 {team.members.length}/{team.maxMembers}
@@ -121,10 +191,69 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
 
         {/* Project Goal */}
         <div className="bg-white p-4 sm:p-6 mb-4 sm:mb-6 border border-gray-200">
-          <h2 className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">
-            Project Goal
-          </h2>
-          <p className="text-base sm:text-lg text-gray-700">{team.description}</p>
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-bold uppercase tracking-wide text-gray-500">
+              Project Goal
+            </h2>
+            {isCaptain && !isEditingDescription && (
+              <button
+                type="button"
+                onClick={() => {
+                  setDescriptionInput(team.description || '');
+                  setIsEditingDescription(true);
+                }}
+                className="text-xs font-medium px-3 py-1 rounded transition-colors"
+                style={{
+                  color: teamConfig.color,
+                  backgroundColor: teamConfig.bgColor,
+                  border: `1px solid ${teamConfig.borderColor}`,
+                }}
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          {isEditingDescription ? (
+            <div className="space-y-3">
+              <textarea
+                value={descriptionInput}
+                onChange={(e) => setDescriptionInput(e.target.value)}
+                placeholder="Describe your team's project goal..."
+                className={`w-full p-3 border-2 focus:outline-none text-base sm:text-lg resize-none transition-colors
+                  ${descriptionInput.trim().length < 10 ? 'border-red-300' : 'border-gray-200 focus:border-gray-900'}`}
+                rows={3}
+                maxLength={500}
+              />
+              <div className="flex items-center justify-between">
+                {descriptionInput.trim().length < 10 ? (
+                  <p className="text-xs text-red-500">Description must be at least 10 characters</p>
+                ) : (
+                  <span />
+                )}
+                <p className="text-xs text-gray-400">{descriptionInput.length}/500</p>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={handleCancelDescription}
+                  className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 rounded hover:bg-gray-200 transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveDescription}
+                  disabled={descriptionInput.trim().length < 10}
+                  className="px-4 py-2 text-sm font-medium text-white rounded transition-colors disabled:opacity-50"
+                  style={{ backgroundColor: teamConfig.color }}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-base sm:text-lg text-gray-700">{team.description}</p>
+          )}
         </div>
 
         {/* More Info */}
@@ -220,7 +349,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                       </div>
                     )}
                   </div>
-                  <div className="flex flex-col min-w-0">
+                  <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
                         className={`font-bold text-gray-900 truncate ${
@@ -239,6 +368,17 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                       </span>
                     )}
                   </div>
+                  {/* Transfer Captain Button - Only visible to captain for non-captain members */}
+                  {isCaptain && member.id !== team.captainId && (
+                    <button
+                      type="button"
+                      onClick={() => openTransferModal(member)}
+                      className="p-2 text-gray-400 hover:text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors flex-shrink-0"
+                      title="Make Captain"
+                    >
+                      <Crown className="w-4 h-4" />
+                    </button>
+                  )}
                 </div>
                 <div className="flex flex-wrap gap-1">
                   {member.skills.slice(0, 3).map((skill) => (
@@ -607,6 +747,164 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 style={{ backgroundColor: teamConfig.color }}
               >
                 Send Request
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Team Name Modal */}
+      {isEditingName && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div
+            className={`bg-white w-full max-w-md p-4 sm:p-6 ${teamConfig.borderRadius} border-2`}
+            style={{ borderColor: teamConfig.borderColor }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">Edit Team Name</h3>
+              <button
+                type="button"
+                onClick={handleCancelTeamName}
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                Team Name
+              </label>
+              <input
+                type="text"
+                value={teamNameInput}
+                onChange={(e) => setTeamNameInput(e.target.value)}
+                placeholder="Enter team name"
+                maxLength={50}
+                className={`w-full px-3 py-3 border-2 focus:outline-none transition-colors text-base
+                  ${team.side === 'ai' ? 'font-mono' : ''}
+                  ${teamNameInput.trim().length < 3 ? 'border-red-300' : 'border-gray-200 focus:border-gray-900'}`}
+                autoFocus
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' && teamNameInput.trim().length >= 3) handleSaveTeamName();
+                  if (e.key === 'Escape') handleCancelTeamName();
+                }}
+              />
+              <div className="flex items-center justify-between mt-1">
+                {teamNameInput.trim().length < 3 ? (
+                  <p className="text-xs text-red-500">Team name must be at least 3 characters</p>
+                ) : (
+                  <span />
+                )}
+                <p className="text-xs text-gray-400">{teamNameInput.length}/50</p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={handleCancelTeamName}
+                className="flex-1 py-3 text-sm font-bold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveTeamName}
+                disabled={teamNameInput.trim().length < 3}
+                className="flex-1 py-3 text-sm font-bold text-white rounded-lg transition-colors hover:opacity-90 disabled:opacity-50"
+                style={{ backgroundColor: teamConfig.color }}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Transfer Captain Modal */}
+      {showTransferModal && memberToTransfer && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div
+            className={`bg-white w-full max-w-md p-4 sm:p-6 ${teamConfig.borderRadius} border-2`}
+            style={{ borderColor: teamConfig.borderColor }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-bold text-gray-900">Transfer Captain Role</h3>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowTransferModal(false);
+                  setMemberToTransfer(null);
+                }}
+                className="p-1 text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Transfer Info */}
+            <div className="mb-6">
+              <div className="flex items-center justify-center gap-4 py-4">
+                {/* Current Captain (You) */}
+                <div className="text-center">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 relative"
+                    style={{ backgroundColor: teamConfig.color }}
+                  >
+                    <User className="w-7 h-7 text-white" />
+                    <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
+                      <Crown className="w-3.5 h-3.5 text-yellow-800" />
+                    </div>
+                  </div>
+                  <p className="text-sm font-medium text-gray-900">You</p>
+                  <p className="text-xs text-gray-500">Current Captain</p>
+                </div>
+
+                {/* Arrow */}
+                <div className="flex flex-col items-center">
+                  <ArrowRightLeft className="w-6 h-6 text-gray-400" />
+                </div>
+
+                {/* New Captain */}
+                <div className="text-center">
+                  <div
+                    className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2"
+                    style={{ backgroundColor: teamConfig.color }}
+                  >
+                    <User className="w-7 h-7 text-white" />
+                  </div>
+                  <p className="text-sm font-medium text-gray-900">{memberToTransfer.name}</p>
+                  <p className="text-xs text-gray-500">New Captain</p>
+                </div>
+              </div>
+
+              <div className="p-3 bg-amber-50 border border-amber-200 rounded-lg">
+                <p className="text-sm text-amber-800">
+                  <span className="font-semibold">Are you sure?</span> This will transfer all captain privileges to{' '}
+                  <span className="font-semibold">{memberToTransfer.name}</span>. You will become a regular team member.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setShowTransferModal(false);
+                  setMemberToTransfer(null);
+                }}
+                className="flex-1 py-3 text-sm font-bold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleTransferCaptain}
+                className="flex-1 py-3 text-sm font-bold text-white bg-yellow-500 rounded-lg hover:bg-yellow-600 transition-colors flex items-center justify-center gap-2"
+              >
+                <Crown className="w-4 h-4" />
+                Transfer Captain
               </button>
             </div>
           </div>

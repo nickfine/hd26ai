@@ -78,8 +78,11 @@ function Marketplace({
     return bApplied - aApplied;
   });
 
-  // Filter free agents by allegiance
+  // Filter free agents by allegiance (and exclude current user - you don't need to see yourself)
   const allegianceFilteredAgents = freeAgents.filter((agent) => {
+    // Exclude current user from the list
+    if (agent.id === user?.id || agent.name === user?.name) return false;
+    
     if (filterAllegiance === 'human') return agent.allegiance === 'human';
     if (filterAllegiance === 'ai') return agent.allegiance === 'ai';
     return true; // neutral shows all

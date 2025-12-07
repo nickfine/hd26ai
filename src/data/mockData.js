@@ -303,6 +303,7 @@ export const MOCK_TEAMS = [
     maxMembers: 5,
     captainId: 101,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 101, name: 'Alex Chen', callsign: 'Keyboard Bandit', skills: ['Backend Development', 'DevOps'] },
       { id: 102, name: 'Jordan Lee', callsign: 'Neural Ninja', skills: ['Machine Learning', 'Data Science'] },
@@ -363,6 +364,7 @@ export const MOCK_TEAMS = [
     maxMembers: 4,
     captainId: 201,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 201, name: 'Morgan Riley', callsign: 'Pixel Pusher', skills: ['UI/UX Design', 'Product Management'] },
       { id: 202, name: 'Casey Brooks', callsign: 'CSS Wizard', skills: ['Frontend Development', 'UI/UX Design'] },
@@ -412,6 +414,7 @@ export const MOCK_TEAMS = [
     maxMembers: 6,
     captainId: 301,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 301, name: 'Jamie Foster', callsign: 'The Architect', skills: ['Product Management', 'UI/UX Design'] },
       { id: 302, name: 'Drew Parker', callsign: 'Mobile Maven', skills: ['Frontend Development', 'Mobile Development'] },
@@ -449,6 +452,7 @@ export const MOCK_TEAMS = [
     maxMembers: 4,
     captainId: 401,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 401, name: 'Sam Rivera', callsign: 'Data Drifter', skills: ['Machine Learning', 'Data Science'] },
       { id: 402, name: 'Chris Nakamura', callsign: 'Token Master', skills: ['Backend Development', 'Machine Learning'] },
@@ -484,6 +488,7 @@ export const MOCK_TEAMS = [
     maxMembers: 5,
     captainId: 501,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 501, name: 'Pat O\'Brien', callsign: 'Circuit Breaker', skills: ['Hardware/IoT', 'Security'] },
       { id: 502, name: 'Dana Kowalski', callsign: 'Server Sage', skills: ['Backend Development', 'DevOps'] },
@@ -512,6 +517,7 @@ export const MOCK_TEAMS = [
     maxMembers: 4,
     captainId: 601,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 601, name: 'Sage Thompson', callsign: 'Prompt Lord', skills: ['Machine Learning', 'DevOps', 'Data Science'] },
     ],
@@ -538,6 +544,7 @@ export const MOCK_TEAMS = [
     maxMembers: 3,
     captainId: 701,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 701, name: 'Robin Sinclair', callsign: 'Retro Designer', skills: ['UI/UX Design', 'Frontend Development'] },
       { id: 702, name: 'Finley Grant', callsign: 'Roadmap Rebel', skills: ['Product Management', 'UI/UX Design'] },
@@ -565,6 +572,7 @@ export const MOCK_TEAMS = [
     maxMembers: 5,
     captainId: 801,
     moreInfo: '',
+    isAutoCreated: false,
     members: [
       { id: 801, name: 'Kai Patel', callsign: 'Full Stack Flash', skills: ['Frontend Development', 'Backend Development'] },
       { id: 802, name: 'Blake Nguyen', callsign: 'Gradient Ghost', skills: ['Machine Learning', 'Backend Development'] },
@@ -615,6 +623,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'human',
     bio: 'Designer who codes. Looking for a team that values aesthetics and user experience.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
   {
     id: 5002,
@@ -623,6 +632,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'ai',
     bio: 'Data scientist with a passion for neural networks. Ready to help your AI project dominate.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
   {
     id: 5003,
@@ -631,6 +641,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'neutral',
     bio: 'Full-stack engineer. I go where the interesting problems are, regardless of side.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
   {
     id: 5004,
@@ -639,6 +650,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'human',
     bio: 'Cross-platform mobile dev. I believe in crafting apps with a human touch.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
   {
     id: 5005,
@@ -647,6 +659,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'ai',
     bio: 'Product strategist embracing AI-first design. Let machines do the heavy lifting.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
   {
     id: 5006,
@@ -655,6 +668,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'human',
     bio: 'Hardware hacker at heart. Building tangible things in an increasingly digital world.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
   {
     id: 5007,
@@ -663,6 +677,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'ai',
     bio: 'LLM enthusiast. If it involves prompts and parameters, count me in.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
   {
     id: 5008,
@@ -671,6 +686,7 @@ export const MOCK_FREE_AGENTS = [
     allegiance: 'neutral',
     bio: 'Versatile full-stack dev. Show me your vision and I\'ll help you build it.',
     teamInvites: [],
+    autoAssignOptIn: false,
   },
 ];
 

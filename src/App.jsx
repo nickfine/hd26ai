@@ -73,6 +73,8 @@ function App() {
         role: auth.profile.role?.toLowerCase() || 'participant',
         image: auth.profile.image,
         bio: auth.profile.bio,
+        callsign: auth.profile.callsign || '',
+        autoAssignOptIn: auth.profile.autoAssignOptIn || false,
       };
     }
     return null;
@@ -199,6 +201,71 @@ function App() {
       refetchTeams();
     }
   }, [useDemoMode, teamMutations, refetchTeams]);
+
+  const leaveTeam = useCallback(async (teamId) => {
+    if (!effectiveUser) return;
+    
+    if (useDemoMode) {
+      // Remove user from team
+      setMockTeams(prev =>
+        prev.map(team => {
+          if (team.id !== teamId) return team;
+          
+          // Remove user from members array
+          const updatedMembers = team.members.filter(
+            m => m.id !== effectiveUser.id && m.name !== effectiveUser.name
+          );
+          
+          // If user was captain and there are remaining members, promote the first one
+          let newCaptainId = team.captainId;
+          if (team.captainId === effectiveUser.id && updatedMembers.length > 0) {
+            newCaptainId = updatedMembers[0].id;
+          }
+          
+          return {
+            ...team,
+            members: updatedMembers,
+            captainId: newCaptainId,
+          };
+        }).filter(team => {
+          // Remove team if it has no members left
+          if (team.id === teamId) {
+            const remainingMembers = team.members.filter(
+              m => m.id !== effectiveUser.id && m.name !== effectiveUser.name
+            );
+            return remainingMembers.length > 0;
+          }
+          return true;
+        })
+      );
+      
+      // Reset user's allegiance to neutral (free agent grey)
+      setDemoUser(prev => prev ? { ...prev, allegiance: 'neutral' } : prev);
+      
+      // Add user to free agents list
+      setMockFreeAgents(prev => {
+        // Check if already in the list
+        if (prev.some(a => a.id === effectiveUser.id)) return prev;
+        return [
+          ...prev,
+          {
+            id: effectiveUser.id,
+            name: effectiveUser.name,
+            skills: effectiveUser.skills || [],
+            allegiance: 'neutral',
+            bio: effectiveUser.bio || '',
+            teamInvites: [],
+            autoAssignOptIn: false,
+          }
+        ];
+      });
+    } else {
+      await teamMutations.leaveTeam(teamId, effectiveUser.id);
+      // Also reset allegiance in database
+      await auth.updateProfile({ allegiance: 'neutral' });
+      refetchTeams();
+    }
+  }, [useDemoMode, effectiveUser, teamMutations, refetchTeams, auth]);
 
   const handleJoinRequest = useCallback(async (teamId, request) => {
     if (useDemoMode) {
@@ -329,6 +396,7 @@ function App() {
         maxMembers: teamData.maxMembers || 6,
         moreInfo: '',
         captainId: effectiveUser?.id,
+        isAutoCreated: teamData.isAutoCreated || false,
         members: [
           {
             id: effectiveUser?.id,
@@ -364,6 +432,97 @@ function App() {
       return null;
     }
   }, [useDemoMode, effectiveUser, teamMutations, event?.id, refetchTeams]);
+
+  // ============================================================================
+  // AUTO-ASSIGN TEAM HANDLER
+  // ============================================================================
+  const handleAutoAssign = useCallback(async (optIn) => {
+    if (!effectiveUser) return { success: false, error: 'No user logged in' };
+    
+    // Validate allegiance - must be human or ai, not neutral
+    if (effectiveUser.allegiance === 'neutral') {
+      return { success: false, error: 'Choose Human or AI side before auto-assignment' };
+    }
+
+    // Check if user is already on a team
+    const userTeam = teams.find(
+      team => team.captainId === effectiveUser.id || 
+              team.members?.some(m => m.id === effectiveUser.id || m.name === effectiveUser.name)
+    );
+    if (userTeam) {
+      return { success: false, error: 'You are already on a team' };
+    }
+
+    // Update user's auto-assign opt-in status
+    if (useDemoMode) {
+      setDemoUser(prev => prev ? { ...prev, autoAssignOptIn: optIn } : prev);
+    } else {
+      await auth.updateProfile({ autoAssignOptIn: optIn });
+    }
+
+    // If opting out, just return success
+    if (!optIn) {
+      return { success: true };
+    }
+
+    // Find existing auto-created team for user's side with room
+    const side = effectiveUser.allegiance;
+    const existingAutoTeam = teams.find(
+      team => team.isAutoCreated && 
+              team.side === side && 
+              team.members.length < 6
+    );
+
+    if (existingAutoTeam) {
+      // Add user to existing auto-team
+      if (useDemoMode) {
+        const newMember = {
+          id: effectiveUser.id,
+          name: effectiveUser.name,
+          callsign: effectiveUser.callsign || '',
+          skills: effectiveUser.skills || [],
+        };
+        
+        setMockTeams(prev =>
+          prev.map(team =>
+            team.id === existingAutoTeam.id
+              ? { ...team, members: [...team.members, newMember] }
+              : team
+          )
+        );
+        
+        return { success: true, teamId: existingAutoTeam.id, teamName: existingAutoTeam.name };
+      } else {
+        // In Supabase mode, add member to team
+        await teamMutations.addMember(existingAutoTeam.id, effectiveUser.id);
+        refetchTeams();
+        return { success: true, teamId: existingAutoTeam.id, teamName: existingAutoTeam.name };
+      }
+    } else {
+      // Create new auto-team
+      const sideLabel = side === 'ai' ? 'AI' : 'Human';
+      const existingAutoTeamsCount = teams.filter(
+        t => t.isAutoCreated && t.side === side
+      ).length;
+      const teamNumber = existingAutoTeamsCount + 1;
+      const teamName = `Auto Squad ${sideLabel} #${teamNumber}`;
+
+      const teamData = {
+        name: teamName,
+        side: side,
+        description: `Auto-created team for ${sideLabel} side participants. Join us and let's build something amazing together!`,
+        lookingFor: [],
+        maxMembers: 6,
+        isAutoCreated: true,
+      };
+
+      const result = await handleCreateTeam(teamData);
+      if (result?.id) {
+        return { success: true, teamId: result.id, teamName: teamName };
+      }
+      return { success: false, error: 'Failed to create auto-team' };
+    }
+  }, [effectiveUser, teams, useDemoMode, auth, teamMutations, refetchTeams, handleCreateTeam]);
 
   // ============================================================================
   // SUBMISSION HANDLERS
@@ -515,6 +674,8 @@ function App() {
       if (updates.skills) dbUpdates.skills = updates.skills.join(', ');
       if (updates.allegiance) dbUpdates.trackSide = updates.allegiance.toUpperCase();
       if (updates.bio) dbUpdates.bio = updates.bio;
+      if (updates.callsign !== undefined) dbUpdates.callsign = updates.callsign;
+      if (updates.autoAssignOptIn !== undefined) dbUpdates.autoAssignOptIn = updates.autoAssignOptIn;
       
       await auth.updateProfile(dbUpdates);
     }
@@ -528,6 +689,8 @@ function App() {
       allegiance: userData.allegiance || 'neutral',
       email: userData.email || '',
       role: userData.role || 'participant',
+      callsign: userData.callsign || '',
+      autoAssignOptIn: userData.autoAssignOptIn || false,
     });
     setUseDemoMode(true);
   }, []);
@@ -547,6 +710,23 @@ function App() {
       setMockEventPhase(userData.phase);
     }
     setCurrentView('dashboard');
+  }, [createUser]);
+
+  // Demo onboarding handler - creates a new user and goes to onboarding
+  const handleDemoOnboarding = useCallback((phase) => {
+    createUser({
+      id: Date.now(),
+      name: '',
+      email: 'new.user@company.com',
+      skills: [],
+      allegiance: 'neutral',
+      role: 'participant',
+      autoAssignOptIn: false,
+    });
+    if (phase) {
+      setMockEventPhase(phase);
+    }
+    setCurrentView('onboarding');
   }, [createUser]);
 
   // ============================================================================
@@ -586,6 +766,7 @@ function App() {
             onNavigate={setCurrentView}
             onLogin={(email) => createUser({ email })}
             onDemoLogin={handleDemoLogin}
+            onDemoOnboarding={handleDemoOnboarding}
             onOAuthSignIn={handleOAuthSignIn}
             authLoading={auth.loading}
             authError={auth.error}
@@ -598,6 +779,7 @@ function App() {
             user={effectiveUser}
             updateUser={updateUser}
             onNavigate={setCurrentView}
+            onAutoAssign={handleAutoAssign}
           />
         );
       
@@ -638,6 +820,8 @@ function App() {
             allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             onNavigateToTeam={navigateToTeam}
+            onLeaveTeam={leaveTeam}
+            onAutoAssign={handleAutoAssign}
             eventPhase={eventPhase}
           />
         );
