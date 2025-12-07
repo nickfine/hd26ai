@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import adaptLogo from '../../adaptlogo.png';
 import {
   Clock,
@@ -22,6 +22,72 @@ import {
   X,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG, USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
+
+// ============================================================================
+// WAR TIMER - Countdown to June 21, 2026
+// ============================================================================
+
+const EVENT_START = new Date('2026-06-21T09:00:00');  // Event start
+const EVENT_END = new Date('2026-06-22T17:00:00');    // Event end
+
+const calculateTimeRemaining = () => {
+  const now = new Date();
+  
+  // Event hasn't started yet
+  if (now < EVENT_START) {
+    const diff = EVENT_START - now;
+    const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const months = Math.floor(totalDays / 30);
+    const days = totalDays % 30;
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    let display;
+    if (months > 0) {
+      display = `${months}mo ${days}d ${hours}h ${minutes}m ${seconds}s`;
+    } else if (days > 0) {
+      display = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    } else {
+      display = `${hours}h ${minutes}m ${seconds}s`;
+    }
+    
+    return {
+      status: 'countdown',
+      months,
+      days,
+      hours,
+      minutes,
+      seconds,
+      display,
+      label: 'Until HackDay 2026'
+    };
+  }
+  
+  // Event is live!
+  if (now >= EVENT_START && now < EVENT_END) {
+    const diff = EVENT_END - now;
+    const hours = Math.floor(diff / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    return {
+      status: 'live',
+      hours,
+      minutes,
+      seconds,
+      display: `${hours}h ${minutes}m ${seconds}s`,
+      label: '⚡ EVENT LIVE ⚡'
+    };
+  }
+  
+  // Event has ended
+  return {
+    status: 'ended',
+    display: '0h 0m 0s',
+    label: 'Event Complete'
+  };
+};
 
 // ============================================================================
 // NAVIGATION ITEMS
@@ -96,6 +162,15 @@ function AppLayout({
   showSidebar = true,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining);
+
+  // Update countdown every second
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Find the team the user is captain of (if any)
   const captainedTeam = teams.find((team) => team.captainId === user?.id);
@@ -165,11 +240,23 @@ function AppLayout({
           </div>
 
           {/* War Timer */}
-          <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-gray-900 text-white">
+          <div className={`hidden md:flex items-center gap-3 px-4 py-2 text-white
+            ${timeRemaining.status === 'live' 
+              ? 'bg-gradient-to-r from-cyan-600 to-green-600 animate-pulse' 
+              : timeRemaining.status === 'ended'
+                ? 'bg-gray-600'
+                : 'bg-gray-900'}`}
+          >
             <Clock className="w-5 h-5" />
             <div>
-              <div className="font-mono text-2xl font-bold tracking-wider">47:59:00</div>
-              <div className="text-xs text-gray-400 uppercase tracking-wide">Until June 21st 2026</div>
+              <div className="font-mono text-2xl font-bold tracking-wider">
+                {timeRemaining.display}
+              </div>
+              <div className={`text-xs uppercase tracking-wide
+                ${timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-gray-400'}`}
+              >
+                {timeRemaining.label}
+              </div>
             </div>
           </div>
 

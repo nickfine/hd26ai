@@ -1,6 +1,6 @@
 # HD26AI Roadmap
 
-## Current Version: 0.10.6
+## Current Version: 0.10.7
 
 This document tracks planned features and improvements for the HackDay 2026 Companion App.
 
@@ -63,15 +63,15 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
   - [ ] Generate personalized badge with user name + allegiance
   - [ ] Download as PNG/ZIP
 
-#### Live War Timer
-- **Status:** Hardcoded value
-- **Description:** Real countdown to event date (June 21st, 2026)
+#### ~~Live War Timer~~ ✅ DONE
+- **Status:** Complete (v0.10.7)
 - **Location:** `AppLayout.jsx` → Header timer section
-- **Acceptance Criteria:**
-  - [ ] Calculate time remaining from current date to event start
-  - [ ] Update every second
-  - [ ] Show different message when event is live or ended
-  - [ ] Handle timezone considerations
+- **Implemented:**
+  - [x] Calculate time remaining from current date to event start (June 21, 2026 9AM)
+  - [x] Update every second via `useEffect` interval
+  - [x] Show different message when event is live ("⚡ EVENT LIVE ⚡") or ended ("Event Complete")
+  - [x] Dynamic styling: dark bg for countdown, gradient pulse for live, muted for ended
+  - [x] Consistent unit format: `6mo 15d 12h 26m 29s` (adapts as time passes)
 
 #### Edit Skills in Profile
 - **Status:** Display only
@@ -157,8 +157,8 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
 
 ## 🐛 Known Issues
 
-- [ ] macOS metadata files (`._*.jsx`) appearing in git status — need to add to `.gitignore`
-- [ ] `hints.json` file appears unrelated to project — consider removing
+- [x] ~~macOS metadata files (`._*.jsx`) appearing in git status~~ — Already handled by `._*` in `.gitignore`
+- [x] ~~`hints.json` file appears unrelated to project~~ — Removed (was Jira/HAPI scripting, unrelated)
 
 ---
 
@@ -170,5 +170,5 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
 
 ---
 
-*Last updated: December 7, 2024*
+*Last updated: December 7, 2025*
 
