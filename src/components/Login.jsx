@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2 } from 'lucide-react';
+import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
 
 // Google Icon SVG
@@ -139,6 +139,27 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                   >
                     <Crown className="w-4 h-4" />
                     Participant (Team Captain)
+                  </button>
+                  
+                  {/* Participant / Team Member */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onDemoLogin({
+                        id: 202,
+                        name: 'Casey Brooks',
+                        email: 'casey.brooks@company.com',
+                        skills: ['Frontend Development', 'UI/UX Design'],
+                        allegiance: 'human',
+                        role: 'participant',
+                      });
+                    }}
+                    className="w-full py-3 bg-green-600 text-white font-bold
+                               hover:bg-green-700 transition-colors text-sm
+                               flex items-center justify-center gap-2"
+                  >
+                    <User className="w-4 h-4" />
+                    Participant (Team Member)
                   </button>
                   
                   {/* Ambassador */}
