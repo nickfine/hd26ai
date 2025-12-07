@@ -1,6 +1,6 @@
 # HD26AI Roadmap
 
-## Current Version: 0.10.5
+## Current Version: 0.10.6
 
 This document tracks planned features and improvements for the HackDay 2026 Companion App.
 
@@ -10,28 +10,30 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
 
 ### High Priority
 
-#### Create Team UI
-- **Status:** Not started
-- **Description:** Add UI for participants to create new teams (currently can only browse/join existing teams)
-- **Location:** New component or add to `Marketplace.jsx`
-- **Dependencies:** `useTeamMutations.createTeam()` hook already exists
-- **Acceptance Criteria:**
-  - [ ] Form to enter team name, description, allegiance (Human/AI)
-  - [ ] Select skills the team is looking for
-  - [ ] Set max team size
-  - [ ] Creator becomes team captain automatically
+#### ~~Create Team UI~~ ✅ DONE
+- **Status:** Complete (v0.10.5)
+- **Location:** `Marketplace.jsx` → Create Team modal
+- **Implemented:**
+  - [x] Form to enter team name, description, allegiance (Human/AI)
+  - [x] Select skills the team is looking for
+  - [x] Set max team size (2-6 slider)
+  - [x] Creator becomes team captain automatically
+  - [x] Form validation with inline error messages
+  - [x] Button hidden if user already on a team
 
-#### User Management (Admin Panel)
-- **Status:** Placeholder UI exists
-- **Description:** Allow admins to search users, view their roles, and assign new roles
+#### ~~User Management (Admin Panel)~~ ✅ DONE
+- **Status:** Complete (v0.10.6)
 - **Location:** `AdminPanel.jsx` → `renderUsers()` section
-- **Dependencies:** Needs Supabase query for user list
-- **Acceptance Criteria:**
-  - [ ] Search/filter users by name or email
-  - [ ] Display current role for each user
-  - [ ] Dropdown to change role (participant/ambassador/judge/admin)
-  - [ ] Confirmation dialog before role changes
-  - [ ] Success/error feedback
+- **Implemented:**
+  - [x] Search/filter users by name or email
+  - [x] Filter dropdown by role (All, Participant, Ambassador, Judge, Admin)
+  - [x] Display current role badge for each user
+  - [x] Role counts in legend cards
+  - [x] Dropdown to change role (participant/ambassador/judge/admin)
+  - [x] Confirmation modal before role changes
+  - [x] Success/error toast feedback
+  - [x] Prevents changing own role
+  - [x] useUsers hook in useSupabase.js for Supabase integration
 
 ---
 
@@ -168,5 +170,5 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
 
 ---
 
-*Last updated: December 2024*
+*Last updated: December 7, 2024*
 

@@ -845,3 +845,101 @@ export function useSubmissionMutations() {
   return { loading, error, updateSubmission };
 }
 
+// ============================================================================
+// USERS HOOK (Admin)
+// ============================================================================
+
+/**
+ * Hook for fetching and managing users (admin only)
+ */
+export function useUsers() {
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Map database roles to app roles
+  const dbRoleToAppRole = (dbRole) => {
+    const roleMap = {
+      'USER': 'participant',
+      'JUDGE': 'judge',
+      'ADMIN': 'admin',
+    };
+    return roleMap[dbRole] || 'participant';
+  };
+
+  // Map app roles to database roles
+  const appRoleToDbRole = (appRole) => {
+    const roleMap = {
+      'participant': 'USER',
+      'ambassador': 'USER', // Ambassador is a UI distinction, stored as USER in DB
+      'judge': 'JUDGE',
+      'admin': 'ADMIN',
+    };
+    return roleMap[appRole] || 'USER';
+  };
+
+  const fetchUsers = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      const { data, error: fetchError } = await supabase
+        .from('User')
+        .select('id, name, email, image, role, trackSide, createdAt')
+        .order('name', { ascending: true });
+
+      if (fetchError) throw fetchError;
+
+      const transformedUsers = (data || []).map(user => ({
+        id: user.id,
+        name: user.name || 'Unknown',
+        email: user.email || '',
+        image: user.image,
+        role: dbRoleToAppRole(user.role),
+        allegiance: user.trackSide?.toLowerCase() || 'neutral',
+        createdAt: user.createdAt,
+      }));
+
+      setUsers(transformedUsers);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching users:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const updateUserRole = useCallback(async (userId, newRole) => {
+    try {
+      const dbRole = appRoleToDbRole(newRole);
+
+      const { error: updateError } = await supabase
+        .from('User')
+        .update({
+          role: dbRole,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq('id', userId);
+
+      if (updateError) throw updateError;
+
+      // Update local state
+      setUsers(prev => prev.map(user =>
+        user.id === userId ? { ...user, role: newRole } : user
+      ));
+
+      return { error: null };
+    } catch (err) {
+      console.error('Error updating user role:', err);
+      setError(err.message);
+      return { error: err.message };
+    }
+  }, []);
+
+  return { users, loading, error, refetch: fetchUsers, updateUserRole };
+}
+

@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   MOCK_TEAMS,
   MOCK_FREE_AGENTS,
+  MOCK_USERS,
   ALLEGIANCE_CONFIG,
   USER_ROLES,
   EVENT_PHASES,
@@ -19,6 +20,7 @@ import {
   useEvent,
   useTeamMutations,
   useSubmissionMutations,
+  useUsers,
 } from './hooks/useSupabase';
 
 // Components
@@ -103,11 +105,27 @@ function App() {
   const teamMutations = useTeamMutations();
   const submissionMutations = useSubmissionMutations();
 
+  // Users (for admin panel)
+  const { 
+    users: supabaseUsers, 
+    loading: usersLoading, 
+    refetch: refetchUsers, 
+    updateUserRole: supabaseUpdateUserRole 
+  } = useUsers();
+
   // Demo mode state (mock data)
   const [mockTeams, setMockTeams] = useState(MOCK_TEAMS);
   const [mockFreeAgents, setMockFreeAgents] = useState(MOCK_FREE_AGENTS);
   const [mockUserVotes, setMockUserVotes] = useState([]);
   const [mockEventPhase, setMockEventPhase] = useState('voting');
+  
+  // Flatten mock users for admin panel
+  const [mockAllUsers, setMockAllUsers] = useState(() => [
+    ...MOCK_USERS.participants,
+    ...MOCK_USERS.ambassadors,
+    ...MOCK_USERS.judges,
+    ...MOCK_USERS.admins,
+  ]);
 
   // Effective data (Supabase or mock)
   const teams = useMemo(() => {
@@ -451,10 +469,21 @@ function App() {
   }, [useDemoMode, effectiveUser, updateEventPhase]);
 
   const handleUpdateUserRole = useCallback(async (userId, newRole) => {
-    if (!effectiveUser || effectiveUser.role !== 'admin') return;
-    console.log(`Admin updated user ${userId} to role: ${newRole}`);
-    // In Supabase mode, this would update the User table
-  }, [effectiveUser]);
+    if (!effectiveUser || effectiveUser.role !== 'admin') {
+      return { error: 'Only admins can change user roles' };
+    }
+
+    if (useDemoMode) {
+      // Update mock users in demo mode
+      setMockAllUsers(prev => prev.map(u =>
+        u.id === userId ? { ...u, role: newRole } : u
+      ));
+      return { error: null };
+    } else {
+      // Use Supabase to update the user role
+      return await supabaseUpdateUserRole(userId, newRole);
+    }
+  }, [effectiveUser, useDemoMode, supabaseUpdateUserRole]);
 
   // ============================================================================
   // NAVIGATION HANDLERS
@@ -687,6 +716,9 @@ function App() {
             onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
             onUpdateUserRole={handleUpdateUserRole}
+            allUsers={useDemoMode ? mockAllUsers : supabaseUsers}
+            usersLoading={useDemoMode ? false : usersLoading}
+            onRefreshUsers={useDemoMode ? () => {} : refetchUsers}
           />
         );
       
