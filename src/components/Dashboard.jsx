@@ -25,6 +25,7 @@ import Card from './ui/Card';
 import Badge from './ui/Badge';
 import { HStack, VStack } from './layout';
 import { cn, getAllegianceConfig, formatNameWithCallsign } from '../lib/design-system';
+import { PROMO_IMAGES } from '../data/mockData';
 
 // ============================================================================
 // MOCK DATA
@@ -60,6 +61,81 @@ const MOCK_FAQ = [
 ];
 
 // ============================================================================
+// PROMO TILE COMPONENT
+// ============================================================================
+
+function PromoTile({ src, alt, colorScheme = 'ai', className }) {
+  const [imageError, setImageError] = useState(false);
+
+  const colorConfig = {
+    ai: {
+      bg: 'bg-gradient-to-br from-ai-50 to-teal-50',
+      iconBg: 'bg-ai-100',
+      iconColor: 'text-ai-300',
+      textPrimary: 'text-ai-400',
+      textSecondary: 'text-ai-300',
+    },
+    special: {
+      bg: 'bg-gradient-to-br from-special-50 to-indigo-50',
+      iconBg: 'bg-special-100',
+      iconColor: 'text-special-300',
+      textPrimary: 'text-special-400',
+      textSecondary: 'text-special-300',
+    },
+    human: {
+      bg: 'bg-gradient-to-br from-human-50 to-emerald-50',
+      iconBg: 'bg-human-100',
+      iconColor: 'text-human-300',
+      textPrimary: 'text-human-400',
+      textSecondary: 'text-human-300',
+    },
+  };
+
+  const colors = colorConfig[colorScheme] || colorConfig.ai;
+
+  // Show placeholder if no image or image failed to load
+  if (!src || imageError) {
+    return (
+      <Card 
+        variant="ghost" 
+        padding="none"
+        className={cn(
+          'border-2 border-dashed border-neutral-300 flex items-center justify-center min-h-[200px]',
+          colors.bg,
+          className
+        )}
+      >
+        <VStack align="center" gap="4" className="p-6">
+          <div className={cn('w-16 h-16 rounded-full flex items-center justify-center', colors.iconBg)}>
+            <ImageIcon className={cn('w-8 h-8', colors.iconColor)} />
+          </div>
+          <p className={cn('text-sm font-medium', colors.textPrimary)}>Promo Graphic</p>
+          <p className={cn('text-xs', colors.textSecondary)}>Coming Soon</p>
+        </VStack>
+      </Card>
+    );
+  }
+
+  return (
+    <Card 
+      variant="ghost" 
+      padding="none"
+      className={cn(
+        'overflow-hidden min-h-[200px]',
+        className
+      )}
+    >
+      <img
+        src={src}
+        alt={alt}
+        className="w-full h-full object-cover min-h-[200px]"
+        onError={() => setImageError(true)}
+      />
+    </Card>
+  );
+}
+
+// ============================================================================
 // COMPONENT
 // ============================================================================
 
@@ -89,19 +165,12 @@ function Dashboard({
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {/* Promo Tile 1 - Always visible, full width */}
-          <Card 
-            variant="ghost" 
-            padding="none"
-            className="md:col-span-2 border-2 border-dashed border-neutral-300 bg-gradient-to-br from-ai-50 to-teal-50 flex items-center justify-center min-h-[200px]"
-          >
-            <VStack align="center" gap="4" className="p-6">
-              <div className="w-16 h-16 rounded-full bg-ai-100 flex items-center justify-center">
-                <ImageIcon className="w-8 h-8 text-ai-300" />
-              </div>
-              <p className="text-sm text-ai-400 font-medium">Promo Graphic 1</p>
-              <p className="text-xs text-ai-300">Coming Soon</p>
-            </VStack>
-          </Card>
+          <PromoTile 
+            src={PROMO_IMAGES.promo1} 
+            alt="Promo Banner 1" 
+            colorScheme="ai"
+            className="md:col-span-2"
+          />
 
           {/* Team Finder Feature Box */}
           <Card variant="outlined" padding="md">
@@ -290,19 +359,11 @@ function Dashboard({
 
           {/* Promo Tile 2 - Shows in last slot when voting tile is hidden */}
           {eventPhase !== 'voting' && (
-            <Card 
-              variant="ghost" 
-              padding="none"
-              className="border-2 border-dashed border-neutral-300 bg-gradient-to-br from-special-50 to-indigo-50 flex items-center justify-center min-h-[200px]"
-            >
-              <VStack align="center" gap="4" className="p-6">
-                <div className="w-16 h-16 rounded-full bg-special-100 flex items-center justify-center">
-                  <ImageIcon className="w-8 h-8 text-special-300" />
-                </div>
-                <p className="text-sm text-special-400 font-medium">Promo Graphic 2</p>
-                <p className="text-xs text-special-300">Coming Soon</p>
-              </VStack>
-            </Card>
+            <PromoTile 
+              src={PROMO_IMAGES.promo2} 
+              alt="Promo Banner 2" 
+              colorScheme="special"
+            />
           )}
 
           {/* FAQ Widget */}

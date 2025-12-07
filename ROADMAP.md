@@ -1,6 +1,6 @@
 # HD26AI Roadmap
 
-## Current Version: 0.10.7
+## Current Version: 0.10.9
 
 This document tracks planned features and improvements for the HackDay 2026 Companion App.
 
@@ -39,29 +39,18 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
 
 ### Medium Priority
 
-#### Avatar Selection
-- **Status:** Placeholder button exists
-- **Description:** Let users choose or upload profile avatars
+#### ~~Avatar Selection~~ ✅ DONE
+- **Status:** Complete (v0.10.9)
 - **Location:** `Profile.jsx` → Avatar card section
-- **Options:**
-  - Pre-set allegiance-themed avatars
-  - Upload custom image (requires Supabase Storage)
-- **Acceptance Criteria:**
-  - [ ] Gallery of pre-set avatar options
-  - [ ] Preview before saving
-  - [ ] Avatar displays in header and profile
-
-#### Download Avatar/Badge Assets
-- **Status:** Button exists, not functional
-- **Description:** Generate downloadable allegiance-themed assets
-- **Location:** `AppLayout.jsx` → Sidebar "Download Avatar" button
-- **Deliverables:**
-  - Slack avatar (512x512)
-  - Zoom background (1920x1080)
-  - Teams background
-- **Acceptance Criteria:**
-  - [ ] Generate personalized badge with user name + allegiance
-  - [ ] Download as PNG/ZIP
+- **Asset Directory:** `public/avatars/human/` and `public/avatars/ai/`
+- **Implemented:**
+  - [x] AvatarPickerModal with grid of avatar options
+  - [x] Separate Human and AI avatar sets
+  - [x] Neutral users can browse both sets via tabs
+  - [x] Click to select with visual preview
+  - [x] Save via `updateUser({ avatar })`
+  - [x] Avatar displays in profile identity card
+  - [x] Placeholder fallback when images not yet added
 
 #### ~~Live War Timer~~ ✅ DONE
 - **Status:** Complete (v0.10.7)
@@ -73,23 +62,27 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
   - [x] Dynamic styling: dark bg for countdown, gradient pulse for live, muted for ended
   - [x] Consistent unit format: `6mo 15d 12h 26m 29s` (adapts as time passes)
 
-#### Edit Skills in Profile
-- **Status:** Display only
-- **Description:** Allow users to modify their skills after onboarding
+#### ~~Edit Skills in Profile~~ ✅ DONE
+- **Status:** Complete (v0.10.8)
 - **Location:** `Profile.jsx` → Skills section
-- **Acceptance Criteria:**
-  - [ ] Edit button to enter edit mode
-  - [ ] Multi-select skill picker (same as onboarding)
-  - [ ] Save to Supabase profile
+- **Implemented:**
+  - [x] Edit button to enter edit mode
+  - [x] Multi-select skill picker with predefined options
+  - [x] Custom skill input with Enter key support
+  - [x] Remove skills with X button on tags
+  - [x] Max 5 skills limit enforced
+  - [x] Validation for custom skills (2-30 chars, no duplicates)
+  - [x] Save/cancel with persistence to Supabase
 
-#### Callsign Editing
-- **Status:** Display only (set during onboarding)
-- **Description:** Allow users to edit their callsign from profile
-- **Location:** `Profile.jsx`
-- **Acceptance Criteria:**
-  - [ ] Inline edit for callsign
-  - [ ] Validation (max length, no special chars)
-  - [ ] Persist to database
+#### ~~Callsign Editing~~ ✅ DONE
+- **Status:** Complete (v0.10.8)
+- **Location:** `Profile.jsx` → Identity card section
+- **Implemented:**
+  - [x] Inline edit for callsign (Edit callsign button)
+  - [x] Validation (max 20 chars, letters/numbers/spaces only)
+  - [x] Live preview in name display during editing
+  - [x] Character counter
+  - [x] Save/cancel with persistence to database
 
 ---
 
@@ -118,15 +111,16 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
   - [ ] Format and display new activities
   - [ ] Limit to recent N items
 
-#### Promo Tiles / Banner Graphics
-- **Status:** Placeholder slots ready
-- **Description:** Add actual promotional graphics to dashboard
-- **Location:** `Dashboard.jsx` → Promo tile sections
-- **Notes:** Waiting for design assets
-- **Acceptance Criteria:**
-  - [ ] Receive promo images from design team
-  - [ ] Implement responsive image display
-  - [ ] Optional: rotation/randomization of multiple promos
+#### ~~Promo Tiles / Banner Graphics~~ ✅ DONE
+- **Status:** Complete (v0.10.9)
+- **Location:** `Dashboard.jsx` → PromoTile component
+- **Asset Directory:** `public/promo/`
+- **Implemented:**
+  - [x] PromoTile component with image display
+  - [x] Graceful fallback to placeholder when images not yet added
+  - [x] 2 promo slots on dashboard (full-width + secondary)
+  - [x] Responsive image display
+- **To Add Images:** Drop `promo-1.png` and `promo-2.png` into `public/promo/`
 
 ---
 
@@ -152,6 +146,10 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
 - [x] Callsign display system ("First 'Callsign' Last" format)
 - [x] War recruitment status widget
 - [x] Event phase progress bar
+- [x] Edit skills from profile (v0.10.8)
+- [x] Edit callsign from profile (v0.10.8)
+- [x] Avatar selection from pre-made sets (v0.10.9)
+- [x] Promo image support on dashboard (v0.10.9)
 
 ---
 

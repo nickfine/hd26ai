@@ -4,6 +4,13 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  // Safelist dynamic classes that Tailwind JIT can't detect
+  safelist: [
+    'bg-ai-500', 'bg-ai-600', 'hover:bg-ai-600',
+    'bg-human-500', 'bg-human-600', 'hover:bg-human-600',
+    'bg-accent-500', 'bg-accent-600', 'hover:bg-accent-600',
+    'bg-special-600', 'bg-special-700', 'hover:bg-special-700',
+  ],
   theme: {
     extend: {
       // =======================================================================

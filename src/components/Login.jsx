@@ -46,7 +46,7 @@ const GoogleIcon = () => (
 );
 
 // Demo role button component
-const DemoRoleButton = ({ icon: Icon, label, onClick, variant = 'primary', className }) => (
+const DemoRoleButton = ({ icon: Icon, label, onClick, variant = 'primary', className, style }) => (
   <button
     type="button"
     onClick={onClick}
@@ -54,6 +54,7 @@ const DemoRoleButton = ({ icon: Icon, label, onClick, variant = 'primary', class
       'w-full py-3 text-white font-bold transition-colors text-sm flex items-center justify-center gap-2',
       className
     )}
+    style={style}
   >
     <Icon className="w-4 h-4" />
     {label}
@@ -87,8 +88,8 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
-        <div className="w-full max-w-md">
+      <main className="flex-1 overflow-y-auto px-4 sm:px-6 py-8 sm:py-12">
+        <div className="w-full max-w-md mx-auto">
           {/* Card */}
           <Card variant="outlined" padding="lg">
             <VStack align="center" gap="6">
@@ -244,7 +245,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="bg-ai-500 hover:bg-ai-600"
+                    style={{ backgroundColor: '#06b6d4' }}
                   />
                   
                   {/* Ambassador */}
@@ -262,7 +263,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="bg-human-500 hover:bg-human-600"
+                    style={{ backgroundColor: '#22c55e' }}
                   />
                   
                   {/* Judge */}
@@ -280,7 +281,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="bg-accent-500 hover:bg-accent-600"
+                    style={{ backgroundColor: '#f59e0b' }}
                   />
                   
                   {/* Admin */}
@@ -298,7 +299,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="bg-special-600 hover:bg-special-700"
+                    style={{ backgroundColor: '#9333ea' }}
                   />
                 </VStack>
                 

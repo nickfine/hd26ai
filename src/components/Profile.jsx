@@ -13,9 +13,11 @@ import {
   Plus,
   Zap,
 } from 'lucide-react';
-import { SKILLS } from '../data/mockData';
+import { SKILLS, AVATARS } from '../data/mockData';
 import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
 import AppLayout from './AppLayout';
+import Modal from './ui/Modal';
+import Button from './ui/Button';
 
 // Validation for callsign
 const validateCallsign = (value) => {
@@ -35,6 +37,186 @@ const validateCustomSkill = (value, existingSkills) => {
 
 // Max skills allowed
 const MAX_SKILLS = 5;
+
+// ============================================================================
+// AVATAR PICKER MODAL
+// ============================================================================
+
+function AvatarPickerModal({ 
+  isOpen, 
+  onClose, 
+  onSelect, 
+  currentAvatar, 
+  allegiance,
+  allegianceStyle 
+}) {
+  const [selectedAvatar, setSelectedAvatar] = useState(currentAvatar || null);
+  const [activeTab, setActiveTab] = useState(allegiance === 'ai' ? 'ai' : 'human');
+
+  // Get avatars for the current tab
+  const avatarsToShow = AVATARS[activeTab] || [];
+
+  // Determine which tabs to show based on allegiance
+  const showBothTabs = allegiance === 'neutral';
+  const showHumanTab = allegiance === 'human' || allegiance === 'neutral';
+  const showAiTab = allegiance === 'ai' || allegiance === 'neutral';
+
+  const handleSave = () => {
+    if (selectedAvatar) {
+      onSelect(selectedAvatar);
+    }
+    onClose();
+  };
+
+  const handleClear = () => {
+    setSelectedAvatar(null);
+    onSelect(null);
+    onClose();
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      title="Choose Your Avatar"
+      description={showBothTabs 
+        ? "Pick an avatar that represents you" 
+        : `Choose from ${allegiance === 'ai' ? 'AI' : 'Human'}-themed avatars`}
+      size="lg"
+    >
+      {/* Tabs for neutral users */}
+      {showBothTabs && (
+        <div className="flex gap-2 mb-4">
+          <button
+            type="button"
+            onClick={() => setActiveTab('human')}
+            className={cn(
+              'flex-1 py-2 px-4 text-sm font-bold rounded-xl border-2 transition-all',
+              activeTab === 'human'
+                ? 'border-green-500 bg-green-50 text-green-700'
+                : 'border-gray-200 text-gray-500 hover:border-green-300'
+            )}
+          >
+            <Heart className="w-4 h-4 inline mr-2" />
+            Human
+          </button>
+          <button
+            type="button"
+            onClick={() => setActiveTab('ai')}
+            className={cn(
+              'flex-1 py-2 px-4 text-sm font-bold border-2 transition-all',
+              activeTab === 'ai'
+                ? 'border-cyan-500 bg-cyan-50 text-cyan-700 border-dashed'
+                : 'border-gray-200 text-gray-500 hover:border-cyan-300'
+            )}
+          >
+            <Cpu className="w-4 h-4 inline mr-2" />
+            AI
+          </button>
+        </div>
+      )}
+
+      {/* Avatar Grid */}
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto p-1">
+        {avatarsToShow.map((avatar) => (
+          <button
+            key={avatar.id}
+            type="button"
+            onClick={() => setSelectedAvatar(avatar.src)}
+            className={cn(
+              'relative aspect-square rounded-lg overflow-hidden border-3 transition-all hover:scale-105',
+              selectedAvatar === avatar.src
+                ? activeTab === 'ai'
+                  ? 'border-cyan-500 ring-2 ring-cyan-200 border-dashed'
+                  : 'border-green-500 ring-2 ring-green-200'
+                : 'border-gray-200 hover:border-gray-400'
+            )}
+          >
+            {/* Avatar Image */}
+            <div 
+              className={cn(
+                'w-full h-full flex items-center justify-center',
+                activeTab === 'ai' ? 'bg-cyan-50' : 'bg-green-50'
+              )}
+            >
+              <img
+                src={avatar.src}
+                alt={avatar.name}
+                className="w-full h-full object-cover"
+                onError={(e) => {
+                  // Show placeholder if image fails to load
+                  e.target.style.display = 'none';
+                  e.target.nextSibling.style.display = 'flex';
+                }}
+              />
+              {/* Placeholder shown on error */}
+              <div 
+                className="hidden w-full h-full items-center justify-center"
+                style={{ position: 'absolute', inset: 0 }}
+              >
+                <User 
+                  className={cn(
+                    'w-8 h-8',
+                    activeTab === 'ai' ? 'text-cyan-300' : 'text-green-300'
+                  )} 
+                />
+              </div>
+            </div>
+
+            {/* Selection indicator */}
+            {selectedAvatar === avatar.src && (
+              <div 
+                className={cn(
+                  'absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center',
+                  activeTab === 'ai' ? 'bg-cyan-500' : 'bg-green-500'
+                )}
+              >
+                <Check className="w-3 h-3 text-white" />
+              </div>
+            )}
+          </button>
+        ))}
+      </div>
+
+      {/* Empty state if no avatars */}
+      {avatarsToShow.length === 0 && (
+        <div className="text-center py-8 text-gray-400">
+          <User className="w-12 h-12 mx-auto mb-2 opacity-50" />
+          <p className="text-sm">No avatars available yet</p>
+          <p className="text-xs mt-1">Check back soon!</p>
+        </div>
+      )}
+
+      {/* Footer */}
+      <Modal.Footer>
+        {currentAvatar && (
+          <Button
+            variant="ghost"
+            onClick={handleClear}
+            className="mr-auto text-gray-500"
+          >
+            Remove Avatar
+          </Button>
+        )}
+        <Button
+          variant="secondary"
+          onClick={onClose}
+        >
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          disabled={!selectedAvatar}
+          style={{ 
+            backgroundColor: selectedAvatar ? allegianceStyle.color : undefined,
+          }}
+        >
+          Save
+        </Button>
+      </Modal.Footer>
+    </Modal>
+  );
+}
 
 function Profile({
   user,
@@ -63,6 +245,9 @@ function Profile({
   
   // Leave team confirmation state
   const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
+  
+  // Avatar picker modal state
+  const [showAvatarPicker, setShowAvatarPicker] = useState(false);
   
   // Auto-assign state
   const [isAutoAssigning, setIsAutoAssigning] = useState(false);
@@ -284,16 +469,35 @@ function Profile({
               {/* Avatar Section - Below Name */}
               <div className="flex flex-col items-center mb-5">
                 <div
-                  className={`w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center ${allegianceStyle.borderRadius}`}
+                  className={`w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center overflow-hidden ${allegianceStyle.borderRadius}`}
                   style={{
                     backgroundColor: allegianceStyle.bgColor,
                     border: `3px solid ${allegianceStyle.borderColor}`,
                   }}
                 >
-                  <User
-                    className="w-14 sm:w-16 h-14 sm:h-16"
-                    style={{ color: allegianceStyle.color }}
-                  />
+                  {user?.avatar ? (
+                    <img
+                      src={user.avatar}
+                      alt={user.name || 'Avatar'}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.nextSibling.style.display = 'flex';
+                      }}
+                    />
+                  ) : null}
+                  {/* Fallback icon - shown when no avatar or image fails */}
+                  <div 
+                    className={cn(
+                      'w-full h-full items-center justify-center',
+                      user?.avatar ? 'hidden' : 'flex'
+                    )}
+                  >
+                    <User
+                      className="w-14 sm:w-16 h-14 sm:h-16"
+                      style={{ color: allegianceStyle.color }}
+                    />
+                  </div>
                 </div>
               </div>
 
@@ -343,10 +547,11 @@ function Profile({
                 <div className="flex items-center justify-center gap-4 mb-5 text-sm">
                   <button
                     type="button"
+                    onClick={() => setShowAvatarPicker(true)}
                     className="font-medium transition-colors hover:underline"
                     style={{ color: allegianceStyle.color }}
                   >
-                    Choose avatar
+                    {user?.avatar ? 'Change avatar' : 'Choose avatar'}
                   </button>
                   <span className="text-gray-300">|</span>
                   <button
@@ -888,6 +1093,16 @@ function Profile({
           </div>
         </div>
       </div>
+
+      {/* Avatar Picker Modal */}
+      <AvatarPickerModal
+        isOpen={showAvatarPicker}
+        onClose={() => setShowAvatarPicker(false)}
+        onSelect={(avatarSrc) => updateUser({ avatar: avatarSrc })}
+        currentAvatar={user?.avatar}
+        allegiance={user?.allegiance || 'neutral'}
+        allegianceStyle={allegianceStyle}
+      />
     </AppLayout>
   );
 }

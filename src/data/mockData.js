@@ -19,6 +19,43 @@ export const SKILLS = [
 ];
 
 // ============================================================================
+// AVATARS
+// ============================================================================
+// Drop your avatar images into src/assets/avatars/human/ and src/assets/avatars/ai/
+// Then update these arrays with the actual filenames.
+// Recommended image size: 256x256 or 512x512 PNG
+
+export const AVATARS = {
+  human: [
+    { id: 'human-1', src: '/avatars/human/human-1.png', name: 'Human Avatar 1' },
+    { id: 'human-2', src: '/avatars/human/human-2.png', name: 'Human Avatar 2' },
+    { id: 'human-3', src: '/avatars/human/human-3.png', name: 'Human Avatar 3' },
+    { id: 'human-4', src: '/avatars/human/human-4.png', name: 'Human Avatar 4' },
+    { id: 'human-5', src: '/avatars/human/human-5.png', name: 'Human Avatar 5' },
+    { id: 'human-6', src: '/avatars/human/human-6.png', name: 'Human Avatar 6' },
+  ],
+  ai: [
+    { id: 'ai-1', src: '/avatars/ai/ai-1.png', name: 'AI Avatar 1' },
+    { id: 'ai-2', src: '/avatars/ai/ai-2.png', name: 'AI Avatar 2' },
+    { id: 'ai-3', src: '/avatars/ai/ai-3.png', name: 'AI Avatar 3' },
+    { id: 'ai-4', src: '/avatars/ai/ai-4.png', name: 'AI Avatar 4' },
+    { id: 'ai-5', src: '/avatars/ai/ai-5.png', name: 'AI Avatar 5' },
+    { id: 'ai-6', src: '/avatars/ai/ai-6.png', name: 'AI Avatar 6' },
+  ],
+};
+
+// ============================================================================
+// PROMO IMAGES
+// ============================================================================
+// Drop your promo images into src/assets/promo/
+// Recommended size: 1200x400 or similar wide format
+
+export const PROMO_IMAGES = {
+  promo1: '/promo/promo-1.png',
+  promo2: '/promo/promo-2.png',
+};
+
+// ============================================================================
 // USER ROLES
 // ============================================================================
 
