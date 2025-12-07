@@ -36,6 +36,7 @@ import VotingAnalytics from './components/VotingAnalytics';
 import JudgeScoring from './components/JudgeScoring';
 import AdminPanel from './components/AdminPanel';
 import Results from './components/Results';
+import Schedule from './components/Schedule';
 
 // Max votes per user for voting phase
 const MAX_VOTES = 5;
@@ -637,6 +638,15 @@ function App() {
             onNavigate={setCurrentView}
             eventPhase={eventPhase}
             awards={AWARDS}
+          />
+        );
+      
+      case 'schedule':
+        return (
+          <Schedule
+            user={effectiveUser}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
           />
         );
       

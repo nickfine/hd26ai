@@ -319,6 +319,7 @@ function Dashboard({
                   onClick={() => {
                     setActiveNav(item.id);
                     if (item.id === 'teams') onNavigate('marketplace', { tab: 'teams' });
+                    if (item.id === 'schedule') onNavigate('schedule');
                     if (item.id === 'rules') onNavigate('rules');
                     if (item.id === 'submission') onNavigate('submission');
                     if (item.id === 'voting') onNavigate('voting');
@@ -596,14 +597,14 @@ function Dashboard({
             </div>
 
             {/* Awards List Widget */}
-            <div className="md:col-span-2 p-5 border-2 border-gray-200">
+            <div className="p-5 border-2 border-gray-200">
               <div className="flex items-center justify-between mb-4">
                 <div className="text-xs font-bold uppercase tracking-wide text-gray-400">
                   Awards & Prizes
                 </div>
                 <Trophy className="w-4 h-4 text-amber-500" />
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-3">
                 {MOCK_AWARDS.map((award) => {
                   const Icon = award.icon;
                   const isAI = award.title.includes('AI');
@@ -612,17 +613,18 @@ function Dashboard({
                   return (
                     <div 
                       key={award.id} 
-                      className={`p-5 border-2 transition-all hover:shadow-md
+                      className={`p-3 border-2 transition-all hover:shadow-md flex items-center gap-3
                         ${isAI ? 'border-cyan-300 border-dashed' : isHuman ? 'border-green-300 rounded-xl' : isChampion ? 'border-amber-400 bg-amber-50' : 'border-gray-200'}`}
                     >
-                      <Icon className={`w-10 h-10 mb-3 
+                      <Icon className={`w-8 h-8 flex-shrink-0
                         ${isAI ? 'text-cyan-600' : isHuman ? 'text-green-600' : 'text-amber-500'}`} 
                       />
-                      <div className={`font-black text-lg mb-2 ${isAI ? 'font-mono text-cyan-700' : isHuman ? 'text-green-700' : 'text-amber-700'}`}>
-                        {award.title}
+                      <div className="min-w-0">
+                        <div className={`font-bold text-sm ${isAI ? 'font-mono text-cyan-700' : isHuman ? 'text-green-700' : 'text-amber-700'}`}>
+                          {award.title}
+                        </div>
+                        <div className="text-xs text-gray-500">{award.prize}</div>
                       </div>
-                      <div className="text-sm font-bold text-gray-900 mb-2">{award.prize}</div>
-                      <div className="text-xs text-gray-500">{award.description}</div>
                     </div>
                   );
                 })}
