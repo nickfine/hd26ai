@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import adaptLogo from '../../adaptlogo.png';
 import {
   Cpu,
@@ -27,10 +27,16 @@ function Marketplace({
   onNavigateToTeam,
   onSendInvite,
   onInviteResponse,
+  initialTab = 'teams',
 }) {
   const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('teams');
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [inviteModalAgent, setInviteModalAgent] = useState(null);
+
+  // Sync activeTab when initialTab prop changes
+  useEffect(() => {
+    setActiveTab(initialTab);
+  }, [initialTab]);
   const [inviteMessage, setInviteMessage] = useState('');
   const [filterAllegiance, setFilterAllegiance] = useState(user?.allegiance || 'neutral');
   const [sidebarOpen, setSidebarOpen] = useState(false);

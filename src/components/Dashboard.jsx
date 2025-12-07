@@ -19,6 +19,7 @@ import {
   Download,
   LayoutDashboard,
   LogOut,
+  BookOpen,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
 
@@ -68,6 +69,7 @@ const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { id: 'schedule', label: 'Schedule', icon: Calendar },
   { id: 'teams', label: 'Teams', icon: Users },
+  { id: 'rules', label: 'Rules', icon: BookOpen },
   { id: 'submission', label: 'Submission', icon: Send },
   { id: 'voting', label: 'Voting', icon: Vote },
   { id: 'results', label: 'Results', icon: Trophy },
@@ -133,7 +135,7 @@ function Dashboard({
             <Clock className="w-5 h-5" />
             <div>
               <div className="font-mono text-2xl font-bold tracking-wider">47:59:00</div>
-              <div className="text-xs text-gray-400 uppercase tracking-wide">Until Launch</div>
+              <div className="text-xs text-gray-400 uppercase tracking-wide">Until June 21st 2026</div>
             </div>
           </div>
 
@@ -239,7 +241,9 @@ function Dashboard({
                   type="button"
                   onClick={() => {
                     setActiveNav(item.id);
-                    if (item.id === 'teams') onNavigate('marketplace');
+                    if (item.id === 'teams') onNavigate('marketplace', { tab: 'teams' });
+                    if (item.id === 'rules') onNavigate('rules');
+                    if (item.id === 'submission') onNavigate('submission');
                   }}
                   className={`w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all
                     ${isActive 
@@ -323,7 +327,7 @@ function Dashboard({
               <div className="flex gap-3">
                 <button
                   type="button"
-                  onClick={() => onNavigate('marketplace')}
+                  onClick={() => onNavigate('marketplace', { tab: 'teams' })}
                   className="flex-1 py-3 bg-white text-gray-900 font-bold text-sm
                              hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
                 >
@@ -332,7 +336,7 @@ function Dashboard({
                 </button>
                 <button
                   type="button"
-                  onClick={() => onNavigate('marketplace')}
+                  onClick={() => onNavigate('marketplace', { tab: 'people' })}
                   className="flex-1 py-3 border-2 border-white text-white font-bold text-sm
                              hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-2"
                 >
@@ -394,6 +398,40 @@ function Dashboard({
               </div>
             </div>
 
+            {/* Schedule Preview Widget */}
+            <div className="p-5 border-2 border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-400">
+                  Schedule Preview
+                </div>
+                <Calendar className="w-4 h-4 text-gray-400" />
+              </div>
+              <div className="space-y-3">
+                {MOCK_SCHEDULE.map((item, index) => (
+                  <div 
+                    key={item.id} 
+                    className={`flex gap-3 pb-3 ${index < MOCK_SCHEDULE.length - 1 ? 'border-b border-gray-100' : ''}`}
+                  >
+                    <div className="w-16 flex-shrink-0">
+                      <div className="text-xs font-mono font-bold text-gray-900">{item.time}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-gray-900">{item.title}</div>
+                      <div className="text-xs text-gray-500">{item.description}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="w-full mt-4 py-2 text-sm font-bold text-gray-600 hover:text-gray-900 
+                           flex items-center justify-center gap-1"
+              >
+                View Full Schedule
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+
             {/* Faction Selection Widget */}
             <div
               className={`p-5 border-2 ${allegianceStyle?.borderRadius || 'rounded-lg'}`}
@@ -435,40 +473,6 @@ function Dashboard({
               >
                 <Download className="w-4 h-4" />
                 Download Slack Avatar
-              </button>
-            </div>
-
-            {/* Schedule Preview Widget */}
-            <div className="p-5 border-2 border-gray-200">
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-gray-400">
-                  Schedule Preview
-                </div>
-                <Calendar className="w-4 h-4 text-gray-400" />
-              </div>
-              <div className="space-y-3">
-                {MOCK_SCHEDULE.map((item, index) => (
-                  <div 
-                    key={item.id} 
-                    className={`flex gap-3 pb-3 ${index < MOCK_SCHEDULE.length - 1 ? 'border-b border-gray-100' : ''}`}
-                  >
-                    <div className="w-16 flex-shrink-0">
-                      <div className="text-xs font-mono font-bold text-gray-900">{item.time}</div>
-                    </div>
-                    <div>
-                      <div className="text-sm font-bold text-gray-900">{item.title}</div>
-                      <div className="text-xs text-gray-500">{item.description}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button
-                type="button"
-                className="w-full mt-4 py-2 text-sm font-bold text-gray-600 hover:text-gray-900 
-                           flex items-center justify-center gap-1"
-              >
-                View Full Schedule
-                <ChevronRight className="w-4 h-4" />
               </button>
             </div>
 

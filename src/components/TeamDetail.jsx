@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import adaptLogo from '../../adaptlogo.png';
-import { ArrowLeft, Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle } from 'lucide-react';
+import { ArrowLeft, Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
 
 function TeamDetail({ team, user, allegianceStyle, onNavigate, onUpdateTeam, onJoinRequest, onRequestResponse }) {
@@ -323,6 +323,118 @@ function TeamDetail({ team, user, allegianceStyle, onNavigate, onUpdateTeam, onJ
             ))}
           </div>
         </div>
+
+        {/* Project Submission Status - Visible to team members */}
+        {(isCaptain || isMember) && (
+          <div
+            className={`bg-white p-4 sm:p-6 mb-4 sm:mb-6 border-2 ${teamConfig.borderRadius} ${team.side === 'ai' ? 'border-dashed' : ''}`}
+            style={{ borderColor: teamConfig.borderColor }}
+          >
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                Project Submission
+              </h2>
+              {/* Status Badge */}
+              {(() => {
+                const status = team.submission?.status || 'not_started';
+                const statusConfig = {
+                  submitted: { label: 'Submitted', color: 'rgb(34, 197, 94)', bgColor: 'rgba(34, 197, 94, 0.1)', Icon: CheckCircle2 },
+                  draft: { label: 'Draft', color: 'rgb(245, 158, 11)', bgColor: 'rgba(245, 158, 11, 0.1)', Icon: Edit3 },
+                  not_started: { label: 'Not Started', color: 'rgb(156, 163, 175)', bgColor: 'rgba(156, 163, 175, 0.1)', Icon: Circle },
+                }[status];
+                const StatusIcon = statusConfig.Icon;
+                return (
+                  <div
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold"
+                    style={{ backgroundColor: statusConfig.bgColor, color: statusConfig.color }}
+                  >
+                    <StatusIcon className="w-3.5 h-3.5" />
+                    {statusConfig.label}
+                  </div>
+                );
+              })()}
+            </div>
+
+            {/* Submission Preview */}
+            {(!team.submission || team.submission?.status === 'not_started') ? (
+              <div className="text-center py-4">
+                <Send className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                <p className="text-sm text-gray-500 mb-4">
+                  {isCaptain 
+                    ? "You haven't started your submission yet." 
+                    : "Your team hasn't started the submission yet."}
+                </p>
+                {isCaptain && (
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('submission')}
+                    className={`px-4 py-2 font-bold text-sm text-white transition-colors hover:opacity-90 ${teamConfig.borderRadius}`}
+                    style={{ backgroundColor: teamConfig.color }}
+                  >
+                    Start Submission
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {team.submission?.projectName && (
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1">Project Name</div>
+                    <div className="font-bold text-gray-900">{team.submission.projectName}</div>
+                  </div>
+                )}
+                {team.submission?.description && (
+                  <div>
+                    <div className="text-xs text-gray-400 mb-1">Description</div>
+                    <div className="text-sm text-gray-700 line-clamp-2">{team.submission.description}</div>
+                  </div>
+                )}
+
+                {/* Progress indicators */}
+                <div className="flex items-center gap-4 pt-2 border-t border-gray-100 text-xs text-gray-500">
+                  <div className="flex items-center gap-1">
+                    {team.submission?.repoUrl ? (
+                      <Check className="w-3.5 h-3.5 text-green-500" />
+                    ) : (
+                      <Circle className="w-3.5 h-3.5 text-gray-300" />
+                    )}
+                    Repo
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {team.submission?.demoVideoUrl ? (
+                      <Check className="w-3.5 h-3.5 text-green-500" />
+                    ) : (
+                      <Circle className="w-3.5 h-3.5 text-gray-300" />
+                    )}
+                    Video
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {team.submission?.liveDemoUrl ? (
+                      <Check className="w-3.5 h-3.5 text-green-500" />
+                    ) : (
+                      <Circle className="w-3.5 h-3.5 text-gray-300" />
+                    )}
+                    Live Demo
+                  </div>
+                </div>
+
+                {/* Captain Action Button */}
+                {isCaptain && (
+                  <button
+                    type="button"
+                    onClick={() => onNavigate('submission')}
+                    className={`w-full mt-2 py-2.5 flex items-center justify-center gap-2 font-bold text-sm 
+                               transition-colors hover:opacity-90 ${teamConfig.borderRadius}`}
+                    style={{ backgroundColor: teamConfig.color, color: 'white' }}
+                  >
+                    {team.submission?.status === 'submitted' ? 'View Submission' : 'Continue Editing'}
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Pending Requests - Captain Only */}
         {isCaptain && team.joinRequests?.length > 0 && (

@@ -7,6 +7,8 @@ import Dashboard from './components/Dashboard';
 import Marketplace from './components/Marketplace';
 import TeamDetail from './components/TeamDetail';
 import Profile from './components/Profile';
+import Rules from './components/Rules';
+import Submission from './components/Submission';
 
 function App() {
   // Global State
@@ -15,6 +17,7 @@ function App() {
   const [selectedTeamId, setSelectedTeamId] = useState(null);
   const [mockTeams, setMockTeams] = useState(MOCK_TEAMS);
   const [freeAgents, setFreeAgents] = useState(MOCK_FREE_AGENTS);
+  const [marketplaceInitialTab, setMarketplaceInitialTab] = useState('teams');
 
   // Update a specific team
   const updateTeam = (teamId, updates) => {
@@ -131,10 +134,31 @@ function App() {
     }
   };
 
+  // Handle submission updates from captain
+  const handleUpdateSubmission = (teamId, submissionData) => {
+    setMockTeams((prev) =>
+      prev.map((team) =>
+        team.id === teamId
+          ? { ...team, submission: { ...team.submission, ...submissionData } }
+          : team
+      )
+    );
+  };
+
   // Navigation handler for team detail
   const navigateToTeam = (teamId) => {
     setSelectedTeamId(teamId);
     setCurrentView('team-detail');
+  };
+
+  // Navigation handler with optional data (e.g., for tab selection)
+  const handleNavigate = (view, options = {}) => {
+    if (view === 'marketplace' && options.tab) {
+      setMarketplaceInitialTab(options.tab);
+    } else if (view === 'marketplace') {
+      setMarketplaceInitialTab('teams'); // default to teams tab
+    }
+    setCurrentView(view);
   };
 
   // User management
@@ -188,7 +212,7 @@ function App() {
             user={user}
             teams={mockTeams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
           />
         );
       case 'marketplace':
@@ -202,6 +226,7 @@ function App() {
             onNavigateToTeam={navigateToTeam}
             onSendInvite={handleSendInvite}
             onInviteResponse={handleInviteResponse}
+            initialTab={marketplaceInitialTab}
           />
         );
       case 'profile':
@@ -213,6 +238,24 @@ function App() {
             allegianceStyle={getAllegianceStyle()}
             onNavigate={setCurrentView}
             onNavigateToTeam={navigateToTeam}
+          />
+        );
+      case 'rules':
+        return (
+          <Rules
+            user={user}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+          />
+        );
+      case 'submission':
+        return (
+          <Submission
+            user={user}
+            teams={mockTeams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+            onUpdateSubmission={handleUpdateSubmission}
           />
         );
       case 'team-detail': {
