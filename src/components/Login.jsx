@@ -138,7 +138,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                                flex items-center justify-center gap-2"
                   >
                     <Crown className="w-4 h-4" />
-                    Participant (Team Captain)
+                    Team Captain
                   </button>
                   
                   {/* Participant / Team Member */}
@@ -159,7 +159,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                                flex items-center justify-center gap-2"
                   >
                     <User className="w-4 h-4" />
-                    Participant (Team Member)
+                    Team Member
                   </button>
                   
                   {/* Ambassador */}
@@ -180,7 +180,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                                flex items-center justify-center gap-2"
                   >
                     <Megaphone className="w-4 h-4" />
-                    Ambassador (Human Side)
+                    Ambassador
                   </button>
                   
                   {/* Judge */}
