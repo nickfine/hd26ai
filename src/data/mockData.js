@@ -1,6 +1,10 @@
 // Mock Data for HackDay Companion App
 // Theme: AI vs Human
 
+// ============================================================================
+// SKILLS
+// ============================================================================
+
 export const SKILLS = [
   'Frontend Development',
   'Backend Development',
@@ -13,6 +17,281 @@ export const SKILLS = [
   'Security',
   'Hardware/IoT',
 ];
+
+// ============================================================================
+// USER ROLES
+// ============================================================================
+
+export const USER_ROLES = {
+  participant: {
+    id: 'participant',
+    label: 'Participant',
+    description: 'Regular hackday attendee',
+    canVote: true,           // People's Champion voting
+    canJudge: false,         // Judge scoring
+    canManage: false,        // Admin panel access
+    canViewAnalytics: false, // Voting analytics
+  },
+  ambassador: {
+    id: 'ambassador',
+    label: 'Ambassador',
+    description: 'Side recruiter with voting power',
+    canVote: true,
+    canJudge: false,
+    canManage: false,
+    canViewAnalytics: false,
+  },
+  judge: {
+    id: 'judge',
+    label: 'Judge',
+    description: 'Official project evaluator',
+    canVote: false,          // Judges don't vote for People's Champion
+    canJudge: true,
+    canManage: false,
+    canViewAnalytics: true,
+  },
+  admin: {
+    id: 'admin',
+    label: 'Admin',
+    description: 'Event organizer with full access',
+    canVote: false,
+    canJudge: false,
+    canManage: true,
+    canViewAnalytics: true,
+  },
+};
+
+// ============================================================================
+// EVENT PHASES
+// ============================================================================
+
+export const EVENT_PHASES = {
+  registration: {
+    id: 'registration',
+    label: 'Registration',
+    description: 'Sign up and create your profile',
+    order: 1,
+  },
+  team_formation: {
+    id: 'team_formation',
+    label: 'Team Formation',
+    description: 'Find teammates and form your squad',
+    order: 2,
+  },
+  hacking: {
+    id: 'hacking',
+    label: 'Hacking',
+    description: 'Build your project',
+    order: 3,
+  },
+  submission: {
+    id: 'submission',
+    label: 'Submission',
+    description: 'Submit your project for judging',
+    order: 4,
+  },
+  voting: {
+    id: 'voting',
+    label: 'Voting',
+    description: "Vote for People's Champion",
+    order: 5,
+  },
+  judging: {
+    id: 'judging',
+    label: 'Judging',
+    description: 'Judges evaluate submissions',
+    order: 6,
+  },
+  results: {
+    id: 'results',
+    label: 'Results',
+    description: 'Winners announced!',
+    order: 7,
+  },
+};
+
+export const EVENT_PHASE_ORDER = [
+  'registration',
+  'team_formation',
+  'hacking',
+  'submission',
+  'voting',
+  'judging',
+  'results',
+];
+
+// ============================================================================
+// JUDGE SCORING CRITERIA
+// ============================================================================
+
+export const JUDGE_CRITERIA = [
+  {
+    id: 'innovation',
+    label: 'Innovation',
+    description: 'Originality and creativity of the idea',
+    maxScore: 10,
+    weight: 1,
+  },
+  {
+    id: 'technical',
+    label: 'Technical Excellence',
+    description: 'Code quality and technical implementation',
+    maxScore: 10,
+    weight: 1,
+  },
+  {
+    id: 'presentation',
+    label: 'Presentation',
+    description: 'Demo quality and communication',
+    maxScore: 10,
+    weight: 1,
+  },
+  {
+    id: 'impact',
+    label: 'Impact',
+    description: 'Potential real-world value',
+    maxScore: 10,
+    weight: 1,
+  },
+  {
+    id: 'theme',
+    label: 'Theme Alignment',
+    description: 'How well it fits Human vs AI theme',
+    maxScore: 10,
+    weight: 1,
+  },
+];
+
+// ============================================================================
+// AWARDS
+// ============================================================================
+
+export const AWARDS = {
+  grand_champion: {
+    id: 'grand_champion',
+    label: 'Grand HackDay Champion',
+    emoji: '🏆',
+    description: 'Highest combined judge scores',
+    determinedBy: 'judges',
+    filter: 'all',
+  },
+  best_human: {
+    id: 'best_human',
+    label: 'Best Human Team',
+    emoji: '💚',
+    description: 'Top human-side project by judge scores',
+    determinedBy: 'judges',
+    filter: 'human',
+  },
+  best_ai: {
+    id: 'best_ai',
+    label: 'Best AI Team',
+    emoji: '🤖',
+    description: 'Top AI-side project by judge scores',
+    determinedBy: 'judges',
+    filter: 'ai',
+  },
+  peoples_champion: {
+    id: 'peoples_champion',
+    label: "People's Champion",
+    emoji: '👑',
+    description: 'Most votes from participants',
+    determinedBy: 'votes',
+    filter: 'all',
+  },
+};
+
+// ============================================================================
+// MOCK USERS BY ROLE
+// ============================================================================
+
+export const MOCK_USERS = {
+  participants: [
+    {
+      id: 101,
+      name: 'Alex Chen',
+      email: 'alex.chen@company.com',
+      skills: ['Backend Development', 'DevOps'],
+      allegiance: 'ai',
+      role: 'participant',
+    },
+    {
+      id: 201,
+      name: 'Morgan Riley',
+      email: 'morgan.riley@company.com',
+      skills: ['UI/UX Design', 'Product Management'],
+      allegiance: 'human',
+      role: 'participant',
+    },
+    {
+      id: 301,
+      name: 'Jamie Foster',
+      email: 'jamie.foster@company.com',
+      skills: ['Product Management', 'UI/UX Design'],
+      allegiance: 'human',
+      role: 'participant',
+    },
+  ],
+  ambassadors: [
+    {
+      id: 2001,
+      name: 'Sarah Mitchell',
+      email: 'sarah.mitchell@company.com',
+      skills: ['Product Management'],
+      allegiance: 'human',
+      role: 'ambassador',
+      bio: 'Recruiting for Team Human! Join the resistance against AI dominance.',
+    },
+    {
+      id: 2002,
+      name: 'Marcus Wong',
+      email: 'marcus.wong@company.com',
+      skills: ['Machine Learning'],
+      allegiance: 'ai',
+      role: 'ambassador',
+      bio: 'The future is AI. Join the winning side.',
+    },
+  ],
+  judges: [
+    {
+      id: 3001,
+      name: 'Dr. Elena Vasquez',
+      email: 'elena.vasquez@company.com',
+      skills: [],
+      allegiance: 'neutral',
+      role: 'judge',
+      title: 'VP of Engineering',
+    },
+    {
+      id: 3002,
+      name: 'James Okonkwo',
+      email: 'james.okonkwo@company.com',
+      skills: [],
+      allegiance: 'neutral',
+      role: 'judge',
+      title: 'Chief Innovation Officer',
+    },
+    {
+      id: 3003,
+      name: 'Priya Sharma',
+      email: 'priya.sharma@company.com',
+      skills: [],
+      allegiance: 'neutral',
+      role: 'judge',
+      title: 'Head of Product',
+    },
+  ],
+  admins: [
+    {
+      id: 4001,
+      name: 'HackDay Admin',
+      email: 'admin@company.com',
+      skills: [],
+      allegiance: 'neutral',
+      role: 'admin',
+    },
+  ],
+};
 
 export const MOCK_TEAMS = [
   {
@@ -48,14 +327,31 @@ export const MOCK_TEAMS = [
       },
     ],
     submission: {
-      status: 'draft',
+      status: 'submitted',
       projectName: 'CodeReview AI',
-      description: 'An autonomous code review agent powered by LLMs that provides intelligent feedback on pull requests.',
-      demoVideoUrl: '',
+      description: 'An autonomous code review agent powered by LLMs that provides intelligent feedback on pull requests. It analyzes code patterns, suggests improvements, and catches bugs before they reach production.',
+      demoVideoUrl: 'https://youtube.com/watch?v=neural123',
       repoUrl: 'https://github.com/neural-nexus/codereview-ai',
-      liveDemoUrl: '',
-      submittedAt: null,
+      liveDemoUrl: 'https://codereview-ai.vercel.app',
+      submittedAt: '2025-12-07T10:30:00.000Z',
       lastUpdated: '2025-12-07T10:30:00.000Z',
+      participantVotes: 24,
+      judgeScores: [
+        {
+          judgeId: 3001,
+          judgeName: 'Dr. Elena Vasquez',
+          scores: { innovation: 9, technical: 9, presentation: 8, impact: 9, theme: 8 },
+          comments: 'Excellent technical execution. The AI integration is seamless.',
+          scoredAt: '2025-12-07T14:00:00.000Z',
+        },
+        {
+          judgeId: 3002,
+          judgeName: 'James Okonkwo',
+          scores: { innovation: 8, technical: 9, presentation: 7, impact: 8, theme: 9 },
+          comments: 'Strong alignment with the AI theme. Very practical solution.',
+          scoredAt: '2025-12-07T14:30:00.000Z',
+        },
+      ],
     },
   },
   {
@@ -75,12 +371,36 @@ export const MOCK_TEAMS = [
     submission: {
       status: 'submitted',
       projectName: 'Empathy Engine',
-      description: 'A design system that adapts to user emotional states through micro-interactions and thoughtful UX patterns.',
+      description: 'A design system that adapts to user emotional states through micro-interactions and thoughtful UX patterns. It proves that human intuition in design cannot be replicated by algorithms.',
       demoVideoUrl: 'https://youtube.com/watch?v=example123',
       repoUrl: 'https://github.com/human-touch/empathy-engine',
       liveDemoUrl: 'https://empathy-engine.vercel.app',
       submittedAt: '2025-12-07T09:00:00.000Z',
       lastUpdated: '2025-12-07T09:00:00.000Z',
+      participantVotes: 31,
+      judgeScores: [
+        {
+          judgeId: 3001,
+          judgeName: 'Dr. Elena Vasquez',
+          scores: { innovation: 9, technical: 7, presentation: 10, impact: 8, theme: 9 },
+          comments: 'Beautiful presentation. The emotional design approach is unique.',
+          scoredAt: '2025-12-07T13:00:00.000Z',
+        },
+        {
+          judgeId: 3002,
+          judgeName: 'James Okonkwo',
+          scores: { innovation: 8, technical: 7, presentation: 9, impact: 9, theme: 10 },
+          comments: 'Perfect embodiment of the human side. Inspiring work.',
+          scoredAt: '2025-12-07T13:30:00.000Z',
+        },
+        {
+          judgeId: 3003,
+          judgeName: 'Priya Sharma',
+          scores: { innovation: 9, technical: 8, presentation: 9, impact: 8, theme: 9 },
+          comments: 'A compelling argument for human-centered design.',
+          scoredAt: '2025-12-07T15:00:00.000Z',
+        },
+      ],
     },
   },
   {
@@ -100,14 +420,24 @@ export const MOCK_TEAMS = [
     ],
     joinRequests: [],
     submission: {
-      status: 'not_started',
-      projectName: '',
-      description: '',
-      demoVideoUrl: '',
-      repoUrl: '',
-      liveDemoUrl: '',
-      submittedAt: null,
-      lastUpdated: null,
+      status: 'submitted',
+      projectName: 'HumanFirst',
+      description: 'A collaborative workspace that prioritizes human connection over efficiency metrics. Features real-time collaboration without AI interference.',
+      demoVideoUrl: 'https://youtube.com/watch?v=resist789',
+      repoUrl: 'https://github.com/the-resistance/humanfirst',
+      liveDemoUrl: 'https://humanfirst.app',
+      submittedAt: '2025-12-07T11:00:00.000Z',
+      lastUpdated: '2025-12-07T11:00:00.000Z',
+      participantVotes: 18,
+      judgeScores: [
+        {
+          judgeId: 3001,
+          judgeName: 'Dr. Elena Vasquez',
+          scores: { innovation: 7, technical: 8, presentation: 8, impact: 7, theme: 8 },
+          comments: 'Solid execution, though the concept is less groundbreaking.',
+          scoredAt: '2025-12-07T15:00:00.000Z',
+        },
+      ],
     },
   },
   {
@@ -125,14 +455,24 @@ export const MOCK_TEAMS = [
     ],
     joinRequests: [],
     submission: {
-      status: 'not_started',
-      projectName: '',
-      description: '',
-      demoVideoUrl: '',
-      repoUrl: '',
-      liveDemoUrl: '',
-      submittedAt: null,
-      lastUpdated: null,
+      status: 'submitted',
+      projectName: 'MindMeld',
+      description: 'An AI-powered brainstorming tool that generates, combines, and evolves ideas faster than any human team could. Let the machines do the thinking.',
+      demoVideoUrl: 'https://youtube.com/watch?v=synth456',
+      repoUrl: 'https://github.com/synthetic-minds/mindmeld',
+      liveDemoUrl: 'https://mindmeld.ai',
+      submittedAt: '2025-12-07T10:00:00.000Z',
+      lastUpdated: '2025-12-07T10:00:00.000Z',
+      participantVotes: 15,
+      judgeScores: [
+        {
+          judgeId: 3002,
+          judgeName: 'James Okonkwo',
+          scores: { innovation: 8, technical: 8, presentation: 7, impact: 8, theme: 9 },
+          comments: 'Creative use of AI for ideation. Good theme alignment.',
+          scoredAt: '2025-12-07T14:45:00.000Z',
+        },
+      ],
     },
   },
   {
@@ -151,14 +491,16 @@ export const MOCK_TEAMS = [
     ],
     joinRequests: [],
     submission: {
-      status: 'draft',
+      status: 'submitted',
       projectName: 'SecureVault',
-      description: '',
-      demoVideoUrl: '',
-      repoUrl: '',
+      description: 'Hardware-backed authentication that proves humans are still the best at security. No AI, no cloud dependencies, just pure engineering.',
+      demoVideoUrl: 'https://youtube.com/watch?v=vault321',
+      repoUrl: 'https://github.com/carbon-coalition/securevault',
       liveDemoUrl: '',
-      submittedAt: null,
-      lastUpdated: '2025-12-06T16:00:00.000Z',
+      submittedAt: '2025-12-07T09:30:00.000Z',
+      lastUpdated: '2025-12-07T09:30:00.000Z',
+      participantVotes: 12,
+      judgeScores: [],
     },
   },
   {
@@ -183,6 +525,8 @@ export const MOCK_TEAMS = [
       liveDemoUrl: '',
       submittedAt: null,
       lastUpdated: null,
+      participantVotes: 0,
+      judgeScores: [],
     },
   },
   {
@@ -208,6 +552,8 @@ export const MOCK_TEAMS = [
       liveDemoUrl: '',
       submittedAt: null,
       lastUpdated: null,
+      participantVotes: 0,
+      judgeScores: [],
     },
   },
   {
@@ -227,12 +573,36 @@ export const MOCK_TEAMS = [
     submission: {
       status: 'submitted',
       projectName: 'QuantumGen',
-      description: 'A next-generation code generator that uses multiple AI models in parallel to produce optimal solutions.',
+      description: 'A next-generation code generator that uses multiple AI models in parallel to produce optimal solutions. The future of development is here.',
       demoVideoUrl: 'https://youtube.com/watch?v=quantum456',
       repoUrl: 'https://github.com/quantum-collective/quantumgen',
       liveDemoUrl: 'https://quantumgen.ai',
       submittedAt: '2025-12-07T08:30:00.000Z',
       lastUpdated: '2025-12-07T08:30:00.000Z',
+      participantVotes: 27,
+      judgeScores: [
+        {
+          judgeId: 3001,
+          judgeName: 'Dr. Elena Vasquez',
+          scores: { innovation: 10, technical: 10, presentation: 9, impact: 10, theme: 10 },
+          comments: 'Exceptional. This is the future of software development.',
+          scoredAt: '2025-12-07T12:00:00.000Z',
+        },
+        {
+          judgeId: 3002,
+          judgeName: 'James Okonkwo',
+          scores: { innovation: 9, technical: 10, presentation: 8, impact: 9, theme: 10 },
+          comments: 'Technical masterpiece. Perfect AI theme alignment.',
+          scoredAt: '2025-12-07T12:30:00.000Z',
+        },
+        {
+          judgeId: 3003,
+          judgeName: 'Priya Sharma',
+          scores: { innovation: 10, technical: 9, presentation: 9, impact: 10, theme: 9 },
+          comments: 'Game-changing potential. Well executed.',
+          scoredAt: '2025-12-07T14:00:00.000Z',
+        },
+      ],
     },
   },
 ];

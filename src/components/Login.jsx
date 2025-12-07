@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Mail, Lock, Crown } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, Crown, Gavel, Megaphone, Shield, Users } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
 
 function Login({ onNavigate, onLogin, onDemoLogin }) {
@@ -122,34 +122,103 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
             </button>
           </div>
 
-          {/* Demo Captain Login */}
-          <div className="mt-4 sm:mt-6 p-4 border-2 border-dashed border-cyan-400 bg-cyan-50/50">
-            <div className="flex items-center gap-2 mb-3">
-              <Crown className="w-4 h-4 text-yellow-500" />
+          {/* Demo Mode - Role Selection */}
+          <div className="mt-4 sm:mt-6 p-4 border-2 border-dashed border-gray-300 bg-gray-50">
+            <div className="flex items-center gap-2 mb-4">
+              <Users className="w-4 h-4 text-gray-500" />
               <span className="text-xs font-bold uppercase tracking-wide text-gray-600">
-                Demo Mode
+                Demo Mode — Select Role
               </span>
             </div>
-            <button
-              type="button"
-              onClick={() => {
-                onDemoLogin({
-                  id: 101,
-                  name: 'Alex Chen',
-                  email: 'alex.chen@company.com',
-                  skills: ['Backend Development', 'DevOps'],
-                  allegiance: 'ai',
-                });
-              }}
-              className="w-full py-3 bg-cyan-500 text-white font-bold
-                         hover:bg-cyan-600 transition-colors text-sm
-                         flex items-center justify-center gap-2"
-            >
-              <Crown className="w-4 h-4" />
-              Login as Captain (Alex Chen)
-            </button>
-            <p className="text-xs text-gray-500 mt-2 text-center">
-              Captain of Neural Nexus — AI Side
+            
+            <div className="space-y-3">
+              {/* Participant / Captain */}
+              <button
+                type="button"
+                onClick={() => {
+                  onDemoLogin({
+                    id: 101,
+                    name: 'Alex Chen',
+                    email: 'alex.chen@company.com',
+                    skills: ['Backend Development', 'DevOps'],
+                    allegiance: 'ai',
+                    role: 'participant',
+                  });
+                }}
+                className="w-full py-3 bg-cyan-500 text-white font-bold
+                           hover:bg-cyan-600 transition-colors text-sm
+                           flex items-center justify-center gap-2"
+              >
+                <Crown className="w-4 h-4" />
+                Participant (Team Captain)
+              </button>
+              
+              {/* Ambassador */}
+              <button
+                type="button"
+                onClick={() => {
+                  onDemoLogin({
+                    id: 2001,
+                    name: 'Sarah Mitchell',
+                    email: 'sarah.mitchell@company.com',
+                    skills: ['Product Management'],
+                    allegiance: 'human',
+                    role: 'ambassador',
+                  });
+                }}
+                className="w-full py-3 bg-green-500 text-white font-bold
+                           hover:bg-green-600 transition-colors text-sm
+                           flex items-center justify-center gap-2"
+              >
+                <Megaphone className="w-4 h-4" />
+                Ambassador (Human Side)
+              </button>
+              
+              {/* Judge */}
+              <button
+                type="button"
+                onClick={() => {
+                  onDemoLogin({
+                    id: 3001,
+                    name: 'Dr. Elena Vasquez',
+                    email: 'elena.vasquez@company.com',
+                    skills: [],
+                    allegiance: 'neutral',
+                    role: 'judge',
+                  });
+                }}
+                className="w-full py-3 bg-amber-500 text-white font-bold
+                           hover:bg-amber-600 transition-colors text-sm
+                           flex items-center justify-center gap-2"
+              >
+                <Gavel className="w-4 h-4" />
+                Judge
+              </button>
+              
+              {/* Admin */}
+              <button
+                type="button"
+                onClick={() => {
+                  onDemoLogin({
+                    id: 4001,
+                    name: 'HackDay Admin',
+                    email: 'admin@company.com',
+                    skills: [],
+                    allegiance: 'neutral',
+                    role: 'admin',
+                  });
+                }}
+                className="w-full py-3 bg-purple-600 text-white font-bold
+                           hover:bg-purple-700 transition-colors text-sm
+                           flex items-center justify-center gap-2"
+              >
+                <Shield className="w-4 h-4" />
+                Admin
+              </button>
+            </div>
+            
+            <p className="text-xs text-gray-500 mt-3 text-center">
+              Each role has different permissions and views
             </p>
           </div>
 

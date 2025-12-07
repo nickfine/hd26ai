@@ -20,8 +20,12 @@ import {
   LayoutDashboard,
   LogOut,
   BookOpen,
+  BarChart3,
+  Gavel,
+  Shield,
+  Megaphone,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import { ALLEGIANCE_CONFIG, USER_ROLES } from '../data/mockData';
 
 // ============================================================================
 // MOCK DATA
@@ -65,15 +69,49 @@ const EVENT_PHASES = [
   { id: 'results', label: 'Results', complete: false },
 ];
 
-const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'schedule', label: 'Schedule', icon: Calendar },
-  { id: 'teams', label: 'Teams', icon: Users },
-  { id: 'rules', label: 'Rules', icon: BookOpen },
-  { id: 'submission', label: 'Submission', icon: Send },
-  { id: 'voting', label: 'Voting', icon: Vote },
-  { id: 'results', label: 'Results', icon: Trophy },
-];
+const getNavItems = (userRole) => {
+  const baseItems = [
+    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'schedule', label: 'Schedule', icon: Calendar },
+    { id: 'teams', label: 'Teams', icon: Users },
+    { id: 'rules', label: 'Rules', icon: BookOpen },
+    { id: 'submission', label: 'Submission', icon: Send },
+  ];
+
+  const permissions = USER_ROLES[userRole] || USER_ROLES.participant;
+
+  // Add voting for those who can vote
+  if (permissions.canVote) {
+    baseItems.push({ id: 'voting', label: 'Voting', icon: Vote });
+  }
+
+  // Add judge scoring for judges
+  if (permissions.canJudge) {
+    baseItems.push({ id: 'judge-scoring', label: 'Judge Scoring', icon: Gavel, highlight: 'amber' });
+  }
+
+  // Add analytics for judges and admins
+  if (permissions.canViewAnalytics) {
+    baseItems.push({ id: 'analytics', label: 'Analytics', icon: BarChart3, highlight: 'purple' });
+  }
+
+  // Add admin panel for admins
+  if (permissions.canManage) {
+    baseItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, highlight: 'purple' });
+  }
+
+  // Results always at the end
+  baseItems.push({ id: 'results', label: 'Results', icon: Trophy });
+
+  return baseItems;
+};
+
+const ROLE_BADGES = {
+  participant: { label: 'Participant', color: 'gray', icon: User },
+  ambassador: { label: 'Ambassador', color: 'green', icon: Megaphone },
+  judge: { label: 'Judge', color: 'amber', icon: Gavel },
+  admin: { label: 'Admin', color: 'purple', icon: Shield },
+};
 
 // ============================================================================
 // COMPONENT
@@ -96,6 +134,12 @@ function Dashboard({
     team.captainId === user?.id || 
     team.members?.some(m => m.id === user?.id)
   );
+
+  // Get nav items based on user role
+  const navItems = getNavItems(user?.role);
+
+  // Get role badge info
+  const roleBadge = ROLE_BADGES[user?.role] || ROLE_BADGES.participant;
 
   // Calculate war stats
   const humanTeams = teams.filter(t => t.side === 'human').length;
@@ -227,14 +271,52 @@ function Dashboard({
         {/* LEFT SIDEBAR (30%) */}
         {/* ================================================================ */}
         <aside className="w-full lg:w-[280px] border-r-0 lg:border-r-2 border-gray-200 p-4 sm:p-6 space-y-6">
+          {/* Role Badge */}
+          {user?.role && user.role !== 'participant' && (
+            <div
+              className={`p-3 border-2 flex items-center gap-2 mb-4
+                ${roleBadge.color === 'amber' ? 'border-amber-300 bg-amber-50' : ''}
+                ${roleBadge.color === 'purple' ? 'border-purple-300 bg-purple-50' : ''}
+                ${roleBadge.color === 'green' ? 'border-green-300 bg-green-50' : ''}
+              `}
+            >
+              {roleBadge.icon && (
+                <roleBadge.icon
+                  className={`w-5 h-5
+                    ${roleBadge.color === 'amber' ? 'text-amber-600' : ''}
+                    ${roleBadge.color === 'purple' ? 'text-purple-600' : ''}
+                    ${roleBadge.color === 'green' ? 'text-green-600' : ''}
+                  `}
+                />
+              )}
+              <div>
+                <div
+                  className={`text-xs font-bold uppercase tracking-wide
+                    ${roleBadge.color === 'amber' ? 'text-amber-700' : ''}
+                    ${roleBadge.color === 'purple' ? 'text-purple-700' : ''}
+                    ${roleBadge.color === 'green' ? 'text-green-700' : ''}
+                  `}
+                >
+                  {roleBadge.label}
+                </div>
+                <div className="text-xs text-gray-500">
+                  {user.role === 'judge' && 'Score submitted projects'}
+                  {user.role === 'admin' && 'Full event access'}
+                  {user.role === 'ambassador' && 'Recruit for your side'}
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Navigation Menu */}
           <nav className="space-y-1">
             <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">
               Navigation
             </div>
-            {NAV_ITEMS.map((item) => {
+            {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeNav === item.id;
+              const isHighlighted = item.highlight;
               return (
                 <button
                   key={item.id}
@@ -245,11 +327,18 @@ function Dashboard({
                     if (item.id === 'rules') onNavigate('rules');
                     if (item.id === 'submission') onNavigate('submission');
                     if (item.id === 'voting') onNavigate('voting');
+                    if (item.id === 'analytics') onNavigate('analytics');
+                    if (item.id === 'judge-scoring') onNavigate('judge-scoring');
+                    if (item.id === 'admin') onNavigate('admin');
                   }}
                   className={`w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all
                     ${isActive 
                       ? 'bg-gray-900 text-white' 
-                      : 'text-gray-600 hover:bg-gray-100'}`}
+                      : isHighlighted === 'amber'
+                        ? 'text-amber-700 bg-amber-50 hover:bg-amber-100 border-l-4 border-amber-400'
+                        : isHighlighted === 'purple'
+                          ? 'text-purple-700 bg-purple-50 hover:bg-purple-100 border-l-4 border-purple-400'
+                          : 'text-gray-600 hover:bg-gray-100'}`}
                 >
                   <Icon className="w-4 h-4" />
                   {item.label}

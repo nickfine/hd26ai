@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { MOCK_TEAMS, MOCK_FREE_AGENTS, ALLEGIANCE_CONFIG } from './data/mockData';
+import {
+  MOCK_TEAMS,
+  MOCK_FREE_AGENTS,
+  ALLEGIANCE_CONFIG,
+  USER_ROLES,
+  EVENT_PHASES,
+  JUDGE_CRITERIA,
+  AWARDS,
+} from './data/mockData';
 import Landing from './components/Landing';
 import Login from './components/Login';
 import Onboarding from './components/Onboarding';
@@ -10,6 +18,9 @@ import Profile from './components/Profile';
 import Rules from './components/Rules';
 import Submission from './components/Submission';
 import Voting from './components/Voting';
+import VotingAnalytics from './components/VotingAnalytics';
+import JudgeScoring from './components/JudgeScoring';
+import AdminPanel from './components/AdminPanel';
 
 // Max votes per user for voting phase
 const MAX_VOTES = 5;
@@ -23,6 +34,13 @@ function App() {
   const [freeAgents, setFreeAgents] = useState(MOCK_FREE_AGENTS);
   const [marketplaceInitialTab, setMarketplaceInitialTab] = useState('teams');
   const [userVotes, setUserVotes] = useState([]); // Array of team IDs the user has voted for
+  const [eventPhase, setEventPhase] = useState('voting'); // Current event phase
+
+  // Get user role permissions
+  const getUserPermissions = () => {
+    if (!user?.role) return USER_ROLES.participant;
+    return USER_ROLES[user.role] || USER_ROLES.participant;
+  };
 
   // Update a specific team
   const updateTeam = (teamId, updates) => {
@@ -194,7 +212,64 @@ function App() {
       skills: userData.skills || [],
       allegiance: userData.allegiance || 'neutral',
       email: userData.email || '',
+      role: userData.role || 'participant',
     });
+  };
+
+  // Handle judge scoring a project
+  const handleJudgeScore = (teamId, scoreData) => {
+    if (!user || user.role !== 'judge') return;
+
+    setMockTeams((prev) =>
+      prev.map((team) => {
+        if (team.id !== teamId) return team;
+
+        const existingScores = team.submission?.judgeScores || [];
+        const existingScoreIndex = existingScores.findIndex(
+          (s) => s.judgeId === user.id
+        );
+
+        const newScore = {
+          judgeId: user.id,
+          judgeName: user.name,
+          scores: scoreData.scores,
+          comments: scoreData.comments || '',
+          scoredAt: new Date().toISOString(),
+        };
+
+        let updatedScores;
+        if (existingScoreIndex >= 0) {
+          // Update existing score
+          updatedScores = [...existingScores];
+          updatedScores[existingScoreIndex] = newScore;
+        } else {
+          // Add new score
+          updatedScores = [...existingScores, newScore];
+        }
+
+        return {
+          ...team,
+          submission: {
+            ...team.submission,
+            judgeScores: updatedScores,
+          },
+        };
+      })
+    );
+  };
+
+  // Handle admin changing event phase
+  const handlePhaseChange = (newPhase) => {
+    if (!user || user.role !== 'admin') return;
+    setEventPhase(newPhase);
+  };
+
+  // Handle admin updating user role
+  const handleUpdateUserRole = (userId, newRole) => {
+    if (!user || user.role !== 'admin') return;
+    // In a real app, this would update the database
+    // For now, we'll just log it
+    console.log(`Admin updated user ${userId} to role: ${newRole}`);
   };
 
   // Get current allegiance styling
@@ -288,6 +363,43 @@ function App() {
             onNavigate={setCurrentView}
             userVotes={userVotes}
             onVote={handleVote}
+            permissions={getUserPermissions()}
+          />
+        );
+      case 'analytics':
+        return (
+          <VotingAnalytics
+            user={user}
+            teams={mockTeams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+            eventPhase={eventPhase}
+            judgeCriteria={JUDGE_CRITERIA}
+            awards={AWARDS}
+          />
+        );
+      case 'judge-scoring':
+        return (
+          <JudgeScoring
+            user={user}
+            teams={mockTeams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+            onScore={handleJudgeScore}
+            judgeCriteria={JUDGE_CRITERIA}
+          />
+        );
+      case 'admin':
+        return (
+          <AdminPanel
+            user={user}
+            teams={mockTeams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+            eventPhase={eventPhase}
+            onPhaseChange={handlePhaseChange}
+            eventPhases={EVENT_PHASES}
+            onUpdateUserRole={handleUpdateUserRole}
           />
         );
       case 'team-detail': {
