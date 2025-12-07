@@ -58,7 +58,7 @@ function Profile({
     >
       {/* Header */}
       <header
-        className="border-b-2 px-6 py-4 bg-white transition-all duration-300"
+        className="border-b-2 px-4 sm:px-6 py-4 bg-white transition-all duration-300"
         style={{ borderColor: allegianceStyle.borderColor }}
       >
         <div className="max-w-4xl mx-auto flex items-center justify-between">
@@ -68,7 +68,7 @@ function Profile({
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back to Marketplace</span>
+            <span className="text-sm hidden sm:inline">Back to Marketplace</span>
           </button>
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-gray-900" />
@@ -79,18 +79,18 @@ function Profile({
 
       {/* Captain Alert Banner */}
       {isCaptain && pendingRequestCount > 0 && (
-        <div className="bg-amber-50 border-b-2 border-amber-300 px-6 py-3">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
+        <div className="bg-amber-50 border-b-2 border-amber-300 px-4 sm:px-6 py-3">
+          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3 text-amber-700">
-              <Bell className="w-5 h-5" />
-              <span className="font-bold">
+              <Bell className="w-5 h-5 flex-shrink-0" />
+              <span className="font-bold text-sm sm:text-base">
                 You have {pendingRequestCount} pending application{pendingRequestCount > 1 ? 's' : ''} to review
               </span>
             </div>
             <button
               type="button"
               onClick={() => onNavigateToTeam(userTeam.id)}
-              className="px-4 py-2 bg-amber-500 text-white font-bold text-sm rounded hover:bg-amber-600 transition-colors flex items-center gap-2"
+              className="w-full sm:w-auto px-4 py-2 bg-amber-500 text-white font-bold text-sm rounded hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
             >
               Review Applications
               <ChevronRight className="w-4 h-4" />
@@ -100,15 +100,15 @@ function Profile({
       )}
 
       {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-6 py-8">
-        <h1 className="text-2xl font-black text-gray-900 mb-6">YOUR PROFILE</h1>
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <h1 className="text-xl sm:text-2xl font-black text-gray-900 mb-6">YOUR PROFILE</h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Left Column - Avatar & Basic Info */}
-          <div className="lg:col-span-1 space-y-6">
+          <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             {/* Avatar Card */}
             <div
-              className={`bg-white p-6 border-2 ${allegianceStyle.borderRadius}`}
+              className={`bg-white p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
               <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-4">
@@ -118,14 +118,14 @@ function Profile({
               {/* Avatar Placeholder */}
               <div className="flex flex-col items-center">
                 <div
-                  className={`w-32 h-32 flex items-center justify-center mb-4 ${allegianceStyle.borderRadius}`}
+                  className={`w-24 sm:w-32 h-24 sm:h-32 flex items-center justify-center mb-4 ${allegianceStyle.borderRadius}`}
                   style={{
                     backgroundColor: allegianceStyle.bgColor,
                     border: `3px solid ${allegianceStyle.borderColor}`,
                   }}
                 >
                   <User
-                    className="w-16 h-16"
+                    className="w-12 sm:w-16 h-12 sm:h-16"
                     style={{ color: allegianceStyle.color }}
                   />
                 </div>
@@ -152,12 +152,12 @@ function Profile({
 
             {/* Name & Allegiance */}
             <div
-              className={`bg-white p-6 border-2 ${allegianceStyle.borderRadius}`}
+              className={`bg-white p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
               <div className="flex items-center gap-3 mb-3">
                 <div
-                  className={`w-10 h-10 flex items-center justify-center ${allegianceStyle.borderRadius}`}
+                  className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${allegianceStyle.borderRadius}`}
                   style={{
                     backgroundColor: allegianceStyle.bgColor,
                     border: `2px solid ${allegianceStyle.borderColor}`,
@@ -168,10 +168,10 @@ function Profile({
                     style={{ color: allegianceStyle.color }}
                   />
                 </div>
-                <div>
-                  <div className="text-lg font-bold text-gray-900 flex items-center gap-2">
-                    {user?.name}
-                    {isCaptain && <Crown className="w-4 h-4 text-yellow-500" />}
+                <div className="min-w-0">
+                  <div className="text-base sm:text-lg font-bold text-gray-900 flex items-center gap-2 flex-wrap">
+                    <span className="truncate">{user?.name}</span>
+                    {isCaptain && <Crown className="w-4 h-4 text-yellow-500 flex-shrink-0" />}
                   </div>
                   <div
                     className="text-sm font-bold uppercase"
@@ -189,10 +189,10 @@ function Profile({
           </div>
 
           {/* Right Column - Bio, Skills, Team */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Bio Section */}
             <div
-              className={`bg-white p-6 border-2 ${allegianceStyle.borderRadius}`}
+              className={`bg-white p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
               <div className="flex items-center justify-between mb-4">
@@ -247,7 +247,7 @@ function Profile({
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-700">
+                <p className="text-gray-700 text-sm sm:text-base">
                   {user?.bio || (
                     <span className="text-gray-400 italic">
                       Click Edit to share what you're looking for in HackDay...
@@ -259,7 +259,7 @@ function Profile({
 
             {/* Skills Section */}
             <div
-              className={`bg-white p-6 border-2 ${allegianceStyle.borderRadius}`}
+              className={`bg-white p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
               <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-4">
@@ -271,7 +271,7 @@ function Profile({
                   {user.skills.map((skill) => (
                     <span
                       key={skill}
-                      className={`px-3 py-2 text-sm font-medium border ${allegianceStyle.borderRadius}`}
+                      className={`px-3 py-2 text-xs sm:text-sm font-medium border ${allegianceStyle.borderRadius}`}
                       style={{
                         borderColor: allegianceStyle.borderColor,
                         color: allegianceStyle.color,
@@ -292,7 +292,7 @@ function Profile({
             {/* My Team Section */}
             {userTeam && (
               <div
-                className={`bg-white p-6 border-2 ${teamConfig.borderRadius}
+                className={`bg-white p-4 sm:p-6 border-2 ${teamConfig.borderRadius}
                            ${userTeam.side === 'ai' ? 'border-dashed' : ''}`}
                 style={{ borderColor: teamConfig.borderColor }}
               >
@@ -308,21 +308,21 @@ function Profile({
                   )}
                 </div>
 
-                <div className="flex items-start gap-4">
+                <div className="flex flex-col sm:flex-row items-start gap-4">
                   <div
-                    className={`w-14 h-14 flex items-center justify-center ${teamConfig.borderRadius}`}
+                    className={`w-12 sm:w-14 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
                     style={{ backgroundColor: teamConfig.bgColor }}
                   >
                     {userTeam.side === 'ai' ? (
-                      <Cpu className="w-7 h-7" style={{ color: teamConfig.color }} />
+                      <Cpu className="w-6 sm:w-7 h-6 sm:h-7" style={{ color: teamConfig.color }} />
                     ) : (
-                      <Heart className="w-7 h-7" style={{ color: teamConfig.color }} />
+                      <Heart className="w-6 sm:w-7 h-6 sm:h-7" style={{ color: teamConfig.color }} />
                     )}
                   </div>
                   
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <h3
-                      className={`text-lg font-bold text-gray-900 ${
+                      className={`text-base sm:text-lg font-bold text-gray-900 ${
                         userTeam.side === 'ai' ? 'font-mono' : ''
                       }`}
                     >
@@ -342,7 +342,7 @@ function Profile({
                       </span>
                     </div>
 
-                    <p className="text-sm text-gray-600 mt-2">{userTeam.description}</p>
+                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">{userTeam.description}</p>
                   </div>
                 </div>
 
@@ -362,7 +362,7 @@ function Profile({
 
             {/* No Team State */}
             {!userTeam && (
-              <div className="bg-white p-6 border-2 border-gray-200 rounded-lg">
+              <div className="bg-white p-4 sm:p-6 border-2 border-gray-200 rounded-lg">
                 <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-4">
                   My Team
                 </div>
@@ -385,7 +385,7 @@ function Profile({
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 px-6 py-4 bg-white mt-8">
+      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white mt-8">
         <div className="max-w-4xl mx-auto text-center text-xs text-gray-400">
           WIREFRAME PROTOTYPE — Allegiance:{' '}
           <span style={{ color: allegianceStyle.color }}>
@@ -398,4 +398,3 @@ function Profile({
 }
 
 export default Profile;
-

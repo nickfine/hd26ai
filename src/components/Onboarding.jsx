@@ -29,7 +29,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-200 px-6 py-4">
+      <header className="border-b border-gray-200 px-4 sm:px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button
             type="button"
@@ -37,7 +37,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back</span>
+            <span className="text-sm hidden sm:inline">Back</span>
           </button>
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-gray-900" />
@@ -47,15 +47,15 @@ function Onboarding({ user, updateUser, onNavigate }) {
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
+      <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-6 sm:py-12">
         <div className="w-full max-w-2xl">
           {/* Card with dynamic border */}
           <div
-            className={`bg-white p-8 transition-all duration-300 ${config.borderRadius} ${config.borderStyle}`}
+            className={`bg-white p-5 sm:p-8 transition-all duration-300 ${config.borderRadius} ${config.borderStyle}`}
             style={{ borderColor: config.borderColor }}
           >
-            <div className="text-center mb-8">
-              <h1 className="text-2xl font-black text-gray-900 mb-2">
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900 mb-2">
                 CONFIGURE YOUR AGENT
               </h1>
               <p className="text-sm text-gray-500">
@@ -63,7 +63,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
               </p>
             </div>
 
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8">
               {/* Display Name */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
@@ -77,7 +77,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                   className="w-full px-4 py-3 border-2 border-gray-200 
                              focus:border-gray-900 focus:outline-none
                              text-gray-900 placeholder:text-gray-400
-                             transition-colors"
+                             transition-colors text-base"
                 />
               </div>
 
@@ -85,11 +85,11 @@ function Onboarding({ user, updateUser, onNavigate }) {
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
                   Areas of Interest
-                  <span className="font-normal text-gray-400 ml-2">
+                  <span className="font-normal text-gray-400 ml-2 block sm:inline mt-1 sm:mt-0">
                     (Select all that apply)
                   </span>
                 </label>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   {SKILLS.map((skill) => (
                     <button
                       type="button"
@@ -104,7 +104,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                     >
                       <span className="flex items-center gap-2">
                         {selectedSkills.includes(skill) && (
-                          <Check className="w-4 h-4" />
+                          <Check className="w-4 h-4 flex-shrink-0" />
                         )}
                         {skill}
                       </span>
@@ -118,12 +118,12 @@ function Onboarding({ user, updateUser, onNavigate }) {
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
                   Declare Allegiance
                 </label>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
                   {/* Human */}
                   <button
                     type="button"
                     onClick={() => setAllegiance('human')}
-                    className={`p-4 border-2 transition-all duration-200 rounded-xl
+                    className={`p-3 sm:p-4 border-2 transition-all duration-200 rounded-xl
                       ${
                         allegiance === 'human'
                           ? 'border-green-500 bg-green-50'
@@ -131,18 +131,18 @@ function Onboarding({ user, updateUser, onNavigate }) {
                       }`}
                   >
                     <Heart
-                      className={`w-8 h-8 mx-auto mb-2 ${
+                      className={`w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2 ${
                         allegiance === 'human' ? 'text-green-500' : 'text-gray-400'
                       }`}
                     />
                     <div
-                      className={`text-sm font-bold ${
+                      className={`text-xs sm:text-sm font-bold ${
                         allegiance === 'human' ? 'text-green-600' : 'text-gray-600'
                       }`}
                     >
                       HUMAN
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-gray-400 mt-1 hidden sm:block">
                       Organic creativity
                     </div>
                   </button>
@@ -151,7 +151,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                   <button
                     type="button"
                     onClick={() => setAllegiance('neutral')}
-                    className={`p-4 border-2 transition-all duration-200 rounded-lg
+                    className={`p-3 sm:p-4 border-2 transition-all duration-200 rounded-lg
                       ${
                         allegiance === 'neutral'
                           ? 'border-gray-500 bg-gray-50'
@@ -159,18 +159,18 @@ function Onboarding({ user, updateUser, onNavigate }) {
                       }`}
                   >
                     <Scale
-                      className={`w-8 h-8 mx-auto mb-2 ${
+                      className={`w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2 ${
                         allegiance === 'neutral' ? 'text-gray-500' : 'text-gray-400'
                       }`}
                     />
                     <div
-                      className={`text-sm font-bold ${
+                      className={`text-xs sm:text-sm font-bold ${
                         allegiance === 'neutral' ? 'text-gray-600' : 'text-gray-600'
                       }`}
                     >
                       NEUTRAL
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-gray-400 mt-1 hidden sm:block">
                       Free agent
                     </div>
                   </button>
@@ -179,7 +179,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                   <button
                     type="button"
                     onClick={() => setAllegiance('ai')}
-                    className={`p-4 border-2 transition-all duration-200 rounded-sm
+                    className={`p-3 sm:p-4 border-2 transition-all duration-200 rounded-sm
                       ${
                         allegiance === 'ai'
                           ? 'border-cyan-500 bg-cyan-50 border-dashed'
@@ -187,18 +187,18 @@ function Onboarding({ user, updateUser, onNavigate }) {
                       }`}
                   >
                     <Cpu
-                      className={`w-8 h-8 mx-auto mb-2 ${
+                      className={`w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2 ${
                         allegiance === 'ai' ? 'text-cyan-500' : 'text-gray-400'
                       }`}
                     />
                     <div
-                      className={`text-sm font-bold font-mono ${
+                      className={`text-xs sm:text-sm font-bold font-mono ${
                         allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-600'
                       }`}
                     >
                       AI
                     </div>
-                    <div className="text-xs text-gray-400 mt-1">
+                    <div className="text-xs text-gray-400 mt-1 hidden sm:block">
                       Silicon supremacy
                     </div>
                   </button>
@@ -210,7 +210,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                 type="button"
                 onClick={handleSubmit}
                 disabled={!name.trim()}
-                className="w-full py-4 bg-gray-900 text-white font-bold
+                className="w-full py-3 sm:py-4 bg-gray-900 text-white font-bold
                            hover:bg-gray-800 transition-colors
                            border-2 border-gray-900
                            disabled:opacity-50 disabled:cursor-not-allowed"
@@ -237,7 +237,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
           </div>
 
           {/* Footer note */}
-          <p className="text-center text-xs text-gray-400 mt-6">
+          <p className="text-center text-xs text-gray-400 mt-4 sm:mt-6">
             Your allegiance affects team recommendations in the marketplace
           </p>
         </div>
@@ -247,4 +247,3 @@ function Onboarding({ user, updateUser, onNavigate }) {
 }
 
 export default Onboarding;
-

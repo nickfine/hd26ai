@@ -14,6 +14,7 @@ import {
   X,
   Mail,
   Check,
+  Menu,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
 
@@ -32,6 +33,7 @@ function Dashboard({
   const [inviteModalAgent, setInviteModalAgent] = useState(null);
   const [inviteMessage, setInviteMessage] = useState('');
   const [filterAllegiance, setFilterAllegiance] = useState(user?.allegiance || 'neutral');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Find the team the user is captain of (if any)
   const captainedTeam = teams.find((team) => team.captainId === user?.id);
@@ -102,21 +104,29 @@ function Dashboard({
     >
       {/* Header */}
       <header
-        className={`border-b-2 px-6 py-4 bg-white transition-all duration-300`}
+        className={`border-b-2 px-4 sm:px-6 py-4 bg-white transition-all duration-300`}
         style={{ borderColor: allegianceStyle.borderColor }}
       >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
+            {/* Mobile menu button */}
+            <button
+              type="button"
+              onClick={() => setSidebarOpen(!sidebarOpen)}
+              className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
             <Zap className="w-5 h-5 text-gray-900" />
-            <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
+            <span className="font-bold text-sm tracking-tight hidden sm:inline">HACKDAY 2026</span>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
             {/* User Info - Clickable to Profile */}
             <button
               type="button"
               onClick={() => onNavigate('profile')}
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
             >
               <div
                 className={`w-8 h-8 flex items-center justify-center ${allegianceStyle.borderRadius}`}
@@ -130,7 +140,7 @@ function Dashboard({
                   style={{ color: allegianceStyle.color }}
                 />
               </div>
-              <div className="text-sm text-left">
+              <div className="text-sm text-left hidden sm:block">
                 <div className="font-bold text-gray-900">{user?.name}</div>
                 <div className="text-xs text-gray-500">
                   {captainedTeam ? 'Team Captain' : 'Free Agent'}
@@ -149,9 +159,31 @@ function Dashboard({
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto flex">
+      <div className="max-w-7xl mx-auto flex relative">
+        {/* Mobile sidebar overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <aside className="w-72 border-r border-gray-200 bg-white min-h-[calc(100vh-65px)] p-6">
+        <aside className={`
+          fixed lg:static inset-y-0 left-0 z-50
+          w-72 border-r border-gray-200 bg-white min-h-[calc(100vh-65px)] p-6
+          transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+        `}>
+          {/* Close button for mobile */}
+          <button
+            type="button"
+            onClick={() => setSidebarOpen(false)}
+            className="lg:hidden absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600"
+          >
+            <X className="w-5 h-5" />
+          </button>
+
           {/* Pending Invites - For Free Agents */}
           {pendingInvites.length > 0 && (
             <div className="p-4 mb-6 border-2 border-blue-300 bg-blue-50 rounded-lg">
@@ -225,7 +257,10 @@ function Dashboard({
                   <button
                     type="button"
                     key={side}
-                    onClick={() => setFilterAllegiance(side)}
+                    onClick={() => {
+                      setFilterAllegiance(side);
+                      setSidebarOpen(false);
+                    }}
                     className={`w-full p-3 flex items-center gap-3 transition-all duration-200
                       ${config.borderRadius} border-2
                       ${
@@ -285,11 +320,11 @@ function Dashboard({
         </aside>
 
         {/* Main Content - Marketplace */}
-        <main className="flex-1 p-6">
+        <main className="flex-1 p-4 sm:p-6 w-full lg:w-auto">
           {/* Header */}
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-              <h1 className="text-2xl font-black text-gray-900">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900">
                 THE MARKETPLACE
               </h1>
               <p className="text-sm text-gray-500">
@@ -298,32 +333,32 @@ function Dashboard({
             </div>
 
             {/* Search */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder={activeTab === 'teams' ? 'Search teams or skills...' : 'Search people or skills...'}
-                className="pl-10 pr-4 py-2 border-2 border-gray-200 
+                className="w-full sm:w-64 pl-10 pr-4 py-2 border-2 border-gray-200 
                            focus:border-gray-900 focus:outline-none
-                           text-sm w-64"
+                           text-sm"
               />
             </div>
           </div>
 
           {/* Tab Switcher */}
-          <div className="flex gap-2 mb-6">
+          <div className="flex gap-2 mb-6 overflow-x-auto">
             <button
               type="button"
               onClick={() => setActiveTab('teams')}
-              className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2
+              className={`px-3 sm:px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap
                          ${activeTab === 'teams' 
                            ? 'bg-gray-900 text-white' 
                            : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
             >
               <Users className="w-4 h-4" />
-              TEAMS
+              <span className="hidden xs:inline">TEAMS</span>
               <span className={`px-1.5 py-0.5 text-xs rounded-full ${
                 activeTab === 'teams' ? 'bg-white/20' : 'bg-gray-100'
               }`}>
@@ -333,13 +368,13 @@ function Dashboard({
             <button
               type="button"
               onClick={() => setActiveTab('people')}
-              className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2
+              className={`px-3 sm:px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap
                          ${activeTab === 'people' 
                            ? 'bg-gray-900 text-white' 
                            : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
             >
               <User className="w-4 h-4" />
-              PEOPLE
+              <span className="hidden xs:inline">PEOPLE</span>
               <span className={`px-1.5 py-0.5 text-xs rounded-full ${
                 activeTab === 'people' ? 'bg-white/20' : 'bg-gray-100'
               }`}>
@@ -361,17 +396,17 @@ function Dashboard({
             {filterAllegiance === 'human' && <Heart className="w-4 h-4" />}
             {filterAllegiance === 'ai' && <Cpu className="w-4 h-4" />}
             {filterAllegiance === 'neutral' && <Scale className="w-4 h-4" />}
-            <span>
+            <span className="text-xs sm:text-sm">
               {filterAllegiance === 'neutral'
                 ? `Showing all ${activeTab}`
-                : `Showing ${ALLEGIANCE_CONFIG[filterAllegiance].label} ${activeTab} only`}
+                : `Showing ${ALLEGIANCE_CONFIG[filterAllegiance].label} ${activeTab}`}
             </span>
           </div>
 
           {/* Teams Grid */}
           {activeTab === 'teams' && (
             <>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
                 {filteredTeams.map((team) => {
                   const teamConfig = ALLEGIANCE_CONFIG[team.side];
                   const TeamIcon = team.side === 'ai' ? Cpu : Heart;
@@ -380,7 +415,7 @@ function Dashboard({
                   return (
                     <div
                       key={team.id}
-                      className={`p-5 bg-white transition-all duration-200 hover:shadow-lg
+                      className={`p-4 sm:p-5 bg-white transition-all duration-200 hover:shadow-lg
                                  border-2 ${teamConfig.borderRadius}
                                  ${team.side === 'ai' ? 'border-dashed' : ''}`}
                       style={{ borderColor: teamConfig.borderColor }}
@@ -389,7 +424,7 @@ function Dashboard({
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-10 h-10 flex items-center justify-center ${teamConfig.borderRadius}`}
+                            className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
                             style={{
                               backgroundColor: teamConfig.bgColor,
                             }}
@@ -399,10 +434,10 @@ function Dashboard({
                               style={{ color: teamConfig.color }}
                             />
                           </div>
-                          <div>
-                            <div className="flex items-center gap-2">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <h3
-                                className={`font-bold text-gray-900 ${
+                                className={`font-bold text-gray-900 truncate ${
                                   team.side === 'ai' ? 'font-mono' : ''
                                 }`}
                               >
@@ -422,7 +457,7 @@ function Dashboard({
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <div className="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
                           <Users className="w-4 h-4" />
                           <span>
                             {team.members.length}/{team.maxMembers}
@@ -431,7 +466,7 @@ function Dashboard({
                       </div>
 
                       {/* Description */}
-                      <p className="text-sm text-gray-600 mb-4">{team.description}</p>
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{team.description}</p>
 
                       {/* Looking For */}
                       <div className="mb-4">
@@ -439,7 +474,7 @@ function Dashboard({
                           Looking For
                         </div>
                         <div className="flex flex-wrap gap-1">
-                          {team.lookingFor.map((skill) => (
+                          {team.lookingFor.slice(0, 3).map((skill) => (
                             <span
                               key={skill}
                               className={`px-2 py-1 text-xs border ${teamConfig.borderRadius}`}
@@ -452,6 +487,11 @@ function Dashboard({
                               {skill}
                             </span>
                           ))}
+                          {team.lookingFor.length > 3 && (
+                            <span className="px-2 py-1 text-xs text-gray-400">
+                              +{team.lookingFor.length - 3} more
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -492,7 +532,7 @@ function Dashboard({
           {/* People Grid */}
           {activeTab === 'people' && (
             <>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
                 {filteredAgents.map((agent) => {
                   const agentConfig = ALLEGIANCE_CONFIG[agent.allegiance] || ALLEGIANCE_CONFIG.neutral;
                   const AgentIcon = { human: Heart, neutral: Scale, ai: Cpu }[agent.allegiance] || Scale;
@@ -501,7 +541,7 @@ function Dashboard({
                   return (
                     <div
                       key={agent.id}
-                      className={`p-5 bg-white transition-all duration-200 hover:shadow-lg
+                      className={`p-4 sm:p-5 bg-white transition-all duration-200 hover:shadow-lg
                                  border-2 ${agentConfig.borderRadius}
                                  ${agent.allegiance === 'ai' ? 'border-dashed' : ''}`}
                       style={{ borderColor: agentConfig.borderColor }}
@@ -510,7 +550,7 @@ function Dashboard({
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-10 h-10 flex items-center justify-center ${agentConfig.borderRadius}`}
+                            className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${agentConfig.borderRadius}`}
                             style={{
                               backgroundColor: agentConfig.bgColor,
                             }}
@@ -520,10 +560,10 @@ function Dashboard({
                               style={{ color: agentConfig.color }}
                             />
                           </div>
-                          <div>
-                            <div className="flex items-center gap-2">
+                          <div className="min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
                               <h3
-                                className={`font-bold text-gray-900 ${
+                                className={`font-bold text-gray-900 truncate ${
                                   agent.allegiance === 'ai' ? 'font-mono' : ''
                                 }`}
                               >
@@ -543,13 +583,13 @@ function Dashboard({
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                        <div className="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
                           <User className="w-4 h-4" />
                         </div>
                       </div>
 
                       {/* Bio */}
-                      <p className="text-sm text-gray-600 mb-4">{agent.bio}</p>
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{agent.bio}</p>
 
                       {/* Skills */}
                       <div className="mb-4">
@@ -557,7 +597,7 @@ function Dashboard({
                           Skills
                         </div>
                         <div className="flex flex-wrap gap-1">
-                          {agent.skills?.map((skill) => (
+                          {agent.skills?.slice(0, 3).map((skill) => (
                             <span
                               key={skill}
                               className={`px-2 py-1 text-xs border ${agentConfig.borderRadius}`}
@@ -570,6 +610,11 @@ function Dashboard({
                               {skill}
                             </span>
                           ))}
+                          {agent.skills?.length > 3 && (
+                            <span className="px-2 py-1 text-xs text-gray-400">
+                              +{agent.skills.length - 3} more
+                            </span>
+                          )}
                         </div>
                       </div>
 
@@ -631,7 +676,7 @@ function Dashboard({
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 px-6 py-4 bg-white">
+      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white">
         <div className="max-w-7xl mx-auto text-center text-xs text-gray-400">
           WIREFRAME PROTOTYPE — Allegiance:{' '}
           <span style={{ color: allegianceStyle.color }}>
@@ -642,8 +687,8 @@ function Dashboard({
 
       {/* Invite Modal */}
       {inviteModalAgent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 max-w-md w-full mx-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white p-4 sm:p-6 max-w-md w-full mx-4 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-lg font-bold text-gray-900">Send Team Invite</h2>
               <button
@@ -709,4 +754,3 @@ function Dashboard({
 }
 
 export default Dashboard;
-

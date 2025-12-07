@@ -15,7 +15,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-200 px-6 py-4">
+      <header className="border-b border-gray-200 px-4 sm:px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button
             type="button"
@@ -23,7 +23,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back</span>
+            <span className="text-sm hidden sm:inline">Back</span>
           </button>
           <div className="flex items-center gap-2">
             <Zap className="w-5 h-5 text-gray-900" />
@@ -33,12 +33,12 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
       </header>
 
       {/* Main */}
-      <main className="flex-1 flex items-center justify-center px-6 py-12">
+      <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
         <div className="w-full max-w-md">
           {/* Card */}
-          <div className="border-2 border-gray-900 bg-white p-8">
-            <div className="text-center mb-8">
-              <h1 className="text-2xl font-black text-gray-900 mb-2">
+          <div className="border-2 border-gray-900 bg-white p-6 sm:p-8">
+            <div className="text-center mb-6 sm:mb-8">
+              <h1 className="text-xl sm:text-2xl font-black text-gray-900 mb-2">
                 AUTHENTICATE
               </h1>
               <p className="text-sm text-gray-500">
@@ -46,7 +46,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
               </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               {/* Email */}
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
@@ -62,7 +62,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
                     className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 
                                focus:border-gray-900 focus:outline-none
                                text-gray-900 placeholder:text-gray-400
-                               transition-colors"
+                               transition-colors text-base"
                     required
                   />
                 </div>
@@ -83,7 +83,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
                     className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 
                                focus:border-gray-900 focus:outline-none
                                text-gray-900 placeholder:text-gray-400
-                               transition-colors"
+                               transition-colors text-base"
                     required
                   />
                 </div>
@@ -92,7 +92,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
               {/* Submit */}
               <button
                 type="submit"
-                className="w-full py-4 bg-gray-900 text-white font-bold
+                className="w-full py-3 sm:py-4 bg-gray-900 text-white font-bold
                            hover:bg-gray-800 transition-colors
                            border-2 border-gray-900"
               >
@@ -101,7 +101,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
             </form>
 
             {/* Divider */}
-            <div className="my-6 flex items-center gap-4">
+            <div className="my-4 sm:my-6 flex items-center gap-4">
               <div className="flex-1 border-t border-gray-200" />
               <span className="text-xs text-gray-400 uppercase">or</span>
               <div className="flex-1 border-t border-gray-200" />
@@ -122,7 +122,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
           </div>
 
           {/* Demo Captain Login */}
-          <div className="mt-6 p-4 border-2 border-dashed border-cyan-400 bg-cyan-50/50">
+          <div className="mt-4 sm:mt-6 p-4 border-2 border-dashed border-cyan-400 bg-cyan-50/50">
             <div className="flex items-center gap-2 mb-3">
               <Crown className="w-4 h-4 text-yellow-500" />
               <span className="text-xs font-bold uppercase tracking-wide text-gray-600">
@@ -153,7 +153,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
           </div>
 
           {/* Footer note */}
-          <p className="text-center text-xs text-gray-400 mt-6">
+          <p className="text-center text-xs text-gray-400 mt-4 sm:mt-6">
             [WIREFRAME] Authentication is mocked for prototype
           </p>
         </div>
@@ -163,4 +163,3 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
 }
 
 export default Login;
-
