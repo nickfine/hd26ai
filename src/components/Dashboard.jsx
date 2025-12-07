@@ -22,13 +22,23 @@ import AppLayout from './AppLayout';
 // ============================================================================
 
 const MOCK_ACTIVITY_FEED = [
-  { id: 1, type: 'join', user: 'Maya Rodriguez', team: 'Neural Nexus', side: 'ai', time: '2 min ago' },
-  { id: 2, type: 'create', user: 'Jordan Lee', team: 'Quantum Collective', side: 'ai', time: '5 min ago' },
-  { id: 3, type: 'join', user: 'Casey Brooks', team: 'Human Touch', side: 'human', time: '12 min ago' },
-  { id: 4, type: 'allegiance', user: 'River Chen', side: 'ai', time: '15 min ago' },
-  { id: 5, type: 'create', user: 'Pat O\'Brien', team: 'Carbon Coalition', side: 'human', time: '23 min ago' },
-  { id: 6, type: 'join', user: 'Skyler Vance', team: 'Digital Overlords', side: 'ai', time: '31 min ago' },
+  { id: 1, type: 'join', user: 'Maya Rodriguez', callsign: 'HTML Hotshot', team: 'Neural Nexus', side: 'ai', time: '2 min ago' },
+  { id: 2, type: 'create', user: 'Jordan Lee', callsign: 'Prompt Wizard', team: 'Quantum Collective', side: 'ai', time: '5 min ago' },
+  { id: 3, type: 'join', user: 'Casey Brooks', callsign: 'CSS Wizard', team: 'Human Touch', side: 'human', time: '12 min ago' },
+  { id: 4, type: 'allegiance', user: 'River Chen', callsign: 'Stack Overflow', side: 'ai', time: '15 min ago' },
+  { id: 5, type: 'create', user: 'Pat O\'Brien', callsign: 'Circuit Breaker', team: 'Carbon Coalition', side: 'human', time: '23 min ago' },
+  { id: 6, type: 'join', user: 'Skyler Vance', callsign: 'Data Drifter', team: 'Digital Overlords', side: 'ai', time: '31 min ago' },
 ];
+
+// Helper to format name with callsign: "First 'Callsign' Last"
+const formatNameWithCallsign = (name, callsign) => {
+  if (!callsign) return name;
+  const parts = name.split(' ');
+  if (parts.length < 2) return name;
+  const firstName = parts[0];
+  const lastName = parts.slice(1).join(' ');
+  return { firstName, callsign, lastName };
+};
 
 const MOCK_SCHEDULE = [
   { id: 1, time: '10:00 AM', title: 'Opening Ceremony', description: 'Kickoff & rules explanation' },
@@ -182,8 +192,25 @@ function Dashboard({
                         }
                       </div>
                       <div className="flex-1 min-w-0">
-                        <span className={`font-bold ${activity.side === 'ai' ? 'font-mono' : ''}`}>
-                          {activity.user}
+                        <span className={`font-bold text-gray-900 inline-flex items-center gap-1 flex-wrap ${activity.side === 'ai' ? 'font-mono' : ''}`}>
+                          {(() => {
+                            const formatted = formatNameWithCallsign(activity.user, activity.callsign);
+                            if (typeof formatted === 'string') return formatted;
+                            return (
+                              <>
+                                {formatted.firstName}
+                                <span className={`px-1.5 py-0.5 text-xs font-bold rounded-full border bg-white
+                                    ${activity.side === 'ai' 
+                                      ? 'border-cyan-500 text-cyan-700' 
+                                      : activity.side === 'human' 
+                                        ? 'border-green-500 text-green-700' 
+                                        : 'border-gray-400 text-gray-600'}`}>
+                                  {formatted.callsign}
+                                </span>
+                                {formatted.lastName}
+                              </>
+                            );
+                          })()}
                         </span>
                         {activity.type === 'join' && (
                           <span className="text-gray-500"> joined </span>

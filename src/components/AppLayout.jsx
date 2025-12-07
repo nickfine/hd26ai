@@ -71,6 +71,16 @@ const ROLE_BADGES = {
   admin: { label: 'Admin', color: 'purple', icon: Shield },
 };
 
+// Helper to format name with callsign: "First 'Callsign' Last"
+const formatNameWithCallsign = (name, callsign) => {
+  if (!callsign || !name) return { formatted: name, hasCallsign: false };
+  const parts = name.split(' ');
+  if (parts.length < 2) return { formatted: name, hasCallsign: false };
+  const firstName = parts[0];
+  const lastName = parts.slice(1).join(' ');
+  return { firstName, callsign, lastName, hasCallsign: true };
+};
+
 // ============================================================================
 // COMPONENT
 // ============================================================================
@@ -95,6 +105,9 @@ function AppLayout({
     team.captainId === user?.id || 
     team.members?.some(m => m.id === user?.id)
   );
+
+  // Find user's callsign from their team membership
+  const userCallsign = userTeam?.members?.find(m => m.id === user?.id)?.callsign;
 
   // Get nav items based on user role and event phase
   const navItems = getNavItems(user?.role, eventPhase);
@@ -183,7 +196,26 @@ function AppLayout({
               )}
             </div>
             <div className="text-left hidden sm:block">
-              <div className="font-bold text-gray-900 text-sm">{user?.name || 'Operator'}</div>
+              <div className="font-bold text-gray-900 text-sm flex items-center gap-1 flex-wrap">
+                {(() => {
+                  const formatted = formatNameWithCallsign(user?.name, userCallsign);
+                  if (!formatted.hasCallsign) return user?.name || 'Operator';
+                  return (
+                    <>
+                      {formatted.firstName}
+                      <span className={`px-1.5 py-0.5 text-xs font-bold rounded-full border bg-white
+                          ${user?.allegiance === 'ai' 
+                            ? 'border-cyan-500 text-cyan-700' 
+                            : user?.allegiance === 'human' 
+                              ? 'border-green-500 text-green-700' 
+                              : 'border-gray-400 text-gray-600'}`}>
+                        {formatted.callsign}
+                      </span>
+                      {formatted.lastName}
+                    </>
+                  );
+                })()}
+              </div>
               {captainedTeam ? (
                 <>
                   <div className="text-xs text-gray-500">Captain</div>
