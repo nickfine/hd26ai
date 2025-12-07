@@ -295,6 +295,59 @@ function App() {
   }, [useDemoMode, mockFreeAgents]);
 
   // ============================================================================
+  // CREATE TEAM HANDLER
+  // ============================================================================
+  const handleCreateTeam = useCallback(async (teamData) => {
+    if (useDemoMode) {
+      // Generate a unique ID for the new team
+      const newTeamId = Date.now();
+      
+      const newTeam = {
+        id: newTeamId,
+        name: teamData.name,
+        side: teamData.side,
+        description: teamData.description,
+        lookingFor: teamData.lookingFor || [],
+        maxMembers: teamData.maxMembers || 6,
+        moreInfo: '',
+        captainId: effectiveUser?.id,
+        members: [
+          {
+            id: effectiveUser?.id,
+            name: effectiveUser?.name,
+            callsign: '',
+            skills: effectiveUser?.skills || [],
+          },
+        ],
+        joinRequests: [],
+        submission: {
+          projectId: null,
+          status: 'not_started',
+          projectName: '',
+          description: '',
+          demoVideoUrl: '',
+          repoUrl: '',
+          liveDemoUrl: '',
+          submittedAt: null,
+          lastUpdated: null,
+          participantVotes: 0,
+          judgeScores: [],
+        },
+      };
+
+      setMockTeams(prev => [newTeam, ...prev]);
+      return { id: newTeamId };
+    } else {
+      const result = await teamMutations.createTeam(teamData, effectiveUser?.id, event?.id);
+      if (!result.error) {
+        refetchTeams();
+        return { id: result.data.id };
+      }
+      return null;
+    }
+  }, [useDemoMode, effectiveUser, teamMutations, event?.id, refetchTeams]);
+
+  // ============================================================================
   // SUBMISSION HANDLERS
   // ============================================================================
   const handleUpdateSubmission = useCallback(async (teamId, submissionData) => {
@@ -541,6 +594,7 @@ function App() {
             onNavigateToTeam={navigateToTeam}
             onSendInvite={handleSendInvite}
             onInviteResponse={handleInviteResponse}
+            onCreateTeam={handleCreateTeam}
             initialTab={marketplaceInitialTab}
             eventPhase={eventPhase}
           />

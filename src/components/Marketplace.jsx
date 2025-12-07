@@ -13,7 +13,7 @@ import {
   Mail,
   Check,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import { ALLEGIANCE_CONFIG, SKILLS } from '../data/mockData';
 import AppLayout from './AppLayout';
 
 function Marketplace({ 
@@ -25,6 +25,7 @@ function Marketplace({
   onNavigateToTeam,
   onSendInvite,
   onInviteResponse,
+  onCreateTeam,
   initialTab = 'teams',
   eventPhase,
 }) {
@@ -38,6 +39,17 @@ function Marketplace({
   }, [initialTab]);
   const [inviteMessage, setInviteMessage] = useState('');
   const [filterAllegiance, setFilterAllegiance] = useState(user?.allegiance || 'neutral');
+
+  // Create Team Modal State
+  const [showCreateTeamModal, setShowCreateTeamModal] = useState(false);
+  const [isCreatingTeam, setIsCreatingTeam] = useState(false);
+  const [newTeam, setNewTeam] = useState({
+    name: '',
+    description: '',
+    side: user?.allegiance === 'neutral' ? 'human' : (user?.allegiance || 'human'),
+    lookingFor: [],
+    maxMembers: 6,
+  });
 
   // Find the team the user is captain of (if any)
   const captainedTeam = teams.find((team) => team.captainId === user?.id);
@@ -95,6 +107,55 @@ function Marketplace({
       setInviteMessage('');
     }
   };
+
+  // Check if user is already on a team
+  const userTeam = teams.find(
+    (team) => team.captainId === user?.id || team.members?.some((m) => m.id === user?.id)
+  );
+
+  // Handle creating team
+  const handleCreateTeam = async () => {
+    // Validation
+    if (newTeam.name.trim().length < 3) return;
+    if (newTeam.description.trim().length < 10) return;
+    if (newTeam.lookingFor.length === 0) return;
+
+    setIsCreatingTeam(true);
+    try {
+      const result = await onCreateTeam?.(newTeam);
+      if (result?.id) {
+        // Reset form and close modal
+        setNewTeam({
+          name: '',
+          description: '',
+          side: user?.allegiance === 'neutral' ? 'human' : (user?.allegiance || 'human'),
+          lookingFor: [],
+          maxMembers: 6,
+        });
+        setShowCreateTeamModal(false);
+        // Navigate to the new team
+        onNavigateToTeam(result.id);
+      }
+    } finally {
+      setIsCreatingTeam(false);
+    }
+  };
+
+  // Toggle skill in lookingFor array
+  const toggleSkill = (skill) => {
+    setNewTeam((prev) => ({
+      ...prev,
+      lookingFor: prev.lookingFor.includes(skill)
+        ? prev.lookingFor.filter((s) => s !== skill)
+        : [...prev.lookingFor, skill],
+    }));
+  };
+
+  // Validation state
+  const isFormValid =
+    newTeam.name.trim().length >= 3 &&
+    newTeam.description.trim().length >= 10 &&
+    newTeam.lookingFor.length > 0;
 
   return (
     <AppLayout
@@ -190,9 +251,9 @@ function Marketplace({
           </div>
 
           {/* Filter and Tab Switcher Row */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-6">
-            {/* Tab Switcher */}
-            <div className="flex gap-2 flex-1">
+          <div className="flex flex-col gap-4 mb-6">
+            {/* Tab Switcher + Create Team */}
+            <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
                 onClick={() => setActiveTab('teams')}
@@ -223,17 +284,24 @@ function Marketplace({
                   {allegianceFilteredAgents.length}
                 </span>
               </button>
-              <button
-                type="button"
-                className="px-4 py-2 font-bold text-sm bg-gray-900 text-white hover:bg-gray-800 transition-all flex items-center gap-2 whitespace-nowrap"
-              >
-                <Plus className="w-4 h-4" />
-                CREATE TEAM
-              </button>
+              
+              {/* Spacer to push Create Team and filters to the right on larger screens */}
+              <div className="hidden sm:block flex-1" />
+              
+              {!userTeam && (
+                <button
+                  type="button"
+                  onClick={() => setShowCreateTeamModal(true)}
+                  className="px-4 py-2 font-bold text-sm bg-green-600 text-white hover:bg-green-700 transition-all flex items-center gap-2 whitespace-nowrap"
+                >
+                  <Plus className="w-4 h-4" />
+                  CREATE TEAM
+                </button>
+              )}
             </div>
 
             {/* Allegiance Filter */}
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               {['human', 'ai', 'neutral'].map((side) => {
                 const config = ALLEGIANCE_CONFIG[side];
                 const isActive = filterAllegiance === side;
@@ -588,6 +656,192 @@ function Marketplace({
               >
                 <Send className="w-4 h-4" />
                 Send Invite
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Team Modal */}
+      {showCreateTeamModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white p-4 sm:p-6 max-w-lg w-full mx-4 shadow-2xl my-8">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-xl font-black text-gray-900">CREATE YOUR TEAM</h2>
+              <button
+                type="button"
+                onClick={() => setShowCreateTeamModal(false)}
+                className="p-1 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Team Name */}
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                Team Name <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                value={newTeam.name}
+                onChange={(e) => setNewTeam((prev) => ({ ...prev, name: e.target.value }))}
+                placeholder="Enter your team name"
+                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-sm"
+                maxLength={50}
+              />
+              {newTeam.name.length > 0 && newTeam.name.length < 3 && (
+                <p className="text-xs text-red-500 mt-1">Team name must be at least 3 characters</p>
+              )}
+            </div>
+
+            {/* Allegiance */}
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                Choose Your Side <span className="text-red-500">*</span>
+              </label>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setNewTeam((prev) => ({ ...prev, side: 'human' }))}
+                  className={`flex-1 p-4 border-2 rounded-xl transition-all flex flex-col items-center gap-2
+                    ${newTeam.side === 'human'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-gray-400'
+                    }`}
+                >
+                  <Heart className={`w-8 h-8 ${newTeam.side === 'human' ? 'text-green-600' : 'text-gray-400'}`} />
+                  <span className={`font-bold text-sm ${newTeam.side === 'human' ? 'text-green-700' : 'text-gray-500'}`}>
+                    Human
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setNewTeam((prev) => ({ ...prev, side: 'ai' }))}
+                  className={`flex-1 p-4 border-2 border-dashed transition-all flex flex-col items-center gap-2
+                    ${newTeam.side === 'ai'
+                      ? 'border-cyan-500 bg-cyan-50'
+                      : 'border-gray-200 hover:border-gray-400'
+                    }`}
+                >
+                  <Cpu className={`w-8 h-8 ${newTeam.side === 'ai' ? 'text-cyan-600' : 'text-gray-400'}`} />
+                  <span className={`font-bold text-sm font-mono ${newTeam.side === 'ai' ? 'text-cyan-700' : 'text-gray-500'}`}>
+                    AI
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            {/* Description */}
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                Description <span className="text-red-500">*</span>
+              </label>
+              <textarea
+                value={newTeam.description}
+                onChange={(e) => setNewTeam((prev) => ({ ...prev, description: e.target.value }))}
+                placeholder="Describe your team's mission, goals, or project idea..."
+                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-sm resize-none h-24"
+                maxLength={500}
+              />
+              <div className="flex justify-between mt-1">
+                {newTeam.description.length > 0 && newTeam.description.length < 10 ? (
+                  <p className="text-xs text-red-500">Description must be at least 10 characters</p>
+                ) : (
+                  <span />
+                )}
+                <p className="text-xs text-gray-400">{newTeam.description.length}/500</p>
+              </div>
+            </div>
+
+            {/* Looking For Skills */}
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                Looking For <span className="text-red-500">*</span>
+              </label>
+              <p className="text-xs text-gray-500 mb-3">Select skills you're looking for in teammates</p>
+              <div className="flex flex-wrap gap-2">
+                {SKILLS.map((skill) => {
+                  const isSelected = newTeam.lookingFor.includes(skill);
+                  const sideConfig = ALLEGIANCE_CONFIG[newTeam.side];
+                  return (
+                    <button
+                      key={skill}
+                      type="button"
+                      onClick={() => toggleSkill(skill)}
+                      className={`px-3 py-1.5 text-xs font-medium border-2 transition-all
+                        ${newTeam.side === 'ai' ? '' : 'rounded-full'}
+                        ${isSelected
+                          ? `text-white ${newTeam.side === 'ai' ? 'border-dashed' : ''}`
+                          : 'border-gray-200 text-gray-600 hover:border-gray-400'
+                        }`}
+                      style={isSelected ? {
+                        backgroundColor: sideConfig.color,
+                        borderColor: sideConfig.color,
+                      } : {}}
+                    >
+                      {skill}
+                    </button>
+                  );
+                })}
+              </div>
+              {newTeam.lookingFor.length === 0 && (
+                <p className="text-xs text-red-500 mt-2">Select at least one skill</p>
+              )}
+            </div>
+
+            {/* Max Members */}
+            <div className="mb-6">
+              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                Max Team Size
+              </label>
+              <div className="flex items-center gap-4">
+                <input
+                  type="range"
+                  min="2"
+                  max="6"
+                  value={newTeam.maxMembers}
+                  onChange={(e) => setNewTeam((prev) => ({ ...prev, maxMembers: parseInt(e.target.value, 10) }))}
+                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                />
+                <div className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded">
+                  <Users className="w-4 h-4 text-gray-500" />
+                  <span className="font-bold text-gray-900">{newTeam.maxMembers}</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => setShowCreateTeamModal(false)}
+                className="flex-1 py-3 border-2 border-gray-200 text-gray-600 font-bold text-sm
+                           hover:border-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleCreateTeam}
+                disabled={!isFormValid || isCreatingTeam}
+                className={`flex-1 py-3 font-bold text-sm transition-all flex items-center justify-center gap-2
+                  ${isFormValid && !isCreatingTeam
+                    ? 'bg-gray-900 text-white hover:bg-gray-800'
+                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
+              >
+                {isCreatingTeam ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                    Creating...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4" />
+                    Create Team
+                  </>
+                )}
               </button>
             </div>
           </div>
