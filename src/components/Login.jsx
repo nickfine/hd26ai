@@ -120,27 +120,6 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                 </div>
                 
                 <div className="space-y-3">
-                  {/* Participant / Captain */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      onDemoLogin({
-                        id: 101,
-                        name: 'Alex Chen',
-                        email: 'alex.chen@company.com',
-                        skills: ['Backend Development', 'DevOps'],
-                        allegiance: 'ai',
-                        role: 'participant',
-                      });
-                    }}
-                    className="w-full py-3 bg-cyan-500 text-white font-bold
-                               hover:bg-cyan-600 transition-colors text-sm
-                               flex items-center justify-center gap-2"
-                  >
-                    <Crown className="w-4 h-4" />
-                    Team Captain
-                  </button>
-                  
                   {/* Participant / Team Member */}
                   <button
                     type="button"
@@ -160,6 +139,27 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                   >
                     <User className="w-4 h-4" />
                     Team Member
+                  </button>
+                  
+                  {/* Participant / Captain */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      onDemoLogin({
+                        id: 101,
+                        name: 'Alex Chen',
+                        email: 'alex.chen@company.com',
+                        skills: ['Backend Development', 'DevOps'],
+                        allegiance: 'ai',
+                        role: 'participant',
+                      });
+                    }}
+                    className="w-full py-3 bg-cyan-500 text-white font-bold
+                               hover:bg-cyan-600 transition-colors text-sm
+                               flex items-center justify-center gap-2"
+                  >
+                    <Crown className="w-4 h-4" />
+                    Team Captain
                   </button>
                   
                   {/* Ambassador */}
