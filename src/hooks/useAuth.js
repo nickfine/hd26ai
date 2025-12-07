@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { supabase, signInWithGoogle, signInWithGitHub, signOut } from '../lib/supabase';
+import { supabase, signInWithGoogle, signOut } from '../lib/supabase';
 
 /**
  * Custom hook for authentication with Supabase
@@ -117,20 +117,6 @@ export function useAuth() {
     // Loading will be set to false by auth state change listener
   }, []);
 
-  // Sign in with GitHub
-  const handleGitHubSignIn = useCallback(async () => {
-    setError(null);
-    setLoading(true);
-    
-    const { error: signInError } = await signInWithGitHub();
-    
-    if (signInError) {
-      setError(signInError.message);
-      setLoading(false);
-    }
-    // Loading will be set to false by auth state change listener
-  }, []);
-
   // Sign out
   const handleSignOut = useCallback(async () => {
     setError(null);
@@ -199,7 +185,6 @@ export function useAuth() {
     
     // Actions
     signInWithGoogle: handleGoogleSignIn,
-    signInWithGitHub: handleGitHubSignIn,
     signOut: handleSignOut,
     updateProfile,
     refreshProfile,

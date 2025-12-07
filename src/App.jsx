@@ -453,8 +453,6 @@ function App() {
   const handleOAuthSignIn = useCallback(async (provider) => {
     if (provider === 'google') {
       await auth.signInWithGoogle();
-    } else if (provider === 'github') {
-      await auth.signInWithGitHub();
     }
   }, [auth]);
 
