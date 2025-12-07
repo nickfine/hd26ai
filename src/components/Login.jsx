@@ -1,6 +1,17 @@
 import { useState } from 'react';
-import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User } from 'lucide-react';
+import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User, UserPlus, UsersRound, Code, Send, Vote, Scale, Trophy } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
+
+// Event phases for demo mode
+const EVENT_PHASES = [
+  { id: 'registration', label: 'Register', icon: UserPlus },
+  { id: 'team_formation', label: 'Teams', icon: UsersRound },
+  { id: 'hacking', label: 'Hacking', icon: Code },
+  { id: 'submission', label: 'Submit', icon: Send },
+  { id: 'voting', label: 'Voting', icon: Vote },
+  { id: 'judging', label: 'Judging', icon: Scale },
+  { id: 'results', label: 'Results', icon: Trophy },
+];
 
 // Google Icon SVG
 const GoogleIcon = () => (
@@ -26,6 +37,7 @@ const GoogleIcon = () => (
 
 function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, authError }) {
   const [showDemoMode, setShowDemoMode] = useState(false);
+  const [selectedPhase, setSelectedPhase] = useState('hacking');
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -113,9 +125,44 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
             {/* Demo Mode - Role Selection */}
             {showDemoMode && (
               <div className="mt-3 p-4 border-2 border-dashed border-gray-300 bg-gray-50">
-                <div className="flex items-center gap-2 mb-4">
+                {/* Phase Selector */}
+                <div className="mb-5">
+                  <span className="text-xs font-bold uppercase tracking-wide text-gray-600 block mb-3">
+                    Event Phase
+                  </span>
+                  <div className="grid grid-cols-7 gap-1">
+                    {EVENT_PHASES.map((phase, index) => {
+                      const Icon = phase.icon;
+                      const isSelected = selectedPhase === phase.id;
+                      return (
+                        <button
+                          key={phase.id}
+                          type="button"
+                          onClick={() => setSelectedPhase(phase.id)}
+                          className={`flex flex-col items-center justify-center py-2 px-1 rounded transition-all
+                            ${isSelected 
+                              ? 'bg-gray-900 text-white' 
+                              : 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 border border-gray-200'
+                            }`}
+                          title={phase.label}
+                        >
+                          <Icon className="w-4 h-4 mb-1" />
+                          <span className="text-[9px] font-medium leading-tight">{phase.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <div className="mt-2 text-center">
+                    <span className="text-xs text-gray-500">
+                      Simulating: <span className="font-semibold text-gray-700">{EVENT_PHASES.find(p => p.id === selectedPhase)?.label}</span> phase
+                    </span>
+                  </div>
+                </div>
+
+                {/* Role Selector */}
+                <div className="flex items-center gap-2 mb-3">
                   <span className="text-xs font-bold uppercase tracking-wide text-gray-600">
-                    Select Demo Role
+                    Select Role
                   </span>
                 </div>
                 
@@ -131,6 +178,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                         skills: ['Frontend Development', 'UI/UX Design'],
                         allegiance: 'human',
                         role: 'participant',
+                        phase: selectedPhase,
                       });
                     }}
                     className="w-full py-3 bg-blue-500 text-white font-bold
@@ -152,6 +200,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                         skills: ['Backend Development', 'DevOps'],
                         allegiance: 'ai',
                         role: 'participant',
+                        phase: selectedPhase,
                       });
                     }}
                     className="w-full py-3 bg-cyan-500 text-white font-bold
@@ -173,6 +222,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                         skills: ['Product Management'],
                         allegiance: 'human',
                         role: 'ambassador',
+                        phase: selectedPhase,
                       });
                     }}
                     className="w-full py-3 bg-green-500 text-white font-bold
@@ -194,6 +244,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                         skills: [],
                         allegiance: 'neutral',
                         role: 'judge',
+                        phase: selectedPhase,
                       });
                     }}
                     className="w-full py-3 bg-amber-500 text-white font-bold
@@ -215,6 +266,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                         skills: [],
                         allegiance: 'neutral',
                         role: 'admin',
+                        phase: selectedPhase,
                       });
                     }}
                     className="w-full py-3 bg-purple-600 text-white font-bold

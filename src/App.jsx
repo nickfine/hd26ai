@@ -459,6 +459,10 @@ function App() {
   // Demo login handler
   const handleDemoLogin = useCallback((userData) => {
     createUser(userData);
+    // Set the event phase if provided
+    if (userData.phase) {
+      setMockEventPhase(userData.phase);
+    }
     setCurrentView('dashboard');
   }, [createUser]);
 
