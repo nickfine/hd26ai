@@ -244,6 +244,7 @@ function Dashboard({
                     if (item.id === 'teams') onNavigate('marketplace', { tab: 'teams' });
                     if (item.id === 'rules') onNavigate('rules');
                     if (item.id === 'submission') onNavigate('submission');
+                    if (item.id === 'voting') onNavigate('voting');
                   }}
                   className={`w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all
                     ${isActive 
@@ -344,6 +345,26 @@ function Dashboard({
                   Free Agents
                 </button>
               </div>
+            </div>
+
+            {/* Project Gallery Feature Box */}
+            <div className="p-5 border-2 border-amber-400 bg-amber-50">
+              <div className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-2">
+                Project Gallery
+              </div>
+              <h3 className="text-xl font-black text-amber-900 mb-3">Vote for Projects</h3>
+              <p className="text-sm text-amber-700 mb-4">
+                Browse all submitted hackathon projects and vote for your favorites!
+              </p>
+              <button
+                type="button"
+                onClick={() => onNavigate('voting')}
+                className="w-full py-3 bg-amber-400 text-amber-900 font-bold text-sm
+                           hover:bg-amber-500 transition-all flex items-center justify-center gap-2"
+              >
+                <Vote className="w-4 h-4" />
+                Browse &amp; Vote
+              </button>
             </div>
 
             {/* Live Activity Feed Widget */}

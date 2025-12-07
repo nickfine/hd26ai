@@ -9,6 +9,10 @@ import TeamDetail from './components/TeamDetail';
 import Profile from './components/Profile';
 import Rules from './components/Rules';
 import Submission from './components/Submission';
+import Voting from './components/Voting';
+
+// Max votes per user for voting phase
+const MAX_VOTES = 5;
 
 function App() {
   // Global State
@@ -18,6 +22,7 @@ function App() {
   const [mockTeams, setMockTeams] = useState(MOCK_TEAMS);
   const [freeAgents, setFreeAgents] = useState(MOCK_FREE_AGENTS);
   const [marketplaceInitialTab, setMarketplaceInitialTab] = useState('teams');
+  const [userVotes, setUserVotes] = useState([]); // Array of team IDs the user has voted for
 
   // Update a specific team
   const updateTeam = (teamId, updates) => {
@@ -145,6 +150,22 @@ function App() {
     );
   };
 
+  // Handle voting for a project
+  const handleVote = (teamId) => {
+    setUserVotes((prev) => {
+      const hasVoted = prev.includes(teamId);
+      if (hasVoted) {
+        // Remove vote (toggle off)
+        return prev.filter((id) => id !== teamId);
+      } else if (prev.length < MAX_VOTES) {
+        // Add vote if under limit
+        return [...prev, teamId];
+      }
+      // At vote limit, do nothing
+      return prev;
+    });
+  };
+
   // Navigation handler for team detail
   const navigateToTeam = (teamId) => {
     setSelectedTeamId(teamId);
@@ -256,6 +277,17 @@ function App() {
             allegianceStyle={getAllegianceStyle()}
             onNavigate={setCurrentView}
             onUpdateSubmission={handleUpdateSubmission}
+          />
+        );
+      case 'voting':
+        return (
+          <Voting
+            user={user}
+            teams={mockTeams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+            userVotes={userVotes}
+            onVote={handleVote}
           />
         );
       case 'team-detail': {
