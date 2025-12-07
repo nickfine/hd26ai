@@ -1,87 +1,102 @@
+/**
+ * Landing Page
+ * The entry point for the HackDay app, introducing the Human vs AI theme.
+ */
+
 import { Cpu, Heart } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
+import Button from './ui/Button';
+import Card from './ui/Card';
+import { Container, HStack, VStack } from './layout';
 
 function Landing({ onNavigate }) {
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-surface-1 flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-200 px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 sm:h-8 w-auto" />
-            <span className="font-bold text-base sm:text-lg tracking-tight">HACKDAY 2026</span>
-          </div>
-          <span className="text-xs text-gray-500 uppercase tracking-widest hidden sm:inline">
-            The Arena Awaits
-          </span>
-        </div>
+      <header className="border-b border-neutral-200 px-4 sm:px-6 py-4">
+        <Container size="lg" padding="none">
+          <HStack justify="between" align="center">
+            <HStack gap="2" align="center">
+              <img src={adaptLogo} alt="Adaptavist" className="h-6 sm:h-8 w-auto" />
+              <span className="font-bold text-base sm:text-lg tracking-tight">HACKDAY 2026</span>
+            </HStack>
+            <span className="text-xs text-neutral-500 uppercase tracking-widest hidden sm:inline">
+              The Arena Awaits
+            </span>
+          </HStack>
+        </Container>
       </header>
 
       {/* Hero */}
       <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-0">
-        <div className="max-w-3xl mx-auto text-center">
-          {/* VS Badge */}
-          <div className="flex items-center justify-center gap-3 sm:gap-6 mb-6 sm:mb-8">
-            <div className="flex items-center gap-1 sm:gap-2 text-cyan-500">
-              <Cpu className="w-6 sm:w-10 h-6 sm:h-10" />
-              <span className="text-lg sm:text-2xl font-mono font-bold">AI</span>
-            </div>
-            <div className="w-10 sm:w-16 h-10 sm:h-16 rounded-full border-2 sm:border-4 border-gray-900 flex items-center justify-center">
-              <span className="text-sm sm:text-xl font-black">VS</span>
-            </div>
-            <div className="flex items-center gap-1 sm:gap-2 text-green-500">
-              <span className="text-lg sm:text-2xl font-bold">HUMAN</span>
-              <Heart className="w-6 sm:w-10 h-6 sm:h-10" />
-            </div>
-          </div>
+        <Container size="md" padding="none">
+          <VStack align="center" gap="6">
+            {/* VS Badge */}
+            <HStack gap="3" align="center" className="sm:gap-6">
+              <HStack gap="1" align="center" className="text-ai-500 sm:gap-2">
+                <Cpu className="w-6 sm:w-10 h-6 sm:h-10" />
+                <span className="text-lg sm:text-2xl font-mono font-bold">AI</span>
+              </HStack>
+              <div className="w-10 sm:w-16 h-10 sm:h-16 rounded-full border-2 sm:border-4 border-neutral-900 flex items-center justify-center">
+                <span className="text-sm sm:text-xl font-black">VS</span>
+              </div>
+              <HStack gap="1" align="center" className="text-human-500 sm:gap-2">
+                <span className="text-lg sm:text-2xl font-bold">HUMAN</span>
+                <Heart className="w-6 sm:w-10 h-6 sm:h-10" />
+              </HStack>
+            </HStack>
 
-          {/* Title */}
-          <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-gray-900 mb-3 sm:mb-4 tracking-tight">
-            THE WAR IS ON
-          </h1>
-          <p className="text-base sm:text-xl text-gray-600 mb-2">
-            Choose your side. Build your team. Ship something legendary.
-          </p>
-          <p className="text-xs sm:text-sm text-gray-400 mb-8 sm:mb-12">
-            Corporate HackDay 2026 — Where allegiances are tested
-          </p>
+            {/* Title */}
+            <VStack align="center" gap="2">
+              <h1 className="text-3xl sm:text-5xl md:text-7xl font-black text-neutral-900 tracking-tight text-center">
+                THE WAR IS ON
+              </h1>
+              <p className="text-base sm:text-xl text-neutral-600 text-center">
+                Choose your side. Build your team. Ship something legendary.
+              </p>
+              <p className="text-xs sm:text-sm text-neutral-400 text-center">
+                Corporate HackDay 2026 — Where allegiances are tested
+              </p>
+            </VStack>
 
-          {/* CTA */}
-          <button
-            type="button"
-            onClick={() => onNavigate('login')}
-            className="group relative px-8 sm:px-12 py-3 sm:py-4 bg-gray-900 text-white font-bold text-base sm:text-lg 
-                       hover:bg-gray-800 transition-all duration-200
-                       border-2 border-gray-900 hover:border-gray-700"
-          >
-            <span className="relative z-10">ENTER THE ARENA</span>
-            <div className="absolute inset-0 bg-gradient-to-r from-cyan-500/20 to-green-500/20 
-                            opacity-0 group-hover:opacity-100 transition-opacity" />
-          </button>
+            {/* CTA */}
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => onNavigate('login')}
+              className="relative group px-8 sm:px-12"
+            >
+              <span className="relative z-10">ENTER THE ARENA</span>
+              <div className="absolute inset-0 bg-gradient-to-r from-ai-500/20 to-human-500/20 
+                              opacity-0 group-hover:opacity-100 transition-opacity" />
+            </Button>
 
-          {/* Stats */}
-          <div className="mt-10 sm:mt-16 grid grid-cols-3 gap-3 sm:gap-8 text-center">
-            <div className="border border-gray-200 p-3 sm:p-4">
-              <div className="text-xl sm:text-3xl font-bold text-gray-900">48</div>
-              <div className="text-xs text-gray-500 uppercase tracking-wide">Hours</div>
-            </div>
-            <div className="border border-gray-200 p-3 sm:p-4">
-              <div className="text-xl sm:text-3xl font-bold text-gray-900">∞</div>
-              <div className="text-xs text-gray-500 uppercase tracking-wide">Possibilities</div>
-            </div>
-            <div className="border border-gray-200 p-3 sm:p-4">
-              <div className="text-xl sm:text-3xl font-bold text-gray-900">1</div>
-              <div className="text-xs text-gray-500 uppercase tracking-wide">Winner</div>
-            </div>
-          </div>
-        </div>
+            {/* Stats */}
+            <HStack gap="3" className="sm:gap-8 mt-4 sm:mt-8">
+              <Card variant="outlined" padding="sm" className="text-center min-w-[80px] sm:min-w-[100px]">
+                <div className="text-xl sm:text-3xl font-bold text-neutral-900">48</div>
+                <div className="text-xs text-neutral-500 uppercase tracking-wide">Hours</div>
+              </Card>
+              <Card variant="outlined" padding="sm" className="text-center min-w-[80px] sm:min-w-[100px]">
+                <div className="text-xl sm:text-3xl font-bold text-neutral-900">∞</div>
+                <div className="text-xs text-neutral-500 uppercase tracking-wide">Possibilities</div>
+              </Card>
+              <Card variant="outlined" padding="sm" className="text-center min-w-[80px] sm:min-w-[100px]">
+                <div className="text-xl sm:text-3xl font-bold text-neutral-900">1</div>
+                <div className="text-xs text-neutral-500 uppercase tracking-wide">Winner</div>
+              </Card>
+            </HStack>
+          </VStack>
+        </Container>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto text-center text-xs text-gray-400">
-          WIREFRAME PROTOTYPE — LOW FIDELITY
-        </div>
+      <footer className="border-t border-neutral-200 px-4 sm:px-6 py-4">
+        <Container size="lg" padding="none">
+          <div className="text-center text-xs text-neutral-400">
+            WIREFRAME PROTOTYPE — LOW FIDELITY
+          </div>
+        </Container>
       </footer>
     </div>
   );

@@ -13,7 +13,8 @@ import {
   Mail,
   Check,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, SKILLS } from '../data/mockData';
+import { SKILLS } from '../data/mockData';
+import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 function Marketplace({ 

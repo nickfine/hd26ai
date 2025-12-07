@@ -1,5 +1,96 @@
+/* Design System Tokens */
+@import './styles/tokens.css';
+
+/* Tailwind Base Layers */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* =============================================================================
+   BASE LAYER OVERRIDES
+   ============================================================================= */
 
+@layer base {
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Better default focus styles */
+  :focus-visible {
+    outline: 2px solid var(--focus-ring-color);
+    outline-offset: 2px;
+  }
+
+  /* Remove default button styles */
+  button {
+    font: inherit;
+  }
+}
+
+/* =============================================================================
+   COMPONENT LAYER UTILITIES
+   ============================================================================= */
+
+@layer components {
+  /* Card base styles */
+  .card {
+    @apply bg-white border-2 border-neutral-200 transition-all duration-200;
+  }
+
+  .card-elevated {
+    @apply bg-white border border-neutral-200 shadow-md hover:shadow-lg transition-shadow duration-200;
+  }
+
+  /* Button base resets */
+  .btn {
+    @apply inline-flex items-center justify-center font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2;
+  }
+
+  /* Input base styles */
+  .input {
+    @apply w-full px-3 py-2 border-2 border-neutral-300 bg-white text-neutral-900 placeholder-neutral-400 transition-colors duration-200 focus:outline-none focus:border-neutral-900;
+  }
+
+  /* Badge base styles */
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 text-xs font-bold;
+  }
+}
+
+/* =============================================================================
+   UTILITY LAYER ADDITIONS
+   ============================================================================= */
+
+@layer utilities {
+  /* Text balance for headings */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Allegiance-specific border styles */
+  .border-allegiance-human {
+    border-style: solid;
+    border-radius: var(--radius-human);
+  }
+
+  .border-allegiance-ai {
+    border-style: dashed;
+    border-radius: var(--radius-ai);
+  }
+
+  .border-allegiance-neutral {
+    border-style: solid;
+    border-radius: var(--radius-neutral);
+  }
+
+  /* Hide scrollbar but allow scrolling */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}

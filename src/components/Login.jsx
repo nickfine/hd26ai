@@ -1,6 +1,16 @@
+/**
+ * Login Page
+ * Authentication page with OAuth and demo mode options.
+ */
+
 import { useState } from 'react';
 import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User, UserPlus, UsersRound, Code, Send, Vote, Scale, Trophy, Sparkles } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
+import Button from './ui/Button';
+import Card from './ui/Card';
+import Alert from './ui/Alert';
+import { Container, HStack, VStack } from './layout';
+import { cn } from '../lib/design-system';
 
 // Event phases for demo mode
 const EVENT_PHASES = [
@@ -35,87 +45,97 @@ const GoogleIcon = () => (
   </svg>
 );
 
+// Demo role button component
+const DemoRoleButton = ({ icon: Icon, label, onClick, variant = 'primary', className }) => (
+  <button
+    type="button"
+    onClick={onClick}
+    className={cn(
+      'w-full py-3 text-white font-bold transition-colors text-sm flex items-center justify-center gap-2',
+      className
+    )}
+  >
+    <Icon className="w-4 h-4" />
+    {label}
+  </button>
+);
+
 function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSignIn, authLoading, authError }) {
   const [showDemoMode, setShowDemoMode] = useState(false);
   const [selectedPhase, setSelectedPhase] = useState('team_formation');
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-surface-1 flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-200 px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => onNavigate('landing')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:inline">Back</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-            <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
-          </div>
-        </div>
+      <header className="border-b border-neutral-200 px-4 sm:px-6 py-4">
+        <Container size="lg" padding="none">
+          <HStack justify="between" align="center">
+            <button
+              type="button"
+              onClick={() => onNavigate('landing')}
+              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm hidden sm:inline">Back</span>
+            </button>
+            <HStack gap="2" align="center">
+              <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
+              <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
+            </HStack>
+          </HStack>
+        </Container>
       </header>
 
       {/* Main */}
       <main className="flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-12">
         <div className="w-full max-w-md">
           {/* Card */}
-          <div className="border-2 border-gray-900 bg-white p-6 sm:p-8">
-            <div className="text-center mb-6 sm:mb-8">
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900 mb-2">
-                AUTHENTICATE
-              </h1>
-              <p className="text-sm text-gray-500">
-                Sign in to enter the arena
+          <Card variant="outlined" padding="lg">
+            <VStack align="center" gap="6">
+              <VStack align="center" gap="2">
+                <h1 className="text-xl sm:text-2xl font-black text-neutral-900">
+                  AUTHENTICATE
+                </h1>
+                <p className="text-sm text-neutral-500">
+                  Sign in to enter the arena
+                </p>
+              </VStack>
+
+              {/* Error Message */}
+              {authError && (
+                <Alert variant="error" className="w-full">
+                  {authError}
+                </Alert>
+              )}
+
+              {/* OAuth Buttons */}
+              <VStack gap="3" className="w-full">
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  fullWidth
+                  onClick={() => onOAuthSignIn?.('google')}
+                  disabled={authLoading}
+                  leftIcon={authLoading ? <Loader2 className="animate-spin" /> : <GoogleIcon />}
+                  className="border-neutral-200 hover:border-neutral-400"
+                >
+                  {authLoading ? 'Signing in...' : 'Continue with Google'}
+                </Button>
+              </VStack>
+
+              {/* Info text */}
+              <p className="text-xs text-neutral-500 text-center">
+                By signing in, you agree to participate in HackDay 2026
               </p>
-            </div>
-
-            {/* Error Message */}
-            {authError && (
-              <div className="mb-6 p-3 bg-red-50 border-2 border-red-200 text-red-700 text-sm">
-                {authError}
-              </div>
-            )}
-
-            {/* OAuth Buttons */}
-            <div className="space-y-3">
-              {/* Google Sign In */}
-              <button
-                type="button"
-                onClick={() => onOAuthSignIn?.('google')}
-                disabled={authLoading}
-                className="w-full py-3 px-4 border-2 border-gray-200 bg-white
-                           hover:border-gray-400 hover:bg-gray-50 transition-all
-                           flex items-center justify-center gap-3 font-medium
-                           disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {authLoading ? (
-                  <Loader2 className="w-5 h-5 animate-spin text-gray-400" />
-                ) : (
-                  <>
-                    <GoogleIcon />
-                    <span className="text-gray-700">Continue with Google</span>
-                  </>
-                )}
-              </button>
-
-            </div>
-
-            {/* Info text */}
-            <p className="text-xs text-gray-500 text-center mt-4">
-              By signing in, you agree to participate in HackDay 2026
-            </p>
-          </div>
+            </VStack>
+          </Card>
 
           {/* Demo Mode Toggle */}
           <div className="mt-4 sm:mt-6">
             <button
               type="button"
               onClick={() => setShowDemoMode(!showDemoMode)}
-              className="w-full py-2 text-sm text-gray-500 hover:text-gray-700 
+              className="w-full py-2 text-sm text-neutral-500 hover:text-neutral-700 
                          transition-colors flex items-center justify-center gap-2"
             >
               <Users className="w-4 h-4" />
@@ -124,14 +144,14 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
 
             {/* Demo Mode - Role Selection */}
             {showDemoMode && (
-              <div className="mt-3 p-4 border-2 border-dashed border-gray-300 bg-gray-50">
+              <Card variant="ghost" padding="md" className="mt-3 border-2 border-dashed border-neutral-300 bg-surface-1">
                 {/* Phase Selector */}
                 <div className="mb-5">
-                  <span className="text-xs font-bold uppercase tracking-wide text-gray-600 block mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wide text-neutral-600 block mb-3">
                     Event Phase
                   </span>
                   <div className="grid grid-cols-7 gap-1">
-                    {EVENT_PHASES.map((phase, index) => {
+                    {EVENT_PHASES.map((phase) => {
                       const Icon = phase.icon;
                       const isSelected = selectedPhase === phase.id;
                       return (
@@ -139,11 +159,12 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                           key={phase.id}
                           type="button"
                           onClick={() => setSelectedPhase(phase.id)}
-                          className={`flex flex-col items-center justify-center py-2 px-1 rounded transition-all
-                            ${isSelected 
-                              ? 'bg-gray-900 text-white' 
-                              : 'bg-white text-gray-500 hover:bg-gray-100 hover:text-gray-700 border border-gray-200'
-                            }`}
+                          className={cn(
+                            'flex flex-col items-center justify-center py-2 px-1 rounded transition-all',
+                            isSelected 
+                              ? 'bg-neutral-900 text-white' 
+                              : 'bg-white text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 border border-neutral-200'
+                          )}
                           title={phase.label}
                         >
                           <Icon className="w-4 h-4 mb-1" />
@@ -153,23 +174,24 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                     })}
                   </div>
                   <div className="mt-2 text-center">
-                    <span className="text-xs text-gray-500">
-                      Simulating: <span className="font-semibold text-gray-700">{EVENT_PHASES.find(p => p.id === selectedPhase)?.label}</span> phase
+                    <span className="text-xs text-neutral-500">
+                      Simulating: <span className="font-semibold text-neutral-700">{EVENT_PHASES.find(p => p.id === selectedPhase)?.label}</span> phase
                     </span>
                   </div>
                 </div>
 
                 {/* Role Selector */}
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-bold uppercase tracking-wide text-gray-600">
+                  <span className="text-xs font-bold uppercase tracking-wide text-neutral-600">
                     Select Role
                   </span>
                 </div>
                 
-                <div className="space-y-3">
+                <VStack gap="3">
                   {/* New User - Goes to Onboarding */}
-                  <button
-                    type="button"
+                  <DemoRoleButton
+                    icon={Sparkles}
+                    label="New User (Onboarding)"
                     onClick={() => {
                       if (onDemoOnboarding) {
                         onDemoOnboarding(selectedPhase);
@@ -186,17 +208,13 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         onNavigate('onboarding');
                       }
                     }}
-                    className="w-full py-3 bg-gradient-to-r from-pink-500 to-orange-500 text-white font-bold
-                               hover:from-pink-600 hover:to-orange-600 transition-colors text-sm
-                               flex items-center justify-center gap-2"
-                  >
-                    <Sparkles className="w-4 h-4" />
-                    New User (Onboarding)
-                  </button>
+                    className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600"
+                  />
                   
                   {/* Participant / Team Member */}
-                  <button
-                    type="button"
+                  <DemoRoleButton
+                    icon={User}
+                    label="Team Member"
                     onClick={() => {
                       onDemoLogin({
                         id: 202,
@@ -208,17 +226,13 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="w-full py-3 bg-blue-500 text-white font-bold
-                               hover:bg-blue-600 transition-colors text-sm
-                               flex items-center justify-center gap-2"
-                  >
-                    <User className="w-4 h-4" />
-                    Team Member
-                  </button>
+                    className="bg-blue-500 hover:bg-blue-600"
+                  />
                   
                   {/* Participant / Captain */}
-                  <button
-                    type="button"
+                  <DemoRoleButton
+                    icon={Crown}
+                    label="Team Captain"
                     onClick={() => {
                       onDemoLogin({
                         id: 101,
@@ -230,17 +244,13 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="w-full py-3 bg-cyan-500 text-white font-bold
-                               hover:bg-cyan-600 transition-colors text-sm
-                               flex items-center justify-center gap-2"
-                  >
-                    <Crown className="w-4 h-4" />
-                    Team Captain
-                  </button>
+                    className="bg-ai-500 hover:bg-ai-600"
+                  />
                   
                   {/* Ambassador */}
-                  <button
-                    type="button"
+                  <DemoRoleButton
+                    icon={Megaphone}
+                    label="Ambassador"
                     onClick={() => {
                       onDemoLogin({
                         id: 2001,
@@ -252,17 +262,13 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="w-full py-3 bg-green-500 text-white font-bold
-                               hover:bg-green-600 transition-colors text-sm
-                               flex items-center justify-center gap-2"
-                  >
-                    <Megaphone className="w-4 h-4" />
-                    Ambassador
-                  </button>
+                    className="bg-human-500 hover:bg-human-600"
+                  />
                   
                   {/* Judge */}
-                  <button
-                    type="button"
+                  <DemoRoleButton
+                    icon={Gavel}
+                    label="Judge"
                     onClick={() => {
                       onDemoLogin({
                         id: 3001,
@@ -274,17 +280,13 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="w-full py-3 bg-amber-500 text-white font-bold
-                               hover:bg-amber-600 transition-colors text-sm
-                               flex items-center justify-center gap-2"
-                  >
-                    <Gavel className="w-4 h-4" />
-                    Judge
-                  </button>
+                    className="bg-accent-500 hover:bg-accent-600"
+                  />
                   
                   {/* Admin */}
-                  <button
-                    type="button"
+                  <DemoRoleButton
+                    icon={Shield}
+                    label="Admin"
                     onClick={() => {
                       onDemoLogin({
                         id: 4001,
@@ -296,19 +298,14 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         phase: selectedPhase,
                       });
                     }}
-                    className="w-full py-3 bg-purple-600 text-white font-bold
-                               hover:bg-purple-700 transition-colors text-sm
-                               flex items-center justify-center gap-2"
-                  >
-                    <Shield className="w-4 h-4" />
-                    Admin
-                  </button>
-                </div>
+                    className="bg-special-600 hover:bg-special-700"
+                  />
+                </VStack>
                 
-                <p className="text-xs text-gray-500 mt-3 text-center">
+                <p className="text-xs text-neutral-500 mt-3 text-center">
                   Demo mode uses mock data — no authentication required
                 </p>
-              </div>
+              </Card>
             )}
           </div>
         </div>

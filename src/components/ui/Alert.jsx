@@ -1,0 +1,283 @@
+/**
+ * Alert Component
+ * Display important messages, notifications, and feedback.
+ * 
+ * @example
+ * <Alert variant="success">Operation completed!</Alert>
+ * <Alert variant="error" title="Error" dismissible onDismiss={() => {}}>
+ *   Something went wrong.
+ * </Alert>
+ */
+
+import { forwardRef, useState } from 'react';
+import { 
+  CheckCircle, 
+  AlertCircle, 
+  AlertTriangle, 
+  Info, 
+  X 
+} from 'lucide-react';
+import { cn } from '../../lib/design-system';
+
+/**
+ * @typedef {Object} AlertProps
+ * @property {'info' | 'success' | 'warning' | 'error'} [variant='info']
+ * @property {string} [title]
+ * @property {boolean} [dismissible=false]
+ * @property {() => void} [onDismiss]
+ * @property {boolean} [showIcon=true]
+ * @property {React.ReactNode} [icon]
+ * @property {React.ReactNode} [action]
+ * @property {string} [className]
+ * @property {React.ReactNode} children
+ */
+
+const VARIANT_STYLES = {
+  info: {
+    container: 'bg-blue-50 border-blue-200 text-blue-800',
+    icon: 'text-blue-500',
+    title: 'text-blue-900',
+    Icon: Info,
+  },
+  success: {
+    container: 'bg-success-50 border-success-200 text-success-800',
+    icon: 'text-success-500',
+    title: 'text-success-900',
+    Icon: CheckCircle,
+  },
+  warning: {
+    container: 'bg-warning-50 border-warning-200 text-warning-800',
+    icon: 'text-warning-500',
+    title: 'text-warning-900',
+    Icon: AlertTriangle,
+  },
+  error: {
+    container: 'bg-error-50 border-error-200 text-error-800',
+    icon: 'text-error-500',
+    title: 'text-error-900',
+    Icon: AlertCircle,
+  },
+};
+
+const Alert = forwardRef(({
+  variant = 'info',
+  title,
+  dismissible = false,
+  onDismiss,
+  showIcon = true,
+  icon,
+  action,
+  className,
+  children,
+  ...props
+}, ref) => {
+  const [isVisible, setIsVisible] = useState(true);
+  const styles = VARIANT_STYLES[variant] || VARIANT_STYLES.info;
+  const IconComponent = styles.Icon;
+
+  const handleDismiss = () => {
+    setIsVisible(false);
+    onDismiss?.();
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div
+      ref={ref}
+      role="alert"
+      className={cn(
+        'flex gap-3 p-4 border-2 rounded-lg',
+        styles.container,
+        className
+      )}
+      {...props}
+    >
+      {/* Icon */}
+      {showIcon && (
+        <div className="flex-shrink-0">
+          {icon || <IconComponent className={cn('w-5 h-5', styles.icon)} />}
+        </div>
+      )}
+
+      {/* Content */}
+      <div className="flex-1 min-w-0">
+        {title && (
+          <h4 className={cn('font-bold mb-1', styles.title)}>
+            {title}
+          </h4>
+        )}
+        <div className="text-sm">
+          {children}
+        </div>
+        {action && (
+          <div className="mt-3">
+            {action}
+          </div>
+        )}
+      </div>
+
+      {/* Dismiss Button */}
+      {dismissible && (
+        <button
+          type="button"
+          onClick={handleDismiss}
+          className="flex-shrink-0 p-1 -m-1 rounded hover:bg-black/5 transition-colors"
+          aria-label="Dismiss alert"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  );
+});
+
+Alert.displayName = 'Alert';
+
+/**
+ * InlineAlert - Compact alert for inline messages
+ */
+export const InlineAlert = forwardRef(({
+  variant = 'info',
+  showIcon = true,
+  className,
+  children,
+  ...props
+}, ref) => {
+  const styles = VARIANT_STYLES[variant] || VARIANT_STYLES.info;
+  const IconComponent = styles.Icon;
+
+  return (
+    <div
+      ref={ref}
+      role="alert"
+      className={cn(
+        'flex items-center gap-2 text-sm',
+        variant === 'error' && 'text-error-600',
+        variant === 'warning' && 'text-warning-600',
+        variant === 'success' && 'text-success-600',
+        variant === 'info' && 'text-blue-600',
+        className
+      )}
+      {...props}
+    >
+      {showIcon && (
+        <IconComponent className="w-4 h-4 flex-shrink-0" />
+      )}
+      <span>{children}</span>
+    </div>
+  );
+});
+
+InlineAlert.displayName = 'InlineAlert';
+
+/**
+ * Toast - Brief notification message (typically used with a toast system)
+ */
+export const Toast = forwardRef(({
+  variant = 'info',
+  title,
+  message,
+  dismissible = true,
+  onDismiss,
+  className,
+  ...props
+}, ref) => {
+  const styles = VARIANT_STYLES[variant] || VARIANT_STYLES.info;
+  const IconComponent = styles.Icon;
+
+  return (
+    <div
+      ref={ref}
+      role="alert"
+      className={cn(
+        'flex items-start gap-3 p-4 bg-white border-2 border-neutral-200 shadow-lg rounded-lg min-w-[300px] max-w-md',
+        'animate-slide-up',
+        className
+      )}
+      {...props}
+    >
+      <IconComponent className={cn('w-5 h-5 flex-shrink-0', styles.icon)} />
+      
+      <div className="flex-1 min-w-0">
+        {title && (
+          <h4 className="font-bold text-neutral-900 mb-0.5">
+            {title}
+          </h4>
+        )}
+        {message && (
+          <p className="text-sm text-neutral-600">
+            {message}
+          </p>
+        )}
+      </div>
+
+      {dismissible && (
+        <button
+          type="button"
+          onClick={onDismiss}
+          className="flex-shrink-0 p-1 -m-1 rounded hover:bg-neutral-100 transition-colors"
+          aria-label="Dismiss"
+        >
+          <X className="w-4 h-4 text-neutral-400" />
+        </button>
+      )}
+    </div>
+  );
+});
+
+Toast.displayName = 'Toast';
+
+/**
+ * Banner - Full-width alert banner
+ */
+export const Banner = forwardRef(({
+  variant = 'info',
+  dismissible = false,
+  onDismiss,
+  className,
+  children,
+  ...props
+}, ref) => {
+  const [isVisible, setIsVisible] = useState(true);
+  const styles = VARIANT_STYLES[variant] || VARIANT_STYLES.info;
+  const IconComponent = styles.Icon;
+
+  const handleDismiss = () => {
+    setIsVisible(false);
+    onDismiss?.();
+  };
+
+  if (!isVisible) return null;
+
+  return (
+    <div
+      ref={ref}
+      role="alert"
+      className={cn(
+        'flex items-center justify-center gap-3 px-4 py-3 text-sm',
+        styles.container,
+        className
+      )}
+      {...props}
+    >
+      <IconComponent className={cn('w-4 h-4 flex-shrink-0', styles.icon)} />
+      <span>{children}</span>
+      {dismissible && (
+        <button
+          type="button"
+          onClick={handleDismiss}
+          className="p-1 -m-1 rounded hover:bg-black/5 transition-colors ml-auto"
+          aria-label="Dismiss banner"
+        >
+          <X className="w-4 h-4" />
+        </button>
+      )}
+    </div>
+  );
+});
+
+Banner.displayName = 'Banner';
+
+export default Alert;
+

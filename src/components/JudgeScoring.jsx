@@ -14,7 +14,7 @@ import {
   MessageSquare,
   AlertCircle,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 // ============================================================================

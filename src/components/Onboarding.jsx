@@ -1,7 +1,18 @@
+/**
+ * Onboarding Page
+ * User profile setup: name, skills, allegiance selection, and auto-assign option.
+ */
+
 import { useState } from 'react';
-import { ArrowLeft, Cpu, Heart, Scale, Check, X, Plus, Users, Zap } from 'lucide-react';
+import { ArrowLeft, Cpu, Heart, Scale, Check, X, Plus, Users, Zap, Loader2 } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
-import { SKILLS, ALLEGIANCE_CONFIG } from '../data/mockData';
+import { SKILLS } from '../data/mockData';
+import Button from './ui/Button';
+import Card from './ui/Card';
+import Input from './ui/Input';
+import Badge from './ui/Badge';
+import { Container, HStack, VStack } from './layout';
+import { cn, getAllegianceConfig, ALLEGIANCE_CONFIG } from '../lib/design-system';
 
 // Max skills allowed
 const MAX_SKILLS = 5;
@@ -77,10 +88,8 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
     if (autoAssignEnabled && allegiance !== 'neutral' && onAutoAssign) {
       const result = await onAutoAssign(true);
       if (result?.success && result?.teamId) {
-        // User was assigned to a team, go to dashboard
         onNavigate('dashboard');
       } else {
-        // Assignment failed, still go to dashboard
         onNavigate('dashboard');
       }
     } else {
@@ -90,26 +99,28 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
     setIsSubmitting(false);
   };
 
-  const config = ALLEGIANCE_CONFIG[allegiance];
+  const config = getAllegianceConfig(allegiance);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-surface-1 flex flex-col">
       {/* Header */}
-      <header className="border-b border-gray-200 px-4 sm:px-6 py-4">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => onNavigate('login')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:inline">Back</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-            <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
-          </div>
-        </div>
+      <header className="border-b border-neutral-200 px-4 sm:px-6 py-4">
+        <Container size="lg" padding="none">
+          <HStack justify="between" align="center">
+            <button
+              type="button"
+              onClick={() => onNavigate('login')}
+              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span className="text-sm hidden sm:inline">Back</span>
+            </button>
+            <HStack gap="2" align="center">
+              <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
+              <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
+            </HStack>
+          </HStack>
+        </Container>
       </header>
 
       {/* Main */}
@@ -117,101 +128,95 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
         <div className="w-full max-w-2xl">
           {/* Card with dynamic border */}
           <div
-            className={`bg-white p-5 sm:p-8 transition-all duration-300 ${config.borderRadius} ${config.borderStyle}`}
+            className={cn(
+              'bg-white p-5 sm:p-8 transition-all duration-300',
+              config.borderRadius,
+              allegiance === 'ai' ? 'border-2 border-dashed' : 'border-2'
+            )}
             style={{ borderColor: config.borderColor }}
           >
-            <div className="text-center mb-6 sm:mb-8">
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900 mb-2">
+            <VStack align="center" gap="2" className="mb-6 sm:mb-8">
+              <h1 className="text-xl sm:text-2xl font-black text-neutral-900">
                 CONFIGURE YOUR AGENT
               </h1>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-neutral-500">
                 Set up your profile and declare your allegiance
               </p>
-            </div>
+            </VStack>
 
-            <div className="space-y-6 sm:space-y-8">
+            <VStack gap="6">
               {/* Display Name */}
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-2">
-                  Display Name
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter your name"
-                  className="w-full px-4 py-3 border-2 border-gray-200 
-                             focus:border-gray-900 focus:outline-none
-                             text-gray-900 placeholder:text-gray-400
-                             transition-colors text-base"
-                />
-              </div>
+              <Input
+                label="Display Name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Enter your name"
+                size="lg"
+              />
 
               {/* Skills */}
               <div>
-                <div className="flex items-center gap-2 mb-3">
-                  <label className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                <HStack gap="2" align="center" className="mb-3">
+                  <label className="text-xs font-bold text-neutral-700 uppercase tracking-wide">
                     Areas of Interest
                   </label>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-neutral-400">
                     ({selectedSkills.length}/{MAX_SKILLS})
                   </span>
-                </div>
+                </HStack>
 
                 {/* Selected Skills as Tags */}
                 {selectedSkills.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mb-4">
+                  <HStack gap="2" wrap className="mb-4">
                     {selectedSkills.map((skill) => (
-                      <span
+                      <Badge
                         key={skill}
-                        className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-gray-900 text-white rounded"
+                        variant="default"
+                        size="md"
+                        removable
+                        onRemove={() => removeSkill(skill)}
+                        className="bg-neutral-900 text-white border-neutral-900"
                       >
                         {skill}
-                        <button
-                          type="button"
-                          onClick={() => removeSkill(skill)}
-                          className="ml-1 hover:bg-gray-700 rounded-full p-0.5"
-                        >
-                          <X className="w-3 h-3" />
-                        </button>
-                      </span>
+                      </Badge>
                     ))}
-                  </div>
+                  </HStack>
                 )}
 
                 {/* Predefined Skills */}
                 <div className="mb-4">
-                  <p className="text-xs text-gray-500 mb-2">
+                  <p className="text-xs text-neutral-500 mb-2">
                     Suggested skills (click to add)
                   </p>
-                  <div className="flex flex-wrap gap-2">
+                  <HStack gap="2" wrap>
                     {SKILLS.filter(s => !selectedSkills.includes(s)).map((skill) => (
                       <button
                         type="button"
                         key={skill}
                         onClick={() => toggleSkill(skill)}
                         disabled={selectedSkills.length >= MAX_SKILLS}
-                        className={`px-3 py-1.5 text-sm border-2 transition-all rounded
-                          ${selectedSkills.length >= MAX_SKILLS
-                            ? 'border-gray-100 text-gray-300 cursor-not-allowed'
-                            : 'border-gray-200 text-gray-700 hover:border-gray-400'
-                          }`}
+                        className={cn(
+                          'px-3 py-1.5 text-sm border-2 transition-all rounded',
+                          selectedSkills.length >= MAX_SKILLS
+                            ? 'border-neutral-100 text-neutral-300 cursor-not-allowed'
+                            : 'border-neutral-200 text-neutral-700 hover:border-neutral-400'
+                        )}
                       >
-                        <span className="flex items-center gap-1">
+                        <HStack gap="1" align="center">
                           <Plus className="w-3 h-3" />
                           {skill}
-                        </span>
+                        </HStack>
                       </button>
                     ))}
-                  </div>
+                  </HStack>
                 </div>
 
                 {/* Custom Skill Input */}
                 <div>
-                  <p className="text-xs text-gray-500 mb-2">
+                  <p className="text-xs text-neutral-500 mb-2">
                     Or add your own
                   </p>
-                  <div className="flex gap-2">
+                  <HStack gap="2">
                     <input
                       type="text"
                       value={customSkillInput}
@@ -223,30 +228,32 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                       placeholder="Type a skill and press Enter"
                       maxLength={30}
                       disabled={selectedSkills.length >= MAX_SKILLS}
-                      className={`flex-1 px-3 py-2 border-2 focus:outline-none text-sm transition-colors rounded
-                        ${customSkillError 
-                          ? 'border-red-300 focus:border-red-500' 
-                          : 'border-gray-200 focus:border-gray-900'}
-                        ${selectedSkills.length >= MAX_SKILLS ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+                      className={cn(
+                        'flex-1 px-3 py-2 border-2 focus:outline-none text-sm transition-colors rounded',
+                        customSkillError 
+                          ? 'border-error-300 focus:border-error-500' 
+                          : 'border-neutral-200 focus:border-neutral-900',
+                        selectedSkills.length >= MAX_SKILLS && 'bg-neutral-50 cursor-not-allowed'
+                      )}
                     />
-                    <button
-                      type="button"
+                    <Button
+                      variant="primary"
+                      size="md"
                       onClick={handleAddCustomSkill}
                       disabled={selectedSkills.length >= MAX_SKILLS || !customSkillInput.trim()}
-                      className="px-4 py-2 text-sm font-medium bg-gray-900 text-white transition-colors disabled:opacity-50 rounded hover:bg-gray-800"
                     >
                       Add
-                    </button>
-                  </div>
+                    </Button>
+                  </HStack>
                   {customSkillError && (
-                    <p className="text-xs text-red-500 mt-1">{customSkillError}</p>
+                    <p className="text-xs text-error-500 mt-1">{customSkillError}</p>
                   )}
                 </div>
               </div>
 
-              {/* Allegiance Toggle - CRITICAL FEATURE */}
+              {/* Allegiance Toggle */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">
                   Declare Allegiance
                 </label>
                 <div className="grid grid-cols-3 gap-2 sm:gap-4">
@@ -254,26 +261,26 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                   <button
                     type="button"
                     onClick={() => setAllegiance('human')}
-                    className={`p-3 sm:p-4 border-2 transition-all duration-200 rounded-xl
-                      ${
-                        allegiance === 'human'
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-gray-400'
-                      }`}
+                    className={cn(
+                      'p-3 sm:p-4 border-2 transition-all duration-200 rounded-human',
+                      allegiance === 'human'
+                        ? 'border-human-500 bg-human-50'
+                        : 'border-neutral-200 hover:border-neutral-400'
+                    )}
                   >
                     <Heart
-                      className={`w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2 ${
-                        allegiance === 'human' ? 'text-green-500' : 'text-gray-400'
-                      }`}
+                      className={cn(
+                        'w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2',
+                        allegiance === 'human' ? 'text-human-500' : 'text-neutral-400'
+                      )}
                     />
-                    <div
-                      className={`text-xs sm:text-sm font-bold ${
-                        allegiance === 'human' ? 'text-green-600' : 'text-gray-600'
-                      }`}
-                    >
+                    <div className={cn(
+                      'text-xs sm:text-sm font-bold',
+                      allegiance === 'human' ? 'text-human-600' : 'text-neutral-600'
+                    )}>
                       HUMAN
                     </div>
-                    <div className="text-xs text-gray-400 mt-1 hidden sm:block">
+                    <div className="text-xs text-neutral-400 mt-1 hidden sm:block">
                       Organic creativity
                     </div>
                   </button>
@@ -283,28 +290,28 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                     type="button"
                     onClick={() => {
                       setAllegiance('neutral');
-                      setAutoAssignEnabled(false); // Disable auto-assign when neutral
+                      setAutoAssignEnabled(false);
                     }}
-                    className={`p-3 sm:p-4 border-2 transition-all duration-200 rounded-lg
-                      ${
-                        allegiance === 'neutral'
-                          ? 'border-gray-500 bg-gray-50'
-                          : 'border-gray-200 hover:border-gray-400'
-                      }`}
+                    className={cn(
+                      'p-3 sm:p-4 border-2 transition-all duration-200 rounded-neutral',
+                      allegiance === 'neutral'
+                        ? 'border-neutral-500 bg-neutral-50'
+                        : 'border-neutral-200 hover:border-neutral-400'
+                    )}
                   >
                     <Scale
-                      className={`w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2 ${
-                        allegiance === 'neutral' ? 'text-gray-500' : 'text-gray-400'
-                      }`}
+                      className={cn(
+                        'w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2',
+                        allegiance === 'neutral' ? 'text-neutral-500' : 'text-neutral-400'
+                      )}
                     />
-                    <div
-                      className={`text-xs sm:text-sm font-bold ${
-                        allegiance === 'neutral' ? 'text-gray-600' : 'text-gray-600'
-                      }`}
-                    >
+                    <div className={cn(
+                      'text-xs sm:text-sm font-bold',
+                      allegiance === 'neutral' ? 'text-neutral-600' : 'text-neutral-600'
+                    )}>
                       NEUTRAL
                     </div>
-                    <div className="text-xs text-gray-400 mt-1 hidden sm:block">
+                    <div className="text-xs text-neutral-400 mt-1 hidden sm:block">
                       Free agent
                     </div>
                   </button>
@@ -313,26 +320,26 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                   <button
                     type="button"
                     onClick={() => setAllegiance('ai')}
-                    className={`p-3 sm:p-4 border-2 transition-all duration-200 rounded-sm
-                      ${
-                        allegiance === 'ai'
-                          ? 'border-cyan-500 bg-cyan-50 border-dashed'
-                          : 'border-gray-200 hover:border-gray-400'
-                      }`}
+                    className={cn(
+                      'p-3 sm:p-4 border-2 transition-all duration-200 rounded-ai',
+                      allegiance === 'ai'
+                        ? 'border-ai-500 bg-ai-50 border-dashed'
+                        : 'border-neutral-200 hover:border-neutral-400'
+                    )}
                   >
                     <Cpu
-                      className={`w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2 ${
-                        allegiance === 'ai' ? 'text-cyan-500' : 'text-gray-400'
-                      }`}
+                      className={cn(
+                        'w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2',
+                        allegiance === 'ai' ? 'text-ai-500' : 'text-neutral-400'
+                      )}
                     />
-                    <div
-                      className={`text-xs sm:text-sm font-bold font-mono ${
-                        allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-600'
-                      }`}
-                    >
+                    <div className={cn(
+                      'text-xs sm:text-sm font-bold font-mono',
+                      allegiance === 'ai' ? 'text-ai-600' : 'text-neutral-600'
+                    )}>
                       AI
                     </div>
-                    <div className="text-xs text-gray-400 mt-1 hidden sm:block">
+                    <div className="text-xs text-neutral-400 mt-1 hidden sm:block">
                       Silicon supremacy
                     </div>
                   </button>
@@ -341,7 +348,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
 
               {/* Auto-Assign Toggle */}
               <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wide mb-3">
+                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">
                   Team Assignment
                 </label>
                 <button
@@ -352,100 +359,96 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                     }
                   }}
                   disabled={allegiance === 'neutral'}
-                  className={`w-full p-4 border-2 transition-all duration-200 text-left
-                    ${allegiance === 'neutral' 
-                      ? 'border-gray-100 bg-gray-50 cursor-not-allowed opacity-60'
+                  className={cn(
+                    'w-full p-4 border-2 transition-all duration-200 text-left',
+                    allegiance === 'neutral' 
+                      ? 'border-neutral-100 bg-neutral-50 cursor-not-allowed opacity-60 rounded-lg'
                       : autoAssignEnabled
                         ? allegiance === 'ai'
-                          ? 'border-cyan-500 bg-cyan-50 border-dashed'
-                          : 'border-green-500 bg-green-50 rounded-xl'
-                        : 'border-gray-200 hover:border-gray-400 rounded-lg'
-                    }`}
+                          ? 'border-ai-500 bg-ai-50 border-dashed rounded-ai'
+                          : 'border-human-500 bg-human-50 rounded-human'
+                        : 'border-neutral-200 hover:border-neutral-400 rounded-lg'
+                  )}
                 >
-                  <div className="flex items-start gap-3">
-                    <div className={`mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0
-                      ${allegiance === 'neutral'
-                        ? 'border-gray-300'
+                  <HStack gap="3" align="start">
+                    <div className={cn(
+                      'mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0',
+                      allegiance === 'neutral'
+                        ? 'border-neutral-300'
                         : autoAssignEnabled
                           ? allegiance === 'ai'
-                            ? 'border-cyan-500 bg-cyan-500'
-                            : 'border-green-500 bg-green-500'
-                          : 'border-gray-300'
-                      }`}
-                    >
+                            ? 'border-ai-500 bg-ai-500'
+                            : 'border-human-500 bg-human-500'
+                          : 'border-neutral-300'
+                    )}>
                       {autoAssignEnabled && allegiance !== 'neutral' && (
                         <Check className="w-3 h-3 text-white" />
                       )}
                     </div>
                     <div className="flex-1">
-                      <div className="flex items-center gap-2">
-                        <Zap className={`w-4 h-4 ${
+                      <HStack gap="2" align="center">
+                        <Zap className={cn(
+                          'w-4 h-4',
                           allegiance === 'neutral'
-                            ? 'text-gray-400'
+                            ? 'text-neutral-400'
                             : autoAssignEnabled
-                              ? allegiance === 'ai' ? 'text-cyan-600' : 'text-green-600'
-                              : 'text-gray-500'
-                        }`} />
-                        <span className={`font-bold text-sm ${
+                              ? allegiance === 'ai' ? 'text-ai-600' : 'text-human-600'
+                              : 'text-neutral-500'
+                        )} />
+                        <span className={cn(
+                          'font-bold text-sm',
                           allegiance === 'neutral'
-                            ? 'text-gray-400'
+                            ? 'text-neutral-400'
                             : autoAssignEnabled
-                              ? allegiance === 'ai' ? 'text-cyan-700' : 'text-green-700'
-                              : 'text-gray-700'
-                        }`}>
+                              ? allegiance === 'ai' ? 'text-ai-700' : 'text-human-700'
+                              : 'text-neutral-700'
+                        )}>
                           Auto-assign me to a team
                         </span>
-                      </div>
-                      <p className={`text-xs mt-1 ${
-                        allegiance === 'neutral' ? 'text-gray-400' : 'text-gray-500'
-                      }`}>
+                      </HStack>
+                      <p className={cn(
+                        'text-xs mt-1',
+                        allegiance === 'neutral' ? 'text-neutral-400' : 'text-neutral-500'
+                      )}>
                         {allegiance === 'neutral'
                           ? 'Choose Human or AI side to enable auto-assignment'
                           : `Join an existing ${allegiance === 'ai' ? 'AI' : 'Human'} team automatically, or start a new one if none are available`
                         }
                       </p>
                     </div>
-                    <Users className={`w-5 h-5 flex-shrink-0 ${
+                    <Users className={cn(
+                      'w-5 h-5 flex-shrink-0',
                       allegiance === 'neutral'
-                        ? 'text-gray-300'
+                        ? 'text-neutral-300'
                         : autoAssignEnabled
-                          ? allegiance === 'ai' ? 'text-cyan-500' : 'text-green-500'
-                          : 'text-gray-400'
-                    }`} />
-                  </div>
+                          ? allegiance === 'ai' ? 'text-ai-500' : 'text-human-500'
+                          : 'text-neutral-400'
+                    )} />
+                  </HStack>
                 </button>
               </div>
 
               {/* Submit */}
-              <button
-                type="button"
+              <Button
+                variant={autoAssignEnabled && allegiance !== 'neutral' 
+                  ? (allegiance === 'ai' ? 'ai' : 'human') 
+                  : 'primary'}
+                size="lg"
+                fullWidth
                 onClick={handleSubmit}
                 disabled={!name.trim() || isSubmitting}
-                className={`w-full py-3 sm:py-4 font-bold transition-colors border-2
-                           disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2
-                           ${autoAssignEnabled && allegiance !== 'neutral'
-                             ? allegiance === 'ai'
-                               ? 'bg-cyan-600 border-cyan-600 text-white hover:bg-cyan-700'
-                               : 'bg-green-600 border-green-600 text-white hover:bg-green-700'
-                             : 'bg-gray-900 border-gray-900 text-white hover:bg-gray-800'
-                           }`}
+                loading={isSubmitting}
+                leftIcon={autoAssignEnabled && allegiance !== 'neutral' ? <Zap /> : undefined}
               >
-                {isSubmitting ? (
-                  <>
-                    <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                    {autoAssignEnabled && allegiance !== 'neutral' ? 'FINDING YOUR TEAM...' : 'JOINING...'}
-                  </>
-                ) : autoAssignEnabled && allegiance !== 'neutral' ? (
-                  <>
-                    <Zap className="w-4 h-4" />
-                    AUTO-JOIN A TEAM
-                  </>
-                ) : (
-                  'JOIN AS FREE AGENT'
-                )}
-              </button>
+                {isSubmitting 
+                  ? (autoAssignEnabled && allegiance !== 'neutral' ? 'FINDING YOUR TEAM...' : 'JOINING...')
+                  : autoAssignEnabled && allegiance !== 'neutral' 
+                    ? 'AUTO-JOIN A TEAM'
+                    : 'JOIN AS FREE AGENT'
+                }
+              </Button>
 
-              {/* DEV SKIP BUTTON - REMOVE BEFORE LIVE */}
+              {/* DEV SKIP BUTTON */}
               <button
                 type="button"
                 onClick={() => {
@@ -456,15 +459,15 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                   });
                   onNavigate('dashboard');
                 }}
-                className="w-full py-2 text-xs text-gray-400 hover:text-gray-600 underline"
+                className="w-full py-2 text-xs text-neutral-400 hover:text-neutral-600 underline"
               >
                 [DEV] Skip to Dashboard
               </button>
-            </div>
+            </VStack>
           </div>
 
           {/* Footer note */}
-          <p className="text-center text-xs text-gray-400 mt-4 sm:mt-6">
+          <p className="text-center text-xs text-neutral-400 mt-4 sm:mt-6">
             Your allegiance affects team recommendations in the marketplace
           </p>
         </div>

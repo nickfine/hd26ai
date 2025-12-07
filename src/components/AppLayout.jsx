@@ -1,3 +1,8 @@
+/**
+ * AppLayout Component
+ * Main layout wrapper providing consistent header, sidebar navigation, and footer.
+ */
+
 import { useState, useEffect } from 'react';
 import adaptLogo from '../../adaptlogo.png';
 import {
@@ -20,19 +25,24 @@ import {
   Menu,
   X,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
+import Progress from './ui/Progress';
+import Badge, { RoleBadge } from './ui/Badge';
+import NavItem, { NavGroup } from './shared/NavItem';
+import { Container, HStack, VStack } from './layout';
+import { AllegianceAvatar } from './ui/Avatar';
+import { cn, getAllegianceConfig, formatNameWithCallsign, ALLEGIANCE_CONFIG } from '../lib/design-system';
+import { USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
 
 // ============================================================================
 // WAR TIMER - Countdown to June 21, 2026
 // ============================================================================
 
-const EVENT_START = new Date('2026-06-21T09:00:00');  // Event start
-const EVENT_END = new Date('2026-06-22T17:00:00');    // Event end
+const EVENT_START = new Date('2026-06-21T09:00:00');
+const EVENT_END = new Date('2026-06-22T17:00:00');
 
 const calculateTimeRemaining = () => {
   const now = new Date();
   
-  // Event hasn't started yet
   if (now < EVENT_START) {
     const diff = EVENT_START - now;
     const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -51,41 +61,19 @@ const calculateTimeRemaining = () => {
       display = `${hours}h ${minutes}m ${seconds}s`;
     }
     
-    return {
-      status: 'countdown',
-      months,
-      days,
-      hours,
-      minutes,
-      seconds,
-      display,
-      label: 'Until HackDay 2026'
-    };
+    return { status: 'countdown', display, label: 'Until HackDay 2026' };
   }
   
-  // Event is live!
   if (now >= EVENT_START && now < EVENT_END) {
     const diff = EVENT_END - now;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
     
-    return {
-      status: 'live',
-      hours,
-      minutes,
-      seconds,
-      display: `${hours}h ${minutes}m ${seconds}s`,
-      label: '⚡ EVENT LIVE ⚡'
-    };
+    return { status: 'live', display: `${hours}h ${minutes}m ${seconds}s`, label: '⚡ EVENT LIVE ⚡' };
   }
   
-  // Event has ended
-  return {
-    status: 'ended',
-    display: '0h 0m 0s',
-    label: 'Event Complete'
-  };
+  return { status: 'ended', display: '0h 0m 0s', label: 'Event Complete' };
 };
 
 // ============================================================================
@@ -103,47 +91,25 @@ const getNavItems = (userRole, eventPhase = 'voting') => {
 
   const permissions = USER_ROLES[userRole] || USER_ROLES.participant;
 
-  // Add voting for those who can vote (only during voting phase)
   if (permissions.canVote && eventPhase === 'voting') {
     baseItems.push({ id: 'voting', label: 'Voting', icon: Vote });
   }
 
-  // Add judge scoring for judges
   if (permissions.canJudge) {
     baseItems.push({ id: 'judge-scoring', label: 'Judge Scoring', icon: Gavel, highlight: 'amber' });
   }
 
-  // Add analytics for judges and admins
   if (permissions.canViewAnalytics) {
     baseItems.push({ id: 'analytics', label: 'Analytics', icon: BarChart3, highlight: 'purple' });
   }
 
-  // Add admin panel for admins
   if (permissions.canManage) {
     baseItems.push({ id: 'admin', label: 'Admin Panel', icon: Shield, highlight: 'purple' });
   }
 
-  // Results always at the end
   baseItems.push({ id: 'results', label: 'Results', icon: Trophy });
 
   return baseItems;
-};
-
-const ROLE_BADGES = {
-  participant: { label: 'Participant', color: 'gray', icon: User },
-  ambassador: { label: 'Ambassador', color: 'green', icon: null },
-  judge: { label: 'Judge', color: 'amber', icon: Gavel },
-  admin: { label: 'Admin', color: 'purple', icon: Shield },
-};
-
-// Helper to format name with callsign: "First 'Callsign' Last"
-const formatNameWithCallsign = (name, callsign) => {
-  if (!callsign || !name) return { formatted: name, hasCallsign: false };
-  const parts = name.split(' ');
-  if (parts.length < 2) return { formatted: name, hasCallsign: false };
-  const firstName = parts[0];
-  const lastName = parts.slice(1).join(' ');
-  return { firstName, callsign, lastName, hasCallsign: true };
 };
 
 // ============================================================================
@@ -163,7 +129,6 @@ function AppLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining);
 
-  // Update countdown every second
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining(calculateTimeRemaining());
@@ -171,36 +136,22 @@ function AppLayout({
     return () => clearInterval(timer);
   }, []);
 
-  // Find the team the user is captain of (if any)
   const captainedTeam = teams.find((team) => team.captainId === user?.id);
-  
-  // Find user's team (as member or captain)
   const userTeam = teams.find((team) => 
     team.captainId === user?.id || 
     team.members?.some(m => m.id === user?.id)
   );
-
-  // Find user's callsign - prefer user profile, fall back to team membership
   const userCallsign = user?.callsign || userTeam?.members?.find(m => m.id === user?.id)?.callsign;
 
-  // Get nav items based on user role and event phase
   const navItems = getNavItems(user?.role, eventPhase);
+  const config = getAllegianceConfig(user?.allegiance || 'neutral');
 
-  // Get role badge info
-  const roleBadge = ROLE_BADGES[user?.role] || ROLE_BADGES.participant;
-
-  // Calculate war stats
+  // War stats
   const humanTeams = teams.filter(t => t.side === 'human').length;
   const aiTeams = teams.filter(t => t.side === 'ai').length;
   const totalTeams = humanTeams + aiTeams;
   const humanPercent = totalTeams > 0 ? Math.round((humanTeams / totalTeams) * 100) : 50;
   const aiPercent = totalTeams > 0 ? Math.round((aiTeams / totalTeams) * 100) : 50;
-
-  const AllegianceIcon = {
-    human: Heart,
-    neutral: Scale,
-    ai: Cpu,
-  }[user?.allegiance || 'neutral'];
 
   const handleNavClick = (itemId) => {
     setSidebarOpen(false);
@@ -212,332 +163,298 @@ function AppLayout({
   };
 
   return (
-    <div className={`min-h-screen bg-white ${allegianceStyle?.font || 'font-sans'}`}>
+    <div className={cn('min-h-screen bg-white', config.font)}>
       {/* ================================================================== */}
       {/* HEADER */}
       {/* ================================================================== */}
-      <header className="border-b-2 border-gray-900 px-4 sm:px-6 py-4 bg-white sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Mobile menu button */}
-          {showSidebar && (
+      <header className="border-b-2 border-neutral-900 px-4 sm:px-6 py-4 bg-white sticky top-0 z-40">
+        <Container size="xl" padding="none">
+          <HStack justify="between" align="center">
+            {/* Mobile menu button */}
+            {showSidebar && (
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="lg:hidden p-2 -ml-2 text-neutral-600 hover:text-neutral-900"
+              >
+                <Menu className="w-5 h-5" />
+              </button>
+            )}
+
+            {/* Logo */}
+            <HStack gap="3" align="center">
+              <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
+              <div className="hidden sm:block">
+                <div className="font-black text-lg tracking-tight">HACKDAY 2026</div>
+                <div className="text-xs text-neutral-500 font-mono">HUMAN VS AI</div>
+              </div>
+            </HStack>
+
+            {/* War Timer */}
+            <div className={cn(
+              'hidden md:flex items-center gap-3 px-4 py-2 text-white',
+              timeRemaining.status === 'live' 
+                ? 'bg-gradient-to-r from-ai-600 to-human-600 animate-pulse' 
+                : timeRemaining.status === 'ended'
+                  ? 'bg-neutral-600'
+                  : 'bg-neutral-900'
+            )}>
+              <Clock className="w-5 h-5" />
+              <div>
+                <div className="font-mono text-2xl font-bold tracking-wider">
+                  {timeRemaining.display}
+                </div>
+                <div className={cn(
+                  'text-xs uppercase tracking-wide',
+                  timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-neutral-400'
+                )}>
+                  {timeRemaining.label}
+                </div>
+              </div>
+            </div>
+
+            {/* User Quick Access */}
             <button
               type="button"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900"
+              onClick={() => onNavigate('profile')}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
             >
-              <Menu className="w-5 h-5" />
-            </button>
-          )}
-
-          {/* Logo */}
-          <div className="flex items-center gap-3">
-            <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
-            <div className="hidden sm:block">
-              <div className="font-black text-lg tracking-tight">HACKDAY 2026</div>
-              <div className="text-xs text-gray-500 font-mono">HUMAN VS AI</div>
-            </div>
-          </div>
-
-          {/* War Timer */}
-          <div className={`hidden md:flex items-center gap-3 px-4 py-2 text-white
-            ${timeRemaining.status === 'live' 
-              ? 'bg-gradient-to-r from-cyan-600 to-green-600 animate-pulse' 
-              : timeRemaining.status === 'ended'
-                ? 'bg-gray-600'
-                : 'bg-gray-900'}`}
-          >
-            <Clock className="w-5 h-5" />
-            <div>
-              <div className="font-mono text-2xl font-bold tracking-wider">
-                {timeRemaining.display}
-              </div>
-              <div className={`text-xs uppercase tracking-wide
-                ${timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-gray-400'}`}
-              >
-                {timeRemaining.label}
-              </div>
-            </div>
-          </div>
-
-          {/* User Quick Access */}
-          <button
-            type="button"
-            onClick={() => onNavigate('profile')}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
-          >
-            <div className="relative">
-              <div
-                className={`w-10 h-10 flex items-center justify-center ${allegianceStyle?.borderRadius || 'rounded-lg'}`}
-                style={{
-                  backgroundColor: allegianceStyle?.bgColor,
-                  border: `2px solid ${allegianceStyle?.borderColor}`,
-                }}
-              >
-                <AllegianceIcon className="w-5 h-5" style={{ color: allegianceStyle?.color }} />
-              </div>
-              {captainedTeam?.joinRequests?.length > 0 && (
-                <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
-                  {captainedTeam.joinRequests.length}
-                </div>
-              )}
-            </div>
-            <div className="text-left hidden sm:block">
-              <div className="font-bold text-gray-900 text-sm flex items-center gap-1 flex-wrap">
-                {(() => {
-                  const formatted = formatNameWithCallsign(user?.name, userCallsign);
-                  if (!formatted.hasCallsign) return user?.name || 'Operator';
-                  return (
-                    <>
-                      {formatted.firstName}
-                      <span className={`px-1.5 py-0.5 text-xs font-bold rounded-full border bg-white
-                          ${user?.allegiance === 'ai' 
-                            ? 'border-cyan-500 text-cyan-700' 
-                            : user?.allegiance === 'human' 
-                              ? 'border-green-500 text-green-700' 
-                              : 'border-gray-400 text-gray-600'}`}>
-                        {formatted.callsign}
-                      </span>
-                      {formatted.lastName}
-                    </>
-                  );
-                })()}
-              </div>
-              {captainedTeam ? (
-                <>
-                  <div className="text-xs text-gray-500">Captain</div>
-                  <div className="text-xs font-medium" style={{ color: allegianceStyle?.color }}>
-                    {captainedTeam.name}
+              <div className="relative">
+                <AllegianceAvatar allegiance={user?.allegiance || 'neutral'} size="md" />
+                {captainedTeam?.joinRequests?.length > 0 && (
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-error-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {captainedTeam.joinRequests.length}
                   </div>
-                </>
-              ) : userTeam ? (
-                <div className="text-xs font-medium" style={{ color: allegianceStyle?.color }}>
-                  {userTeam.name}
+                )}
+              </div>
+              <div className="text-left hidden sm:block">
+                <div className="font-bold text-neutral-900 text-sm flex items-center gap-1 flex-wrap">
+                  {(() => {
+                    const formatted = formatNameWithCallsign(user?.name, userCallsign);
+                    if (!formatted.hasCallsign) return user?.name || 'Operator';
+                    return (
+                      <>
+                        {formatted.firstName}
+                        <Badge 
+                          variant={user?.allegiance === 'ai' ? 'ai' : user?.allegiance === 'human' ? 'human' : 'neutral'} 
+                          size="xs"
+                        >
+                          {formatted.callsign}
+                        </Badge>
+                        {formatted.lastName}
+                      </>
+                    );
+                  })()}
                 </div>
-              ) : (
-                <div className="text-xs text-gray-500">Free Agent</div>
-              )}
-            </div>
-          </button>
-        </div>
+                {captainedTeam ? (
+                  <>
+                    <div className="text-xs text-neutral-500">Captain</div>
+                    <div className="text-xs font-medium" style={{ color: config.color }}>
+                      {captainedTeam.name}
+                    </div>
+                  </>
+                ) : userTeam ? (
+                  <div className="text-xs font-medium" style={{ color: config.color }}>
+                    {userTeam.name}
+                  </div>
+                ) : (
+                  <div className="text-xs text-neutral-500">Free Agent</div>
+                )}
+              </div>
+            </button>
+          </HStack>
+        </Container>
       </header>
 
       {/* ================================================================== */}
       {/* EVENT STATUS BAR */}
       {/* ================================================================== */}
-      <div className="border-b-2 border-gray-200 bg-gray-50 px-4 sm:px-6 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 sm:gap-4 overflow-x-auto">
-          {EVENT_PHASE_ORDER.map((phaseKey, index) => {
-            const phase = EVENT_PHASES_CONFIG[phaseKey];
-            const currentPhaseIndex = EVENT_PHASE_ORDER.indexOf(eventPhase);
-            const isActive = phaseKey === eventPhase;
-            const isComplete = index < currentPhaseIndex;
-            return (
-              <div key={phaseKey} className="flex items-center">
-                <div className="flex items-center gap-1.5">
-                  <div
-                    className={`w-6 h-6 flex items-center justify-center text-xs font-bold
-                      ${isComplete 
-                        ? 'bg-gray-900 text-white' 
+      <div className="border-b-2 border-neutral-200 bg-surface-1 px-4 sm:px-6 py-3">
+        <Container size="xl" padding="none">
+          <HStack justify="center" gap="2" className="sm:gap-4 overflow-x-auto">
+            {EVENT_PHASE_ORDER.map((phaseKey, index) => {
+              const phase = EVENT_PHASES_CONFIG[phaseKey];
+              const currentPhaseIndex = EVENT_PHASE_ORDER.indexOf(eventPhase);
+              const isActive = phaseKey === eventPhase;
+              const isComplete = index < currentPhaseIndex;
+              return (
+                <HStack key={phaseKey} gap="0" align="center">
+                  <HStack gap="1" align="center">
+                    <div className={cn(
+                      'w-6 h-6 flex items-center justify-center text-xs font-bold',
+                      isComplete 
+                        ? 'bg-neutral-900 text-white' 
                         : isActive 
-                          ? 'bg-cyan-500 text-white animate-pulse' 
-                          : 'bg-gray-300 text-gray-500'}`}
-                  >
-                    {isComplete ? '✓' : index + 1}
-                  </div>
-                  <span className={`text-xs font-bold whitespace-nowrap hidden sm:inline
-                    ${isActive ? 'text-cyan-600' : isComplete ? 'text-gray-900' : 'text-gray-400'}`}>
-                    {phase?.label}
-                  </span>
-                </div>
-                {index < EVENT_PHASE_ORDER.length - 1 && (
-                  <div className={`w-4 sm:w-8 h-0.5 mx-1 sm:mx-2
-                    ${isComplete ? 'bg-gray-900' : 'bg-gray-300'}`} 
-                  />
-                )}
-              </div>
-            );
-          })}
-        </div>
+                          ? 'bg-ai-500 text-white animate-pulse' 
+                          : 'bg-neutral-300 text-neutral-500'
+                    )}>
+                      {isComplete ? '✓' : index + 1}
+                    </div>
+                    <span className={cn(
+                      'text-xs font-bold whitespace-nowrap hidden sm:inline',
+                      isActive ? 'text-ai-600' : isComplete ? 'text-neutral-900' : 'text-neutral-400'
+                    )}>
+                      {phase?.label}
+                    </span>
+                  </HStack>
+                  {index < EVENT_PHASE_ORDER.length - 1 && (
+                    <div className={cn(
+                      'w-4 sm:w-8 h-0.5 mx-1 sm:mx-2',
+                      isComplete ? 'bg-neutral-900' : 'bg-neutral-300'
+                    )} />
+                  )}
+                </HStack>
+              );
+            })}
+          </HStack>
+        </Container>
       </div>
 
       {/* ================================================================== */}
       {/* MAIN LAYOUT */}
       {/* ================================================================== */}
-      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row">
-        {/* Mobile sidebar overlay */}
-        {sidebarOpen && showSidebar && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
+      <Container size="xl" padding="none">
+        <div className="flex flex-col lg:flex-row">
+          {/* Mobile sidebar overlay */}
+          {sidebarOpen && showSidebar && (
+            <div 
+              className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+              onClick={() => setSidebarOpen(false)}
+            />
+          )}
 
-        {/* ================================================================ */}
-        {/* LEFT SIDEBAR */}
-        {/* ================================================================ */}
-        {showSidebar && (
-          <aside className={`
-            fixed lg:static inset-y-0 left-0 z-50
-            w-[280px] border-r-0 lg:border-r-2 border-gray-200 bg-white
-            transform transition-transform duration-300 ease-in-out
-            ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-            overflow-y-auto
-          `}>
-            <div className="p-4 sm:p-6 space-y-6">
-              {/* Close button for mobile */}
-              <button
-                type="button"
-                onClick={() => setSidebarOpen(false)}
-                className="lg:hidden absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              {/* Role Badge */}
-              {user?.role && user.role !== 'participant' && (
-                <div
-                  className={`p-3 border-2 flex items-center gap-2
-                    ${roleBadge.color === 'amber' ? 'border-amber-300 bg-amber-50' : ''}
-                    ${roleBadge.color === 'purple' ? 'border-purple-300 bg-purple-50' : ''}
-                    ${roleBadge.color === 'green' ? 'border-green-300 bg-green-50' : ''}
-                  `}
-                >
-                  {roleBadge.icon && (
-                    <roleBadge.icon
-                      className={`w-5 h-5
-                        ${roleBadge.color === 'amber' ? 'text-amber-600' : ''}
-                        ${roleBadge.color === 'purple' ? 'text-purple-600' : ''}
-                        ${roleBadge.color === 'green' ? 'text-green-600' : ''}
-                      `}
-                    />
-                  )}
-                  <div>
-                    <div
-                      className={`text-xs font-bold uppercase tracking-wide
-                        ${roleBadge.color === 'amber' ? 'text-amber-700' : ''}
-                        ${roleBadge.color === 'purple' ? 'text-purple-700' : ''}
-                        ${roleBadge.color === 'green' ? 'text-green-700' : ''}
-                      `}
-                    >
-                      {roleBadge.label}
-                    </div>
-                    <div className="text-xs text-gray-500">
-                      {user.role === 'judge' && 'Score submitted projects'}
-                      {user.role === 'admin' && 'Full event access'}
-                      {user.role === 'ambassador' && 'Recruit for your side'}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Navigation Menu */}
-              <nav className="space-y-1">
-                <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">
-                  Navigation
-                </div>
-                {navItems.map((item) => {
-                  const Icon = item.icon;
-                  const isActive = activeNav === item.id;
-                  const isHighlighted = item.highlight;
-                  return (
-                    <button
-                      key={item.id}
-                      type="button"
-                      onClick={() => handleNavClick(item.id)}
-                      className={`w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all
-                        ${isActive 
-                          ? 'bg-gray-900 text-white' 
-                          : isHighlighted === 'amber'
-                            ? 'text-amber-700 bg-amber-50 hover:bg-amber-100 border-l-4 border-amber-400'
-                            : isHighlighted === 'purple'
-                              ? 'text-purple-700 bg-purple-50 hover:bg-purple-100 border-l-4 border-purple-400'
-                              : 'text-gray-600 hover:bg-gray-100'}`}
-                    >
-                      <Icon className="w-4 h-4" />
-                      {item.label}
-                    </button>
-                  );
-                })}
+          {/* ================================================================ */}
+          {/* LEFT SIDEBAR */}
+          {/* ================================================================ */}
+          {showSidebar && (
+            <aside className={cn(
+              'fixed lg:static inset-y-0 left-0 z-50',
+              'w-[280px] border-r-0 lg:border-r-2 border-neutral-200 bg-white',
+              'transform transition-transform duration-300 ease-in-out',
+              sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+              'overflow-y-auto'
+            )}>
+              <div className="p-4 sm:p-6 space-y-6">
+                {/* Close button for mobile */}
                 <button
                   type="button"
-                  onClick={() => onNavigate('landing')}
-                  className="w-full px-3 py-2 flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all mt-4"
+                  onClick={() => setSidebarOpen(false)}
+                  className="lg:hidden absolute top-4 right-4 p-2 text-neutral-400 hover:text-neutral-600"
                 >
-                  <LogOut className="w-4 h-4" />
-                  Sign Out
+                  <X className="w-5 h-5" />
                 </button>
-              </nav>
 
-              {/* War Recruitment Status */}
-              <div className="p-4 border-2 border-gray-200">
-                <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">
-                  War Recruitment Status
-                </div>
-                <div className="space-y-3">
-                  {/* Human Bar */}
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="font-bold text-green-600 flex items-center gap-1">
-                        <Heart className="w-3 h-3" /> Human
-                      </span>
-                      <span className="font-mono font-bold">{humanPercent}%</span>
-                    </div>
-                    <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
-                      <div 
-                        className="h-full bg-green-500 rounded-full transition-all duration-500"
-                        style={{ width: `${humanPercent}%` }}
-                      />
-                    </div>
-                  </div>
-                  {/* AI Bar */}
-                  <div>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="font-bold font-mono text-cyan-600 flex items-center gap-1">
-                        <Cpu className="w-3 h-3" /> AI
-                      </span>
-                      <span className="font-mono font-bold">{aiPercent}%</span>
-                    </div>
-                    <div className="h-3 bg-gray-100 overflow-hidden">
-                      <div 
-                        className="h-full bg-cyan-500 transition-all duration-500"
-                        style={{ width: `${aiPercent}%` }}
-                      />
+                {/* Role Badge */}
+                {user?.role && user.role !== 'participant' && (
+                  <div className={cn(
+                    'p-3 border-2 flex items-center gap-2',
+                    user.role === 'judge' && 'border-accent-300 bg-accent-50',
+                    user.role === 'admin' && 'border-special-300 bg-special-50',
+                    user.role === 'ambassador' && 'border-human-300 bg-human-50'
+                  )}>
+                    {user.role === 'judge' && <Gavel className="w-5 h-5 text-accent-600" />}
+                    {user.role === 'admin' && <Shield className="w-5 h-5 text-special-600" />}
+                    <div>
+                      <div className={cn(
+                        'text-xs font-bold uppercase tracking-wide',
+                        user.role === 'judge' && 'text-accent-700',
+                        user.role === 'admin' && 'text-special-700',
+                        user.role === 'ambassador' && 'text-human-700'
+                      )}>
+                        {user.role === 'judge' ? 'Judge' : user.role === 'admin' ? 'Admin' : 'Ambassador'}
+                      </div>
+                      <div className="text-xs text-neutral-500">
+                        {user.role === 'judge' && 'Score submitted projects'}
+                        {user.role === 'admin' && 'Full event access'}
+                        {user.role === 'ambassador' && 'Recruit for your side'}
+                      </div>
                     </div>
                   </div>
-                  {/* Total */}
-                  <div className="pt-2 border-t border-gray-100 text-center">
-                    <span className="text-xs text-gray-400">{totalTeams} teams registered</span>
+                )}
+
+                {/* Navigation Menu */}
+                <NavGroup label="Navigation">
+                  {navItems.map((item) => (
+                    <NavItem
+                      key={item.id}
+                      icon={<item.icon />}
+                      active={activeNav === item.id}
+                      highlight={item.highlight}
+                      onClick={() => handleNavClick(item.id)}
+                    >
+                      {item.label}
+                    </NavItem>
+                  ))}
+                  <NavItem
+                    icon={<LogOut />}
+                    onClick={() => onNavigate('landing')}
+                    className="mt-4 text-neutral-400 hover:text-neutral-600"
+                  >
+                    Sign Out
+                  </NavItem>
+                </NavGroup>
+
+                {/* War Recruitment Status */}
+                <div className="p-4 border-2 border-neutral-200">
+                  <div className="text-xs font-bold uppercase tracking-wide text-neutral-400 mb-3">
+                    War Recruitment Status
                   </div>
+                  <VStack gap="3">
+                    {/* Human Bar */}
+                    <div>
+                      <HStack justify="between" className="text-sm mb-1">
+                        <HStack gap="1" align="center" className="font-bold text-human-600">
+                          <Heart className="w-3 h-3" /> Human
+                        </HStack>
+                        <span className="font-mono font-bold">{humanPercent}%</span>
+                      </HStack>
+                      <Progress value={humanPercent} variant="human" size="sm" />
+                    </div>
+                    {/* AI Bar */}
+                    <div>
+                      <HStack justify="between" className="text-sm mb-1">
+                        <HStack gap="1" align="center" className="font-bold font-mono text-ai-600">
+                          <Cpu className="w-3 h-3" /> AI
+                        </HStack>
+                        <span className="font-mono font-bold">{aiPercent}%</span>
+                      </HStack>
+                      <Progress value={aiPercent} variant="ai" size="sm" />
+                    </div>
+                    {/* Total */}
+                    <div className="pt-2 border-t border-neutral-100 text-center">
+                      <span className="text-xs text-neutral-400">{totalTeams} teams registered</span>
+                    </div>
+                  </VStack>
                 </div>
               </div>
+            </aside>
+          )}
 
-            </div>
-          </aside>
-        )}
-
-        {/* ================================================================ */}
-        {/* MAIN CONTENT */}
-        {/* ================================================================ */}
-        <main className={`flex-1 ${showSidebar ? 'min-h-[calc(100vh-200px)]' : ''}`}>
-          {children}
-        </main>
-      </div>
+          {/* ================================================================ */}
+          {/* MAIN CONTENT */}
+          {/* ================================================================ */}
+          <main className={cn('flex-1', showSidebar && 'min-h-[calc(100vh-200px)]')}>
+            {children}
+          </main>
+        </div>
+      </Container>
 
       {/* Footer */}
-      <footer className="border-t-2 border-gray-200 px-4 sm:px-6 py-4 bg-white mt-6">
-        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-gray-400">
-          <span>MISSION CONTROL v1.0</span>
-          <span>
-            ALLEGIANCE:{' '}
-            <span style={{ color: allegianceStyle?.color }} className="font-bold">
-              {ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label.toUpperCase()}
+      <footer className="border-t-2 border-neutral-200 px-4 sm:px-6 py-4 bg-white mt-6">
+        <Container size="xl" padding="none">
+          <HStack justify="between" className="text-xs text-neutral-400">
+            <span>MISSION CONTROL v1.0</span>
+            <span>
+              ALLEGIANCE:{' '}
+              <span style={{ color: config.color }} className="font-bold">
+                {config.label.toUpperCase()}
+              </span>
             </span>
-          </span>
-        </div>
+          </HStack>
+        </Container>
       </footer>
     </div>
   );
 }
 
 export default AppLayout;
-

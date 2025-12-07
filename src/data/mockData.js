@@ -690,33 +690,7 @@ export const MOCK_FREE_AGENTS = [
   },
 ];
 
-export const ALLEGIANCE_CONFIG = {
-  human: {
-    color: 'rgb(34, 197, 94)', // organic green
-    bgColor: 'rgba(34, 197, 94, 0.1)',
-    borderColor: 'rgb(34, 197, 94)',
-    label: 'Human',
-    font: 'font-sans',
-    borderRadius: 'rounded-2xl',
-    borderStyle: 'border-2',
-  },
-  neutral: {
-    color: 'rgb(156, 163, 175)', // gray
-    bgColor: 'rgba(156, 163, 175, 0.1)',
-    borderColor: 'rgb(156, 163, 175)',
-    label: 'Neutral',
-    font: 'font-sans',
-    borderRadius: 'rounded-lg',
-    borderStyle: 'border',
-  },
-  ai: {
-    color: 'rgb(6, 182, 212)', // cyan
-    bgColor: 'rgba(6, 182, 212, 0.1)',
-    borderColor: 'rgb(6, 182, 212)',
-    label: 'AI',
-    font: 'font-mono',
-    borderRadius: 'rounded-sm',
-    borderStyle: 'border-2 border-dashed',
-  },
-};
+// Re-export ALLEGIANCE_CONFIG from design-system for backwards compatibility
+// The canonical source is now in src/lib/design-system.js
+export { ALLEGIANCE_CONFIG } from '../lib/design-system';
 

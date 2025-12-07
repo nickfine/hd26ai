@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3, ArrowRightLeft } from 'lucide-react';
-import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTeam, onJoinRequest, onRequestResponse, eventPhase }) {
