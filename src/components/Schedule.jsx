@@ -22,10 +22,84 @@ import {
 } from 'lucide-react';
 
 // ============================================================================
-// SCHEDULE DATA - June 21-22, 2026
+// SCHEDULE DATA - Remote Hackathon
+// Pre-event: June 1st onwards | Hacking: June 21-22, 2026
 // ============================================================================
 
 const SCHEDULE_DATA = {
+  preEvent: {
+    date: '2026-06-01',
+    label: 'Pre-Event',
+    subtitle: 'June 1st - 20th',
+    events: [
+      {
+        id: 'pre-1',
+        time: '09:00',
+        endTime: '10:00',
+        title: 'HackDay 2026 Launch',
+        description: 'Official announcement and kickoff! Registration opens, theme revealed, and rules published.',
+        location: 'Online - Live Stream',
+        category: 'ceremony',
+        icon: Flag,
+        date: 'June 1st',
+      },
+      {
+        id: 'pre-2',
+        time: '09:00',
+        endTime: '23:59',
+        title: 'Registration & Team Formation Opens',
+        description: 'Sign up, choose your allegiance (Human or AI), and start forming teams. Browse the marketplace to find teammates.',
+        location: 'HackDay Portal',
+        category: 'logistics',
+        icon: Users,
+        date: 'June 1st',
+      },
+      {
+        id: 'pre-3',
+        time: '12:00',
+        endTime: '13:00',
+        title: 'Rules & Guidelines Webinar',
+        description: 'Deep dive into the rules for Human and AI teams. Q&A session with organizers.',
+        location: 'Online - Zoom',
+        category: 'social',
+        icon: Mic,
+        date: 'June 5th',
+      },
+      {
+        id: 'pre-4',
+        time: '15:00',
+        endTime: '16:00',
+        title: 'Team Matching Social',
+        description: 'Virtual networking event for free agents looking for teams. Speed-dating style introductions.',
+        location: 'Online - Gather.town',
+        category: 'social',
+        icon: Users,
+        date: 'June 10th',
+      },
+      {
+        id: 'pre-5',
+        time: '23:59',
+        endTime: '23:59',
+        title: 'Team Formation Deadline',
+        description: 'Final deadline to form teams and lock in your allegiance. No changes after this date.',
+        location: 'HackDay Portal',
+        category: 'deadline',
+        icon: Clock,
+        date: 'June 15th',
+      },
+      {
+        id: 'pre-6',
+        time: '14:00',
+        endTime: '15:00',
+        title: 'Pre-Hack Tech Check',
+        description: 'Test your setup, verify access to collaboration tools, and meet your team virtually.',
+        location: 'Online - Slack/Discord',
+        category: 'logistics',
+        icon: Code,
+        date: 'June 18th',
+      },
+    ],
+  },
   day1: {
     date: '2026-06-21',
     label: 'Day 1',
@@ -33,92 +107,62 @@ const SCHEDULE_DATA = {
     events: [
       {
         id: 'd1-1',
-        time: '08:00',
-        endTime: '09:00',
-        title: 'Registration & Check-in',
-        description: 'Collect your badge, swag bag, and get settled. Meet fellow hackers!',
-        location: 'Main Lobby',
-        category: 'logistics',
-        icon: Users,
-      },
-      {
-        id: 'd1-2',
         time: '09:00',
         endTime: '10:00',
         title: 'Opening Ceremony',
-        description: 'Welcome address, theme reveal, rules overview, and the official start of HackDay 2026.',
-        location: 'Main Auditorium',
+        description: 'Welcome address, final rules reminder, and the official countdown to hacking. Join the live stream!',
+        location: 'Online - Live Stream',
         category: 'ceremony',
         icon: Flag,
       },
       {
-        id: 'd1-3',
+        id: 'd1-2',
         time: '10:00',
-        endTime: '11:00',
-        title: 'Team Formation',
-        description: 'Find your squad! Network with other participants and form teams. Choose your allegiance: Human or AI.',
-        location: 'Collaboration Zone',
+        endTime: '10:00',
+        title: 'Hacking Begins!',
+        description: 'The clock starts now! 48 hours to build something amazing. May the best team win!',
+        location: 'Remote - Your Workspace',
+        category: 'hacking',
+        icon: Code,
+      },
+      {
+        id: 'd1-3',
+        time: '12:00',
+        endTime: '12:30',
+        title: 'Midday Check-in',
+        description: 'Quick standup on Slack. Share what you\'re working on, ask for help, connect with other teams.',
+        location: 'Online - Slack',
         category: 'social',
         icon: Users,
       },
       {
         id: 'd1-4',
-        time: '11:00',
-        endTime: '11:30',
-        title: 'Hacking Begins!',
-        description: 'The official start of the 48-hour hackathon. May the best team win!',
-        location: 'Hacking Spaces',
-        category: 'hacking',
-        icon: Code,
-      },
-      {
-        id: 'd1-5',
-        time: '12:30',
-        endTime: '13:30',
-        title: 'Lunch',
-        description: 'Fuel up with a variety of food options. Vegetarian and vegan options available.',
-        location: 'Cafeteria',
-        category: 'meal',
-        icon: Utensils,
-      },
-      {
-        id: 'd1-6',
         time: '15:00',
-        endTime: '15:30',
-        title: 'Afternoon Coffee Break',
-        description: 'Recharge with coffee, tea, and snacks. Quick networking opportunity.',
-        location: 'Break Area',
-        category: 'break',
-        icon: Coffee,
-      },
-      {
-        id: 'd1-7',
-        time: '18:30',
-        endTime: '19:30',
-        title: 'Dinner',
-        description: 'Hearty dinner to keep you going through the night. Multiple cuisine options.',
-        location: 'Cafeteria',
-        category: 'meal',
-        icon: Utensils,
-      },
-      {
-        id: 'd1-8',
-        time: '21:00',
-        endTime: '21:30',
-        title: 'Evening Check-in',
-        description: 'Optional mentor sessions available. Share your progress and get guidance.',
-        location: 'Mentor Lounge',
+        endTime: '16:00',
+        title: 'Office Hours: Mentors Available',
+        description: 'Book 15-minute slots with mentors for technical guidance, feedback, or brainstorming.',
+        location: 'Online - Calendly/Zoom',
         category: 'social',
         icon: Sparkles,
       },
       {
-        id: 'd1-9',
-        time: '00:00',
-        endTime: '00:30',
-        title: 'Midnight Snacks',
-        description: 'Pizza, energy drinks, and late-night fuel for the dedicated hackers.',
-        location: 'Break Area',
-        category: 'meal',
+        id: 'd1-5',
+        time: '18:00',
+        endTime: '18:30',
+        title: 'Evening Standup',
+        description: 'Share your progress! Optional video call for teams to demo early prototypes.',
+        location: 'Online - Zoom',
+        category: 'social',
+        icon: Mic,
+      },
+      {
+        id: 'd1-6',
+        time: '21:00',
+        endTime: '22:00',
+        title: 'Night Owl Hangout',
+        description: 'Casual virtual hangout for those hacking through the night. Music, chat, and co-working vibes.',
+        location: 'Online - Discord',
+        category: 'break',
         icon: Moon,
       },
     ],
@@ -130,61 +174,61 @@ const SCHEDULE_DATA = {
     events: [
       {
         id: 'd2-1',
-        time: '07:00',
-        endTime: '08:30',
-        title: 'Breakfast',
-        description: 'Start the final day right. Full breakfast spread available.',
-        location: 'Cafeteria',
-        category: 'meal',
+        time: '09:00',
+        endTime: '09:30',
+        title: 'Morning Kickoff',
+        description: 'Day 2 begins! Quick announcements, submission reminders, and final stretch motivation.',
+        location: 'Online - Live Stream',
+        category: 'ceremony',
         icon: Sun,
       },
       {
         id: 'd2-2',
         time: '09:00',
-        endTime: '09:30',
-        title: 'Morning Energizer',
-        description: 'Quick stretch session and announcements. Last push begins!',
-        location: 'Main Auditorium',
+        endTime: '10:00',
+        title: 'Final Office Hours',
+        description: 'Last chance to get mentor feedback before code freeze. Book your slot early!',
+        location: 'Online - Calendly/Zoom',
         category: 'social',
         icon: Sparkles,
       },
       {
         id: 'd2-3',
-        time: '11:00',
-        endTime: '11:00',
+        time: '09:00',
+        endTime: '09:00',
         title: 'Code Freeze Warning',
-        description: 'One hour until submissions close! Finalize your code and prepare your demo.',
-        location: 'All Spaces',
+        description: 'One hour until submissions close! Finalize your code, record your demo, prepare your pitch.',
+        location: 'Online - Slack Reminder',
         category: 'hacking',
         icon: Clock,
       },
       {
         id: 'd2-4',
-        time: '12:00',
-        endTime: '12:00',
+        time: '10:00',
+        endTime: '10:00',
         title: 'Submissions Due',
-        description: 'All projects must be submitted by noon. No late submissions accepted.',
-        location: 'Online Portal',
+        description: 'All projects must be submitted via the portal. Include: repo link, demo video, and description.',
+        location: 'HackDay Portal',
         category: 'deadline',
         icon: Flag,
       },
       {
         id: 'd2-5',
-        time: '12:00',
-        endTime: '13:00',
-        title: 'Lunch & Prep Time',
-        description: 'Enjoy lunch while preparing your presentation slides and demo.',
-        location: 'Cafeteria',
-        category: 'meal',
-        icon: Utensils,
+        time: '10:00',
+        endTime: '12:00',
+        title: 'Project Gallery Opens',
+        description: 'Browse all submissions! Watch demo videos, leave comments, and vote for People\'s Champion.',
+        location: 'HackDay Portal',
+        category: 'presentation',
+        icon: Trophy,
       },
       {
         id: 'd2-6',
         time: '13:00',
         endTime: '16:00',
-        title: 'Project Presentations',
-        description: 'Each team presents their project to judges and participants. 3 minutes per team.',
-        location: 'Main Auditorium',
+        title: 'Live Presentations',
+        description: 'Teams present their projects live to judges and participants. 3 minutes per team + Q&A.',
+        location: 'Online - Live Stream',
         category: 'presentation',
         icon: Mic,
       },
@@ -192,9 +236,9 @@ const SCHEDULE_DATA = {
         id: 'd2-7',
         time: '16:00',
         endTime: '17:00',
-        title: 'Judging Deliberation',
-        description: 'Judges review all submissions. Participants can explore other projects.',
-        location: 'Demo Hall',
+        title: 'Judging & Voting',
+        description: 'Judges deliberate while participants cast final votes for People\'s Champion.',
+        location: 'HackDay Portal',
         category: 'judging',
         icon: Trophy,
       },
@@ -203,18 +247,18 @@ const SCHEDULE_DATA = {
         time: '17:00',
         endTime: '18:00',
         title: 'Awards Ceremony',
-        description: 'Announcement of winners: Grand Champion, Best Human Team, Best AI Team, and People\'s Champion.',
-        location: 'Main Auditorium',
+        description: 'Winners announced! Grand Champion, Best Human Team, Best AI Team, and People\'s Champion.',
+        location: 'Online - Live Stream',
         category: 'ceremony',
         icon: Trophy,
       },
       {
         id: 'd2-9',
         time: '18:00',
-        endTime: '18:30',
-        title: 'Closing Remarks',
-        description: 'Thank you to all participants! Networking and celebrations continue.',
-        location: 'Main Auditorium',
+        endTime: '19:00',
+        title: 'Closing Celebration',
+        description: 'Thank you to all participants! Virtual celebration, shoutouts, and wrap-up.',
+        location: 'Online - Zoom Party',
         category: 'ceremony',
         icon: Flag,
       },
@@ -294,11 +338,29 @@ function formatDateTimeForICS(date, time) {
   return `${year}${month}${day}T${hour}${min}00`;
 }
 
+// Pre-event date mapping
+const PRE_EVENT_DATES = {
+  'pre-1': '2026-06-01',
+  'pre-2': '2026-06-01',
+  'pre-3': '2026-06-05',
+  'pre-4': '2026-06-10',
+  'pre-5': '2026-06-15',
+  'pre-6': '2026-06-18',
+};
+
 /**
  * Generate ICS file content for all events
  */
 function generateICSContent() {
   const events = [];
+  
+  // Add Pre-event items
+  SCHEDULE_DATA.preEvent.events.forEach(event => {
+    events.push({
+      ...event,
+      date: PRE_EVENT_DATES[event.id] || SCHEDULE_DATA.preEvent.date,
+    });
+  });
   
   // Add Day 1 events
   SCHEDULE_DATA.day1.events.forEach(event => {
@@ -371,7 +433,7 @@ function downloadAllEventsAsICS() {
 // ============================================================================
 
 function Schedule({ user, allegianceStyle, onNavigate }) {
-  const [activeDay, setActiveDay] = useState('day1');
+  const [activeDay, setActiveDay] = useState('preEvent');
   
   const AllegianceIcon = {
     human: Heart,
@@ -380,9 +442,15 @@ function Schedule({ user, allegianceStyle, onNavigate }) {
   }[user?.allegiance || 'neutral'];
 
   const currentDayData = SCHEDULE_DATA[activeDay];
+  const isPreEvent = activeDay === 'preEvent';
 
   const handleAddToCalendar = (event) => {
-    const url = generateGoogleCalendarUrl(event, currentDayData.date);
+    // For pre-event items, use the specific date mapping
+    let eventDate = currentDayData.date;
+    if (isPreEvent && PRE_EVENT_DATES[event.id]) {
+      eventDate = PRE_EVENT_DATES[event.id];
+    }
+    const url = generateGoogleCalendarUrl(event, eventDate);
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
@@ -442,14 +510,14 @@ function Schedule({ user, allegianceStyle, onNavigate }) {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-900 rounded-full mb-4">
             <Calendar className="w-5 h-5" />
-            <span className="font-bold text-sm">JUNE 21-22, 2026</span>
+            <span className="font-bold text-sm">JUNE 1ST - 22ND, 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">
             EVENT SCHEDULE
           </h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            48 hours of hacking, creating, and competing. Plan your HackDay experience 
-            and add events to your calendar.
+            From launch to celebration — your complete guide to HackDay 2026. 
+            Team formation starts June 1st, hacking kicks off June 21st!
           </p>
         </div>
 
@@ -517,10 +585,17 @@ function Schedule({ user, allegianceStyle, onNavigate }) {
                   >
                     {/* Time Badge */}
                     <div className="flex flex-wrap items-center gap-2 mb-2">
+                      {isPreEvent && event.date && (
+                        <span className="inline-flex items-center gap-1 px-2 py-1 text-xs 
+                                          font-bold rounded bg-gray-900 text-white">
+                          <Calendar className="w-3 h-3" />
+                          {event.date}
+                        </span>
+                      )}
                       <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs 
                                         font-bold rounded ${categoryStyle.bg} ${categoryStyle.text}`}>
                         <Clock className="w-3 h-3" />
-                        {event.time} - {event.endTime}
+                        {event.time}{event.time !== event.endTime ? ` - ${event.endTime}` : ''}
                       </span>
                       <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs 
                                         font-medium rounded bg-gray-100 text-gray-600`}>

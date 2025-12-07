@@ -499,7 +499,7 @@ function Dashboard({
             </div>
 
             {/* Project Gallery Feature Box - Only show during voting phase */}
-            {eventPhase === 'voting' ? (
+            {eventPhase === 'voting' && (
               <div className="p-5 border-2 border-amber-400 bg-amber-50">
                 <div className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-2">
                   Project Gallery
@@ -517,20 +517,6 @@ function Dashboard({
                   <Vote className="w-4 h-4" />
                   Browse &amp; Vote
                 </button>
-              </div>
-            ) : (
-              /* Promo Tile 2 - Shows when voting tile is hidden */
-              <div className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-purple-50 to-indigo-50 
-                              flex items-center justify-center min-h-[200px] relative overflow-hidden"
-                   data-promo-slot="2">
-                {/* Placeholder - Replace with actual promo graphic */}
-                <div className="text-center p-6">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
-                    <ImageIcon className="w-8 h-8 text-purple-300" />
-                  </div>
-                  <p className="text-sm text-purple-400 font-medium">Promo Graphic 2</p>
-                  <p className="text-xs text-purple-300 mt-1">Coming Soon</p>
-                </div>
               </div>
             )}
 
@@ -654,6 +640,22 @@ function Dashboard({
                 })}
               </div>
             </div>
+
+            {/* Promo Tile 2 - Shows in last slot when voting tile is hidden */}
+            {eventPhase !== 'voting' && (
+              <div className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-purple-50 to-indigo-50 
+                              flex items-center justify-center min-h-[200px] relative overflow-hidden"
+                   data-promo-slot="2">
+                {/* Placeholder - Replace with actual promo graphic */}
+                <div className="text-center p-6">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-purple-300" />
+                  </div>
+                  <p className="text-sm text-purple-400 font-medium">Promo Graphic 2</p>
+                  <p className="text-xs text-purple-300 mt-1">Coming Soon</p>
+                </div>
+              </div>
+            )}
 
             {/* FAQ Widget */}
             <div className="md:col-span-2 p-5 border-2 border-gray-200">
