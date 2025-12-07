@@ -453,8 +453,8 @@ function Dashboard({
             const shuffled = [...PROMO_IMAGES].sort(() => Math.random() - 0.5);
           */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {/* Promo Tile 1 - Always visible */}
-            <div className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-cyan-50 to-teal-50 
+            {/* Promo Tile 1 - Always visible, full width */}
+            <div className="md:col-span-2 border-2 border-dashed border-gray-300 bg-gradient-to-br from-cyan-50 to-teal-50 
                             flex items-center justify-center min-h-[200px] relative overflow-hidden"
                  data-promo-slot="1">
               {/* Placeholder - Replace with actual promo graphic */}

@@ -635,10 +635,10 @@ function Schedule({ user, allegianceStyle, onNavigate }) {
           <div className="inline-block p-6 bg-white border-2 border-gray-200 rounded-lg">
             <div className="flex items-center justify-center gap-2 mb-3">
               <Clock className="w-5 h-5 text-gray-600" />
-              <span className="font-bold text-gray-900">48 Hours of Innovation</span>
+              <span className="font-bold text-gray-900">Remote Hackathon</span>
             </div>
             <p className="text-sm text-gray-600 mb-4">
-              All times are in local event timezone. Make sure to check in early and stay hydrated!
+              All times are in your local timezone. Hack from anywhere in the world!
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               <button
@@ -665,7 +665,7 @@ function Schedule({ user, allegianceStyle, onNavigate }) {
       {/* Footer */}
       <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white mt-8">
         <div className="max-w-7xl mx-auto text-center text-xs text-gray-400">
-          HACKDAY 2026 — HUMAN VS AI — June 21-22, 2026
+          HACKDAY 2026 — HUMAN VS AI — Online Remote Event
         </div>
       </footer>
     </div>
