@@ -4,6 +4,7 @@ import Landing from './components/Landing';
 import Login from './components/Login';
 import Onboarding from './components/Onboarding';
 import Dashboard from './components/Dashboard';
+import Marketplace from './components/Marketplace';
 import TeamDetail from './components/TeamDetail';
 import Profile from './components/Profile';
 
@@ -184,6 +185,15 @@ function App() {
       case 'dashboard':
         return (
           <Dashboard
+            user={user}
+            teams={mockTeams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+          />
+        );
+      case 'marketplace':
+        return (
+          <Marketplace
             user={user}
             teams={mockTeams}
             freeAgents={freeAgents}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { ArrowLeft, Mail, Lock, Zap, Crown } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, Crown } from 'lucide-react';
+import adaptLogo from '../../adaptlogo.png';
 
 function Login({ onNavigate, onLogin, onDemoLogin }) {
   const [email, setEmail] = useState('');
@@ -26,7 +27,7 @@ function Login({ onNavigate, onLogin, onDemoLogin }) {
             <span className="text-sm hidden sm:inline">Back</span>
           </button>
           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-gray-900" />
+            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
             <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
           </div>
         </div>

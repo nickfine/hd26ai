@@ -1,4 +1,5 @@
-import { Cpu, Heart, Zap } from 'lucide-react';
+import { Cpu, Heart } from 'lucide-react';
+import adaptLogo from '../../adaptlogo.png';
 
 function Landing({ onNavigate }) {
   return (
@@ -7,7 +8,7 @@ function Landing({ onNavigate }) {
       <header className="border-b border-gray-200 px-4 sm:px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Zap className="w-5 sm:w-6 h-5 sm:h-6 text-gray-900" />
+            <img src={adaptLogo} alt="Adaptavist" className="h-6 sm:h-8 w-auto" />
             <span className="font-bold text-base sm:text-lg tracking-tight">HACKDAY 2026</span>
           </div>
           <span className="text-xs text-gray-500 uppercase tracking-widest hidden sm:inline">

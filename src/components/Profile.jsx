@@ -1,10 +1,10 @@
 import { useState } from 'react';
+import adaptLogo from '../../adaptlogo.png';
 import {
   ArrowLeft,
   Cpu,
   Heart,
   Scale,
-  Zap,
   Crown,
   Bell,
   ChevronRight,
@@ -68,10 +68,10 @@ function Profile({
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:inline">Back to Marketplace</span>
+            <span className="text-sm hidden sm:inline">Back to Dashboard</span>
           </button>
           <div className="flex items-center gap-2">
-            <Zap className="w-5 h-5 text-gray-900" />
+            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
             <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
           </div>
         </div>

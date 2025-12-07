@@ -1,96 +1,106 @@
 import { useState } from 'react';
+import adaptLogo from '../../adaptlogo.png';
 import {
-  Cpu,
-  Heart,
-  Scale,
+  Clock,
   Users,
-  Plus,
-  Search,
-  LogOut,
-  Zap,
-  ChevronRight,
   User,
+  Heart,
+  Cpu,
+  Scale,
+  Calendar,
+  Trophy,
+  HelpCircle,
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
   Send,
-  X,
-  Mail,
-  Check,
-  Menu,
+  Vote,
+  Activity,
+  Download,
+  LayoutDashboard,
+  LogOut,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
 
-function Dashboard({ 
-  user, 
-  teams, 
-  freeAgents = [],
-  allegianceStyle, 
-  onNavigate, 
-  onNavigateToTeam,
-  onSendInvite,
-  onInviteResponse,
+// ============================================================================
+// MOCK DATA
+// ============================================================================
+
+const MOCK_ACTIVITY_FEED = [
+  { id: 1, type: 'join', user: 'Maya Rodriguez', team: 'Neural Nexus', side: 'ai', time: '2 min ago' },
+  { id: 2, type: 'create', user: 'Jordan Lee', team: 'Quantum Collective', side: 'ai', time: '5 min ago' },
+  { id: 3, type: 'join', user: 'Casey Brooks', team: 'Human Touch', side: 'human', time: '12 min ago' },
+  { id: 4, type: 'allegiance', user: 'River Chen', side: 'ai', time: '15 min ago' },
+  { id: 5, type: 'create', user: 'Pat O\'Brien', team: 'Carbon Coalition', side: 'human', time: '23 min ago' },
+  { id: 6, type: 'join', user: 'Skyler Vance', team: 'Digital Overlords', side: 'ai', time: '31 min ago' },
+];
+
+const MOCK_SCHEDULE = [
+  { id: 1, time: '10:00 AM', title: 'Opening Ceremony', description: 'Kickoff & rules explanation' },
+  { id: 2, time: '10:30 AM', title: 'Team Formation Deadline', description: 'Final team submissions' },
+  { id: 3, time: '11:00 AM', title: 'Hacking Begins', description: 'Start building!' },
+  { id: 4, time: '5:00 PM', title: 'Submission Deadline', description: 'All projects due' },
+];
+
+const MOCK_AWARDS = [
+  { id: 1, title: 'Grand HackDay Champion', prize: 'T-Shirts + Digital Swag', icon: Trophy, description: 'Champion t-shirts, Zoom backgrounds, Slack avatars' },
+  { id: 2, title: 'Best Human Team', prize: 'Digital Swag', icon: Heart, description: 'Human team Zoom backgrounds & Slack avatars' },
+  { id: 3, title: 'Best AI Team', prize: 'Digital Swag', icon: Cpu, description: 'AI team Zoom backgrounds & Slack avatars' },
+];
+
+const MOCK_FAQ = [
+  { id: 1, question: 'How do teams work?', answer: 'Teams can have 2-6 members. You can join an existing team or create your own. All team members must choose the same allegiance (Human or AI).' },
+  { id: 2, question: 'What can I build?', answer: 'Anything! Web apps, mobile apps, APIs, games, tools - as long as it fits the theme. AI-side teams are encouraged to use AI tools heavily, while Human-side teams should minimize AI assistance.' },
+  { id: 3, question: 'How is judging done?', answer: 'Projects are judged on innovation, execution, design, and theme adherence. There will be peer voting for People\'s Choice award.' },
+  { id: 4, question: 'Can I switch allegiances?', answer: 'You can switch until team formation deadline. After that, your allegiance is locked for the duration of the hackathon.' },
+];
+
+const EVENT_PHASES = [
+  { id: 'registration', label: 'Registration', complete: true },
+  { id: 'team-formation', label: 'Team Formation', complete: true },
+  { id: 'hacking', label: 'Hacking', complete: false, active: true },
+  { id: 'submission', label: 'Submission', complete: false },
+  { id: 'voting', label: 'Voting', complete: false },
+  { id: 'results', label: 'Results', complete: false },
+];
+
+const NAV_ITEMS = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { id: 'schedule', label: 'Schedule', icon: Calendar },
+  { id: 'teams', label: 'Teams', icon: Users },
+  { id: 'submission', label: 'Submission', icon: Send },
+  { id: 'voting', label: 'Voting', icon: Vote },
+  { id: 'results', label: 'Results', icon: Trophy },
+];
+
+// ============================================================================
+// COMPONENT
+// ============================================================================
+
+function Dashboard({
+  user,
+  teams = [],
+  allegianceStyle,
+  onNavigate,
 }) {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [activeTab, setActiveTab] = useState('teams');
-  const [inviteModalAgent, setInviteModalAgent] = useState(null);
-  const [inviteMessage, setInviteMessage] = useState('');
-  const [filterAllegiance, setFilterAllegiance] = useState(user?.allegiance || 'neutral');
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [expandedFaq, setExpandedFaq] = useState(null);
+  const [activeNav, setActiveNav] = useState('dashboard');
 
   // Find the team the user is captain of (if any)
   const captainedTeam = teams.find((team) => team.captainId === user?.id);
-
-  // Filter teams based on selected filter allegiance
-  const allegianceFilteredTeams = teams.filter((team) => {
-    if (filterAllegiance === 'human') return team.side === 'human';
-    if (filterAllegiance === 'ai') return team.side === 'ai';
-    return true; // neutral shows all
-  });
-
-  // Filter teams by search
-  const searchFilteredTeams = allegianceFilteredTeams.filter(
-    (team) =>
-      team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      team.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      team.lookingFor.some((skill) =>
-        skill.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+  
+  // Find user's team (as member or captain)
+  const userTeam = teams.find((team) => 
+    team.captainId === user?.id || 
+    team.members?.some(m => m.id === user?.id)
   );
 
-  // Sort teams: applied teams first, then others
-  const filteredTeams = [...searchFilteredTeams].sort((a, b) => {
-    const aApplied = a.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
-    const bApplied = b.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
-    return bApplied - aApplied;
-  });
-
-  // Filter free agents by allegiance
-  const allegianceFilteredAgents = freeAgents.filter((agent) => {
-    if (filterAllegiance === 'human') return agent.allegiance === 'human';
-    if (filterAllegiance === 'ai') return agent.allegiance === 'ai';
-    return true; // neutral shows all
-  });
-
-  // Filter free agents by search
-  const filteredAgents = allegianceFilteredAgents.filter(
-    (agent) =>
-      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agent.bio?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agent.skills?.some((skill) =>
-        skill.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
-
-  // Find current user's pending invites (if they are a free agent in the system)
-  const currentUserAgent = freeAgents.find((a) => a.id === user?.id);
-  const pendingInvites = currentUserAgent?.teamInvites || [];
-
-  // Handle sending invite
-  const handleSendInvite = () => {
-    if (inviteModalAgent && captainedTeam) {
-      onSendInvite(inviteModalAgent.id, captainedTeam.id, inviteMessage);
-      setInviteModalAgent(null);
-      setInviteMessage('');
-    }
-  };
+  // Calculate war stats
+  const humanTeams = teams.filter(t => t.side === 'human').length;
+  const aiTeams = teams.filter(t => t.side === 'ai').length;
+  const totalTeams = humanTeams + aiTeams;
+  const humanPercent = totalTeams > 0 ? Math.round((humanTeams / totalTeams) * 100) : 50;
+  const aiPercent = totalTeams > 0 ? Math.round((aiTeams / totalTeams) * 100) : 50;
 
   const AllegianceIcon = {
     human: Heart,
@@ -98,657 +108,452 @@ function Dashboard({
     ai: Cpu,
   }[user?.allegiance || 'neutral'];
 
+  const toggleFaq = (id) => {
+    setExpandedFaq(expandedFaq === id ? null : id);
+  };
+
   return (
-    <div
-      className={`min-h-screen bg-gray-50 ${allegianceStyle.font} transition-all duration-300`}
-    >
-      {/* Header */}
-      <header
-        className={`border-b-2 px-4 sm:px-6 py-4 bg-white transition-all duration-300`}
-        style={{ borderColor: allegianceStyle.borderColor }}
-      >
+    <div className={`min-h-screen bg-white ${allegianceStyle?.font || 'font-sans'}`}>
+      {/* ================================================================== */}
+      {/* HEADER */}
+      {/* ================================================================== */}
+      <header className="border-b-2 border-gray-900 px-4 sm:px-6 py-4 bg-white">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Mobile menu button */}
-            <button
-              type="button"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="lg:hidden p-2 -ml-2 text-gray-600 hover:text-gray-900"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-            <Zap className="w-5 h-5 text-gray-900" />
-            <span className="font-bold text-sm tracking-tight hidden sm:inline">HACKDAY 2026</span>
+          {/* Logo */}
+          <div className="flex items-center gap-3">
+            <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
+            <div>
+              <div className="font-black text-lg tracking-tight">HACKDAY 2026</div>
+              <div className="text-xs text-gray-500 font-mono">HUMAN VS AI</div>
+            </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-4">
-            {/* User Info - Clickable to Profile */}
-            <button
-              type="button"
-              onClick={() => onNavigate('profile')}
-              className="flex items-center gap-2 sm:gap-3 hover:opacity-80 transition-opacity"
-            >
+          {/* War Timer */}
+          <div className="flex items-center gap-3 px-4 py-2 bg-gray-900 text-white">
+            <Clock className="w-5 h-5" />
+            <div>
+              <div className="font-mono text-2xl font-bold tracking-wider">47:59:00</div>
+              <div className="text-xs text-gray-400 uppercase tracking-wide">Until Launch</div>
+            </div>
+          </div>
+
+          {/* User Quick Access */}
+          <button
+            type="button"
+            onClick={() => onNavigate('profile')}
+            className="hidden sm:flex items-center gap-3 hover:opacity-80 transition-opacity"
+          >
+            <div className="relative">
               <div
-                className={`w-8 h-8 flex items-center justify-center ${allegianceStyle.borderRadius}`}
+                className={`w-10 h-10 flex items-center justify-center ${allegianceStyle?.borderRadius || 'rounded-lg'}`}
                 style={{
-                  backgroundColor: allegianceStyle.bgColor,
-                  border: `2px solid ${allegianceStyle.borderColor}`,
+                  backgroundColor: allegianceStyle?.bgColor,
+                  border: `2px solid ${allegianceStyle?.borderColor}`,
                 }}
               >
-                <AllegianceIcon
-                  className="w-4 h-4"
-                  style={{ color: allegianceStyle.color }}
-                />
+                <AllegianceIcon className="w-5 h-5" style={{ color: allegianceStyle?.color }} />
               </div>
-              <div className="text-sm text-left hidden sm:block">
-                <div className="font-bold text-gray-900">{user?.name}</div>
-                <div className="text-xs text-gray-500">
-                  {captainedTeam ? 'Team Captain' : 'Free Agent'}
+              {captainedTeam?.joinRequests?.length > 0 && (
+                <div className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  {captainedTeam.joinRequests.length}
                 </div>
-              </div>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => onNavigate('landing')}
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-            >
-              <LogOut className="w-5 h-5" />
-            </button>
-          </div>
+              )}
+            </div>
+            <div className="text-left">
+              <div className="font-bold text-gray-900 text-sm">{user?.name || 'Operator'}</div>
+              {captainedTeam ? (
+                <>
+                  <div className="text-xs text-gray-500">Captain</div>
+                  <div className="text-xs font-medium" style={{ color: allegianceStyle?.color }}>
+                    {captainedTeam.name}
+                  </div>
+                </>
+              ) : userTeam ? (
+                <div className="text-xs font-medium" style={{ color: allegianceStyle?.color }}>
+                  {userTeam.name}
+                </div>
+              ) : (
+                <div className="text-xs text-gray-500">Free Agent</div>
+              )}
+            </div>
+          </button>
         </div>
       </header>
 
-      <div className="max-w-7xl mx-auto flex relative">
-        {/* Mobile sidebar overlay */}
-        {sidebarOpen && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-40 lg:hidden"
-            onClick={() => setSidebarOpen(false)}
-          />
-        )}
-
-        {/* Sidebar */}
-        <aside className={`
-          fixed lg:static inset-y-0 left-0 z-50
-          w-72 border-r border-gray-200 bg-white min-h-[calc(100vh-65px)] p-6
-          transform transition-transform duration-300 ease-in-out
-          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        `}>
-          {/* Close button for mobile */}
-          <button
-            type="button"
-            onClick={() => setSidebarOpen(false)}
-            className="lg:hidden absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600"
-          >
-            <X className="w-5 h-5" />
-          </button>
-
-          {/* Pending Invites - For Free Agents */}
-          {pendingInvites.length > 0 && (
-            <div className="p-4 mb-6 border-2 border-blue-300 bg-blue-50 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <div className="text-xs font-bold uppercase tracking-wide text-gray-500">
-                  Team Invites
-                </div>
-                <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  <Mail className="w-3 h-3" />
-                  <span className="text-xs font-bold">{pendingInvites.length}</span>
-                </div>
-              </div>
-              
-              <div className="space-y-3">
-                {pendingInvites.map((invite) => {
-                  const teamConfig = ALLEGIANCE_CONFIG[invite.teamSide] || ALLEGIANCE_CONFIG.neutral;
-                  
-                  return (
-                    <div key={invite.id} className="p-3 bg-white border border-gray-200 rounded">
-                      <div 
-                        className={`font-bold text-sm text-gray-900 mb-1 ${
-                          invite.teamSide === 'ai' ? 'font-mono' : ''
-                        }`}
-                      >
-                        {invite.teamName}
-                      </div>
-                      {invite.message && (
-                        <p className="text-xs text-gray-500 mb-2 line-clamp-2">
-                          "{invite.message}"
-                        </p>
-                      )}
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => onInviteResponse(user?.id, invite.id, true)}
-                          className="flex-1 py-1.5 text-xs font-bold text-white rounded flex items-center justify-center gap-1"
-                          style={{ backgroundColor: teamConfig.color }}
-                        >
-                          <Check className="w-3 h-3" />
-                          Accept
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => onInviteResponse(user?.id, invite.id, false)}
-                          className="flex-1 py-1.5 text-xs font-bold text-gray-600 border border-gray-300 rounded
-                                     hover:bg-gray-100 flex items-center justify-center gap-1"
-                        >
-                          <X className="w-3 h-3" />
-                          Decline
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* ALLEGIANCE FILTER - KEY FEATURE */}
-          <div className="mb-6">
-            <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">
-              Filter by Allegiance
-            </div>
-            <div className="space-y-2">
-              {['human', 'ai', 'neutral'].map((side) => {
-                const config = ALLEGIANCE_CONFIG[side];
-                const isActive = filterAllegiance === side;
-                const Icon = { human: Heart, neutral: Scale, ai: Cpu }[side];
-
-                return (
-                  <button
-                    type="button"
-                    key={side}
-                    onClick={() => {
-                      setFilterAllegiance(side);
-                      setSidebarOpen(false);
-                    }}
-                    className={`w-full p-3 flex items-center gap-3 transition-all duration-200
-                      ${config.borderRadius} border-2
-                      ${
-                        isActive
-                          ? ''
-                          : 'border-gray-200 hover:border-gray-400 bg-white'
-                      }`}
-                    style={
-                      isActive
-                        ? {
-                            borderColor: config.borderColor,
-                            backgroundColor: config.bgColor,
-                          }
-                        : {}
-                    }
+      {/* ================================================================== */}
+      {/* EVENT STATUS BAR */}
+      {/* ================================================================== */}
+      <div className="border-b-2 border-gray-200 bg-gray-50 px-4 sm:px-6 py-3">
+        <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 sm:gap-4 overflow-x-auto">
+          {EVENT_PHASES.map((phase, index) => {
+            const isActive = phase.active;
+            const isComplete = phase.complete;
+            return (
+              <div key={phase.id} className="flex items-center">
+                <div className="flex items-center gap-1.5">
+                  <div
+                    className={`w-6 h-6 flex items-center justify-center text-xs font-bold
+                      ${isComplete 
+                        ? 'bg-gray-900 text-white' 
+                        : isActive 
+                          ? 'bg-cyan-500 text-white animate-pulse' 
+                          : 'bg-gray-300 text-gray-500'}`}
                   >
-                    <Icon
-                      className="w-5 h-5"
-                      style={{ color: isActive ? config.color : '#9ca3af' }}
-                    />
-                    <span
-                      className={`font-bold text-sm ${
-                        side === 'ai' ? 'font-mono' : ''
-                      }`}
-                      style={{ color: isActive ? config.color : '#374151' }}
-                    >
-                      {side === 'neutral' ? 'All' : config.label}
-                    </span>
-                    {isActive && (
-                      <span className="ml-auto text-xs text-gray-400">
-                        ACTIVE
-                      </span>
-                    )}
-                  </button>
-                );
-              })}
+                    {isComplete ? '✓' : index + 1}
+                  </div>
+                  <span className={`text-xs font-bold whitespace-nowrap hidden sm:inline
+                    ${isActive ? 'text-cyan-600' : isComplete ? 'text-gray-900' : 'text-gray-400'}`}>
+                    {phase.label}
+                  </span>
+                </div>
+                {index < EVENT_PHASES.length - 1 && (
+                  <div className={`w-4 sm:w-8 h-0.5 mx-1 sm:mx-2
+                    ${isComplete ? 'bg-gray-900' : 'bg-gray-300'}`} 
+                  />
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ================================================================== */}
+      {/* MAIN LAYOUT */}
+      {/* ================================================================== */}
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row">
+        {/* ================================================================ */}
+        {/* LEFT SIDEBAR (30%) */}
+        {/* ================================================================ */}
+        <aside className="w-full lg:w-[280px] border-r-0 lg:border-r-2 border-gray-200 p-4 sm:p-6 space-y-6">
+          {/* Navigation Menu */}
+          <nav className="space-y-1">
+            <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">
+              Navigation
             </div>
-          </div>
+            {NAV_ITEMS.map((item) => {
+              const Icon = item.icon;
+              const isActive = activeNav === item.id;
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    setActiveNav(item.id);
+                    if (item.id === 'teams') onNavigate('marketplace');
+                  }}
+                  className={`w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all
+                    ${isActive 
+                      ? 'bg-gray-900 text-white' 
+                      : 'text-gray-600 hover:bg-gray-100'}`}
+                >
+                  <Icon className="w-4 h-4" />
+                  {item.label}
+                </button>
+              );
+            })}
+            <button
+              type="button"
+              onClick={() => onNavigate('landing')}
+              className="w-full px-3 py-2 flex items-center gap-3 text-sm font-bold text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-all mt-4"
+            >
+              <LogOut className="w-4 h-4" />
+              Sign Out
+            </button>
+          </nav>
 
-          {/* Create Team */}
-          <button
-            type="button"
-            className={`w-full py-3 flex items-center justify-center gap-2 
-                       bg-gray-900 text-white font-bold text-sm
-                       hover:bg-gray-800 transition-all duration-200
-                       ${allegianceStyle.borderRadius}`}
-          >
-            <Plus className="w-4 h-4" />
-            CREATE TEAM
-          </button>
-
-          {/* Info */}
-          <div className="mt-6 p-3 border border-gray-200 bg-gray-50 text-xs text-gray-500">
-            <strong className="text-gray-700">Tip:</strong> Filter by allegiance
-            to see teams for a specific side. Select All to view everything.
+          {/* War Recruitment Status */}
+          <div className="p-4 border-2 border-gray-200">
+            <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-3">
+              War Recruitment Status
+            </div>
+            <div className="space-y-3">
+              {/* Human Bar */}
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="font-bold text-green-600 flex items-center gap-1">
+                    <Heart className="w-3 h-3" /> Human
+                  </span>
+                  <span className="font-mono font-bold">{humanPercent}%</span>
+                </div>
+                <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-green-500 rounded-full transition-all duration-500"
+                    style={{ width: `${humanPercent}%` }}
+                  />
+                </div>
+              </div>
+              {/* AI Bar */}
+              <div>
+                <div className="flex justify-between text-sm mb-1">
+                  <span className="font-bold font-mono text-cyan-600 flex items-center gap-1">
+                    <Cpu className="w-3 h-3" /> AI
+                  </span>
+                  <span className="font-mono font-bold">{aiPercent}%</span>
+                </div>
+                <div className="h-3 bg-gray-100 overflow-hidden">
+                  <div 
+                    className="h-full bg-cyan-500 transition-all duration-500"
+                    style={{ width: `${aiPercent}%` }}
+                  />
+                </div>
+              </div>
+              {/* Total */}
+              <div className="pt-2 border-t border-gray-100 text-center">
+                <span className="text-xs text-gray-400">{totalTeams} teams registered</span>
+              </div>
+            </div>
           </div>
         </aside>
 
-        {/* Main Content - Marketplace */}
-        <main className="flex-1 p-4 sm:p-6 w-full lg:w-auto">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900">
-                THE MARKETPLACE
-              </h1>
-              <p className="text-sm text-gray-500">
-                Find your team or recruit free agents
+        {/* ================================================================ */}
+        {/* RIGHT MAIN CONTENT (70%) */}
+        {/* ================================================================ */}
+        <main className="flex-1 p-4 sm:p-6">
+          {/* Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {/* Team Finder Feature Box */}
+            <div className="p-5 border-2 border-gray-900 bg-gray-900 text-white">
+              <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
+                Team Finder
+              </div>
+              <h3 className="text-xl font-black mb-3">Find Your Squad</h3>
+              <p className="text-sm text-gray-400 mb-4">
+                Browse open teams looking for members or discover free agents with matching skills.
               </p>
+              <div className="flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('marketplace')}
+                  className="flex-1 py-3 bg-white text-gray-900 font-bold text-sm
+                             hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
+                >
+                  <Users className="w-4 h-4" />
+                  Browse Teams
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('marketplace')}
+                  className="flex-1 py-3 border-2 border-white text-white font-bold text-sm
+                             hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-2"
+                >
+                  <User className="w-4 h-4" />
+                  Free Agents
+                </button>
+              </div>
             </div>
 
-            {/* Search */}
-            <div className="relative w-full sm:w-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={activeTab === 'teams' ? 'Search teams or skills...' : 'Search people or skills...'}
-                className="w-full sm:w-64 pl-10 pr-4 py-2 border-2 border-gray-200 
-                           focus:border-gray-900 focus:outline-none
-                           text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Tab Switcher */}
-          <div className="flex gap-2 mb-6 overflow-x-auto">
-            <button
-              type="button"
-              onClick={() => setActiveTab('teams')}
-              className={`px-3 sm:px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap
-                         ${activeTab === 'teams' 
-                           ? 'bg-gray-900 text-white' 
-                           : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
-            >
-              <Users className="w-4 h-4" />
-              <span className="hidden xs:inline">TEAMS</span>
-              <span className={`px-1.5 py-0.5 text-xs rounded-full ${
-                activeTab === 'teams' ? 'bg-white/20' : 'bg-gray-100'
-              }`}>
-                {allegianceFilteredTeams.length}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab('people')}
-              className={`px-3 sm:px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap
-                         ${activeTab === 'people' 
-                           ? 'bg-gray-900 text-white' 
-                           : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
-            >
-              <User className="w-4 h-4" />
-              <span className="hidden xs:inline">PEOPLE</span>
-              <span className={`px-1.5 py-0.5 text-xs rounded-full ${
-                activeTab === 'people' ? 'bg-white/20' : 'bg-gray-100'
-              }`}>
-                {allegianceFilteredAgents.length}
-              </span>
-            </button>
-          </div>
-
-          {/* Allegiance Filter Indicator */}
-          <div
-            className={`inline-flex items-center gap-2 px-3 py-2 mb-6 text-sm
-                        ${ALLEGIANCE_CONFIG[filterAllegiance].borderRadius}`}
-            style={{
-              backgroundColor: ALLEGIANCE_CONFIG[filterAllegiance].bgColor,
-              border: `1px solid ${ALLEGIANCE_CONFIG[filterAllegiance].borderColor}`,
-              color: ALLEGIANCE_CONFIG[filterAllegiance].color,
-            }}
-          >
-            {filterAllegiance === 'human' && <Heart className="w-4 h-4" />}
-            {filterAllegiance === 'ai' && <Cpu className="w-4 h-4" />}
-            {filterAllegiance === 'neutral' && <Scale className="w-4 h-4" />}
-            <span className="text-xs sm:text-sm">
-              {filterAllegiance === 'neutral'
-                ? `Showing all ${activeTab}`
-                : `Showing ${ALLEGIANCE_CONFIG[filterAllegiance].label} ${activeTab}`}
-            </span>
-          </div>
-
-          {/* Teams Grid */}
-          {activeTab === 'teams' && (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
-                {filteredTeams.map((team) => {
-                  const teamConfig = ALLEGIANCE_CONFIG[team.side];
-                  const TeamIcon = team.side === 'ai' ? Cpu : Heart;
-                  const hasApplied = team.joinRequests?.some((r) => r.userName === user?.name);
-
+            {/* Live Activity Feed Widget */}
+            <div className="p-5 border-2 border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-400">
+                  Live Activity
+                </div>
+                <div className="flex items-center gap-1 text-xs text-green-600">
+                  <Activity className="w-3 h-3 animate-pulse" />
+                  Live
+                </div>
+              </div>
+              <div className="space-y-3 max-h-48 overflow-y-auto">
+                {MOCK_ACTIVITY_FEED.map((activity) => {
+                  const config = ALLEGIANCE_CONFIG[activity.side] || ALLEGIANCE_CONFIG.neutral;
                   return (
-                    <div
-                      key={team.id}
-                      className={`p-4 sm:p-5 bg-white transition-all duration-200 hover:shadow-lg
-                                 border-2 ${teamConfig.borderRadius}
-                                 ${team.side === 'ai' ? 'border-dashed' : ''}`}
-                      style={{ borderColor: teamConfig.borderColor }}
-                    >
-                      {/* Team Header */}
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
-                            style={{
-                              backgroundColor: teamConfig.bgColor,
-                            }}
-                          >
-                            <TeamIcon
-                              className="w-5 h-5"
-                              style={{ color: teamConfig.color }}
-                            />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h3
-                                className={`font-bold text-gray-900 truncate ${
-                                  team.side === 'ai' ? 'font-mono' : ''
-                                }`}
-                              >
-                                {team.name}
-                              </h3>
-                              {hasApplied && (
-                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-amber-100 text-amber-600 rounded-full">
-                                  Applied
-                                </span>
-                              )}
-                            </div>
-                            <span
-                              className="text-xs font-bold uppercase"
-                              style={{ color: teamConfig.color }}
-                            >
-                              {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
-                          <Users className="w-4 h-4" />
-                          <span>
-                            {team.members.length}/{team.maxMembers}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* Description */}
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{team.description}</p>
-
-                      {/* Looking For */}
-                      <div className="mb-4">
-                        <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
-                          Looking For
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {team.lookingFor.slice(0, 3).map((skill) => (
-                            <span
-                              key={skill}
-                              className={`px-2 py-1 text-xs border ${teamConfig.borderRadius}`}
-                              style={{
-                                borderColor: teamConfig.borderColor,
-                                color: teamConfig.color,
-                                backgroundColor: teamConfig.bgColor,
-                              }}
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                          {team.lookingFor.length > 3 && (
-                            <span className="px-2 py-1 text-xs text-gray-400">
-                              +{team.lookingFor.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Action */}
-                      <button
-                        type="button"
-                        onClick={() => onNavigateToTeam(team.id)}
-                        className={`w-full py-2 flex items-center justify-center gap-2
-                                   font-bold text-sm transition-all
-                                   ${teamConfig.borderRadius}`}
-                        style={{
-                          backgroundColor: teamConfig.color,
-                          color: 'white',
-                        }}
+                    <div key={activity.id} className="flex items-start gap-3 text-sm">
+                      <div
+                        className={`w-6 h-6 flex-shrink-0 flex items-center justify-center text-xs
+                          ${activity.side === 'ai' ? '' : 'rounded-full'}`}
+                        style={{ backgroundColor: config.bgColor }}
                       >
-                        LEARN MORE
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
+                        {activity.side === 'ai' 
+                          ? <Cpu className="w-3 h-3" style={{ color: config.color }} />
+                          : <Heart className="w-3 h-3" style={{ color: config.color }} />
+                        }
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <span className={`font-bold ${activity.side === 'ai' ? 'font-mono' : ''}`}>
+                          {activity.user}
+                        </span>
+                        {activity.type === 'join' && (
+                          <span className="text-gray-500"> joined </span>
+                        )}
+                        {activity.type === 'create' && (
+                          <span className="text-gray-500"> created </span>
+                        )}
+                        {activity.type === 'allegiance' && (
+                          <span className="text-gray-500"> chose {activity.side.toUpperCase()} side</span>
+                        )}
+                        {activity.team && (
+                          <span className="font-bold" style={{ color: config.color }}>
+                            {activity.team}
+                          </span>
+                        )}
+                        <div className="text-xs text-gray-400">{activity.time}</div>
+                      </div>
                     </div>
                   );
                 })}
               </div>
+            </div>
 
-              {/* Empty State - Teams */}
-              {filteredTeams.length === 0 && (
-                <div className="text-center py-12 text-gray-400">
-                  <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>
-                    {searchTerm
-                      ? 'No teams found matching your search.'
-                      : 'No teams available for the selected filter.'}
-                  </p>
+            {/* Faction Selection Widget */}
+            <div
+              className={`p-5 border-2 ${allegianceStyle?.borderRadius || 'rounded-lg'}`}
+              style={{ borderColor: allegianceStyle?.borderColor }}
+            >
+              <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-4">
+                Your Allegiance
+              </div>
+              <div className="flex gap-3 mb-4">
+                <button
+                  type="button"
+                  className={`flex-1 p-4 border-2 rounded-xl transition-all
+                    ${user?.allegiance === 'human' 
+                      ? 'border-green-500 bg-green-50' 
+                      : 'border-gray-200 hover:border-green-300'}`}
+                >
+                  <Heart className={`w-8 h-8 mx-auto mb-2 ${user?.allegiance === 'human' ? 'text-green-600' : 'text-gray-400'}`} />
+                  <div className={`text-sm font-bold text-center ${user?.allegiance === 'human' ? 'text-green-600' : 'text-gray-600'}`}>
+                    Human
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  className={`flex-1 p-4 border-2 transition-all
+                    ${user?.allegiance === 'ai' 
+                      ? 'border-cyan-500 bg-cyan-50 border-dashed' 
+                      : 'border-gray-200 hover:border-cyan-300'}`}
+                >
+                  <Cpu className={`w-8 h-8 mx-auto mb-2 ${user?.allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-400'}`} />
+                  <div className={`text-sm font-bold font-mono text-center ${user?.allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-600'}`}>
+                    AI
+                  </div>
+                </button>
+              </div>
+              <button
+                type="button"
+                className="w-full py-2 px-4 border-2 border-gray-200 text-gray-600 text-sm font-bold
+                           hover:border-gray-400 transition-all flex items-center justify-center gap-2"
+              >
+                <Download className="w-4 h-4" />
+                Download Slack Avatar
+              </button>
+            </div>
+
+            {/* Schedule Preview Widget */}
+            <div className="p-5 border-2 border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-400">
+                  Schedule Preview
                 </div>
-              )}
-            </>
-          )}
+                <Calendar className="w-4 h-4 text-gray-400" />
+              </div>
+              <div className="space-y-3">
+                {MOCK_SCHEDULE.map((item, index) => (
+                  <div 
+                    key={item.id} 
+                    className={`flex gap-3 pb-3 ${index < MOCK_SCHEDULE.length - 1 ? 'border-b border-gray-100' : ''}`}
+                  >
+                    <div className="w-16 flex-shrink-0">
+                      <div className="text-xs font-mono font-bold text-gray-900">{item.time}</div>
+                    </div>
+                    <div>
+                      <div className="text-sm font-bold text-gray-900">{item.title}</div>
+                      <div className="text-xs text-gray-500">{item.description}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <button
+                type="button"
+                className="w-full mt-4 py-2 text-sm font-bold text-gray-600 hover:text-gray-900 
+                           flex items-center justify-center gap-1"
+              >
+                View Full Schedule
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
 
-          {/* People Grid */}
-          {activeTab === 'people' && (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
-                {filteredAgents.map((agent) => {
-                  const agentConfig = ALLEGIANCE_CONFIG[agent.allegiance] || ALLEGIANCE_CONFIG.neutral;
-                  const AgentIcon = { human: Heart, neutral: Scale, ai: Cpu }[agent.allegiance] || Scale;
-                  const hasInvited = agent.teamInvites?.some((i) => i.teamId === captainedTeam?.id);
-
+            {/* Awards List Widget */}
+            <div className="md:col-span-2 p-5 border-2 border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-400">
+                  Awards & Prizes
+                </div>
+                <Trophy className="w-4 h-4 text-amber-500" />
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                {MOCK_AWARDS.map((award) => {
+                  const Icon = award.icon;
+                  const isAI = award.title.includes('AI');
+                  const isHuman = award.title.includes('Human');
+                  const isChampion = award.title.includes('Champion');
                   return (
-                    <div
-                      key={agent.id}
-                      className={`p-4 sm:p-5 bg-white transition-all duration-200 hover:shadow-lg
-                                 border-2 ${agentConfig.borderRadius}
-                                 ${agent.allegiance === 'ai' ? 'border-dashed' : ''}`}
-                      style={{ borderColor: agentConfig.borderColor }}
+                    <div 
+                      key={award.id} 
+                      className={`p-5 border-2 transition-all hover:shadow-md
+                        ${isAI ? 'border-cyan-300 border-dashed' : isHuman ? 'border-green-300 rounded-xl' : isChampion ? 'border-amber-400 bg-amber-50' : 'border-gray-200'}`}
                     >
-                      {/* Agent Header */}
-                      <div className="flex items-start justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <div
-                            className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${agentConfig.borderRadius}`}
-                            style={{
-                              backgroundColor: agentConfig.bgColor,
-                            }}
-                          >
-                            <AgentIcon
-                              className="w-5 h-5"
-                              style={{ color: agentConfig.color }}
-                            />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="flex items-center gap-2 flex-wrap">
-                              <h3
-                                className={`font-bold text-gray-900 truncate ${
-                                  agent.allegiance === 'ai' ? 'font-mono' : ''
-                                }`}
-                              >
-                                {agent.name}
-                              </h3>
-                              {hasInvited && (
-                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-blue-100 text-blue-600 rounded-full">
-                                  Invited
-                                </span>
-                              )}
-                            </div>
-                            <span
-                              className="text-xs font-bold uppercase"
-                              style={{ color: agentConfig.color }}
-                            >
-                              {agentConfig.label} · FREE AGENT
-                            </span>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
-                          <User className="w-4 h-4" />
-                        </div>
+                      <Icon className={`w-10 h-10 mb-3 
+                        ${isAI ? 'text-cyan-600' : isHuman ? 'text-green-600' : 'text-amber-500'}`} 
+                      />
+                      <div className={`font-black text-lg mb-2 ${isAI ? 'font-mono text-cyan-700' : isHuman ? 'text-green-700' : 'text-amber-700'}`}>
+                        {award.title}
                       </div>
-
-                      {/* Bio */}
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{agent.bio}</p>
-
-                      {/* Skills */}
-                      <div className="mb-4">
-                        <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
-                          Skills
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {agent.skills?.slice(0, 3).map((skill) => (
-                            <span
-                              key={skill}
-                              className={`px-2 py-1 text-xs border ${agentConfig.borderRadius}`}
-                              style={{
-                                borderColor: agentConfig.borderColor,
-                                color: agentConfig.color,
-                                backgroundColor: agentConfig.bgColor,
-                              }}
-                            >
-                              {skill}
-                            </span>
-                          ))}
-                          {agent.skills?.length > 3 && (
-                            <span className="px-2 py-1 text-xs text-gray-400">
-                              +{agent.skills.length - 3} more
-                            </span>
-                          )}
-                        </div>
-                      </div>
-
-                      {/* Action - Only show invite button for captains */}
-                      {captainedTeam && !hasInvited && (
-                        <button
-                          type="button"
-                          onClick={() => setInviteModalAgent(agent)}
-                          className={`w-full py-2 flex items-center justify-center gap-2
-                                     font-bold text-sm transition-all
-                                     ${agentConfig.borderRadius}`}
-                          style={{
-                            backgroundColor: agentConfig.color,
-                            color: 'white',
-                          }}
-                        >
-                          <Send className="w-4 h-4" />
-                          INVITE TO TEAM
-                        </button>
-                      )}
-                      {captainedTeam && hasInvited && (
-                        <div
-                          className={`w-full py-2 flex items-center justify-center gap-2
-                                     font-bold text-sm text-gray-400 border-2 border-gray-200
-                                     ${agentConfig.borderRadius}`}
-                        >
-                          <Check className="w-4 h-4" />
-                          INVITE SENT
-                        </div>
-                      )}
-                      {!captainedTeam && (
-                        <div
-                          className={`w-full py-2 flex items-center justify-center gap-2
-                                     text-sm text-gray-400 border border-gray-200 bg-gray-50
-                                     ${agentConfig.borderRadius}`}
-                        >
-                          Create a team to send invites
-                        </div>
-                      )}
+                      <div className="text-sm font-bold text-gray-900 mb-2">{award.prize}</div>
+                      <div className="text-xs text-gray-500">{award.description}</div>
                     </div>
                   );
                 })}
               </div>
+            </div>
 
-              {/* Empty State - People */}
-              {filteredAgents.length === 0 && (
-                <div className="text-center py-12 text-gray-400">
-                  <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>
-                    {searchTerm
-                      ? 'No free agents found matching your search.'
-                      : 'No free agents available for the selected filter.'}
-                  </p>
+            {/* FAQ Widget */}
+            <div className="md:col-span-2 p-5 border-2 border-gray-200">
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-400">
+                  Frequently Asked Questions
                 </div>
-              )}
-            </>
-          )}
+                <HelpCircle className="w-4 h-4 text-gray-400" />
+              </div>
+              <div className="space-y-2">
+                {MOCK_FAQ.map((faq) => (
+                  <div key={faq.id} className="border border-gray-200">
+                    <button
+                      type="button"
+                      onClick={() => toggleFaq(faq.id)}
+                      className="w-full px-4 py-3 flex items-center justify-between text-left
+                                 hover:bg-gray-50 transition-colors"
+                    >
+                      <span className="font-bold text-sm text-gray-900">{faq.question}</span>
+                      {expandedFaq === faq.id 
+                        ? <ChevronUp className="w-4 h-4 text-gray-400" />
+                        : <ChevronDown className="w-4 h-4 text-gray-400" />
+                      }
+                    </button>
+                    {expandedFaq === faq.id && (
+                      <div className="px-4 pb-4 text-sm text-gray-600 border-t border-gray-100 pt-3">
+                        {faq.answer}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </main>
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white">
-        <div className="max-w-7xl mx-auto text-center text-xs text-gray-400">
-          WIREFRAME PROTOTYPE — Allegiance:{' '}
-          <span style={{ color: allegianceStyle.color }}>
-            {ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label.toUpperCase()}
+      <footer className="border-t-2 border-gray-200 px-4 sm:px-6 py-4 bg-white mt-6">
+        <div className="max-w-7xl mx-auto flex items-center justify-between text-xs text-gray-400">
+          <span>MISSION CONTROL v1.0</span>
+          <span>
+            ALLEGIANCE:{' '}
+            <span style={{ color: allegianceStyle?.color }} className="font-bold">
+              {ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label.toUpperCase()}
+            </span>
           </span>
         </div>
       </footer>
-
-      {/* Invite Modal */}
-      {inviteModalAgent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-4 sm:p-6 max-w-md w-full mx-4 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Send Team Invite</h2>
-              <button
-                type="button"
-                onClick={() => {
-                  setInviteModalAgent(null);
-                  setInviteMessage('');
-                }}
-                className="p-1 text-gray-400 hover:text-gray-600"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
-              <div className="text-sm font-bold text-gray-900">{inviteModalAgent.name}</div>
-              <div className="text-xs text-gray-500 mb-2">
-                {inviteModalAgent.skills?.join(', ')}
-              </div>
-              <div className="text-sm text-gray-600">{inviteModalAgent.bio}</div>
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Invitation Message
-              </label>
-              <textarea
-                value={inviteMessage}
-                onChange={(e) => setInviteMessage(e.target.value)}
-                placeholder={`Tell ${inviteModalAgent.name} why they'd be a great fit for ${captainedTeam?.name}...`}
-                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none
-                           text-sm resize-none h-24"
-              />
-            </div>
-
-            <div className="flex gap-3">
-              <button
-                type="button"
-                onClick={() => {
-                  setInviteModalAgent(null);
-                  setInviteMessage('');
-                }}
-                className="flex-1 py-2 border-2 border-gray-200 text-gray-600 font-bold text-sm
-                           hover:border-gray-400 transition-colors"
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                onClick={handleSendInvite}
-                className="flex-1 py-2 bg-gray-900 text-white font-bold text-sm
-                           hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
-              >
-                <Send className="w-4 h-4" />
-                Send Invite
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
