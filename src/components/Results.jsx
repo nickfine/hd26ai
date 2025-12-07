@@ -14,7 +14,7 @@ import {
   Lock,
   Medal,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, USER_ROLES } from '../data/mockData';
+import { ALLEGIANCE_CONFIG } from '../data/mockData';
 
 // ============================================================================
 // COMPONENT
