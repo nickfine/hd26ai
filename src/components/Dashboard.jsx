@@ -15,20 +15,15 @@ import { ALLEGIANCE_CONFIG } from '../data/mockData';
 function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
   const [searchTerm, setSearchTerm] = useState('');
 
-  // Sort teams based on user allegiance
-  const sortedTeams = [...teams].sort((a, b) => {
-    if (user?.allegiance === 'human') {
-      if (a.side === 'human' && b.side !== 'human') return -1;
-      if (a.side !== 'human' && b.side === 'human') return 1;
-    } else if (user?.allegiance === 'ai') {
-      if (a.side === 'ai' && b.side !== 'ai') return -1;
-      if (a.side !== 'ai' && b.side === 'ai') return 1;
-    }
-    return 0;
+  // Filter teams based on user allegiance
+  const allegianceFilteredTeams = teams.filter((team) => {
+    if (user?.allegiance === 'human') return team.side === 'human';
+    if (user?.allegiance === 'ai') return team.side === 'ai';
+    return true; // neutral shows all
   });
 
   // Filter teams by search
-  const filteredTeams = sortedTeams.filter(
+  const filteredTeams = allegianceFilteredTeams.filter(
     (team) =>
       team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -196,7 +191,7 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
           {/* Info */}
           <div className="mt-6 p-3 border border-gray-200 bg-gray-50 text-xs text-gray-500">
             <strong className="text-gray-700">Tip:</strong> Switch your allegiance
-            to see teams prioritized for your side. Your choice affects sorting
+            to see teams for your side. Your choice affects filtering
             and visual themes.
           </div>
         </aside>
@@ -241,8 +236,9 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
           >
             <AllegianceIcon className="w-4 h-4" />
             <span>
-              Showing {ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label}{' '}
-              teams first
+              {user?.allegiance === 'neutral'
+                ? 'Showing all teams'
+                : `Showing ${ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label} teams only`}
             </span>
           </div>
 

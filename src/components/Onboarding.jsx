@@ -202,6 +202,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
 
               {/* Submit */}
               <button
+                type="button"
                 onClick={handleSubmit}
                 disabled={!name.trim()}
                 className="w-full py-4 bg-gray-900 text-white font-bold
