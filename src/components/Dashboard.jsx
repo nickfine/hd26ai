@@ -468,20 +468,20 @@ function Dashboard({
             </div>
 
             {/* Team Finder Feature Box */}
-            <div className="p-5 border-2 border-gray-900 bg-gray-900 text-white">
+            <div className="p-5 border-2 border-gray-900 bg-white">
               <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
                 Team Finder
               </div>
-              <h3 className="text-xl font-black mb-3">Find Your Squad</h3>
-              <p className="text-sm text-gray-400 mb-4">
+              <h3 className="text-xl font-black text-gray-900 mb-3">Find Your Squad</h3>
+              <p className="text-sm text-gray-500 mb-4">
                 Browse open teams looking for members or discover free agents with matching skills.
               </p>
               <div className="flex gap-3">
                 <button
                   type="button"
                   onClick={() => onNavigate('marketplace', { tab: 'teams' })}
-                  className="flex-1 py-3 bg-white text-gray-900 font-bold text-sm
-                             hover:bg-gray-100 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-3 bg-gray-900 text-white font-bold text-sm
+                             hover:bg-gray-800 transition-all flex items-center justify-center gap-2"
                 >
                   <Users className="w-4 h-4" />
                   Browse Teams
@@ -489,8 +489,8 @@ function Dashboard({
                 <button
                   type="button"
                   onClick={() => onNavigate('marketplace', { tab: 'people' })}
-                  className="flex-1 py-3 border-2 border-white text-white font-bold text-sm
-                             hover:bg-white hover:text-gray-900 transition-all flex items-center justify-center gap-2"
+                  className="flex-1 py-3 border-2 border-gray-900 text-gray-900 font-bold text-sm
+                             hover:bg-gray-900 hover:text-white transition-all flex items-center justify-center gap-2"
                 >
                   <User className="w-4 h-4" />
                   Free Agents
