@@ -1,10 +1,7 @@
 import { useMemo } from 'react';
-import adaptLogo from '../../adaptlogo.png';
 import {
-  ArrowLeft,
   Heart,
   Cpu,
-  Scale,
   Trophy,
   Crown,
   Star,
@@ -15,6 +12,7 @@ import {
   Medal,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import AppLayout from './AppLayout';
 
 // ============================================================================
 // COMPONENT
@@ -28,11 +26,6 @@ function Results({
   eventPhase,
   awards = {},
 }) {
-  const AllegianceIcon = {
-    human: Heart,
-    neutral: Scale,
-    ai: Cpu,
-  }[user?.allegiance || 'neutral'];
 
   // Check if results should be visible
   const isResultsPhase = eventPhase === 'results';
@@ -344,55 +337,24 @@ function Results({
   // MAIN RENDER
   // ============================================================================
   return (
-    <div className={`min-h-screen ${allegianceStyle?.font || 'font-sans'}`}>
-      {/* Celebration background */}
-      {canViewResults && (
-        <div className="fixed inset-0 -z-10 overflow-hidden">
-          <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-purple-50" />
-          <div className="absolute top-0 left-0 w-96 h-96 bg-amber-200/20 rounded-full blur-3xl animate-blob" />
-          <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
-          <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-cyan-200/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
-        </div>
-      )}
-
-      {/* Header */}
-      <header
-        className="border-b-2 px-4 sm:px-6 py-4 bg-white/80 backdrop-blur-sm"
-        style={{ borderColor: allegianceStyle?.borderColor }}
-      >
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => onNavigate('dashboard')}
-            className="p-2 -ml-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline text-sm font-bold">Back to Mission Control</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-            <span className="font-bold text-sm tracking-tight hidden sm:inline">HACKDAY 2026</span>
+    <AppLayout
+      user={user}
+      teams={teams}
+      allegianceStyle={allegianceStyle}
+      onNavigate={onNavigate}
+      eventPhase={eventPhase}
+      activeNav="results"
+    >
+      <div className="p-4 sm:p-6 relative">
+        {/* Celebration background */}
+        {canViewResults && (
+          <div className="absolute inset-0 -z-10 overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-purple-50" />
+            <div className="absolute top-0 left-0 w-96 h-96 bg-amber-200/20 rounded-full blur-3xl animate-blob" />
+            <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
+            <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-cyan-200/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
           </div>
-          <button
-            type="button"
-            onClick={() => onNavigate('profile')}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div
-              className={`w-8 h-8 flex items-center justify-center ${allegianceStyle?.borderRadius}`}
-              style={{
-                backgroundColor: allegianceStyle?.bgColor,
-                border: `2px solid ${allegianceStyle?.borderColor}`,
-              }}
-            >
-              <AllegianceIcon className="w-4 h-4" style={{ color: allegianceStyle?.color }} />
-            </div>
-          </button>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+        )}
         {!canViewResults ? (
           renderComingSoon()
         ) : (
@@ -483,16 +445,8 @@ function Results({
             </div>
           </>
         )}
-      </main>
 
-      {/* Footer */}
-      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white/80 backdrop-blur-sm mt-8">
-        <div className="max-w-6xl mx-auto text-center text-xs text-gray-400">
-          HACKDAY 2026 — Human vs AI — Results
-        </div>
-      </footer>
-
-      {/* CSS Animations */}
+        {/* CSS Animations */}
       <style>{`
         @keyframes fade-in-up {
           from {
@@ -549,7 +503,8 @@ function Results({
           animation-delay: 4s;
         }
       `}</style>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
 

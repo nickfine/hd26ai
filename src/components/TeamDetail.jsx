@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import adaptLogo from '../../adaptlogo.png';
-import { ArrowLeft, Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3 } from 'lucide-react';
+import { Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import AppLayout from './AppLayout';
 
-function TeamDetail({ team, user, allegianceStyle, onNavigate, onUpdateTeam, onJoinRequest, onRequestResponse }) {
+function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTeam, onJoinRequest, onRequestResponse, eventPhase }) {
   const [moreInfoText, setMoreInfoText] = useState(team.moreInfo || '');
   const [isEditingMoreInfo, setIsEditingMoreInfo] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -58,42 +58,24 @@ function TeamDetail({ team, user, allegianceStyle, onNavigate, onUpdateTeam, onJ
     .map(([skill]) => skill);
 
   return (
-    <div
-      className={`min-h-screen bg-gray-50 ${allegianceStyle.font} transition-all duration-300`}
+    <AppLayout
+      user={user}
+      teams={teams}
+      allegianceStyle={allegianceStyle}
+      onNavigate={onNavigate}
+      eventPhase={eventPhase}
+      activeNav="teams"
     >
-      {/* Header */}
-      <header
-        className="border-b-2 px-4 sm:px-6 py-4 bg-white transition-all duration-300"
-        style={{ borderColor: allegianceStyle.borderColor }}
-      >
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => onNavigate('dashboard')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:inline">Back to Dashboard</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-            <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
+      <div className="p-4 sm:p-6">
+        {/* Pending Request Banner */}
+        {hasPendingRequest && (
+          <div className="bg-amber-50 border-2 border-amber-300 px-4 py-3 mb-6">
+            <div className="flex items-center justify-center gap-2 text-amber-700">
+              <Clock className="w-5 h-5 flex-shrink-0" />
+              <span className="font-bold text-sm sm:text-base text-center">Your request to join this team is pending</span>
+            </div>
           </div>
-        </div>
-      </header>
-
-      {/* Pending Request Banner - Top of Page */}
-      {hasPendingRequest && (
-        <div className="bg-amber-50 border-b-2 border-amber-300 px-4 sm:px-6 py-3">
-          <div className="max-w-4xl mx-auto flex items-center justify-center gap-2 text-amber-700">
-            <Clock className="w-5 h-5 flex-shrink-0" />
-            <span className="font-bold text-sm sm:text-base text-center">Your request to join this team is pending</span>
-          </div>
-        </div>
-      )}
-
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        )}
         {/* Team Header Card */}
         <div
           className={`bg-white p-4 sm:p-6 mb-4 sm:mb-6 transition-all duration-300
@@ -550,17 +532,7 @@ function TeamDetail({ team, user, allegianceStyle, onNavigate, onUpdateTeam, onJ
             <ChevronRight className="w-5 h-5" />
           </button>
         )}
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white">
-        <div className="max-w-4xl mx-auto text-center text-xs text-gray-400">
-          WIREFRAME PROTOTYPE — Allegiance:{' '}
-          <span style={{ color: allegianceStyle.color }}>
-            {ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label.toUpperCase()}
-          </span>
-        </div>
-      </footer>
+      </div>
 
       {/* Request to Join Modal */}
       {showRequestModal && (
@@ -640,7 +612,7 @@ function TeamDetail({ team, user, allegianceStyle, onNavigate, onUpdateTeam, onJ
           </div>
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }
 

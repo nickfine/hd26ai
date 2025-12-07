@@ -1,10 +1,7 @@
 import { useState, useEffect } from 'react';
-import adaptLogo from '../../adaptlogo.png';
 import {
-  ArrowLeft,
   Heart,
   Cpu,
-  Scale,
   Send,
   Save,
   Check,
@@ -20,6 +17,7 @@ import {
   Edit3,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import AppLayout from './AppLayout';
 
 // ============================================================================
 // SUBMISSION REQUIREMENTS
@@ -37,7 +35,7 @@ const SUBMISSION_FIELDS = [
 // COMPONENT
 // ============================================================================
 
-function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmission }) {
+function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmission, eventPhase }) {
   // Find the user's team (as captain or member)
   const userTeam = teams.find(
     (team) => team.captainId === user?.id || team.members?.some((m) => m.id === user?.id)
@@ -69,12 +67,6 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
       });
     }
   }, [userTeam]);
-
-  const AllegianceIcon = {
-    human: Heart,
-    neutral: Scale,
-    ai: Cpu,
-  }[user?.allegiance || 'neutral'];
 
   // Calculate completion status
   const getCompletedFields = () => {
@@ -160,32 +152,16 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
   // ============================================================================
   if (!userTeam) {
     return (
-      <div className={`min-h-screen bg-gray-50 ${allegianceStyle?.font || 'font-sans'}`}>
-        {/* Header */}
-        <header
-          className="border-b-2 px-4 sm:px-6 py-4 bg-white"
-          style={{ borderColor: allegianceStyle?.borderColor }}
-        >
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => onNavigate('dashboard')}
-              className="p-2 -ml-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline text-sm font-bold">Back to Mission Control</span>
-            </button>
-            <div className="flex items-center gap-2">
-              <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-              <span className="font-bold text-sm tracking-tight hidden sm:inline">HACKDAY 2026</span>
-            </div>
-            <div className="w-20" />
-          </div>
-        </header>
-
-        {/* No Team Message */}
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-12">
-          <div className="text-center">
+      <AppLayout
+        user={user}
+        teams={teams}
+        allegianceStyle={allegianceStyle}
+        onNavigate={onNavigate}
+        eventPhase={eventPhase}
+        activeNav="submission"
+      >
+        <div className="p-4 sm:p-6">
+          <div className="text-center py-12">
             <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
             <h1 className="text-2xl font-bold text-gray-900 mb-2">No Team Yet</h1>
             <p className="text-gray-600 mb-6">
@@ -199,8 +175,8 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
               Find a Team
             </button>
           </div>
-        </main>
-      </div>
+        </div>
+      </AppLayout>
     );
   }
 
@@ -209,45 +185,15 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
   // ============================================================================
   if (!isCaptain) {
     return (
-      <div className={`min-h-screen bg-gray-50 ${allegianceStyle?.font || 'font-sans'}`}>
-        {/* Header */}
-        <header
-          className="border-b-2 px-4 sm:px-6 py-4 bg-white"
-          style={{ borderColor: teamConfig.borderColor }}
-        >
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <button
-              type="button"
-              onClick={() => onNavigate('dashboard')}
-              className="p-2 -ml-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"
-            >
-              <ArrowLeft className="w-5 h-5" />
-              <span className="hidden sm:inline text-sm font-bold">Back to Mission Control</span>
-            </button>
-            <div className="flex items-center gap-2">
-              <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-              <span className="font-bold text-sm tracking-tight hidden sm:inline">HACKDAY 2026</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => onNavigate('profile')}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-            >
-              <div
-                className={`w-8 h-8 flex items-center justify-center ${allegianceStyle?.borderRadius}`}
-                style={{
-                  backgroundColor: allegianceStyle?.bgColor,
-                  border: `2px solid ${allegianceStyle?.borderColor}`,
-                }}
-              >
-                <AllegianceIcon className="w-4 h-4" style={{ color: allegianceStyle?.color }} />
-              </div>
-            </button>
-          </div>
-        </header>
-
-        {/* Member View Content */}
-        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+      <AppLayout
+        user={user}
+        teams={teams}
+        allegianceStyle={allegianceStyle}
+        onNavigate={onNavigate}
+        eventPhase={eventPhase}
+        activeNav="submission"
+      >
+        <div className="p-4 sm:p-6">
           <div className="mb-6">
             <h1 className="text-2xl font-black text-gray-900 mb-2">PROJECT SUBMISSION</h1>
             <p className="text-gray-600">
@@ -367,15 +313,8 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
               </div>
             )}
           </div>
-        </main>
-
-        {/* Footer */}
-        <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white mt-8">
-          <div className="max-w-4xl mx-auto text-center text-xs text-gray-400">
-            HACKDAY 2026 — Submissions close at 5:00 PM
-          </div>
-        </footer>
-      </div>
+        </div>
+      </AppLayout>
     );
   }
 
@@ -383,45 +322,15 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
   // RENDER: CAPTAIN VIEW (EDITABLE FORM)
   // ============================================================================
   return (
-    <div className={`min-h-screen bg-gray-50 ${allegianceStyle?.font || 'font-sans'}`}>
-      {/* Header */}
-      <header
-        className="border-b-2 px-4 sm:px-6 py-4 bg-white"
-        style={{ borderColor: teamConfig.borderColor }}
-      >
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => onNavigate('dashboard')}
-            className="p-2 -ml-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline text-sm font-bold">Back to Mission Control</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-            <span className="font-bold text-sm tracking-tight hidden sm:inline">HACKDAY 2026</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigate('profile')}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div
-              className={`w-8 h-8 flex items-center justify-center ${allegianceStyle?.borderRadius}`}
-              style={{
-                backgroundColor: allegianceStyle?.bgColor,
-                border: `2px solid ${allegianceStyle?.borderColor}`,
-              }}
-            >
-              <AllegianceIcon className="w-4 h-4" style={{ color: allegianceStyle?.color }} />
-            </div>
-          </button>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-8">
+    <AppLayout
+      user={user}
+      teams={teams}
+      allegianceStyle={allegianceStyle}
+      onNavigate={onNavigate}
+      eventPhase={eventPhase}
+      activeNav="submission"
+    >
+      <div className="p-4 sm:p-6">
         {/* Page Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between flex-wrap gap-4">
@@ -663,15 +572,8 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
             )}
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white mt-8">
-        <div className="max-w-4xl mx-auto text-center text-xs text-gray-400">
-          HACKDAY 2026 — Submissions close at 5:00 PM
-        </div>
-      </footer>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
 

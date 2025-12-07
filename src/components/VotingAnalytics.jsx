@@ -1,16 +1,12 @@
 import { useState, useMemo } from 'react';
-import adaptLogo from '../../adaptlogo.png';
 import {
-  ArrowLeft,
   Heart,
   Cpu,
-  Scale,
   Trophy,
   Star,
   Crown,
   BarChart3,
   TrendingUp,
-  Users,
   Filter,
   Award,
   ChevronDown,
@@ -19,6 +15,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import AppLayout from './AppLayout';
 
 // ============================================================================
 // COMPONENT
@@ -36,12 +33,6 @@ function VotingAnalytics({
   const [filterSide, setFilterSide] = useState('all');
   const [expandedTeam, setExpandedTeam] = useState(null);
   const [activeTab, setActiveTab] = useState('leaderboard'); // 'leaderboard' | 'peoples' | 'judges' | 'awards'
-
-  const AllegianceIcon = {
-    human: Heart,
-    neutral: Scale,
-    ai: Cpu,
-  }[user?.allegiance || 'neutral'];
 
   // Get only submitted projects
   const submittedProjects = useMemo(() => {
@@ -506,45 +497,15 @@ function VotingAnalytics({
   // MAIN RENDER
   // ============================================================================
   return (
-    <div className={`min-h-screen bg-gray-50 ${allegianceStyle?.font || 'font-sans'}`}>
-      {/* Header */}
-      <header
-        className="border-b-2 px-4 sm:px-6 py-4 bg-white"
-        style={{ borderColor: allegianceStyle?.borderColor }}
-      >
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => onNavigate('dashboard')}
-            className="p-2 -ml-2 text-gray-600 hover:text-gray-900 flex items-center gap-2"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="hidden sm:inline text-sm font-bold">Back to Mission Control</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-            <span className="font-bold text-sm tracking-tight hidden sm:inline">HACKDAY 2026</span>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigate('profile')}
-            className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-          >
-            <div
-              className={`w-8 h-8 flex items-center justify-center ${allegianceStyle?.borderRadius}`}
-              style={{
-                backgroundColor: allegianceStyle?.bgColor,
-                border: `2px solid ${allegianceStyle?.borderColor}`,
-              }}
-            >
-              <AllegianceIcon className="w-4 h-4" style={{ color: allegianceStyle?.color }} />
-            </div>
-          </button>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-4 sm:px-6 py-8">
+    <AppLayout
+      user={user}
+      teams={teams}
+      allegianceStyle={allegianceStyle}
+      onNavigate={onNavigate}
+      eventPhase={eventPhase}
+      activeNav="analytics"
+    >
+      <div className="p-4 sm:p-6">
         {/* Page Header */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -623,15 +584,8 @@ function VotingAnalytics({
 
         {/* Tab Content */}
         {renderTabContent()}
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white mt-8">
-        <div className="max-w-6xl mx-auto text-center text-xs text-gray-400">
-          HACKDAY 2026 — Voting Analytics Dashboard
-        </div>
-      </footer>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
 

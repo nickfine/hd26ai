@@ -1,7 +1,5 @@
 import { useState } from 'react';
-import adaptLogo from '../../adaptlogo.png';
 import {
-  ArrowLeft,
   Cpu,
   Heart,
   Scale,
@@ -13,6 +11,7 @@ import {
   User,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
+import AppLayout from './AppLayout';
 
 function Profile({
   user,
@@ -21,6 +20,7 @@ function Profile({
   allegianceStyle,
   onNavigate,
   onNavigateToTeam,
+  eventPhase,
 }) {
   const [bio, setBio] = useState(user?.bio || '');
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -53,54 +53,37 @@ function Profile({
   };
 
   return (
-    <div
-      className={`min-h-screen bg-gray-50 ${allegianceStyle.font} transition-all duration-300`}
+    <AppLayout
+      user={user}
+      teams={teams}
+      allegianceStyle={allegianceStyle}
+      onNavigate={onNavigate}
+      eventPhase={eventPhase}
+      activeNav="profile"
     >
-      {/* Header */}
-      <header
-        className="border-b-2 px-4 sm:px-6 py-4 bg-white transition-all duration-300"
-        style={{ borderColor: allegianceStyle.borderColor }}
-      >
-        <div className="max-w-4xl mx-auto flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => onNavigate('dashboard')}
-            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm hidden sm:inline">Back to Dashboard</span>
-          </button>
-          <div className="flex items-center gap-2">
-            <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-            <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
-          </div>
-        </div>
-      </header>
-
-      {/* Captain Alert Banner */}
-      {isCaptain && pendingRequestCount > 0 && (
-        <div className="bg-amber-50 border-b-2 border-amber-300 px-4 sm:px-6 py-3">
-          <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3 text-amber-700">
-              <Bell className="w-5 h-5 flex-shrink-0" />
-              <span className="font-bold text-sm sm:text-base">
-                You have {pendingRequestCount} pending application{pendingRequestCount > 1 ? 's' : ''} to review
-              </span>
+      <div className="p-4 sm:p-6">
+        {/* Captain Alert Banner */}
+        {isCaptain && pendingRequestCount > 0 && (
+          <div className="bg-amber-50 border-2 border-amber-300 px-4 py-3 mb-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-3 text-amber-700">
+                <Bell className="w-5 h-5 flex-shrink-0" />
+                <span className="font-bold text-sm sm:text-base">
+                  You have {pendingRequestCount} pending application{pendingRequestCount > 1 ? 's' : ''} to review
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => onNavigateToTeam(userTeam.id)}
+                className="w-full sm:w-auto px-4 py-2 bg-amber-500 text-white font-bold text-sm rounded hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
+              >
+                Review Applications
+                <ChevronRight className="w-4 h-4" />
+              </button>
             </div>
-            <button
-              type="button"
-              onClick={() => onNavigateToTeam(userTeam.id)}
-              className="w-full sm:w-auto px-4 py-2 bg-amber-500 text-white font-bold text-sm rounded hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
-            >
-              Review Applications
-              <ChevronRight className="w-4 h-4" />
-            </button>
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <h1 className="text-xl sm:text-2xl font-black text-gray-900 mb-6">YOUR PROFILE</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
@@ -371,7 +354,7 @@ function Profile({
                   <p className="text-gray-500 mb-4">You're not on a team yet</p>
                   <button
                     type="button"
-                    onClick={() => onNavigate('dashboard')}
+                    onClick={() => onNavigate('marketplace')}
                     className="px-6 py-2 bg-gray-900 text-white font-bold text-sm
                                hover:bg-gray-800 transition-colors"
                   >
@@ -382,18 +365,8 @@ function Profile({
             )}
           </div>
         </div>
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-200 px-4 sm:px-6 py-4 bg-white mt-8">
-        <div className="max-w-4xl mx-auto text-center text-xs text-gray-400">
-          WIREFRAME PROTOTYPE — Allegiance:{' '}
-          <span style={{ color: allegianceStyle.color }}>
-            {ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label.toUpperCase()}
-          </span>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
 

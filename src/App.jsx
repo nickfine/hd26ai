@@ -537,11 +537,12 @@ function App() {
             teams={teams}
             freeAgents={freeAgents}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             onNavigateToTeam={navigateToTeam}
             onSendInvite={handleSendInvite}
             onInviteResponse={handleInviteResponse}
             initialTab={marketplaceInitialTab}
+            eventPhase={eventPhase}
           />
         );
       
@@ -552,8 +553,9 @@ function App() {
             updateUser={updateUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             onNavigateToTeam={navigateToTeam}
+            eventPhase={eventPhase}
           />
         );
       
@@ -561,8 +563,10 @@ function App() {
         return (
           <Rules
             user={effectiveUser}
+            teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
+            eventPhase={eventPhase}
           />
         );
       
@@ -572,8 +576,9 @@ function App() {
             user={effectiveUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             onUpdateSubmission={handleUpdateSubmission}
+            eventPhase={eventPhase}
           />
         );
       
@@ -583,10 +588,11 @@ function App() {
             user={effectiveUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             userVotes={userVotes}
             onVote={handleVote}
             permissions={getUserPermissions()}
+            eventPhase={eventPhase}
           />
         );
       
@@ -596,7 +602,7 @@ function App() {
             user={effectiveUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             eventPhase={eventPhase}
             judgeCriteria={JUDGE_CRITERIA}
             awards={AWARDS}
@@ -609,9 +615,10 @@ function App() {
             user={effectiveUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             onScore={handleJudgeScore}
             judgeCriteria={JUDGE_CRITERIA}
+            eventPhase={eventPhase}
           />
         );
       
@@ -621,7 +628,7 @@ function App() {
             user={effectiveUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             eventPhase={eventPhase}
             onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
@@ -635,7 +642,7 @@ function App() {
             user={effectiveUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             eventPhase={eventPhase}
             awards={AWARDS}
           />
@@ -645,8 +652,10 @@ function App() {
         return (
           <Schedule
             user={effectiveUser}
+            teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
+            eventPhase={eventPhase}
           />
         );
       
@@ -660,11 +669,13 @@ function App() {
           <TeamDetail
             team={selectedTeam}
             user={effectiveUser}
+            teams={teams}
             allegianceStyle={getAllegianceStyle()}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             onUpdateTeam={updateTeam}
             onJoinRequest={handleJoinRequest}
             onRequestResponse={handleRequestResponse}
+            eventPhase={eventPhase}
           />
         );
       }
