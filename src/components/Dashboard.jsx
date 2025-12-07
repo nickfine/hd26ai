@@ -24,6 +24,7 @@ import {
   Gavel,
   Shield,
   Megaphone,
+  Image as ImageIcon,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG, USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
 
@@ -442,6 +443,19 @@ function Dashboard({
         <main className="flex-1 p-4 sm:p-6">
           {/* Bento Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            {/* Promo Tile */}
+            <div className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 
+                            flex items-center justify-center min-h-[200px] relative overflow-hidden">
+              {/* Placeholder - Replace with actual promo graphic */}
+              <div className="text-center p-6">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-200 flex items-center justify-center">
+                  <ImageIcon className="w-8 h-8 text-gray-400" />
+                </div>
+                <p className="text-sm text-gray-400 font-medium">Promo Graphic</p>
+                <p className="text-xs text-gray-300 mt-1">Coming Soon</p>
+              </div>
+            </div>
+
             {/* Team Finder Feature Box */}
             <div className="p-5 border-2 border-gray-900 bg-gray-900 text-white">
               <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
