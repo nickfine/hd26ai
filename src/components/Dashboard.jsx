@@ -443,17 +443,27 @@ function Dashboard({
         {/* ================================================================ */}
         <main className="flex-1 p-4 sm:p-6">
           {/* Bento Grid */}
+          {/* 
+            PROMO TILES: Placeholder slots for promotional graphics.
+            Replace placeholder content with actual images using:
+            <img src={promoImage} alt="Promo" className="w-full h-full object-cover" />
+            
+            Future: Import promo images and randomly assign to slots:
+            const PROMO_IMAGES = [promo1, promo2, promo3, ...];
+            const shuffled = [...PROMO_IMAGES].sort(() => Math.random() - 0.5);
+          */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-            {/* Promo Tile */}
-            <div className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-gray-50 to-gray-100 
-                            flex items-center justify-center min-h-[200px] relative overflow-hidden">
+            {/* Promo Tile 1 - Always visible */}
+            <div className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-cyan-50 to-teal-50 
+                            flex items-center justify-center min-h-[200px] relative overflow-hidden"
+                 data-promo-slot="1">
               {/* Placeholder - Replace with actual promo graphic */}
               <div className="text-center p-6">
-                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-gray-200 flex items-center justify-center">
-                  <ImageIcon className="w-8 h-8 text-gray-400" />
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-cyan-100 flex items-center justify-center">
+                  <ImageIcon className="w-8 h-8 text-cyan-300" />
                 </div>
-                <p className="text-sm text-gray-400 font-medium">Promo Graphic</p>
-                <p className="text-xs text-gray-300 mt-1">Coming Soon</p>
+                <p className="text-sm text-cyan-400 font-medium">Promo Graphic 1</p>
+                <p className="text-xs text-cyan-300 mt-1">Coming Soon</p>
               </div>
             </div>
 
@@ -489,7 +499,7 @@ function Dashboard({
             </div>
 
             {/* Project Gallery Feature Box - Only show during voting phase */}
-            {eventPhase === 'voting' && (
+            {eventPhase === 'voting' ? (
               <div className="p-5 border-2 border-amber-400 bg-amber-50">
                 <div className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-2">
                   Project Gallery
@@ -507,6 +517,20 @@ function Dashboard({
                   <Vote className="w-4 h-4" />
                   Browse &amp; Vote
                 </button>
+              </div>
+            ) : (
+              /* Promo Tile 2 - Shows when voting tile is hidden */
+              <div className="border-2 border-dashed border-gray-300 bg-gradient-to-br from-purple-50 to-indigo-50 
+                              flex items-center justify-center min-h-[200px] relative overflow-hidden"
+                   data-promo-slot="2">
+                {/* Placeholder - Replace with actual promo graphic */}
+                <div className="text-center p-6">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-purple-100 flex items-center justify-center">
+                    <ImageIcon className="w-8 h-8 text-purple-300" />
+                  </div>
+                  <p className="text-sm text-purple-400 font-medium">Promo Graphic 2</p>
+                  <p className="text-xs text-purple-300 mt-1">Coming Soon</p>
+                </div>
               </div>
             )}
 
