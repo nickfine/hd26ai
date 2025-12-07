@@ -60,7 +60,7 @@ const MOCK_FAQ = [
   { id: 4, question: 'Can I switch allegiances?', answer: 'You can switch until team formation deadline. After that, your allegiance is locked for the duration of the hackathon.' },
 ];
 
-const getNavItems = (userRole) => {
+const getNavItems = (userRole, eventPhase = 'voting') => {
   const baseItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'schedule', label: 'Schedule', icon: Calendar },
@@ -71,8 +71,8 @@ const getNavItems = (userRole) => {
 
   const permissions = USER_ROLES[userRole] || USER_ROLES.participant;
 
-  // Add voting for those who can vote
-  if (permissions.canVote) {
+  // Add voting for those who can vote (only during voting phase)
+  if (permissions.canVote && eventPhase === 'voting') {
     baseItems.push({ id: 'voting', label: 'Voting', icon: Vote });
   }
 
@@ -127,8 +127,8 @@ function Dashboard({
     team.members?.some(m => m.id === user?.id)
   );
 
-  // Get nav items based on user role
-  const navItems = getNavItems(user?.role);
+  // Get nav items based on user role and event phase
+  const navItems = getNavItems(user?.role, eventPhase);
 
   // Get role badge info
   const roleBadge = ROLE_BADGES[user?.role] || ROLE_BADGES.participant;
@@ -473,25 +473,27 @@ function Dashboard({
               </div>
             </div>
 
-            {/* Project Gallery Feature Box */}
-            <div className="p-5 border-2 border-amber-400 bg-amber-50">
-              <div className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-2">
-                Project Gallery
+            {/* Project Gallery Feature Box - Only show during voting phase */}
+            {eventPhase === 'voting' && (
+              <div className="p-5 border-2 border-amber-400 bg-amber-50">
+                <div className="text-xs font-bold uppercase tracking-wide text-amber-600 mb-2">
+                  Project Gallery
+                </div>
+                <h3 className="text-xl font-black text-amber-900 mb-3">Vote for Projects</h3>
+                <p className="text-sm text-amber-700 mb-4">
+                  Browse all submitted hackathon projects and vote for your favorites!
+                </p>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('voting')}
+                  className="w-full py-3 bg-amber-400 text-amber-900 font-bold text-sm
+                             hover:bg-amber-500 transition-all flex items-center justify-center gap-2"
+                >
+                  <Vote className="w-4 h-4" />
+                  Browse &amp; Vote
+                </button>
               </div>
-              <h3 className="text-xl font-black text-amber-900 mb-3">Vote for Projects</h3>
-              <p className="text-sm text-amber-700 mb-4">
-                Browse all submitted hackathon projects and vote for your favorites!
-              </p>
-              <button
-                type="button"
-                onClick={() => onNavigate('voting')}
-                className="w-full py-3 bg-amber-400 text-amber-900 font-bold text-sm
-                           hover:bg-amber-500 transition-all flex items-center justify-center gap-2"
-              >
-                <Vote className="w-4 h-4" />
-                Browse &amp; Vote
-              </button>
-            </div>
+            )}
 
             {/* Live Activity Feed Widget */}
             <div className="p-5 border-2 border-gray-200">
