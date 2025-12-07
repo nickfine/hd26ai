@@ -32,6 +32,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
       <header className="border-b border-gray-200 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button
+            type="button"
             onClick={() => onNavigate('login')}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
@@ -91,6 +92,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                 <div className="grid grid-cols-2 gap-2">
                   {SKILLS.map((skill) => (
                     <button
+                      type="button"
                       key={skill}
                       onClick={() => toggleSkill(skill)}
                       className={`px-3 py-2 text-sm text-left border-2 transition-all
@@ -119,6 +121,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
                 <div className="grid grid-cols-3 gap-4">
                   {/* Human */}
                   <button
+                    type="button"
                     onClick={() => setAllegiance('human')}
                     className={`p-4 border-2 transition-all duration-200 rounded-xl
                       ${
@@ -146,6 +149,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
 
                   {/* Neutral */}
                   <button
+                    type="button"
                     onClick={() => setAllegiance('neutral')}
                     className={`p-4 border-2 transition-all duration-200 rounded-lg
                       ${
@@ -173,6 +177,7 @@ function Onboarding({ user, updateUser, onNavigate }) {
 
                   {/* AI */}
                   <button
+                    type="button"
                     onClick={() => setAllegiance('ai')}
                     className={`p-4 border-2 transition-all duration-200 rounded-sm
                       ${

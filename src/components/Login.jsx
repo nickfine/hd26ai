@@ -18,6 +18,7 @@ function Login({ onNavigate, onLogin }) {
       <header className="border-b border-gray-200 px-6 py-4">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
           <button
+            type="button"
             onClick={() => onNavigate('landing')}
             className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
           >
@@ -108,6 +109,7 @@ function Login({ onNavigate, onLogin }) {
 
             {/* SSO Mock */}
             <button
+              type="button"
               onClick={() => {
                 onLogin('sso.user@company.com');
                 onNavigate('onboarding');

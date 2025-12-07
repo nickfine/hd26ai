@@ -75,6 +75,7 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
             </div>
 
             <button
+              type="button"
               onClick={() => onNavigate('landing')}
               className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
             >
@@ -136,6 +137,7 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
 
                 return (
                   <button
+                    type="button"
                     key={side}
                     onClick={() => updateUser({ allegiance: side })}
                     className={`w-full p-3 flex items-center gap-3 transition-all duration-200
@@ -179,6 +181,7 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
 
           {/* Create Team */}
           <button
+            type="button"
             className={`w-full py-3 flex items-center justify-center gap-2 
                        bg-gray-900 text-white font-bold text-sm
                        hover:bg-gray-800 transition-all duration-200
@@ -321,6 +324,7 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
 
                   {/* Action */}
                   <button
+                    type="button"
                     className={`w-full py-2 flex items-center justify-center gap-2
                                font-bold text-sm transition-all
                                ${teamConfig.borderRadius}`}
@@ -341,7 +345,11 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
           {filteredTeams.length === 0 && (
             <div className="text-center py-12 text-gray-400">
               <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>No teams found matching your search.</p>
+              <p>
+                {searchTerm
+                  ? 'No teams found matching your search.'
+                  : 'No teams available for your current allegiance.'}
+              </p>
             </div>
           )}
         </main>

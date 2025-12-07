@@ -47,6 +47,7 @@ function Landing({ onNavigate }) {
 
           {/* CTA */}
           <button
+            type="button"
             onClick={() => onNavigate('login')}
             className="group relative px-12 py-4 bg-gray-900 text-white font-bold text-lg 
                        hover:bg-gray-800 transition-all duration-200
