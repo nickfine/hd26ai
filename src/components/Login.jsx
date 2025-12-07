@@ -133,8 +133,8 @@ function Login({ onNavigate, onLogin, onDemoLogin, onOAuthSignIn, authLoading, a
                         role: 'participant',
                       });
                     }}
-                    className="w-full py-3 bg-green-600 text-white font-bold
-                               hover:bg-green-700 transition-colors text-sm
+                    className="w-full py-3 bg-blue-500 text-white font-bold
+                               hover:bg-blue-600 transition-colors text-sm
                                flex items-center justify-center gap-2"
                   >
                     <User className="w-4 h-4" />
