@@ -21,6 +21,7 @@ import Voting from './components/Voting';
 import VotingAnalytics from './components/VotingAnalytics';
 import JudgeScoring from './components/JudgeScoring';
 import AdminPanel from './components/AdminPanel';
+import Results from './components/Results';
 
 // Max votes per user for voting phase
 const MAX_VOTES = 5;
@@ -401,6 +402,17 @@ function App() {
             onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
             onUpdateUserRole={handleUpdateUserRole}
+          />
+        );
+      case 'results':
+        return (
+          <Results
+            user={user}
+            teams={mockTeams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={setCurrentView}
+            eventPhase={eventPhase}
+            awards={AWARDS}
           />
         );
       case 'team-detail': {

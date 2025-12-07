@@ -324,6 +324,7 @@ function Dashboard({
                     if (item.id === 'analytics') onNavigate('analytics');
                     if (item.id === 'judge-scoring') onNavigate('judge-scoring');
                     if (item.id === 'admin') onNavigate('admin');
+                    if (item.id === 'results') onNavigate('results');
                   }}
                   className={`w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all
                     ${isActive 
