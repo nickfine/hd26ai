@@ -9,21 +9,43 @@ import {
   LogOut,
   Zap,
   ChevronRight,
+  User,
+  Send,
+  X,
+  Mail,
+  Check,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG } from '../data/mockData';
 
-function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
+function Dashboard({ 
+  user, 
+  teams, 
+  freeAgents = [],
+  allegianceStyle, 
+  onNavigate, 
+  onNavigateToTeam,
+  onSendInvite,
+  onInviteResponse,
+}) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState('teams');
+  const [inviteModalAgent, setInviteModalAgent] = useState(null);
+  const [inviteMessage, setInviteMessage] = useState('');
+  const [filterAllegiance, setFilterAllegiance] = useState(user?.allegiance || 'neutral');
 
-  // Filter teams based on user allegiance
+  // Find the team the user is captain of (if any)
+  const captainedTeam = teams.find((team) => team.captainId === user?.id);
+  const pendingRequestCount = captainedTeam?.joinRequests?.length || 0;
+
+  // Filter teams based on selected filter allegiance
   const allegianceFilteredTeams = teams.filter((team) => {
-    if (user?.allegiance === 'human') return team.side === 'human';
-    if (user?.allegiance === 'ai') return team.side === 'ai';
+    if (filterAllegiance === 'human') return team.side === 'human';
+    if (filterAllegiance === 'ai') return team.side === 'ai';
     return true; // neutral shows all
   });
 
   // Filter teams by search
-  const filteredTeams = allegianceFilteredTeams.filter(
+  const searchFilteredTeams = allegianceFilteredTeams.filter(
     (team) =>
       team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       team.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -31,6 +53,43 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
         skill.toLowerCase().includes(searchTerm.toLowerCase())
       )
   );
+
+  // Sort teams: applied teams first, then others
+  const filteredTeams = [...searchFilteredTeams].sort((a, b) => {
+    const aApplied = a.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
+    const bApplied = b.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
+    return bApplied - aApplied;
+  });
+
+  // Filter free agents by allegiance
+  const allegianceFilteredAgents = freeAgents.filter((agent) => {
+    if (filterAllegiance === 'human') return agent.allegiance === 'human';
+    if (filterAllegiance === 'ai') return agent.allegiance === 'ai';
+    return true; // neutral shows all
+  });
+
+  // Filter free agents by search
+  const filteredAgents = allegianceFilteredAgents.filter(
+    (agent) =>
+      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.bio?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      agent.skills?.some((skill) =>
+        skill.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+  );
+
+  // Find current user's pending invites (if they are a free agent in the system)
+  const currentUserAgent = freeAgents.find((a) => a.id === user?.id);
+  const pendingInvites = currentUserAgent?.teamInvites || [];
+
+  // Handle sending invite
+  const handleSendInvite = () => {
+    if (inviteModalAgent && captainedTeam) {
+      onSendInvite(inviteModalAgent.id, captainedTeam.id, inviteMessage);
+      setInviteModalAgent(null);
+      setInviteMessage('');
+    }
+  };
 
   const AllegianceIcon = {
     human: Heart,
@@ -54,8 +113,12 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
           </div>
 
           <div className="flex items-center gap-4">
-            {/* User Info */}
-            <div className="flex items-center gap-3">
+            {/* User Info - Clickable to Profile */}
+            <button
+              type="button"
+              onClick={() => onNavigate('profile')}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            >
               <div
                 className={`w-8 h-8 flex items-center justify-center ${allegianceStyle.borderRadius}`}
                 style={{
@@ -68,11 +131,13 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
                   style={{ color: allegianceStyle.color }}
                 />
               </div>
-              <div className="text-sm">
+              <div className="text-sm text-left">
                 <div className="font-bold text-gray-900">{user?.name}</div>
-                <div className="text-xs text-gray-500">Free Agent</div>
+                <div className="text-xs text-gray-500">
+                  {captainedTeam ? 'Team Captain' : 'Free Agent'}
+                </div>
               </div>
-            </div>
+            </button>
 
             <button
               type="button"
@@ -88,58 +153,80 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
       <div className="max-w-7xl mx-auto flex">
         {/* Sidebar */}
         <aside className="w-72 border-r border-gray-200 bg-white min-h-[calc(100vh-65px)] p-6">
-          {/* Profile Card */}
-          <div
-            className={`p-4 mb-6 transition-all duration-300 ${allegianceStyle.borderRadius} ${allegianceStyle.borderStyle}`}
-            style={{
-              borderColor: allegianceStyle.borderColor,
-              backgroundColor: allegianceStyle.bgColor,
-            }}
-          >
-            <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">
-              Your Profile
+          {/* Pending Invites - For Free Agents */}
+          {pendingInvites.length > 0 && (
+            <div className="p-4 mb-6 border-2 border-blue-300 bg-blue-50 rounded-lg">
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                  Team Invites
+                </div>
+                <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                  <Mail className="w-3 h-3" />
+                  <span className="text-xs font-bold">{pendingInvites.length}</span>
+                </div>
+              </div>
+              
+              <div className="space-y-3">
+                {pendingInvites.map((invite) => {
+                  const teamConfig = ALLEGIANCE_CONFIG[invite.teamSide] || ALLEGIANCE_CONFIG.neutral;
+                  
+                  return (
+                    <div key={invite.id} className="p-3 bg-white border border-gray-200 rounded">
+                      <div 
+                        className={`font-bold text-sm text-gray-900 mb-1 ${
+                          invite.teamSide === 'ai' ? 'font-mono' : ''
+                        }`}
+                      >
+                        {invite.teamName}
+                      </div>
+                      {invite.message && (
+                        <p className="text-xs text-gray-500 mb-2 line-clamp-2">
+                          "{invite.message}"
+                        </p>
+                      )}
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => onInviteResponse(user?.id, invite.id, true)}
+                          className="flex-1 py-1.5 text-xs font-bold text-white rounded flex items-center justify-center gap-1"
+                          style={{ backgroundColor: teamConfig.color }}
+                        >
+                          <Check className="w-3 h-3" />
+                          Accept
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => onInviteResponse(user?.id, invite.id, false)}
+                          className="flex-1 py-1.5 text-xs font-bold text-gray-600 border border-gray-300 rounded
+                                     hover:bg-gray-100 flex items-center justify-center gap-1"
+                        >
+                          <X className="w-3 h-3" />
+                          Decline
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
-            <div className="text-lg font-bold text-gray-900 mb-1">
-              {user?.name}
-            </div>
-            <div className="text-xs text-gray-500 mb-3">
-              {user?.skills?.length || 0} skills registered
-            </div>
+          )}
 
-            {/* Skills Preview */}
-            <div className="flex flex-wrap gap-1 mb-4">
-              {user?.skills?.slice(0, 3).map((skill) => (
-                <span
-                  key={skill}
-                  className="px-2 py-1 text-xs bg-white border border-gray-200 text-gray-600"
-                >
-                  {skill}
-                </span>
-              ))}
-              {user?.skills?.length > 3 && (
-                <span className="px-2 py-1 text-xs text-gray-400">
-                  +{user.skills.length - 3} more
-                </span>
-              )}
-            </div>
-          </div>
-
-          {/* LIVE ALLEGIANCE TOGGLE - KEY FEATURE */}
+          {/* ALLEGIANCE FILTER - KEY FEATURE */}
           <div className="mb-6">
             <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-3">
-              Switch Allegiance
+              Filter by Allegiance
             </div>
             <div className="space-y-2">
-              {['human', 'neutral', 'ai'].map((side) => {
+              {['human', 'ai', 'neutral'].map((side) => {
                 const config = ALLEGIANCE_CONFIG[side];
-                const isActive = user?.allegiance === side;
+                const isActive = filterAllegiance === side;
                 const Icon = { human: Heart, neutral: Scale, ai: Cpu }[side];
 
                 return (
                   <button
                     type="button"
                     key={side}
-                    onClick={() => updateUser({ allegiance: side })}
+                    onClick={() => setFilterAllegiance(side)}
                     className={`w-full p-3 flex items-center gap-3 transition-all duration-200
                       ${config.borderRadius} border-2
                       ${
@@ -166,7 +253,7 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
                       }`}
                       style={{ color: isActive ? config.color : '#374151' }}
                     >
-                      {config.label}
+                      {side === 'neutral' ? 'All' : config.label}
                     </span>
                     {isActive && (
                       <span className="ml-auto text-xs text-gray-400">
@@ -193,9 +280,8 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
 
           {/* Info */}
           <div className="mt-6 p-3 border border-gray-200 bg-gray-50 text-xs text-gray-500">
-            <strong className="text-gray-700">Tip:</strong> Switch your allegiance
-            to see teams for your side. Your choice affects filtering
-            and visual themes.
+            <strong className="text-gray-700">Tip:</strong> Filter by allegiance
+            to see teams for a specific side. Select Neutral to view all teams.
           </div>
         </aside>
 
@@ -219,7 +305,7 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search teams or skills..."
+                placeholder={activeTab === 'teams' ? 'Search teams or skills...' : 'Search people or skills...'}
                 className="pl-10 pr-4 py-2 border-2 border-gray-200 
                            focus:border-gray-900 focus:outline-none
                            text-sm w-64"
@@ -227,130 +313,322 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
             </div>
           </div>
 
-          {/* Allegiance Filter Indicator */}
-          <div
-            className={`inline-flex items-center gap-2 px-3 py-2 mb-6 text-sm
-                        ${allegianceStyle.borderRadius}`}
-            style={{
-              backgroundColor: allegianceStyle.bgColor,
-              border: `1px solid ${allegianceStyle.borderColor}`,
-              color: allegianceStyle.color,
-            }}
-          >
-            <AllegianceIcon className="w-4 h-4" />
-            <span>
-              {user?.allegiance === 'neutral'
-                ? 'Showing all teams'
-                : `Showing ${ALLEGIANCE_CONFIG[user?.allegiance || 'neutral'].label} teams only`}
-            </span>
+          {/* Tab Switcher */}
+          <div className="flex gap-2 mb-6">
+            <button
+              type="button"
+              onClick={() => setActiveTab('teams')}
+              className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2
+                         ${activeTab === 'teams' 
+                           ? 'bg-gray-900 text-white' 
+                           : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
+            >
+              <Users className="w-4 h-4" />
+              TEAMS
+              <span className={`px-1.5 py-0.5 text-xs rounded-full ${
+                activeTab === 'teams' ? 'bg-white/20' : 'bg-gray-100'
+              }`}>
+                {allegianceFilteredTeams.length}
+              </span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('people')}
+              className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2
+                         ${activeTab === 'people' 
+                           ? 'bg-gray-900 text-white' 
+                           : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
+            >
+              <User className="w-4 h-4" />
+              PEOPLE
+              <span className={`px-1.5 py-0.5 text-xs rounded-full ${
+                activeTab === 'people' ? 'bg-white/20' : 'bg-gray-100'
+              }`}>
+                {allegianceFilteredAgents.length}
+              </span>
+            </button>
           </div>
+
+          {/* Allegiance Filter Indicator - Only show for Teams tab */}
+          {activeTab === 'teams' && (
+            <div
+              className={`inline-flex items-center gap-2 px-3 py-2 mb-6 text-sm
+                          ${ALLEGIANCE_CONFIG[filterAllegiance].borderRadius}`}
+              style={{
+                backgroundColor: ALLEGIANCE_CONFIG[filterAllegiance].bgColor,
+                border: `1px solid ${ALLEGIANCE_CONFIG[filterAllegiance].borderColor}`,
+                color: ALLEGIANCE_CONFIG[filterAllegiance].color,
+              }}
+            >
+              {filterAllegiance === 'human' && <Heart className="w-4 h-4" />}
+              {filterAllegiance === 'ai' && <Cpu className="w-4 h-4" />}
+              {filterAllegiance === 'neutral' && <Scale className="w-4 h-4" />}
+              <span>
+                {filterAllegiance === 'neutral'
+                  ? 'Showing all teams'
+                  : `Showing ${ALLEGIANCE_CONFIG[filterAllegiance].label} teams only`}
+              </span>
+            </div>
+          )}
 
           {/* Teams Grid */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {filteredTeams.map((team) => {
-              const teamConfig = ALLEGIANCE_CONFIG[team.side];
-              const TeamIcon = team.side === 'ai' ? Cpu : Heart;
+          {activeTab === 'teams' && (
+            <>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {filteredTeams.map((team) => {
+                  const teamConfig = ALLEGIANCE_CONFIG[team.side];
+                  const TeamIcon = team.side === 'ai' ? Cpu : Heart;
+                  const hasApplied = team.joinRequests?.some((r) => r.userName === user?.name);
 
-              return (
-                <div
-                  key={team.id}
-                  className={`p-5 bg-white transition-all duration-200 hover:shadow-lg
-                             border-2 ${teamConfig.borderRadius}
-                             ${team.side === 'ai' ? 'border-dashed' : ''}`}
-                  style={{ borderColor: teamConfig.borderColor }}
-                >
-                  {/* Team Header */}
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className={`w-10 h-10 flex items-center justify-center ${teamConfig.borderRadius}`}
+                  return (
+                    <div
+                      key={team.id}
+                      className={`p-5 bg-white transition-all duration-200 hover:shadow-lg
+                                 border-2 ${teamConfig.borderRadius}
+                                 ${team.side === 'ai' ? 'border-dashed' : ''}`}
+                      style={{ borderColor: teamConfig.borderColor }}
+                    >
+                      {/* Team Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 flex items-center justify-center ${teamConfig.borderRadius}`}
+                            style={{
+                              backgroundColor: teamConfig.bgColor,
+                            }}
+                          >
+                            <TeamIcon
+                              className="w-5 h-5"
+                              style={{ color: teamConfig.color }}
+                            />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3
+                                className={`font-bold text-gray-900 ${
+                                  team.side === 'ai' ? 'font-mono' : ''
+                                }`}
+                              >
+                                {team.name}
+                              </h3>
+                              {hasApplied && (
+                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-amber-100 text-amber-600 rounded-full">
+                                  Applied
+                                </span>
+                              )}
+                            </div>
+                            <span
+                              className="text-xs font-bold uppercase"
+                              style={{ color: teamConfig.color }}
+                            >
+                              {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <Users className="w-4 h-4" />
+                          <span>
+                            {team.members.length}/{team.maxMembers}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* Description */}
+                      <p className="text-sm text-gray-600 mb-4">{team.description}</p>
+
+                      {/* Looking For */}
+                      <div className="mb-4">
+                        <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
+                          Looking For
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {team.lookingFor.map((skill) => (
+                            <span
+                              key={skill}
+                              className={`px-2 py-1 text-xs border ${teamConfig.borderRadius}`}
+                              style={{
+                                borderColor: teamConfig.borderColor,
+                                color: teamConfig.color,
+                                backgroundColor: teamConfig.bgColor,
+                              }}
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action */}
+                      <button
+                        type="button"
+                        onClick={() => onNavigateToTeam(team.id)}
+                        className={`w-full py-2 flex items-center justify-center gap-2
+                                   font-bold text-sm transition-all
+                                   ${teamConfig.borderRadius}`}
                         style={{
-                          backgroundColor: teamConfig.bgColor,
+                          backgroundColor: teamConfig.color,
+                          color: 'white',
                         }}
                       >
-                        <TeamIcon
-                          className="w-5 h-5"
-                          style={{ color: teamConfig.color }}
-                        />
-                      </div>
-                      <div>
-                        <h3
-                          className={`font-bold text-gray-900 ${
-                            team.side === 'ai' ? 'font-mono' : ''
-                          }`}
-                        >
-                          {team.name}
-                        </h3>
-                        <span
-                          className="text-xs font-bold uppercase"
-                          style={{ color: teamConfig.color }}
-                        >
-                          {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
-                        </span>
-                      </div>
+                        LEARN MORE
+                        <ChevronRight className="w-4 h-4" />
+                      </button>
                     </div>
-                    <div className="flex items-center gap-1 text-sm text-gray-500">
-                      <Users className="w-4 h-4" />
-                      <span>
-                        {team.members}/{team.maxMembers}
-                      </span>
-                    </div>
-                  </div>
+                  );
+                })}
+              </div>
 
-                  {/* Description */}
-                  <p className="text-sm text-gray-600 mb-4">{team.description}</p>
+              {/* Empty State - Teams */}
+              {filteredTeams.length === 0 && (
+                <div className="text-center py-12 text-gray-400">
+                  <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>
+                    {searchTerm
+                      ? 'No teams found matching your search.'
+                      : 'No teams available for your current allegiance.'}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
 
-                  {/* Looking For */}
-                  <div className="mb-4">
-                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
-                      Looking For
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {team.lookingFor.map((skill) => (
-                        <span
-                          key={skill}
-                          className={`px-2 py-1 text-xs border ${teamConfig.borderRadius}`}
+          {/* People Grid */}
+          {activeTab === 'people' && (
+            <>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                {filteredAgents.map((agent) => {
+                  const agentConfig = ALLEGIANCE_CONFIG[agent.allegiance] || ALLEGIANCE_CONFIG.neutral;
+                  const AgentIcon = { human: Heart, neutral: Scale, ai: Cpu }[agent.allegiance] || Scale;
+                  const hasInvited = agent.teamInvites?.some((i) => i.teamId === captainedTeam?.id);
+
+                  return (
+                    <div
+                      key={agent.id}
+                      className={`p-5 bg-white transition-all duration-200 hover:shadow-lg
+                                 border-2 ${agentConfig.borderRadius}
+                                 ${agent.allegiance === 'ai' ? 'border-dashed' : ''}`}
+                      style={{ borderColor: agentConfig.borderColor }}
+                    >
+                      {/* Agent Header */}
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div
+                            className={`w-10 h-10 flex items-center justify-center ${agentConfig.borderRadius}`}
+                            style={{
+                              backgroundColor: agentConfig.bgColor,
+                            }}
+                          >
+                            <AgentIcon
+                              className="w-5 h-5"
+                              style={{ color: agentConfig.color }}
+                            />
+                          </div>
+                          <div>
+                            <div className="flex items-center gap-2">
+                              <h3
+                                className={`font-bold text-gray-900 ${
+                                  agent.allegiance === 'ai' ? 'font-mono' : ''
+                                }`}
+                              >
+                                {agent.name}
+                              </h3>
+                              {hasInvited && (
+                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-blue-100 text-blue-600 rounded-full">
+                                  Invited
+                                </span>
+                              )}
+                            </div>
+                            <span
+                              className="text-xs font-bold uppercase"
+                              style={{ color: agentConfig.color }}
+                            >
+                              {agentConfig.label} · FREE AGENT
+                            </span>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-1 text-sm text-gray-500">
+                          <User className="w-4 h-4" />
+                        </div>
+                      </div>
+
+                      {/* Bio */}
+                      <p className="text-sm text-gray-600 mb-4">{agent.bio}</p>
+
+                      {/* Skills */}
+                      <div className="mb-4">
+                        <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
+                          Skills
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {agent.skills?.map((skill) => (
+                            <span
+                              key={skill}
+                              className={`px-2 py-1 text-xs border ${agentConfig.borderRadius}`}
+                              style={{
+                                borderColor: agentConfig.borderColor,
+                                color: agentConfig.color,
+                                backgroundColor: agentConfig.bgColor,
+                              }}
+                            >
+                              {skill}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Action - Only show invite button for captains */}
+                      {captainedTeam && !hasInvited && (
+                        <button
+                          type="button"
+                          onClick={() => setInviteModalAgent(agent)}
+                          className={`w-full py-2 flex items-center justify-center gap-2
+                                     font-bold text-sm transition-all
+                                     ${agentConfig.borderRadius}`}
                           style={{
-                            borderColor: teamConfig.borderColor,
-                            color: teamConfig.color,
-                            backgroundColor: teamConfig.bgColor,
+                            backgroundColor: agentConfig.color,
+                            color: 'white',
                           }}
                         >
-                          {skill}
-                        </span>
-                      ))}
+                          <Send className="w-4 h-4" />
+                          INVITE TO TEAM
+                        </button>
+                      )}
+                      {captainedTeam && hasInvited && (
+                        <div
+                          className={`w-full py-2 flex items-center justify-center gap-2
+                                     font-bold text-sm text-gray-400 border-2 border-gray-200
+                                     ${agentConfig.borderRadius}`}
+                        >
+                          <Check className="w-4 h-4" />
+                          INVITE SENT
+                        </div>
+                      )}
+                      {!captainedTeam && (
+                        <div
+                          className={`w-full py-2 flex items-center justify-center gap-2
+                                     text-sm text-gray-400 border border-gray-200 bg-gray-50
+                                     ${agentConfig.borderRadius}`}
+                        >
+                          Create a team to send invites
+                        </div>
+                      )}
                     </div>
-                  </div>
+                  );
+                })}
+              </div>
 
-                  {/* Action */}
-                  <button
-                    type="button"
-                    className={`w-full py-2 flex items-center justify-center gap-2
-                               font-bold text-sm transition-all
-                               ${teamConfig.borderRadius}`}
-                    style={{
-                      backgroundColor: teamConfig.color,
-                      color: 'white',
-                    }}
-                  >
-                    REQUEST TO JOIN
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+              {/* Empty State - People */}
+              {filteredAgents.length === 0 && (
+                <div className="text-center py-12 text-gray-400">
+                  <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                  <p>
+                    {searchTerm
+                      ? 'No free agents found matching your search.'
+                      : 'No free agents available.'}
+                  </p>
                 </div>
-              );
-            })}
-          </div>
-
-          {/* Empty State */}
-          {filteredTeams.length === 0 && (
-            <div className="text-center py-12 text-gray-400">
-              <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>
-                {searchTerm
-                  ? 'No teams found matching your search.'
-                  : 'No teams available for your current allegiance.'}
-              </p>
-            </div>
+              )}
+            </>
           )}
         </main>
       </div>
@@ -364,6 +642,71 @@ function Dashboard({ user, updateUser, teams, allegianceStyle, onNavigate }) {
           </span>
         </div>
       </footer>
+
+      {/* Invite Modal */}
+      {inviteModalAgent && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 max-w-md w-full mx-4 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-bold text-gray-900">Send Team Invite</h2>
+              <button
+                type="button"
+                onClick={() => {
+                  setInviteModalAgent(null);
+                  setInviteMessage('');
+                }}
+                className="p-1 text-gray-400 hover:text-gray-600"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
+              <div className="text-sm font-bold text-gray-900">{inviteModalAgent.name}</div>
+              <div className="text-xs text-gray-500 mb-2">
+                {inviteModalAgent.skills?.join(', ')}
+              </div>
+              <div className="text-sm text-gray-600">{inviteModalAgent.bio}</div>
+            </div>
+
+            <div className="mb-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+                Invitation Message
+              </label>
+              <textarea
+                value={inviteMessage}
+                onChange={(e) => setInviteMessage(e.target.value)}
+                placeholder={`Tell ${inviteModalAgent.name} why they'd be a great fit for ${captainedTeam?.name}...`}
+                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none
+                           text-sm resize-none h-24"
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                type="button"
+                onClick={() => {
+                  setInviteModalAgent(null);
+                  setInviteMessage('');
+                }}
+                className="flex-1 py-2 border-2 border-gray-200 text-gray-600 font-bold text-sm
+                           hover:border-gray-400 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSendInvite}
+                className="flex-1 py-2 bg-gray-900 text-white font-bold text-sm
+                           hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+              >
+                <Send className="w-4 h-4" />
+                Send Invite
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

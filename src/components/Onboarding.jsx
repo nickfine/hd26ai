@@ -217,6 +217,22 @@ function Onboarding({ user, updateUser, onNavigate }) {
               >
                 JOIN AS FREE AGENT
               </button>
+
+              {/* DEV SKIP BUTTON - DELETE LATER */}
+              <button
+                type="button"
+                onClick={() => {
+                  updateUser({
+                    name: 'Test User',
+                    skills: ['Frontend Development', 'Backend Development'],
+                    allegiance: 'neutral',
+                  });
+                  onNavigate('dashboard');
+                }}
+                className="w-full py-2 text-xs text-gray-400 hover:text-gray-600 underline"
+              >
+                [DEV] Skip to Dashboard
+              </button>
             </div>
           </div>
 

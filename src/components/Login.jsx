@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { ArrowLeft, Mail, Lock, Zap } from 'lucide-react';
+import { ArrowLeft, Mail, Lock, Zap, Crown } from 'lucide-react';
 
-function Login({ onNavigate, onLogin }) {
+function Login({ onNavigate, onLogin, onDemoLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -119,6 +119,37 @@ function Login({ onNavigate, onLogin }) {
             >
               Continue with Corporate SSO
             </button>
+          </div>
+
+          {/* Demo Captain Login */}
+          <div className="mt-6 p-4 border-2 border-dashed border-cyan-400 bg-cyan-50/50">
+            <div className="flex items-center gap-2 mb-3">
+              <Crown className="w-4 h-4 text-yellow-500" />
+              <span className="text-xs font-bold uppercase tracking-wide text-gray-600">
+                Demo Mode
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                onDemoLogin({
+                  id: 101,
+                  name: 'Alex Chen',
+                  email: 'alex.chen@company.com',
+                  skills: ['Backend Development', 'DevOps'],
+                  allegiance: 'ai',
+                });
+              }}
+              className="w-full py-3 bg-cyan-500 text-white font-bold
+                         hover:bg-cyan-600 transition-colors text-sm
+                         flex items-center justify-center gap-2"
+            >
+              <Crown className="w-4 h-4" />
+              Login as Captain (Alex Chen)
+            </button>
+            <p className="text-xs text-gray-500 mt-2 text-center">
+              Captain of Neural Nexus — AI Side
+            </p>
           </div>
 
           {/* Footer note */}
