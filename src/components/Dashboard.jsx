@@ -35,7 +35,6 @@ function Dashboard({
 
   // Find the team the user is captain of (if any)
   const captainedTeam = teams.find((team) => team.captainId === user?.id);
-  const pendingRequestCount = captainedTeam?.joinRequests?.length || 0;
 
   // Filter teams based on selected filter allegiance
   const allegianceFilteredTeams = teams.filter((team) => {
@@ -281,7 +280,7 @@ function Dashboard({
           {/* Info */}
           <div className="mt-6 p-3 border border-gray-200 bg-gray-50 text-xs text-gray-500">
             <strong className="text-gray-700">Tip:</strong> Filter by allegiance
-            to see teams for a specific side. Select Neutral to view all teams.
+            to see teams for a specific side. Select All to view everything.
           </div>
         </aside>
 
@@ -349,27 +348,25 @@ function Dashboard({
             </button>
           </div>
 
-          {/* Allegiance Filter Indicator - Only show for Teams tab */}
-          {activeTab === 'teams' && (
-            <div
-              className={`inline-flex items-center gap-2 px-3 py-2 mb-6 text-sm
-                          ${ALLEGIANCE_CONFIG[filterAllegiance].borderRadius}`}
-              style={{
-                backgroundColor: ALLEGIANCE_CONFIG[filterAllegiance].bgColor,
-                border: `1px solid ${ALLEGIANCE_CONFIG[filterAllegiance].borderColor}`,
-                color: ALLEGIANCE_CONFIG[filterAllegiance].color,
-              }}
-            >
-              {filterAllegiance === 'human' && <Heart className="w-4 h-4" />}
-              {filterAllegiance === 'ai' && <Cpu className="w-4 h-4" />}
-              {filterAllegiance === 'neutral' && <Scale className="w-4 h-4" />}
-              <span>
-                {filterAllegiance === 'neutral'
-                  ? 'Showing all teams'
-                  : `Showing ${ALLEGIANCE_CONFIG[filterAllegiance].label} teams only`}
-              </span>
-            </div>
-          )}
+          {/* Allegiance Filter Indicator */}
+          <div
+            className={`inline-flex items-center gap-2 px-3 py-2 mb-6 text-sm
+                        ${ALLEGIANCE_CONFIG[filterAllegiance].borderRadius}`}
+            style={{
+              backgroundColor: ALLEGIANCE_CONFIG[filterAllegiance].bgColor,
+              border: `1px solid ${ALLEGIANCE_CONFIG[filterAllegiance].borderColor}`,
+              color: ALLEGIANCE_CONFIG[filterAllegiance].color,
+            }}
+          >
+            {filterAllegiance === 'human' && <Heart className="w-4 h-4" />}
+            {filterAllegiance === 'ai' && <Cpu className="w-4 h-4" />}
+            {filterAllegiance === 'neutral' && <Scale className="w-4 h-4" />}
+            <span>
+              {filterAllegiance === 'neutral'
+                ? `Showing all ${activeTab}`
+                : `Showing ${ALLEGIANCE_CONFIG[filterAllegiance].label} ${activeTab} only`}
+            </span>
+          </div>
 
           {/* Teams Grid */}
           {activeTab === 'teams' && (
@@ -485,7 +482,7 @@ function Dashboard({
                   <p>
                     {searchTerm
                       ? 'No teams found matching your search.'
-                      : 'No teams available for your current allegiance.'}
+                      : 'No teams available for the selected filter.'}
                   </p>
                 </div>
               )}
@@ -624,7 +621,7 @@ function Dashboard({
                   <p>
                     {searchTerm
                       ? 'No free agents found matching your search.'
-                      : 'No free agents available.'}
+                      : 'No free agents available for the selected filter.'}
                   </p>
                 </div>
               )}
