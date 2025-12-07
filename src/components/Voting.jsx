@@ -42,6 +42,7 @@ function Voting({
   onNavigate,
   userVotes = [],
   onVote,
+  permissions = {}, // eslint-disable-line no-unused-vars -- Reserved for future permission-based features
 }) {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [filterSide, setFilterSide] = useState('all');

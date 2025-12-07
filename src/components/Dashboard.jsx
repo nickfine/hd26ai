@@ -25,7 +25,7 @@ import {
   Shield,
   Megaphone,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, USER_ROLES } from '../data/mockData';
+import { ALLEGIANCE_CONFIG, USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
 
 // ============================================================================
 // MOCK DATA
@@ -58,15 +58,6 @@ const MOCK_FAQ = [
   { id: 2, question: 'What can I build?', answer: 'Anything! Web apps, mobile apps, APIs, games, tools - as long as it fits the theme. AI-side teams are encouraged to use AI tools heavily, while Human-side teams should minimize AI assistance.' },
   { id: 3, question: 'How is judging done?', answer: 'Projects are judged on innovation, execution, design, and theme adherence. There will be peer voting for People\'s Choice award.' },
   { id: 4, question: 'Can I switch allegiances?', answer: 'You can switch until team formation deadline. After that, your allegiance is locked for the duration of the hackathon.' },
-];
-
-const EVENT_PHASES = [
-  { id: 'registration', label: 'Registration', complete: true },
-  { id: 'team-formation', label: 'Team Formation', complete: true },
-  { id: 'hacking', label: 'Hacking', complete: false, active: true },
-  { id: 'submission', label: 'Submission', complete: false },
-  { id: 'voting', label: 'Voting', complete: false },
-  { id: 'results', label: 'Results', complete: false },
 ];
 
 const getNavItems = (userRole) => {
@@ -122,6 +113,7 @@ function Dashboard({
   teams = [],
   allegianceStyle,
   onNavigate,
+  eventPhase = 'voting',
 }) {
   const [expandedFaq, setExpandedFaq] = useState(null);
   const [activeNav, setActiveNav] = useState('dashboard');
@@ -231,11 +223,13 @@ function Dashboard({
       {/* ================================================================== */}
       <div className="border-b-2 border-gray-200 bg-gray-50 px-4 sm:px-6 py-3">
         <div className="max-w-7xl mx-auto flex items-center justify-center gap-2 sm:gap-4 overflow-x-auto">
-          {EVENT_PHASES.map((phase, index) => {
-            const isActive = phase.active;
-            const isComplete = phase.complete;
+          {EVENT_PHASE_ORDER.map((phaseKey, index) => {
+            const phase = EVENT_PHASES_CONFIG[phaseKey];
+            const currentPhaseIndex = EVENT_PHASE_ORDER.indexOf(eventPhase);
+            const isActive = phaseKey === eventPhase;
+            const isComplete = index < currentPhaseIndex;
             return (
-              <div key={phase.id} className="flex items-center">
+              <div key={phaseKey} className="flex items-center">
                 <div className="flex items-center gap-1.5">
                   <div
                     className={`w-6 h-6 flex items-center justify-center text-xs font-bold
@@ -249,10 +243,10 @@ function Dashboard({
                   </div>
                   <span className={`text-xs font-bold whitespace-nowrap hidden sm:inline
                     ${isActive ? 'text-cyan-600' : isComplete ? 'text-gray-900' : 'text-gray-400'}`}>
-                    {phase.label}
+                    {phase?.label}
                   </span>
                 </div>
-                {index < EVENT_PHASES.length - 1 && (
+                {index < EVENT_PHASE_ORDER.length - 1 && (
                   <div className={`w-4 sm:w-8 h-0.5 mx-1 sm:mx-2
                     ${isComplete ? 'bg-gray-900' : 'bg-gray-300'}`} 
                   />

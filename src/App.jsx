@@ -309,6 +309,7 @@ function App() {
             teams={mockTeams}
             allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
+            eventPhase={eventPhase}
           />
         );
       case 'marketplace':
