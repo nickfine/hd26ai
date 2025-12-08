@@ -84,10 +84,7 @@ const TeamCard = forwardRef(({
           
           {/* Team Info */}
           <div className="flex-1 min-w-0">
-            <h4 className={cn(
-              'font-bold text-white truncate',
-              isAI && 'font-mono'
-            )}>
+            <h4 className="font-bold text-white truncate">
               {team.name}
             </h4>
             <div className="flex items-center gap-2 text-xs text-text-muted">
@@ -131,10 +128,7 @@ const TeamCard = forwardRef(({
               <AllegianceIcon className={cn('w-6 h-6', textColor)} />
             </div>
             <div>
-              <h3 className={cn(
-                'text-lg font-bold text-white',
-                isAI && 'font-mono'
-              )}>
+              <h3 className="text-lg font-bold text-white">
                 {team.name}
               </h3>
               <Badge variant={isAI ? 'ai' : 'human'} size="xs">
@@ -224,10 +218,7 @@ const TeamCard = forwardRef(({
             <AllegianceIcon className={cn('w-5 h-5', textColor)} />
           </div>
           <div>
-            <h4 className={cn(
-              'font-bold text-white',
-              isAI && 'font-mono'
-            )}>
+            <h4 className="font-bold text-white">
               {team.name}
             </h4>
             <div className="flex items-center gap-2 text-xs text-text-muted">
@@ -343,10 +334,7 @@ export const TeamMemberItem = ({
         />
         <div>
           <div className="flex items-center gap-2">
-            <span className={cn(
-              'font-bold text-sm text-white',
-              isAI && 'font-mono'
-            )}>
+            <span className="font-bold text-sm text-white">
               {member.name}
             </span>
             {isCaptain && (

@@ -256,10 +256,7 @@ function Dashboard({
                     <HeartbeatDot className={activity.side === 'ai' ? 'text-ai' : 'text-human'} />
                     
                     <div className="flex-1 min-w-0">
-                      <span className={cn(
-                        'font-bold text-white',
-                        activity.side === 'ai' && 'font-mono'
-                      )}>
+                      <span className="font-bold text-white">
                         {formatted.hasCallsign ? (
                           <>
                             {formatted.firstName}
@@ -351,7 +348,7 @@ function Dashboard({
                     <div className="min-w-0">
                       <div className={cn(
                         'font-bold text-sm',
-                        isAI ? 'font-mono text-ai' : isHuman ? 'text-human' : 'text-white'
+                        isAI ? 'text-ai' : isHuman ? 'text-human' : 'text-white'
                       )}>
                         {award.title}
                       </div>

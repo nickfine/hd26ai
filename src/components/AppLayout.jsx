@@ -455,7 +455,7 @@ function AppLayout({
                     {/* AI Bar */}
                     <div>
                       <HStack justify="between" className="text-sm mb-1">
-                        <HStack gap="1" align="center" className="font-bold font-mono text-ai">
+                        <HStack gap="1" align="center" className="font-bold text-ai">
                           <Cpu className="w-3 h-3" /> AI
                         </HStack>
                         <span className="font-mono font-bold text-white">{aiPercent}%</span>

@@ -203,7 +203,6 @@
     color: var(--color-bg-primary);
     border: 2px solid var(--color-ai);
     border-radius: var(--radius-card);
-    font-family: 'JetBrains Mono', monospace;
   }
 
   .btn-ai:hover {
@@ -278,7 +277,6 @@
     background-color: rgba(0, 229, 255, 0.1);
     color: var(--color-ai);
     border: 1px solid rgba(0, 229, 255, 0.3);
-    font-family: 'JetBrains Mono', monospace;
   }
 
   /* War Status Bar - Orange vs Cyan */

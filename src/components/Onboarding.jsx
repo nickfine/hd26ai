@@ -337,7 +337,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                       )}
                     />
                     <div className={cn(
-                      'text-xs sm:text-sm font-bold font-mono',
+                      'text-xs sm:text-sm font-bold',
                       allegiance === 'ai' ? 'text-ai' : 'text-arena-secondary'
                     )}>
                       AI

@@ -212,7 +212,7 @@ function Results({
               <Heart className="w-5 h-5" style={{ color: config.color }} />
             )}
             <span
-              className={`font-black text-lg ${winner.side === 'ai' ? 'font-mono' : ''}`}
+              className="font-black text-lg"
               style={{ color: config.color }}
             >
               {winner.submission?.projectName}
@@ -281,7 +281,7 @@ function Results({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div
-            className={`font-bold text-sm truncate text-white ${team.side === 'ai' ? 'font-mono' : ''}`}
+            className="font-bold text-sm truncate text-white"
           >
             {team.submission?.projectName}
           </div>

@@ -191,9 +191,7 @@ function Marketplace({
                 return (
                   <div key={invite.id} className="p-3 bg-white border border-gray-200 rounded">
                     <div 
-                      className={`font-bold text-sm text-gray-900 mb-1 ${
-                        invite.teamSide === 'ai' ? 'font-mono' : ''
-                      }`}
+                      className="font-bold text-sm text-gray-900 mb-1"
                     >
                       {invite.teamName}
                     </div>
@@ -367,9 +365,7 @@ function Marketplace({
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <h3
-                                className={`font-bold text-white truncate ${
-                                  team.side === 'ai' ? 'font-mono' : ''
-                                }`}
+                                className="font-bold text-white truncate"
                               >
                                 {team.name}
                               </h3>
@@ -492,9 +488,7 @@ function Marketplace({
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <h3
-                                className={`font-bold text-white truncate ${
-                                  agent.allegiance === 'ai' ? 'font-mono' : ''
-                                }`}
+                                className="font-bold text-white truncate"
                               >
                                 {agent.name}
                               </h3>
@@ -728,7 +722,7 @@ function Marketplace({
                     }`}
                 >
                   <Cpu className={`w-8 h-8 ${newTeam.side === 'ai' ? 'text-cyan-600' : 'text-gray-400'}`} />
-                  <span className={`font-bold text-sm font-mono ${newTeam.side === 'ai' ? 'text-cyan-700' : 'text-gray-500'}`}>
+                  <span className={`font-bold text-sm ${newTeam.side === 'ai' ? 'text-cyan-700' : 'text-gray-500'}`}>
                     AI
                   </span>
                 </button>

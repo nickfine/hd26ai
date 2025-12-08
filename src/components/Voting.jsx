@@ -116,9 +116,7 @@ function Voting({
                 <Heart className="w-4 h-4" style={{ color: config.color }} />
               )}
               <span
-                className={`text-xs font-bold uppercase tracking-wide ${
-                  team.side === 'ai' ? 'font-mono' : ''
-                }`}
+                className="text-xs font-bold uppercase tracking-wide"
                 style={{ color: config.color }}
               >
                 {team.name}
@@ -134,9 +132,7 @@ function Voting({
         {/* Project content */}
         <div className="p-4">
           <h3
-            className={`text-lg font-black text-gray-900 mb-2 line-clamp-1 ${
-              team.side === 'ai' ? 'font-mono' : ''
-            }`}
+            className="text-lg font-black text-gray-900 mb-2 line-clamp-1"
           >
             {submission?.projectName || 'Untitled Project'}
           </h3>
@@ -250,16 +246,12 @@ function Voting({
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
               <h3
-                className={`text-base font-black text-gray-900 truncate ${
-                  team.side === 'ai' ? 'font-mono' : ''
-                }`}
+                className="text-base font-black text-gray-900 truncate"
               >
                 {submission?.projectName || 'Untitled Project'}
               </h3>
               <span
-                className={`text-xs font-bold px-2 py-0.5 ${
-                  team.side === 'ai' ? 'font-mono' : ''
-                }`}
+                className="text-xs font-bold px-2 py-0.5"
                 style={{ backgroundColor: config.bgColor, color: config.color }}
               >
                 {team.name}

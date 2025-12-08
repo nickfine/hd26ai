@@ -254,10 +254,7 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               <Icon className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h2 className={cn(
-                'text-2xl font-heading font-black text-white',
-                isAI && 'font-mono'
-              )}>
+              <h2 className="text-2xl font-heading font-black text-white">
                 {rules.title}
               </h2>
               <p className="text-sm text-text-secondary">{rules.subtitle}</p>

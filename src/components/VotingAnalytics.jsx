@@ -271,9 +271,7 @@ function VotingAnalytics({
           {/* Project info */}
           <div className="flex-1 min-w-0">
             <h3
-              className={`text-base font-black text-gray-900 truncate ${
-                team.side === 'ai' ? 'font-mono' : ''
-              }`}
+              className="text-base font-black text-gray-900 truncate"
             >
               {team.submission?.projectName || 'Untitled'}
             </h3>
@@ -386,7 +384,7 @@ function VotingAnalytics({
               <Heart className="w-4 h-4" style={{ color: config.color }} />
             )}
             <span
-              className={`font-black ${winner.side === 'ai' ? 'font-mono' : ''}`}
+              className="font-black"
               style={{ color: config.color }}
             >
               {winner.submission?.projectName}

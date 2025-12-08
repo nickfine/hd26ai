@@ -87,7 +87,7 @@ export const ALLEGIANCE_CONFIG = {
     borderColor: '#00E5FF',
     textColor: '#00E5FF',
     glowColor: 'rgba(0, 229, 255, 0.4)',
-    font: 'font-mono',
+    font: 'font-sans',             // Unified with Human mode
     borderRadius: 'rounded-card',
     borderStyle: 'border-l-4',
     icon: Cpu,
@@ -282,13 +282,13 @@ export const BUTTON_VARIANTS = {
     focus: 'focus-visible:ring-human',
   },
   ai: {
-    base: 'bg-ai text-arena-black border-2 border-ai rounded-card font-mono',
+    base: 'bg-ai text-arena-black border-2 border-ai rounded-card',
     hover: 'hover:bg-ai/90 hover:shadow-glow-ai-strong hover:-translate-y-1',
     active: 'active:bg-ai/80 active:translate-y-0',
     focus: 'focus-visible:ring-ai',
   },
   'ai-ghost': {
-    base: 'bg-transparent text-ai border border-ai rounded-card font-mono',
+    base: 'bg-transparent text-ai border border-ai rounded-card',
     hover: 'hover:bg-ai/10 hover:shadow-glow-ai hover:-translate-y-0.5',
     active: 'active:bg-ai/20 active:translate-y-0',
     focus: 'focus-visible:ring-ai',
@@ -316,7 +316,7 @@ export const BADGE_VARIANTS = {
   default: 'bg-arena-elevated text-text-secondary border border-arena-border',
   outline: 'bg-transparent text-text-secondary border border-arena-border-strong',
   human: 'bg-human/10 text-human border border-human/30',
-  ai: 'bg-ai/10 text-ai border border-ai/30 font-mono',
+  ai: 'bg-ai/10 text-ai border border-ai/30',
   neutral: 'bg-arena-elevated text-text-muted border border-arena-border',
   success: 'bg-success/10 text-success border border-success/30',
   warning: 'bg-warning/10 text-warning border border-warning/30',

@@ -245,3 +245,4 @@ AllegianceAvatar.displayName = 'AllegianceAvatar';
 
 export default Avatar;
 
+

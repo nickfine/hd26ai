@@ -167,9 +167,7 @@ function JudgeScoring({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <h3
-            className={`font-bold text-sm truncate ${
-              team.side === 'ai' ? 'font-mono' : ''
-            } ${scored ? 'text-gray-600' : 'text-gray-900'}`}
+            className={`font-bold text-sm truncate ${scored ? 'text-gray-600' : 'text-gray-900'}`}
           >
             {team.submission?.projectName || 'Untitled'}
           </h3>
@@ -214,18 +212,14 @@ function JudgeScoring({
               <Heart className="w-5 h-5" style={{ color: config.color }} />
             )}
             <span
-              className={`text-sm font-bold uppercase tracking-wide ${
-                selectedTeam.side === 'ai' ? 'font-mono' : ''
-              }`}
+              className="text-sm font-bold uppercase tracking-wide"
               style={{ color: config.color }}
             >
               {selectedTeam.name}
             </span>
           </div>
           <h2
-            className={`text-2xl font-black text-gray-900 mb-2 ${
-              selectedTeam.side === 'ai' ? 'font-mono' : ''
-            }`}
+            className="text-2xl font-black text-gray-900 mb-2"
           >
             {submission?.projectName || 'Untitled Project'}
           </h2>

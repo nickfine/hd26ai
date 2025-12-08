@@ -148,9 +148,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1
-                    className={`text-xl sm:text-2xl font-black text-gray-900 ${
-                      team.side === 'ai' ? 'font-mono' : ''
-                    }`}
+                    className="text-xl sm:text-2xl font-black text-gray-900"
                   >
                     {team.name}
                   </h1>
@@ -352,9 +350,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
-                        className={`font-bold text-gray-900 truncate ${
-                          team.side === 'ai' ? 'font-mono' : ''
-                        }`}
+                        className="font-bold text-gray-900 truncate"
                       >
                         {member.name}
                       </span>
@@ -782,7 +778,6 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 placeholder="Enter team name"
                 maxLength={50}
                 className={`w-full px-3 py-3 border-2 focus:outline-none transition-colors text-base
-                  ${team.side === 'ai' ? 'font-mono' : ''}
                   ${teamNameInput.trim().length < 3 ? 'border-red-300' : 'border-gray-200 focus:border-gray-900'}`}
                 autoFocus
                 onKeyDown={(e) => {

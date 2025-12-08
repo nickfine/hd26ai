@@ -235,7 +235,7 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                 <Heart className="w-6 h-6" style={{ color: teamConfig.color }} />
               )}
               <div>
-                <div className={`font-bold text-white ${userTeam.side === 'ai' ? 'font-mono' : ''}`}>
+                <div className="font-bold text-white">
                   {userTeam.name}
                 </div>
                 <div className="text-xs text-arena-secondary">
@@ -381,7 +381,7 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                 <Heart className="w-6 h-6" style={{ color: teamConfig.color }} />
               )}
               <div>
-                <div className={`font-bold text-white ${userTeam.side === 'ai' ? 'font-mono' : ''}`}>
+                <div className="font-bold text-white">
                   {userTeam.name}
                 </div>
                 <div className="text-xs text-arena-secondary">

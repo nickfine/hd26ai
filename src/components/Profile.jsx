@@ -604,7 +604,7 @@ function Profile({
                           ${user?.allegiance === 'human'
                             ? 'text-human'
                             : user?.allegiance === 'ai'
-                              ? 'text-ai font-mono'
+                              ? 'text-ai'
                               : 'text-arena-muted'}`}
                       >
                         {user?.allegiance === 'human' ? 'Human' : user?.allegiance === 'ai' ? 'AI' : 'Neutral'}
@@ -641,7 +641,7 @@ function Profile({
                           : 'border-arena-border hover:border-ai/50'}`}
                     >
                       <Cpu className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'}`} />
-                      <div className={`text-xs font-bold font-mono ${user?.allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'}`}>
+                      <div className={`text-xs font-bold ${user?.allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'}`}>
                         AI
                       </div>
                     </button>
@@ -920,9 +920,7 @@ function Profile({
                   
                   <div className="flex-1 min-w-0">
                     <h3
-                      className={`text-base sm:text-lg font-bold text-white ${
-                        userTeam.side === 'ai' ? 'font-mono' : ''
-                      }`}
+                      className="text-base sm:text-lg font-bold text-white"
                     >
                       {userTeam.name}
                     </h3>

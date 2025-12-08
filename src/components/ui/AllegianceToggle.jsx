@@ -63,7 +63,7 @@ const ALLEGIANCE_OPTIONS = [
     label: 'AI',
     shortLabel: 'AI',
     Icon: Cpu,
-    activeClass: 'bg-ai text-arena-black shadow-glow-ai font-mono',
+    activeClass: 'bg-ai text-arena-black shadow-glow-ai',
     inactiveClass: 'text-ai/60 hover:bg-ai/10 hover:text-ai',
   },
 ];
@@ -130,8 +130,6 @@ const AllegianceToggle = forwardRef(({
               index > 0 && 'border-l border-arena-border',
               // Disabled cursor
               disabled && 'cursor-not-allowed',
-              // AI uses mono font
-              option.id === 'ai' && 'font-mono',
             )}
           >
             {/* Icon */}
@@ -220,7 +218,7 @@ export const AllegianceSwitch = forwardRef(({
       </span>
       <span 
         className={cn(
-          'absolute right-2 text-xs font-bold font-mono transition-opacity',
+          'absolute right-2 text-xs font-bold transition-opacity',
           isAI ? 'opacity-100 text-ai' : 'opacity-30 text-ai'
         )}
       >
