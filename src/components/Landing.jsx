@@ -253,7 +253,7 @@ function Landing({ onNavigate }) {
       </header>
 
       {/* Hero */}
-      <main className="relative z-20 flex-1 flex items-center justify-start px-4 sm:px-6 pt-6 sm:pt-12 pb-8">
+      <main className="relative z-20 flex-1 flex items-start justify-center px-4 sm:px-6 pt-4 sm:pt-6 pb-4">
         <Container size="md" padding="none">
           <VStack align="center" gap="8">
             {/* VS Badge */}
