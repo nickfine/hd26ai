@@ -259,7 +259,7 @@ function Dashboard({
                       <span className="font-bold text-white">
                         {formatted.hasCallsign ? (
                           <>
-                            {formatted.firstName}
+                            {formatted.firstName}{' '}
                             <CallsignBadge allegiance={activity.side}>
                               {formatted.callsign}
                             </CallsignBadge>
