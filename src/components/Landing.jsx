@@ -149,10 +149,10 @@ function Landing({ onNavigate }) {
                 THE WAR IS ON
               </h1>
               <p className="text-lg sm:text-2xl text-text-secondary text-center max-w-lg">
-                Choose your side. Build your team. Ship something legendary.
+                Choose your side. Build your team.<br />Ship something legendary
               </p>
               <p className="text-sm text-text-muted text-center font-mono">
-                Corporate HackDay 2026 — Where allegiances are tested
+                Adaptavist HackDay 2026 — Where allegiances are tested
               </p>
             </VStack>
 
