@@ -120,19 +120,23 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
       <div className="p-4 sm:p-6">
         {/* Pending Request Banner */}
         {hasPendingRequest && (
-          <div className="bg-warning/10 border-2 border-warning/50 px-4 py-3 mb-6 rounded-card">
+          <div className="glass-card bg-warning/10 border-2 border-warning/50 px-4 py-3 mb-6 rounded-card"
+               style={{ boxShadow: '0 0 20px rgba(255, 138, 0, 0.15)' }}>
             <div className="flex items-center justify-center gap-2 text-warning">
-              <Clock className="w-5 h-5 flex-shrink-0" />
+              <Clock className="w-5 h-5 flex-shrink-0 animate-pulse" />
               <span className="font-bold text-sm sm:text-base text-center">Your request to join this team is pending</span>
             </div>
           </div>
         )}
         {/* Team Header Card */}
         <div
-          className={`bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 transition-all duration-300
-                     border-2 ${teamConfig.borderRadius}
+          className={`glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 transition-all duration-300
+                     border-l-8 rounded-card shadow-2xl
                      ${team.side === 'ai' ? 'border-dashed' : ''}`}
-          style={{ borderColor: teamConfig.borderColor }}
+          style={{ 
+            borderLeftColor: `${teamConfig.color}CC`,
+            boxShadow: `inset 8px 0 30px -15px ${teamConfig.color}40, 0 25px 50px -12px rgba(0, 0, 0, 0.25)`
+          }}
         >
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
@@ -149,6 +153,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 <div className="flex items-center gap-2 flex-wrap">
                   <h1
                     className="text-xl sm:text-2xl font-black text-white"
+                    style={{ textShadow: `0 0 25px ${teamConfig.color}60` }}
                   >
                     {team.name}
                   </h1>
@@ -188,7 +193,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         </div>
 
         {/* Project Goal */}
-        <div className="bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 border border-arena-border rounded-card">
+        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
               Project Goal
@@ -255,7 +260,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         </div>
 
         {/* More Info */}
-        <div className="bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 border border-arena-border rounded-card">
+        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
               More Info
@@ -320,7 +325,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         </div>
 
         {/* Team Members */}
-        <div className="bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 border border-arena-border rounded-card">
+        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-4">
             Team Members ({team.members.length})
           </h2>
@@ -328,10 +333,10 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
             {team.members.map((member) => (
               <div
                 key={member.id}
-                className={`p-3 sm:p-4 border-2 ${teamConfig.borderRadius} transition-all`}
+                className="glass-card human-glow p-3 sm:p-4 rounded-lg transition-all duration-300 hover:-translate-y-0.5"
                 style={{
-                  borderColor: teamConfig.borderColor,
-                  backgroundColor: teamConfig.bgColor,
+                  borderLeft: `4px solid ${teamConfig.color}`,
+                  boxShadow: `inset 4px 0 15px -10px ${teamConfig.color}40`
                 }}
               >
                 <div className="flex items-center gap-3 mb-3">
@@ -341,7 +346,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   >
                     <User className="w-5 h-5 text-white" />
                     {member.id === team.captainId && (
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-yellow-400 rounded-full flex items-center justify-center shadow-lg animate-pulse">
                         <Crown className="w-3 h-3 text-yellow-800" />
                       </div>
                     )}
@@ -375,11 +380,17 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                     </button>
                   )}
                 </div>
-                <div className="flex flex-wrap gap-1">
+                <div className="flex flex-wrap gap-1.5">
                   {member.skills.slice(0, 3).map((skill) => (
                     <span
                       key={skill}
-                      className="px-2 py-1 text-xs bg-arena-card border border-arena-border text-text-secondary rounded"
+                      className="px-2 py-1 text-xs rounded transition-transform hover:scale-105"
+                      style={{
+                        backgroundColor: `${teamConfig.color}15`,
+                        color: teamConfig.color,
+                        border: `1px solid ${teamConfig.color}30`,
+                        boxShadow: `0 2px 8px ${teamConfig.color}20`
+                      }}
                     >
                       {skill}
                     </span>
@@ -397,7 +408,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
 
         {/* Common Interests */}
         {commonInterests.length > 0 && (
-          <div className="bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 border border-arena-border rounded-card">
+          <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-3">
               Common Interests
             </h2>
@@ -405,11 +416,12 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
               {commonInterests.map((skill) => (
                 <span
                   key={skill}
-                  className={`px-3 py-2 text-sm font-medium ${teamConfig.borderRadius}`}
+                  className="px-3 py-2 text-sm font-medium rounded-lg transition-transform hover:scale-105"
                   style={{
-                    backgroundColor: teamConfig.bgColor,
+                    backgroundColor: `${teamConfig.color}20`,
                     color: teamConfig.color,
-                    border: `1px solid ${teamConfig.borderColor}`,
+                    border: `1px solid ${teamConfig.color}40`,
+                    boxShadow: `0 2px 10px ${teamConfig.color}25`
                   }}
                 >
                   {skill}
@@ -420,7 +432,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         )}
 
         {/* Looking For */}
-        <div className="bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 border border-arena-border rounded-card">
+        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-3">
             Looking For
           </h2>
@@ -428,11 +440,12 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
             {team.lookingFor.map((skill) => (
               <span
                 key={skill}
-                className={`px-3 py-2 text-sm border ${teamConfig.borderRadius}`}
+                className="px-3 py-2 text-sm rounded-lg transition-transform hover:scale-105"
                 style={{
-                  borderColor: teamConfig.borderColor,
+                  backgroundColor: `${teamConfig.color}15`,
                   color: teamConfig.color,
-                  backgroundColor: teamConfig.bgColor,
+                  border: `1px solid ${teamConfig.color}30`,
+                  boxShadow: `0 2px 8px ${teamConfig.color}20`
                 }}
               >
                 {skill}
@@ -444,8 +457,11 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         {/* Project Submission Status - Visible to team members */}
         {(isCaptain || isMember) && (
           <div
-            className={`bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 border-2 ${teamConfig.borderRadius} ${team.side === 'ai' ? 'border-dashed' : ''}`}
-            style={{ borderColor: teamConfig.borderColor }}
+            className={`glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card ${team.side === 'ai' ? 'border-dashed' : ''}`}
+            style={{ 
+              borderColor: `${teamConfig.color}99`,
+              boxShadow: `0 0 25px ${teamConfig.color}20`
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
@@ -556,8 +572,11 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         {/* Pending Requests - Captain Only */}
         {isCaptain && team.joinRequests?.length > 0 && (
           <div
-            className={`bg-arena-card p-4 sm:p-6 mb-4 sm:mb-6 border-2 ${teamConfig.borderRadius}`}
-            style={{ borderColor: teamConfig.borderColor }}
+            className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card"
+            style={{ 
+              borderColor: `${teamConfig.color}60`,
+              boxShadow: `0 0 20px ${teamConfig.color}15`
+            }}
           >
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-4">
               Pending Requests ({team.joinRequests.length})
@@ -566,7 +585,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
               {team.joinRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="p-3 sm:p-4 bg-arena-elevated rounded-lg border border-arena-border"
+                  className="glass-card p-3 sm:p-4 rounded-lg"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -634,20 +653,19 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         {/* Request to Join Button */}
         {isMember ? (
           <div
-            className={`w-full py-3 sm:py-4 text-center font-bold text-base sm:text-lg
-                       ${teamConfig.borderRadius}`}
+            className="glass-card human-glow w-full py-4 sm:py-6 text-center font-bold text-lg sm:text-xl rounded-card"
             style={{
-              backgroundColor: teamConfig.bgColor,
+              background: `linear-gradient(to right, ${teamConfig.color}30, transparent)`,
               color: teamConfig.color,
-              border: `2px solid ${teamConfig.borderColor}`,
+              borderLeft: `4px solid ${teamConfig.color}`,
+              boxShadow: `0 0 30px ${teamConfig.color}20`
             }}
           >
             YOU'RE ON THIS TEAM
           </div>
         ) : hasPendingRequest ? null : isTeamFull ? (
           <div
-            className={`w-full py-3 sm:py-4 text-center font-bold text-base sm:text-lg
-                       ${teamConfig.borderRadius} bg-arena-elevated text-text-muted`}
+            className="glass-card w-full py-3 sm:py-4 text-center font-bold text-base sm:text-lg rounded-card text-text-muted"
           >
             TEAM IS FULL
           </div>
@@ -656,12 +674,11 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
             type="button"
             onClick={() => setShowRequestModal(true)}
             className={`w-full py-3 sm:py-4 flex items-center justify-center gap-2
-                       font-bold text-base sm:text-lg transition-all hover:opacity-90
-                       ${teamConfig.borderRadius}`}
-            style={{
-              backgroundColor: teamConfig.color,
-              color: 'white',
-            }}
+                       font-bold text-base sm:text-lg transition-all duration-300
+                       hover:-translate-y-1 hover:shadow-2xl rounded-card
+                       ${team.side === 'ai' 
+                         ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
+                         : 'bg-gradient-to-r from-[#FF375F] to-[#FF6B35] text-white'}`}
           >
             REQUEST TO JOIN
             <ChevronRight className="w-5 h-5" />
@@ -673,8 +690,11 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
       {showRequestModal && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div
-            className={`bg-arena-card w-full max-w-md p-4 sm:p-6 ${teamConfig.borderRadius} border-2`}
-            style={{ borderColor: teamConfig.borderColor }}
+            className="glass-card w-full max-w-md p-4 sm:p-6 rounded-card border-2 shadow-2xl"
+            style={{ 
+              borderColor: `${teamConfig.color}60`,
+              boxShadow: `0 0 40px ${teamConfig.color}20`
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white">Request to Join</h3>
@@ -731,15 +751,17 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   setShowRequestModal(false);
                   setRequestMessage('');
                 }}
-                className="flex-1 py-3 text-sm font-bold text-text-secondary bg-arena-elevated rounded-lg hover:bg-arena-border transition-colors"
+                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSubmitRequest}
-                className="flex-1 py-3 text-sm font-bold text-white rounded-lg transition-colors hover:opacity-90"
-                style={{ backgroundColor: teamConfig.color }}
+                className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all hover:-translate-y-0.5
+                           ${team.side === 'ai' 
+                             ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
+                             : 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white'}`}
               >
                 Send Request
               </button>
@@ -752,8 +774,11 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
       {isEditingName && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div
-            className={`bg-arena-card w-full max-w-md p-4 sm:p-6 ${teamConfig.borderRadius} border-2`}
-            style={{ borderColor: teamConfig.borderColor }}
+            className="glass-card w-full max-w-md p-4 sm:p-6 rounded-card border-2 shadow-2xl"
+            style={{ 
+              borderColor: `${teamConfig.color}60`,
+              boxShadow: `0 0 40px ${teamConfig.color}20`
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white">Edit Team Name</h3>
@@ -798,7 +823,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
               <button
                 type="button"
                 onClick={handleCancelTeamName}
-                className="flex-1 py-3 text-sm font-bold text-text-secondary bg-arena-elevated rounded-lg hover:bg-arena-border transition-colors"
+                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-white transition-all"
               >
                 Cancel
               </button>
@@ -806,8 +831,10 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 type="button"
                 onClick={handleSaveTeamName}
                 disabled={teamNameInput.trim().length < 3}
-                className="flex-1 py-3 text-sm font-bold text-white rounded-lg transition-colors hover:opacity-90 disabled:opacity-50"
-                style={{ backgroundColor: teamConfig.color }}
+                className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0
+                           ${team.side === 'ai' 
+                             ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
+                             : 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white'}`}
               >
                 Save
               </button>
@@ -820,8 +847,11 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
       {showTransferModal && memberToTransfer && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div
-            className={`bg-arena-card w-full max-w-md p-4 sm:p-6 ${teamConfig.borderRadius} border-2`}
-            style={{ borderColor: teamConfig.borderColor }}
+            className="glass-card w-full max-w-md p-4 sm:p-6 rounded-card border-2 shadow-2xl"
+            style={{ 
+              borderColor: `${teamConfig.color}60`,
+              boxShadow: `0 0 40px ${teamConfig.color}20`
+            }}
           >
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-lg font-bold text-white">Transfer Captain Role</h3>
@@ -888,14 +918,16 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   setShowTransferModal(false);
                   setMemberToTransfer(null);
                 }}
-                className="flex-1 py-3 text-sm font-bold text-text-secondary bg-arena-elevated rounded-lg hover:bg-arena-border transition-colors"
+                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-white transition-all"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleTransferCaptain}
-                className="flex-1 py-3 text-sm font-bold text-arena-black bg-yellow-400 rounded-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-3 text-sm font-bold text-arena-black bg-gradient-to-r from-yellow-400 to-yellow-500 
+                           rounded-lg hover:from-yellow-300 hover:to-yellow-400 hover:-translate-y-0.5 
+                           transition-all flex items-center justify-center gap-2 shadow-lg"
               >
                 <Crown className="w-4 h-4" />
                 Transfer Captain
