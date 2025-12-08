@@ -25,6 +25,7 @@ import {
   Menu,
   X,
   Star,
+  ChevronRight,
 } from 'lucide-react';
 import Progress from './ui/Progress';
 import Badge, { RoleBadge, AllegianceCapsule, StatusCapsule, HeartbeatDot } from './ui/Badge';
@@ -225,64 +226,80 @@ function AppLayout({
               </div>
             </div>
 
-            {/* User Quick Access */}
+            {/* User Quick Access - Premium Glass Card */}
             <button
               type="button"
               onClick={() => onNavigate('profile')}
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+              className={cn(
+                'glass-card flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-2 sm:py-3 rounded-2xl cursor-pointer',
+                'transition-all duration-300 group',
+                'hover:-translate-y-0.5 hover:shadow-2xl',
+                user?.allegiance === 'ai' 
+                  ? 'border-cyan-500/30 hover:border-cyan-400/60 hover:shadow-cyan-900/40' 
+                  : 'border-orange-500/30 hover:border-orange-400/60 hover:shadow-orange-900/40'
+              )}
             >
-              <div className="relative">
-                <AllegianceAvatar allegiance={user?.allegiance || 'neutral'} size="md" />
-                {captainedTeam?.joinRequests?.length > 0 && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-human text-white text-xs font-bold rounded-full flex items-center justify-center">
-                    {captainedTeam.joinRequests.length}
+              {/* Team info - hidden on mobile */}
+              {userTeam && (
+                <div className="hidden sm:flex items-center gap-3">
+                  <div className={cn(
+                    'w-10 h-10 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center shadow-lg',
+                    userTeam.side === 'ai' 
+                      ? 'bg-gradient-to-br from-cyan-600 to-blue-600' 
+                      : 'bg-gradient-to-br from-orange-600 to-red-600'
+                  )}>
+                    {userTeam.side === 'ai' 
+                      ? <Cpu className="w-5 h-5 text-white" />
+                      : <Heart className="w-5 h-5 text-white" />
+                    }
                   </div>
-                )}
-              </div>
-              <div className="text-left hidden sm:block">
-                {/* User name with callsign - AllegianceCapsule style */}
-                {(() => {
-                  const formatted = formatNameWithCallsign(user?.name, userCallsign);
-                  if (!formatted.hasCallsign) {
-                    return (
-                      <div className="font-bold text-white text-sm">
-                        {user?.name || 'Operator'}
-                      </div>
-                    );
-                  }
-                  return (
-                    <AllegianceCapsule
-                      allegiance={user?.allegiance || 'neutral'}
-                      firstName={formatted.firstName}
-                      callsign={formatted.callsign}
-                      lastName={formatted.lastName}
-                      showDot
-                      showIcon
-                    />
-                  );
-                })()}
-                
-                {/* Status and team info */}
-                <div className="flex items-center gap-2 mt-1">
-                  {captainedTeam ? (
-                    <>
-                      <StatusCapsule pulse={false}>
-                        <Star className="w-2.5 h-2.5 mr-0.5" />
-                        Captain
-                      </StatusCapsule>
-                      <span className="text-xs font-medium" style={{ color: config.color }}>
-                        {captainedTeam.name}
-                      </span>
-                    </>
-                  ) : userTeam ? (
-                    <span className="text-xs font-medium" style={{ color: config.color }}>
+                  <div className="text-left">
+                    <p className={cn(
+                      'font-bold text-white text-sm group-hover:transition-colors',
+                      userTeam.side === 'ai' ? 'group-hover:text-cyan-200' : 'group-hover:text-orange-200'
+                    )}>
                       {userTeam.name}
-                    </span>
-                  ) : (
-                    <StatusCapsule>Free Agent</StatusCapsule>
+                    </p>
+                    <p className={cn(
+                      'text-xs',
+                      userTeam.side === 'ai' ? 'text-cyan-400' : 'text-orange-400'
+                    )}>
+                      {captainedTeam ? 'Team Captain' : 'Team Member'}
+                    </p>
+                  </div>
+                  {/* Divider */}
+                  <div className="hidden lg:block h-10 w-px bg-arena-border/50 mx-1" />
+                </div>
+              )}
+
+              {/* User avatar + name */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="relative">
+                  <AllegianceAvatar allegiance={user?.allegiance || 'neutral'} size="md" />
+                  {captainedTeam?.joinRequests?.length > 0 && (
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-human text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                      {captainedTeam.joinRequests.length}
+                    </div>
                   )}
                 </div>
+                <div className="text-left sm:text-right">
+                  <p className="font-semibold text-white text-sm">
+                    {user?.name || 'Operator'}
+                  </p>
+                  <p className={cn(
+                    'text-xs',
+                    user?.allegiance === 'ai' ? 'text-cyan-300' : 'text-orange-300'
+                  )}>
+                    {userCallsign || (userTeam ? (user?.allegiance === 'ai' ? 'AI Operative' : 'Human Fighter') : 'Free Agent')}
+                  </p>
+                </div>
               </div>
+
+              {/* Chevron arrow */}
+              <ChevronRight className={cn(
+                'w-5 h-5 transition-transform group-hover:translate-x-1',
+                user?.allegiance === 'ai' ? 'text-cyan-400' : 'text-orange-400'
+              )} />
             </button>
           </HStack>
         </Container>

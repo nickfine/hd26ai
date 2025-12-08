@@ -524,8 +524,13 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
 
                   {/* Event Card - Glass styling */}
                   <div
-                    className="flex-1 p-4 sm:p-5 glass-card rounded-card 
-                                hover:border-brand/30 hover:-translate-y-1 transition-all duration-300"
+                    className={`flex-1 p-4 sm:p-5 glass-card rounded-card 
+                                hover:border-brand/30 hover:-translate-y-1 transition-all duration-300
+                                ${event.category === 'deadline' 
+                                  ? 'border-2 border-red-500/60 bg-red-950/30' 
+                                  : event.title === 'Hacking Begins!'
+                                    ? 'border-2 border-green-500/60 bg-green-950/30'
+                                    : ''}`}
                   >
                     {/* Time Badge */}
                     <div className="flex flex-wrap items-center gap-2 mb-2">
