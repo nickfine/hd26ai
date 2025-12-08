@@ -175,12 +175,33 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                     </button>
                   )}
                 </div>
-                <span
-                  className="text-sm font-bold uppercase"
-                  style={{ color: teamConfig.color }}
-                >
-                  {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
-                </span>
+                <div className="flex items-center gap-3 mt-1">
+                  <span
+                    className="text-sm font-bold uppercase"
+                    style={{ color: teamConfig.color }}
+                  >
+                    {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
+                  </span>
+                  <span className="text-text-muted">•</span>
+                  <span className="text-sm text-text-secondary">
+                    {team.members.length}/{team.maxMembers} members
+                  </span>
+                  {isMember && (
+                    <>
+                      <span className="text-text-muted">•</span>
+                      <span 
+                        className="text-sm font-bold uppercase px-3 py-1 rounded-full"
+                        style={{ 
+                          color: teamConfig.color,
+                          backgroundColor: `${teamConfig.color}20`,
+                          border: `1px solid ${teamConfig.color}40`
+                        }}
+                      >
+                        YOU'RE ON THIS TEAM
+                      </span>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
             <div className="flex items-center gap-2 text-text-secondary flex-shrink-0">
@@ -651,19 +672,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         )}
 
         {/* Request to Join Button */}
-        {isMember ? (
-          <div
-            className="glass-card human-glow w-full py-4 sm:py-6 text-center font-bold text-lg sm:text-xl rounded-card"
-            style={{
-              background: `linear-gradient(to right, ${teamConfig.color}30, transparent)`,
-              color: teamConfig.color,
-              borderLeft: `4px solid ${teamConfig.color}`,
-              boxShadow: `0 0 30px ${teamConfig.color}20`
-            }}
-          >
-            YOU'RE ON THIS TEAM
-          </div>
-        ) : hasPendingRequest ? null : isTeamFull ? (
+        {isMember ? null : hasPendingRequest ? null : isTeamFull ? (
           <div
             className="glass-card w-full py-3 sm:py-4 text-center font-bold text-base sm:text-lg rounded-card text-text-muted"
           >
