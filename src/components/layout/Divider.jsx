@@ -23,6 +23,7 @@ import { cn } from '../../lib/design-system';
 const Divider = forwardRef(({
   orientation = 'horizontal',
   variant = 'default',
+  glow = false,
   label,
   spacing = 'md',
   className,
@@ -31,9 +32,10 @@ const Divider = forwardRef(({
   const isVertical = orientation === 'vertical';
 
   const variantStyles = {
-    light: 'border-neutral-100',
-    default: 'border-neutral-200',
-    strong: 'border-neutral-900',
+    light: 'border-arena-border',
+    default: 'border-arena-border-strong',
+    strong: 'border-text-muted',
+    glow: 'border-[rgba(255,107,53,0.15)]',
   };
 
   const spacingStyles = {
@@ -41,6 +43,8 @@ const Divider = forwardRef(({
     md: isVertical ? 'mx-4' : 'my-4',
     lg: isVertical ? 'mx-6' : 'my-6',
   };
+
+  const glowStyles = glow ? 'divider-glow' : '';
 
   // Divider with label
   if (label) {
@@ -56,14 +60,16 @@ const Divider = forwardRef(({
       >
         <div className={cn(
           'flex-1 border-t',
-          variantStyles[variant]
+          variantStyles[variant],
+          glowStyles
         )} />
-        <span className="px-4 text-sm text-neutral-400 font-medium">
+        <span className="px-4 text-sm text-text-muted font-medium">
           {label}
         </span>
         <div className={cn(
           'flex-1 border-t',
-          variantStyles[variant]
+          variantStyles[variant],
+          glowStyles
         )} />
       </div>
     );
@@ -80,6 +86,7 @@ const Divider = forwardRef(({
           ? cn('h-full border-l', variantStyles[variant])
           : cn('w-full border-t', variantStyles[variant]),
         spacingStyles[spacing],
+        glowStyles,
         className
       )}
       {...props}

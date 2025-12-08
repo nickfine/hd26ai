@@ -67,10 +67,20 @@ const CursorGlow = ({ allegiance = 'neutral' }) => {
 function Landing({ onNavigate }) {
   const containerRef = useRef(null);
 
+  // Mouse-reactive breathing vignette
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      document.body.style.setProperty('--mouse-x', `${(e.clientX / window.innerWidth) * 100}%`);
+      document.body.style.setProperty('--mouse-y', `${(e.clientY / window.innerHeight) * 100}%`);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
+  }, []);
+
   return (
     <div 
       ref={containerRef}
-      className="min-h-screen bg-arena-black flex flex-col relative overflow-hidden cursor-none"
+      className="min-h-screen bg-hackday flex flex-col relative overflow-hidden cursor-none"
     >
       {/* Cursor Glow Effect */}
       <CursorGlow allegiance="neutral" />

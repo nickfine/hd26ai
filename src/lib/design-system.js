@@ -246,9 +246,9 @@ export const SIZE_CLASSES = {
 
 export const BUTTON_VARIANTS = {
   primary: {
-    base: 'bg-brand text-white border border-brand-dark',
-    hover: 'hover:bg-brand-hover hover:shadow-inner-glow hover:-translate-y-1 hover:shadow-btn-lift',
-    active: 'active:bg-brand-pressed active:translate-y-0',
+    base: 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white border border-brand-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]',
+    hover: 'hover:from-[#FF9966] hover:to-[#FF5722] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.4)] hover:-translate-y-1',
+    active: 'active:from-[#FF7733] active:to-[#E64A19] active:translate-y-0',
     focus: 'focus-visible:ring-brand',
   },
   secondary: {
@@ -270,9 +270,9 @@ export const BUTTON_VARIANTS = {
     focus: 'focus-visible:ring-error',
   },
   human: {
-    base: 'bg-human text-white border border-brand-dark rounded-card',
-    hover: 'hover:bg-brand-hover hover:shadow-inner-glow hover:-translate-y-1 hover:shadow-glow-human-strong',
-    active: 'active:bg-brand-pressed active:translate-y-0',
+    base: 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white border border-brand-dark rounded-card shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]',
+    hover: 'hover:from-[#FF9966] hover:to-[#FF5722] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_0_20px_rgba(255,69,0,0.4)] hover:-translate-y-1',
+    active: 'active:from-[#FF7733] active:to-[#E64A19] active:translate-y-0',
     focus: 'focus-visible:ring-human',
   },
   'human-ghost': {

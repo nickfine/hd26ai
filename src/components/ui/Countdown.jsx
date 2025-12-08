@@ -64,6 +64,15 @@ const SIZE_CONFIG = {
     padding: 'px-6 py-4',
     gap: 'gap-3 sm:gap-6',
   },
+  // Hero size - Signature statement piece (120px on desktop)
+  hero: {
+    digit: 'text-6xl sm:text-8xl md:text-[100px] lg:text-[120px]',
+    seconds: 'text-7xl sm:text-9xl md:text-[110px] lg:text-[130px]',
+    label: 'text-sm sm:text-base',
+    separator: 'text-5xl sm:text-7xl md:text-8xl',
+    padding: 'px-4 sm:px-6 md:px-8 py-4 sm:py-6',
+    gap: 'gap-2 sm:gap-4 md:gap-6',
+  },
 };
 
 // Calculate time remaining from target date
@@ -95,6 +104,7 @@ const pad = (num) => String(num).padStart(2, '0');
 const DigitDisplay = ({ value, label, isSeconds, allegiance, size, isPulsing, heroMode }) => {
   const sizeConfig = SIZE_CONFIG[size];
   const paddedValue = pad(value);
+  const isHeroSize = size === 'hero';
 
   // Get soft glow for seconds based on allegiance
   const getSecondsGlow = () => {
@@ -103,41 +113,55 @@ const DigitDisplay = ({ value, label, isSeconds, allegiance, size, isPulsing, he
     return '0 0 20px rgba(255, 69, 0, 0.5), 0 0 40px rgba(255, 69, 0, 0.25)';
   };
 
-  // Hero mode gets white numbers with orange glow
+  // Hero mode gets white numbers with orange glow + letter spacing
   const getHeroStyle = () => {
-    if (!heroMode) return {};
+    if (!heroMode && !isHeroSize) return {};
     return {
-      textShadow: '0 0 20px #FF4500, 0 0 40px rgba(255, 69, 0, 0.4)',
-      WebkitTextStroke: '0.5px rgba(255, 69, 0, 0.3)',
+      textShadow: '0 0.5px 0 rgba(255, 107, 53, 0.8), 0 0 30px rgba(255, 69, 0, 0.5), 0 0 60px rgba(255, 69, 0, 0.3)',
+      letterSpacing: '-0.02em',
     };
+  };
+
+  // Glitch effect styles for seconds digit
+  const getGlitchStyles = () => {
+    if (!isSeconds || (!heroMode && !isHeroSize)) return '';
+    return 'countdown-glitch';
   };
 
   return (
     <div className="flex flex-col items-center">
       <div
         className={cn(
-          'relative flex items-center justify-center',
-          heroMode ? 'glass-card grain-overlay' : 'bg-arena-card border border-arena-border',
+          'relative flex items-center justify-center overflow-hidden',
+          (heroMode || isHeroSize) ? 'glass-card grain-overlay countdown-gradient-sweep' : 'bg-arena-card border border-arena-border',
           'rounded-card',
           sizeConfig.padding,
           isPulsing && 'animate-countdown-pulse'
         )}
-        style={heroMode ? {
-          background: 'radial-gradient(ellipse at center, rgba(255, 69, 0, 0.15) 0%, rgba(15, 15, 15, 0.72) 70%)',
+        style={(heroMode || isHeroSize) ? {
+          background: 'radial-gradient(ellipse at center, rgba(255, 69, 0, 0.12) 0%, rgba(20, 22, 28, 0.45) 70%)',
         } : {}}
       >
+        {/* Gradient sweep overlay for hero mode */}
+        {(heroMode || isHeroSize) && (
+          <div 
+            className="absolute inset-0 pointer-events-none countdown-sweep-overlay"
+            aria-hidden="true"
+          />
+        )}
         <span
           className={cn(
-            'font-mono tracking-tight',
-            heroMode ? 'font-black' : 'font-bold',
+            'font-mono relative z-10',
+            (heroMode || isHeroSize) ? 'font-black tracking-tighter' : 'font-bold tracking-tight',
             isSeconds ? sizeConfig.seconds : sizeConfig.digit,
             'text-white',
-            'transition-colors duration-150'
+            'transition-all duration-150',
+            getGlitchStyles()
           )}
           style={{
             fontVariantNumeric: 'tabular-nums',
-            textShadow: isSeconds ? getSecondsGlow() : (heroMode ? getHeroStyle().textShadow : 'none'),
-            ...(heroMode && !isSeconds ? getHeroStyle() : {}),
+            textShadow: isSeconds ? getSecondsGlow() : ((heroMode || isHeroSize) ? getHeroStyle().textShadow : 'none'),
+            ...((heroMode || isHeroSize) && !isSeconds ? getHeroStyle() : {}),
           }}
         >
           {paddedValue}

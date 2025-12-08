@@ -130,11 +130,22 @@ function AppLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining);
 
+  // Timer countdown
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeRemaining(calculateTimeRemaining());
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Mouse-reactive breathing vignette
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      document.body.style.setProperty('--mouse-x', `${(e.clientX / window.innerWidth) * 100}%`);
+      document.body.style.setProperty('--mouse-y', `${(e.clientY / window.innerHeight) * 100}%`);
+    };
+    window.addEventListener('mousemove', handleMouseMove);
+    return () => window.removeEventListener('mousemove', handleMouseMove);
   }, []);
 
   const captainedTeam = teams.find((team) => team.captainId === user?.id);
@@ -164,7 +175,7 @@ function AppLayout({
   };
 
   return (
-    <div className={cn('min-h-screen bg-arena-black text-white', config.font)}>
+    <div className={cn('min-h-screen bg-hackday text-white', config.font)}>
       {/* ================================================================== */}
       {/* HEADER */}
       {/* ================================================================== */}
