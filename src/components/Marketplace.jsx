@@ -173,12 +173,13 @@ function Marketplace({
       <div className="p-4 sm:p-6">
         {/* Pending Invites - For Free Agents */}
         {pendingInvites.length > 0 && (
-          <div className="glass-card p-4 mb-6 border-2 border-ai/30 rounded-card">
+          <div className="glass-card p-4 mb-6 border-2 border-ai/30 rounded-card"
+               style={{ boxShadow: '0 0 30px rgba(0, 229, 255, 0.15)' }}>
             <div className="flex items-center justify-between mb-3">
               <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
                 Team Invites
               </div>
-              <div className="flex items-center gap-1 px-2 py-1 bg-ai/20 text-ai rounded-full">
+              <div className="flex items-center gap-1 px-2 py-1 bg-ai/20 text-ai rounded-full live-pulse-glow">
                 <Mail className="w-3 h-3" />
                 <span className="text-xs font-bold">{pendingInvites.length}</span>
               </div>
@@ -189,7 +190,7 @@ function Marketplace({
                 const teamConfig = ALLEGIANCE_CONFIG[invite.teamSide] || ALLEGIANCE_CONFIG.neutral;
                 
                 return (
-                  <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg">
+                  <div key={invite.id} className="p-3 glass-card rounded-lg">
                     <div 
                       className="font-bold text-sm text-white mb-1"
                     >
@@ -204,7 +205,8 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onInviteResponse(user?.id, invite.id, true)}
-                        className="flex-1 py-1.5 text-xs font-bold text-white rounded-lg flex items-center justify-center gap-1"
+                        className="flex-1 py-1.5 text-xs font-bold text-white rounded-lg flex items-center justify-center gap-1
+                                   transition-all hover:-translate-y-0.5"
                         style={{ backgroundColor: teamConfig.color }}
                       >
                         <Check className="w-3 h-3" />
@@ -213,8 +215,8 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onInviteResponse(user?.id, invite.id, false)}
-                        className="flex-1 py-1.5 text-xs font-bold text-arena-secondary border border-arena-border rounded-lg
-                                   hover:bg-arena-card hover:text-white flex items-center justify-center gap-1 transition-colors"
+                        className="flex-1 py-1.5 text-xs font-bold text-arena-secondary glass-card rounded-lg
+                                   hover:text-white flex items-center justify-center gap-1 transition-all hover:-translate-y-0.5"
                       >
                         <X className="w-3 h-3" />
                         Decline
@@ -228,11 +230,12 @@ function Marketplace({
         )}
         {/* Page Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+          <div className="glass-card inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 backdrop-blur-md border border-white/10">
             <Users className="w-5 h-5 text-brand" />
             <span className="font-bold text-sm text-white">FIND YOUR SQUAD</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display"
+              style={{ textShadow: '0 0 30px rgba(255, 107, 53, 0.4)' }}>
             TEAMS
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto mb-6">
@@ -248,9 +251,9 @@ function Marketplace({
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={activeTab === 'teams' ? 'Search teams or skills...' : 'Search people or skills...'}
-              className="w-full pl-12 pr-4 py-3 border border-arena-border bg-arena-card
-                         focus:border-brand focus:outline-none text-white placeholder-arena-muted
-                         text-sm rounded-xl"
+              className="w-full pl-12 pr-4 py-3 glass-card !bg-white/5 border border-white/10
+                         focus:border-brand/50 focus:outline-none text-white placeholder-arena-muted
+                         text-sm rounded-xl transition-all"
             />
           </div>
         </div>
@@ -262,10 +265,10 @@ function Marketplace({
               <button
                 type="button"
                 onClick={() => setActiveTab('teams')}
-                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg
+                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg backdrop-blur-md
                            ${activeTab === 'teams' 
-                             ? 'bg-brand text-white' 
-                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'}`}
+                             ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_20px_rgba(255,107,53,0.3)]' 
+                             : 'glass-card text-arena-secondary hover:border-brand/30 hover:text-white'}`}
               >
                 TEAMS
                 <span className={`px-1.5 py-0.5 text-xs rounded-full ${
@@ -277,10 +280,10 @@ function Marketplace({
               <button
                 type="button"
                 onClick={() => setActiveTab('people')}
-                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg
+                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg backdrop-blur-md
                            ${activeTab === 'people' 
-                             ? 'bg-brand text-white' 
-                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'}`}
+                             ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_20px_rgba(255,107,53,0.3)]' 
+                             : 'glass-card text-arena-secondary hover:border-brand/30 hover:text-white'}`}
               >
                 FREE AGENTS
                 <span className={`px-1.5 py-0.5 text-xs rounded-full ${
@@ -297,7 +300,9 @@ function Marketplace({
                 <button
                   type="button"
                   onClick={() => setShowCreateTeamModal(true)}
-                  className="px-4 py-2 font-bold text-sm bg-success text-arena-black hover:bg-success/90 transition-all flex items-center gap-2 whitespace-nowrap rounded-lg"
+                  className="px-4 py-2 font-bold text-sm bg-gradient-to-r from-emerald-500 to-emerald-600 text-white 
+                             hover:from-emerald-400 hover:to-emerald-500 hover:-translate-y-0.5
+                             transition-all flex items-center gap-2 whitespace-nowrap rounded-lg shadow-lg"
                 >
                   <Plus className="w-4 h-4" />
                   CREATE TEAM
@@ -317,10 +322,10 @@ function Marketplace({
                     type="button"
                     key={side}
                     onClick={() => setFilterAllegiance(side)}
-                    className={`px-3 py-2 flex items-center gap-2 text-xs font-bold transition-all rounded-lg
+                    className={`px-3 py-2 flex items-center gap-2 text-xs font-bold transition-all rounded-lg backdrop-blur-md
                       ${isActive
-                        ? 'bg-brand text-white'
-                        : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
+                        ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_15px_rgba(255,107,53,0.25)]'
+                        : 'glass-card text-arena-secondary hover:border-brand/30 hover:text-white'
                       }`}
                   >
                     <Icon className="w-3 h-3" />
@@ -339,14 +344,18 @@ function Marketplace({
                   const teamConfig = ALLEGIANCE_CONFIG[team.side];
                   const TeamIcon = team.side === 'ai' ? Cpu : Heart;
                   const hasApplied = team.joinRequests?.some((r) => r.userName === user?.name);
-                  const teamColor = team.side === 'ai' ? '#00D4FF' : '#FF2E63';
+                  const teamColor = team.side === 'ai' ? '#00E5FF' : '#FF375F';
 
                   return (
                     <div
                       key={team.id}
-                      className={`p-4 sm:p-5 bg-arena-card transition-all duration-200 hover:shadow-lg
-                                 border-l-4 border border-arena-border rounded-xl`}
-                      style={{ borderLeftColor: teamColor }}
+                      className="glass-card p-4 sm:p-5 transition-all duration-300 
+                                 hover:-translate-y-1 hover:shadow-2xl
+                                 border-l-4 rounded-card"
+                      style={{ 
+                        borderLeftColor: teamColor,
+                        boxShadow: `inset 4px 0 20px -10px ${teamColor}40`
+                      }}
                     >
                       {/* Team Header */}
                       <div className="flex items-start justify-between mb-3">
@@ -399,15 +408,16 @@ function Marketplace({
                         <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-2">
                           Looking For
                         </div>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1.5">
                           {team.lookingFor.slice(0, 3).map((skill) => (
                             <span
                               key={skill}
-                              className="px-2 py-1 text-xs border rounded-lg"
+                              className="px-2.5 py-1 text-xs border rounded-lg transition-transform hover:scale-105"
                               style={{
                                 borderColor: `${teamColor}40`,
                                 color: teamColor,
                                 backgroundColor: `${teamColor}10`,
+                                boxShadow: `0 2px 8px ${teamColor}20`,
                               }}
                             >
                               {skill}
@@ -425,12 +435,12 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onNavigateToTeam(team.id)}
-                        className="w-full py-2 flex items-center justify-center gap-2
-                                   font-bold text-sm transition-all rounded-lg"
-                        style={{
-                          backgroundColor: teamColor,
-                          color: 'white',
-                        }}
+                        className={`w-full h-12 flex items-center justify-center gap-2
+                                   font-semibold text-sm transition-all duration-300 
+                                   hover:-translate-y-1 hover:shadow-2xl rounded-xl shadow-lg
+                                   ${team.side === 'ai' 
+                                     ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
+                                     : 'bg-gradient-to-r from-[#FF375F] to-[#FF6B35] text-white'}`}
                       >
                         LEARN MORE
                         <ChevronRight className="w-4 h-4" />
@@ -462,14 +472,18 @@ function Marketplace({
                   const agentConfig = ALLEGIANCE_CONFIG[agent.allegiance] || ALLEGIANCE_CONFIG.neutral;
                   const AgentIcon = { human: Heart, neutral: Scale, ai: Cpu }[agent.allegiance] || Scale;
                   const hasInvited = agent.teamInvites?.some((i) => i.teamId === captainedTeam?.id);
-                  const agentColor = agent.allegiance === 'ai' ? '#00D4FF' : agent.allegiance === 'human' ? '#FF2E63' : '#A855F7';
+                  const agentColor = agent.allegiance === 'ai' ? '#00E5FF' : agent.allegiance === 'human' ? '#FF375F' : '#A855F7';
 
                   return (
                     <div
                       key={agent.id}
-                      className="p-4 sm:p-5 bg-arena-card transition-all duration-200 hover:shadow-lg
-                                 border-l-4 border border-arena-border rounded-xl"
-                      style={{ borderLeftColor: agentColor }}
+                      className="glass-card p-4 sm:p-5 transition-all duration-300 
+                                 hover:-translate-y-1 hover:shadow-2xl
+                                 border-l-4 rounded-card"
+                      style={{ 
+                        borderLeftColor: agentColor,
+                        boxShadow: `inset 4px 0 20px -10px ${agentColor}40`
+                      }}
                     >
                       {/* Agent Header */}
                       <div className="flex items-start justify-between mb-3">
@@ -519,15 +533,16 @@ function Marketplace({
                         <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-2">
                           Skills
                         </div>
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1.5">
                           {agent.skills?.slice(0, 3).map((skill) => (
                             <span
                               key={skill}
-                              className="px-2 py-1 text-xs border rounded-lg"
+                              className="px-2.5 py-1 text-xs border rounded-lg transition-transform hover:scale-105"
                               style={{
                                 borderColor: `${agentColor}40`,
                                 color: agentColor,
                                 backgroundColor: `${agentColor}10`,
+                                boxShadow: `0 2px 8px ${agentColor}20`,
                               }}
                             >
                               {skill}
@@ -546,12 +561,12 @@ function Marketplace({
                         <button
                           type="button"
                           onClick={() => setInviteModalAgent(agent)}
-                          className="w-full py-2 flex items-center justify-center gap-2
-                                     font-bold text-sm transition-all rounded-lg"
-                          style={{
-                            backgroundColor: agentColor,
-                            color: 'white',
-                          }}
+                          className={`w-full h-12 flex items-center justify-center gap-2
+                                     font-semibold text-sm transition-all duration-300 
+                                     hover:-translate-y-1 hover:shadow-2xl rounded-xl shadow-lg
+                                     ${agent.allegiance === 'ai' 
+                                       ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
+                                       : 'bg-gradient-to-r from-[#FF375F] to-[#FF6B35] text-white'}`}
                         >
                           <Send className="w-4 h-4" />
                           INVITE TO TEAM
@@ -559,8 +574,8 @@ function Marketplace({
                       )}
                       {captainedTeam && hasInvited && (
                         <div
-                          className="w-full py-2 flex items-center justify-center gap-2
-                                     font-bold text-sm text-arena-muted border border-arena-border rounded-lg"
+                          className="w-full h-12 flex items-center justify-center gap-2
+                                     font-bold text-sm text-arena-muted glass-card rounded-xl"
                         >
                           <Check className="w-4 h-4" />
                           INVITE SENT
@@ -568,8 +583,9 @@ function Marketplace({
                       )}
                       {!captainedTeam && (
                         <div
-                          className="w-full py-2 flex items-center justify-center gap-2
-                                     text-sm text-arena-muted border border-arena-border bg-arena-elevated rounded-lg"
+                          className="w-full h-12 flex items-center justify-center gap-2
+                                     text-sm text-arena-muted glass-card rounded-xl
+                                     bg-gradient-to-r from-brand/20 to-transparent border-t border-brand/30"
                         >
                           Create a team to send invites
                         </div>
