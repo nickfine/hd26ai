@@ -66,15 +66,15 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
   const [selectedPhase, setSelectedPhase] = useState('team_formation');
 
   return (
-    <div className="min-h-screen bg-surface-1 flex flex-col">
+    <div className="min-h-screen bg-arena-black flex flex-col">
       {/* Header */}
-      <header className="border-b border-neutral-200 px-4 sm:px-6 py-4">
+      <header className="border-b border-arena-border px-4 sm:px-6 py-4">
         <Container size="lg" padding="none">
           <HStack justify="between" align="center">
             <button
               type="button"
               onClick={() => onNavigate('landing')}
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="flex items-center gap-2 text-text-secondary hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="text-sm hidden sm:inline">Back</span>
@@ -94,10 +94,10 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
           <Card variant="outlined" padding="lg">
             <VStack align="center" gap="6">
               <VStack align="center" gap="2">
-                <h1 className="text-xl sm:text-2xl font-black text-neutral-900">
+                <h1 className="text-xl sm:text-2xl font-black text-white font-display">
                   AUTHENTICATE
                 </h1>
-                <p className="text-sm text-neutral-500">
+                <p className="text-sm text-arena-secondary">
                   Sign in to enter the arena
                 </p>
               </VStack>
@@ -118,14 +118,14 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                   onClick={() => onOAuthSignIn?.('google')}
                   disabled={authLoading}
                   leftIcon={authLoading ? <Loader2 className="animate-spin" /> : <GoogleIcon />}
-                  className="border-neutral-200 hover:border-neutral-400"
+                  className="border-arena-border hover:border-arena-secondary"
                 >
                   {authLoading ? 'Signing in...' : 'Continue with Google'}
                 </Button>
               </VStack>
 
               {/* Info text */}
-              <p className="text-xs text-neutral-500 text-center">
+              <p className="text-xs text-arena-muted text-center">
                 By signing in, you agree to participate in HackDay 2026
               </p>
             </VStack>
@@ -136,7 +136,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
             <button
               type="button"
               onClick={() => setShowDemoMode(!showDemoMode)}
-              className="w-full py-2 text-sm text-neutral-500 hover:text-neutral-700 
+              className="w-full py-2 text-sm text-arena-muted hover:text-white 
                          transition-colors flex items-center justify-center gap-2"
             >
               <Users className="w-4 h-4" />
@@ -145,10 +145,10 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
 
             {/* Demo Mode - Role Selection */}
             {showDemoMode && (
-              <Card variant="ghost" padding="md" className="mt-3 border-2 border-dashed border-neutral-300 bg-surface-1">
+              <Card variant="ghost" padding="md" className="mt-3 border-2 border-dashed border-arena-border bg-arena-card">
                 {/* Phase Selector */}
                 <div className="mb-5">
-                  <span className="text-xs font-bold uppercase tracking-wide text-neutral-600 block mb-3">
+                  <span className="text-xs font-bold uppercase tracking-wide text-arena-secondary block mb-3">
                     Event Phase
                   </span>
                   <div className="grid grid-cols-7 gap-1">
@@ -163,8 +163,8 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                           className={cn(
                             'flex flex-col items-center justify-center py-2 px-1 rounded transition-all',
                             isSelected 
-                              ? 'bg-neutral-900 text-white' 
-                              : 'bg-white text-neutral-500 hover:bg-neutral-100 hover:text-neutral-700 border border-neutral-200'
+                              ? 'bg-brand text-white' 
+                              : 'bg-arena-elevated text-arena-muted hover:bg-arena-border hover:text-white border border-arena-border'
                           )}
                           title={phase.label}
                         >
@@ -175,15 +175,15 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                     })}
                   </div>
                   <div className="mt-2 text-center">
-                    <span className="text-xs text-neutral-500">
-                      Simulating: <span className="font-semibold text-neutral-700">{EVENT_PHASES.find(p => p.id === selectedPhase)?.label}</span> phase
+                    <span className="text-xs text-arena-muted">
+                      Simulating: <span className="font-semibold text-white">{EVENT_PHASES.find(p => p.id === selectedPhase)?.label}</span> phase
                     </span>
                   </div>
                 </div>
 
                 {/* Role Selector */}
                 <div className="flex items-center gap-2 mb-3">
-                  <span className="text-xs font-bold uppercase tracking-wide text-neutral-600">
+                  <span className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
                     Select Role
                   </span>
                 </div>
@@ -303,7 +303,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                   />
                 </VStack>
                 
-                <p className="text-xs text-neutral-500 mt-3 text-center">
+                <p className="text-xs text-arena-muted mt-3 text-center">
                   Demo mode uses mock data — no authentication required
                 </p>
               </Card>

@@ -70,10 +70,10 @@ const Input = forwardRef(({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-bold text-neutral-700 mb-1.5"
+          className="block text-sm font-bold text-arena-secondary mb-1.5"
         >
           {label}
-          {required && <span className="text-error-500 ml-0.5">*</span>}
+          {required && <span className="text-human ml-0.5">*</span>}
         </label>
       )}
 
@@ -82,7 +82,7 @@ const Input = forwardRef(({
         {/* Left Icon */}
         {leftIcon && (
           <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <span className={cn(ICON_SIZE_MAP[size], 'text-neutral-400')}>
+            <span className={cn(ICON_SIZE_MAP[size], 'text-arena-muted')}>
               {leftIcon}
             </span>
           </div>
@@ -99,16 +99,16 @@ const Input = forwardRef(({
           aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
           className={cn(
             // Base styles
-            'w-full border-2 bg-white text-neutral-900 placeholder-neutral-400',
+            'w-full border-2 bg-arena-black text-white placeholder-arena-muted',
             'transition-colors duration-200',
             'focus:outline-none focus:ring-0',
             // Size
             SIZE_MAP[size],
             // States
             error
-              ? 'border-error-500 focus:border-error-600'
-              : 'border-neutral-300 focus:border-neutral-900',
-            disabled && 'opacity-50 cursor-not-allowed bg-neutral-50',
+              ? 'border-human focus:border-human'
+              : 'border-arena-border focus:border-brand',
+            disabled && 'opacity-50 cursor-not-allowed',
             // Icon padding
             leftIcon && 'pl-10',
             (rightIcon || isPassword || (clearable && hasValue)) && 'pr-10'
@@ -123,7 +123,7 @@ const Input = forwardRef(({
             <button
               type="button"
               onClick={onClear}
-              className="text-neutral-400 hover:text-neutral-600 transition-colors"
+              className="text-arena-muted hover:text-white transition-colors"
               aria-label="Clear input"
             >
               <X className={ICON_SIZE_MAP[size]} />
@@ -135,7 +135,7 @@ const Input = forwardRef(({
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-neutral-400 hover:text-neutral-600 transition-colors"
+              className="text-arena-muted hover:text-white transition-colors"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
@@ -148,7 +148,7 @@ const Input = forwardRef(({
 
           {/* Custom Right Icon */}
           {rightIcon && !isPassword && (
-            <span className={cn(ICON_SIZE_MAP[size], 'text-neutral-400')}>
+            <span className={cn(ICON_SIZE_MAP[size], 'text-arena-muted')}>
               {rightIcon}
             </span>
           )}
@@ -157,14 +157,14 @@ const Input = forwardRef(({
 
       {/* Error Message */}
       {error && (
-        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-error-600">
+        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-human">
           {error}
         </p>
       )}
 
       {/* Helper Text */}
       {helperText && !error && (
-        <p id={`${inputId}-helper`} className="mt-1.5 text-sm text-neutral-500">
+        <p id={`${inputId}-helper`} className="mt-1.5 text-sm text-arena-secondary">
           {helperText}
         </p>
       )}
@@ -230,10 +230,10 @@ export const TextArea = forwardRef(({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-bold text-neutral-700 mb-1.5"
+          className="block text-sm font-bold text-arena-secondary mb-1.5"
         >
           {label}
-          {required && <span className="text-error-500 ml-0.5">*</span>}
+          {required && <span className="text-human ml-0.5">*</span>}
         </label>
       )}
 
@@ -248,30 +248,30 @@ export const TextArea = forwardRef(({
         aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
         className={cn(
           // Base styles
-          'w-full px-3 py-2 border-2 bg-white text-neutral-900 placeholder-neutral-400 text-sm',
+          'w-full px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted text-sm',
           'transition-colors duration-200',
           'focus:outline-none focus:ring-0',
           // Resize
           resizeClass[resize],
           // States
           error
-            ? 'border-error-500 focus:border-error-600'
-            : 'border-neutral-300 focus:border-neutral-900',
-          disabled && 'opacity-50 cursor-not-allowed bg-neutral-50'
+            ? 'border-human focus:border-human'
+            : 'border-arena-border focus:border-brand',
+          disabled && 'opacity-50 cursor-not-allowed'
         )}
         {...props}
       />
 
       {/* Error Message */}
       {error && (
-        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-error-600">
+        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-human">
           {error}
         </p>
       )}
 
       {/* Helper Text */}
       {helperText && !error && (
-        <p id={`${inputId}-helper`} className="mt-1.5 text-sm text-neutral-500">
+        <p id={`${inputId}-helper`} className="mt-1.5 text-sm text-arena-secondary">
           {helperText}
         </p>
       )}
@@ -301,10 +301,10 @@ export const FormField = forwardRef(({
       {label && (
         <label
           htmlFor={fieldId}
-          className="block text-sm font-bold text-neutral-700 mb-1.5"
+          className="block text-sm font-bold text-arena-secondary mb-1.5"
         >
           {label}
-          {required && <span className="text-error-500 ml-0.5">*</span>}
+          {required && <span className="text-human ml-0.5">*</span>}
         </label>
       )}
 
@@ -313,12 +313,12 @@ export const FormField = forwardRef(({
 
       {/* Error Message */}
       {error && (
-        <p className="mt-1.5 text-sm text-error-600">{error}</p>
+        <p className="mt-1.5 text-sm text-human">{error}</p>
       )}
 
       {/* Helper Text */}
       {helperText && !error && (
-        <p className="mt-1.5 text-sm text-neutral-500">{helperText}</p>
+        <p className="mt-1.5 text-sm text-arena-secondary">{helperText}</p>
       )}
     </div>
   );

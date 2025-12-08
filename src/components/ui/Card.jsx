@@ -1,6 +1,7 @@
 /**
  * Card Component
  * A flexible container component with multiple variants and optional header/footer slots.
+ * Dark Mode Cyber Arena Theme
  * 
  * @example
  * <Card variant="outlined">Content here</Card>
@@ -24,6 +25,7 @@ const CardContext = createContext({ variant: 'default' });
  * @property {'none' | 'sm' | 'md' | 'lg'} [padding='md']
  * @property {boolean} [hoverable=false]
  * @property {boolean} [clickable=false]
+ * @property {boolean} [glowOnHover=false] - Enable team-colored glow on hover
  * @property {string} [className]
  * @property {React.ReactNode} children
  */
@@ -40,6 +42,7 @@ const Card = forwardRef(({
   padding = 'md',
   hoverable = false,
   clickable = false,
+  glowOnHover = false,
   as: Component = 'div',
   className,
   children,
@@ -47,6 +50,14 @@ const Card = forwardRef(({
 }, ref) => {
   const variantStyles = CARD_VARIANTS[variant] || CARD_VARIANTS.default;
   const paddingStyles = PADDING_MAP[padding];
+
+  // Determine hover glow class based on variant
+  const getHoverGlowClass = () => {
+    if (!glowOnHover && !hoverable && !clickable) return '';
+    if (variant === 'human') return 'hover:shadow-card-human hover:-translate-y-0.5';
+    if (variant === 'ai') return 'hover:shadow-card-ai hover:-translate-y-0.5';
+    return 'hover:shadow-card-hover hover:-translate-y-0.5';
+  };
 
   return (
     <CardContext.Provider value={{ variant }}>
@@ -60,8 +71,8 @@ const Card = forwardRef(({
           // Padding
           paddingStyles,
           // Interactive states
-          hoverable && 'hover:shadow-md',
-          clickable && 'cursor-pointer hover:shadow-md active:scale-[0.99]',
+          (hoverable || clickable || glowOnHover) && getHoverGlowClass(),
+          clickable && 'cursor-pointer active:scale-[0.99]',
           // Custom
           className
         )}
@@ -87,7 +98,7 @@ const CardHeader = forwardRef(({
     <div
       ref={ref}
       className={cn(
-        'border-b border-neutral-200 pb-3 mb-4',
+        'border-b border-arena-border pb-3 mb-4',
         className
       )}
       {...props}
@@ -112,7 +123,7 @@ const CardTitle = forwardRef(({
     <Component
       ref={ref}
       className={cn(
-        'text-lg font-bold text-neutral-900',
+        'text-lg font-bold text-white font-heading',
         className
       )}
       {...props}
@@ -136,7 +147,7 @@ const CardSubtitle = forwardRef(({
     <p
       ref={ref}
       className={cn(
-        'text-sm text-neutral-500 mt-1',
+        'text-sm text-text-secondary mt-1',
         className
       )}
       {...props}
@@ -181,7 +192,7 @@ const CardFooter = forwardRef(({
     <div
       ref={ref}
       className={cn(
-        'border-t border-neutral-200 pt-3 mt-4',
+        'border-t border-arena-border pt-3 mt-4',
         className
       )}
       {...props}
@@ -205,7 +216,7 @@ const CardLabel = forwardRef(({
     <div
       ref={ref}
       className={cn(
-        'text-xs font-bold uppercase tracking-wide text-neutral-400 mb-2',
+        'text-xs font-bold uppercase tracking-wide text-text-muted mb-2',
         className
       )}
       {...props}
@@ -229,4 +240,3 @@ Card.Label = CardLabel;
 export const useCardContext = () => useContext(CardContext);
 
 export default Card;
-

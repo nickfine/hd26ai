@@ -18,6 +18,7 @@ import {
   Vote,
   Activity,
   Image as ImageIcon,
+  Zap,
 } from 'lucide-react';
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
@@ -69,25 +70,25 @@ function PromoTile({ src, alt, colorScheme = 'ai', className }) {
 
   const colorConfig = {
     ai: {
-      bg: 'bg-gradient-to-br from-ai-50 to-teal-50',
-      iconBg: 'bg-ai-100',
-      iconColor: 'text-ai-300',
-      textPrimary: 'text-ai-400',
-      textSecondary: 'text-ai-300',
+      bg: 'bg-ai/5',
+      iconBg: 'bg-ai/20',
+      iconColor: 'text-ai',
+      textPrimary: 'text-ai',
+      textSecondary: 'text-ai/60',
     },
     special: {
-      bg: 'bg-gradient-to-br from-special-50 to-indigo-50',
-      iconBg: 'bg-special-100',
-      iconColor: 'text-special-300',
-      textPrimary: 'text-special-400',
-      textSecondary: 'text-special-300',
+      bg: 'bg-brand/5',
+      iconBg: 'bg-brand/20',
+      iconColor: 'text-brand',
+      textPrimary: 'text-brand',
+      textSecondary: 'text-brand/60',
     },
     human: {
-      bg: 'bg-gradient-to-br from-human-50 to-emerald-50',
-      iconBg: 'bg-human-100',
-      iconColor: 'text-human-300',
-      textPrimary: 'text-human-400',
-      textSecondary: 'text-human-300',
+      bg: 'bg-human/5',
+      iconBg: 'bg-human/20',
+      iconColor: 'text-human',
+      textPrimary: 'text-human',
+      textSecondary: 'text-human/60',
     },
   };
 
@@ -100,7 +101,7 @@ function PromoTile({ src, alt, colorScheme = 'ai', className }) {
         variant="ghost" 
         padding="none"
         className={cn(
-          'border-2 border-dashed border-neutral-300 flex items-center justify-center min-h-[200px]',
+          'border-2 border-dashed border-arena-border flex items-center justify-center min-h-[200px]',
           colors.bg,
           className
         )}
@@ -162,21 +163,28 @@ function Dashboard({
       activeNav="dashboard"
     >
       <div className="p-4 sm:p-6">
+        {/* Page Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+            <Zap className="w-5 h-5 text-brand" />
+            <span className="font-bold text-sm text-white">MISSION CONTROL</span>
+          </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+            DASHBOARD
+          </h1>
+          <p className="text-arena-secondary max-w-2xl mx-auto">
+            Your command center for HackDay 2026. Track your progress, find teammates, 
+            and stay updated on the latest events.
+          </p>
+        </div>
+
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {/* Promo Tile 1 - Always visible, full width */}
-          <PromoTile 
-            src={PROMO_IMAGES.promo1} 
-            alt="Promo Banner 1" 
-            colorScheme="ai"
-            className="md:col-span-2"
-          />
-
           {/* Team Finder Feature Box */}
           <Card variant="outlined" padding="md">
             <Card.Label>Team Finder</Card.Label>
             <Card.Title className="mb-3">Find Your Squad</Card.Title>
-            <p className="text-sm text-neutral-500 mb-4">
+            <p className="text-sm text-arena-secondary mb-4">
               Browse open teams looking for members or discover free agents with matching skills.
             </p>
             <HStack gap="3">
@@ -204,9 +212,9 @@ function Dashboard({
           {/* Project Gallery Feature Box - Only show during voting phase */}
           {eventPhase === 'voting' && (
             <Card variant="accent" padding="md">
-              <Card.Label className="text-accent-600">Project Gallery</Card.Label>
-              <Card.Title className="text-accent-900 mb-3">Vote for Projects</Card.Title>
-              <p className="text-sm text-accent-700 mb-4">
+              <Card.Label className="text-brand">Project Gallery</Card.Label>
+              <Card.Title className="text-white mb-3">Vote for Projects</Card.Title>
+              <p className="text-sm text-arena-secondary mb-4">
                 Browse all submitted hackathon projects and vote for your favorites!
               </p>
               <Button
@@ -225,7 +233,7 @@ function Dashboard({
           <Card variant="default" padding="md">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Live Activity</Card.Label>
-              <HStack gap="1" align="center" className="text-xs text-success-600">
+              <HStack gap="1" align="center" className="text-xs text-success">
                 <Activity className="w-3 h-3 animate-pulse" />
                 Live
               </HStack>
@@ -250,7 +258,7 @@ function Dashboard({
                     </div>
                     <div className="flex-1 min-w-0">
                       <span className={cn(
-                        'font-bold text-neutral-900 inline-flex items-center gap-1 flex-wrap',
+                        'font-bold text-white inline-flex items-center gap-1 flex-wrap',
                         activity.side === 'ai' && 'font-mono'
                       )}>
                         {formatted.hasCallsign ? (
@@ -266,17 +274,17 @@ function Dashboard({
                           </>
                         ) : activity.user}
                       </span>
-                      {activity.type === 'join' && <span className="text-neutral-500"> joined </span>}
-                      {activity.type === 'create' && <span className="text-neutral-500"> created </span>}
+                      {activity.type === 'join' && <span className="text-arena-secondary"> joined </span>}
+                      {activity.type === 'create' && <span className="text-arena-secondary"> created </span>}
                       {activity.type === 'allegiance' && (
-                        <span className="text-neutral-500"> chose {activity.side.toUpperCase()} side</span>
+                        <span className="text-arena-secondary"> chose {activity.side.toUpperCase()} side</span>
                       )}
                       {activity.team && (
                         <span className="font-bold" style={{ color: config.color }}>
                           {activity.team}
                         </span>
                       )}
-                      <div className="text-xs text-neutral-400">{activity.time}</div>
+                      <div className="text-xs text-arena-muted">{activity.time}</div>
                     </div>
                   </HStack>
                 );
@@ -288,21 +296,21 @@ function Dashboard({
           <Card variant="default" padding="md">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Schedule Preview</Card.Label>
-              <Calendar className="w-4 h-4 text-neutral-400" />
+              <Calendar className="w-4 h-4 text-arena-secondary" />
             </HStack>
             <VStack gap="3">
               {MOCK_SCHEDULE.map((item, index) => (
                 <HStack 
                   key={item.id} 
                   gap="3"
-                  className={cn('pb-3', index < MOCK_SCHEDULE.length - 1 && 'border-b border-neutral-100')}
+                  className={cn('pb-3', index < MOCK_SCHEDULE.length - 1 && 'border-b border-arena-border')}
                 >
                   <div className="w-16 flex-shrink-0">
-                    <div className="text-xs font-mono font-bold text-neutral-900">{item.time}</div>
+                    <div className="text-xs font-mono font-bold text-brand">{item.time}</div>
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-neutral-900">{item.title}</div>
-                    <div className="text-xs text-neutral-500">{item.description}</div>
+                    <div className="text-sm font-bold text-white">{item.title}</div>
+                    <div className="text-xs text-arena-secondary">{item.description}</div>
                   </div>
                 </HStack>
               ))}
@@ -322,7 +330,7 @@ function Dashboard({
           <Card variant="default" padding="md">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Awards & Prizes</Card.Label>
-              <Trophy className="w-4 h-4 text-accent-500" />
+              <Trophy className="w-4 h-4 text-brand" />
             </HStack>
             <VStack gap="3">
               {MOCK_AWARDS.map((award) => {
@@ -340,16 +348,16 @@ function Dashboard({
                   >
                     <Icon className={cn(
                       'w-8 h-8 flex-shrink-0',
-                      isAI ? 'text-ai-600' : isHuman ? 'text-human-600' : 'text-accent-500'
+                      isAI ? 'text-ai' : isHuman ? 'text-human' : 'text-brand'
                     )} />
                     <div className="min-w-0">
                       <div className={cn(
                         'font-bold text-sm',
-                        isAI ? 'font-mono text-ai-700' : isHuman ? 'text-human-700' : 'text-accent-700'
+                        isAI ? 'font-mono text-ai' : isHuman ? 'text-human' : 'text-white'
                       )}>
                         {award.title}
                       </div>
-                      <div className="text-xs text-neutral-500">{award.prize}</div>
+                      <div className="text-xs text-arena-secondary">{award.prize}</div>
                     </div>
                   </Card>
                 );
@@ -370,24 +378,24 @@ function Dashboard({
           <Card variant="default" padding="md" className="md:col-span-2">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Frequently Asked Questions</Card.Label>
-              <HelpCircle className="w-4 h-4 text-neutral-400" />
+              <HelpCircle className="w-4 h-4 text-arena-secondary" />
             </HStack>
             <VStack gap="2">
               {MOCK_FAQ.map((faq) => (
-                <div key={faq.id} className="border border-neutral-200">
+                <div key={faq.id} className="border border-arena-border rounded-lg overflow-hidden">
                   <button
                     type="button"
                     onClick={() => toggleFaq(faq.id)}
-                    className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-neutral-50 transition-colors"
+                    className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-arena-elevated transition-colors"
                   >
-                    <span className="font-bold text-sm text-neutral-900">{faq.question}</span>
+                    <span className="font-bold text-sm text-white">{faq.question}</span>
                     {expandedFaq === faq.id 
-                      ? <ChevronUp className="w-4 h-4 text-neutral-400" />
-                      : <ChevronDown className="w-4 h-4 text-neutral-400" />
+                      ? <ChevronUp className="w-4 h-4 text-arena-secondary" />
+                      : <ChevronDown className="w-4 h-4 text-arena-secondary" />
                     }
                   </button>
                   {expandedFaq === faq.id && (
-                    <div className="px-4 pb-4 text-sm text-neutral-600 border-t border-neutral-100 pt-3">
+                    <div className="px-4 pb-4 text-sm text-arena-secondary border-t border-arena-border pt-3">
                       {faq.answer}
                     </div>
                   )}

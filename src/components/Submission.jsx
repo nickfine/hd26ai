@@ -15,6 +15,7 @@ import {
   Users,
   CheckCircle2,
   Edit3,
+  Upload,
 } from 'lucide-react';
 import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
 import AppLayout from './AppLayout';
@@ -161,16 +162,30 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
         activeNav="submission"
       >
         <div className="p-4 sm:p-6">
+          {/* Page Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+              <Upload className="w-5 h-5 text-brand" />
+              <span className="font-bold text-sm text-white">SUBMIT YOUR PROJECT</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+              PROJECT SUBMISSION
+            </h1>
+            <p className="text-arena-secondary max-w-2xl mx-auto">
+              Submit your hackathon project for judging. Complete all required fields and share your creation with the world.
+            </p>
+          </div>
+
           <div className="text-center py-12">
-            <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">No Team Yet</h1>
-            <p className="text-gray-600 mb-6">
+            <Users className="w-16 h-16 mx-auto mb-4 text-arena-muted" />
+            <h2 className="text-2xl font-bold text-white mb-2">No Team Yet</h2>
+            <p className="text-arena-secondary mb-6">
               You need to join or create a team before you can submit a project.
             </p>
             <button
               type="button"
               onClick={() => onNavigate('marketplace')}
-              className="px-6 py-3 bg-gray-900 text-white font-bold text-sm hover:bg-gray-800 transition-colors"
+              className="px-6 py-3 bg-brand text-white font-bold text-sm hover:bg-brand/90 transition-colors rounded-lg"
             >
               Find a Team
             </button>
@@ -194,17 +209,24 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
         activeNav="submission"
       >
         <div className="p-4 sm:p-6">
-          <div className="mb-6">
-            <h1 className="text-2xl font-black text-gray-900 mb-2">PROJECT SUBMISSION</h1>
-            <p className="text-gray-600">
+          {/* Page Header */}
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+              <Upload className="w-5 h-5 text-brand" />
+              <span className="font-bold text-sm text-white">SUBMIT YOUR PROJECT</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+              PROJECT SUBMISSION
+            </h1>
+            <p className="text-arena-secondary max-w-2xl mx-auto">
               View your team's submission status. Only the team captain can edit the submission.
             </p>
           </div>
 
           {/* Team Info */}
           <div
-            className={`p-4 mb-6 border-2 ${teamConfig.borderRadius} ${userTeam.side === 'ai' ? 'border-dashed' : ''}`}
-            style={{ borderColor: teamConfig.borderColor, backgroundColor: teamConfig.bgColor }}
+            className={`p-4 mb-6 border-l-4 border border-arena-border rounded-xl bg-arena-card`}
+            style={{ borderLeftColor: teamConfig.color }}
           >
             <div className="flex items-center gap-3">
               {userTeam.side === 'ai' ? (
@@ -213,10 +235,10 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                 <Heart className="w-6 h-6" style={{ color: teamConfig.color }} />
               )}
               <div>
-                <div className={`font-bold text-gray-900 ${userTeam.side === 'ai' ? 'font-mono' : ''}`}>
+                <div className={`font-bold text-white ${userTeam.side === 'ai' ? 'font-mono' : ''}`}>
                   {userTeam.name}
                 </div>
-                <div className="text-xs text-gray-500">
+                <div className="text-xs text-arena-secondary">
                   Captain: {userTeam.members.find((m) => m.id === userTeam.captainId)?.name}
                 </div>
               </div>
@@ -224,13 +246,13 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
           </div>
 
           {/* Status Card */}
-          <div className="bg-white border-2 border-gray-200 p-6 mb-6">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-xs font-bold uppercase tracking-wide text-gray-500">
+          <div className="bg-arena-card border border-arena-border rounded-xl p-6 mb-6">
+            <div className="mb-4">
+              <h2 className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
                 Submission Status
               </h2>
               <div
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold"
+                className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-bold"
                 style={{ backgroundColor: statusInfo.bgColor, color: statusInfo.color }}
               >
                 <StatusIcon className="w-4 h-4" />
@@ -239,37 +261,37 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
             </div>
 
             {submissionStatus === 'not_started' ? (
-              <p className="text-gray-500 text-center py-8">
+              <p className="text-arena-muted text-center py-8">
                 Your team hasn't started the submission yet.
               </p>
             ) : (
               <div className="space-y-4">
                 {userTeam.submission?.projectName && (
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                    <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-1">
                       Project Name
                     </div>
-                    <div className="text-gray-900 font-medium">{userTeam.submission.projectName}</div>
+                    <div className="text-white font-medium">{userTeam.submission.projectName}</div>
                   </div>
                 )}
                 {userTeam.submission?.description && (
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                    <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-1">
                       Description
                     </div>
-                    <div className="text-gray-700">{userTeam.submission.description}</div>
+                    <div className="text-arena-secondary">{userTeam.submission.description}</div>
                   </div>
                 )}
                 {userTeam.submission?.repoUrl && (
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                    <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-1">
                       Repository
                     </div>
                     <a
                       href={userTeam.submission.repoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
+                      className="text-ai hover:underline"
                     >
                       {userTeam.submission.repoUrl}
                     </a>
@@ -277,14 +299,14 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                 )}
                 {userTeam.submission?.demoVideoUrl && (
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                    <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-1">
                       Demo Video
                     </div>
                     <a
                       href={userTeam.submission.demoVideoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
+                      className="text-ai hover:underline"
                     >
                       {userTeam.submission.demoVideoUrl}
                     </a>
@@ -292,21 +314,21 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                 )}
                 {userTeam.submission?.liveDemoUrl && (
                   <div>
-                    <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-1">
+                    <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-1">
                       Live Demo
                     </div>
                     <a
                       href={userTeam.submission.liveDemoUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-600 hover:underline"
+                      className="text-ai hover:underline"
                     >
                       {userTeam.submission.liveDemoUrl}
                     </a>
                   </div>
                 )}
                 {userTeam.submission?.lastUpdated && (
-                  <div className="pt-4 border-t border-gray-100 text-xs text-gray-400">
+                  <div className="pt-4 border-t border-arena-border text-xs text-arena-muted">
                     Last updated: {new Date(userTeam.submission.lastUpdated).toLocaleString()}
                   </div>
                 )}
@@ -332,43 +354,50 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
     >
       <div className="p-4 sm:p-6">
         {/* Page Header */}
-        <div className="mb-6">
-          <div className="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <h1 className="text-2xl font-black text-gray-900 mb-2">PROJECT SUBMISSION</h1>
-              <p className="text-gray-600">
-                Submit your hackathon project. All required fields must be completed.
-              </p>
-            </div>
-            <div
-              className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-bold"
-              style={{ backgroundColor: statusInfo.bgColor, color: statusInfo.color }}
-            >
-              <StatusIcon className="w-4 h-4" />
-              {statusInfo.label}
-            </div>
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+            <Upload className="w-5 h-5 text-brand" />
+            <span className="font-bold text-sm text-white">SUBMIT YOUR PROJECT</span>
           </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+            PROJECT SUBMISSION
+          </h1>
+          <p className="text-arena-secondary max-w-2xl mx-auto">
+            Submit your hackathon project for judging. Complete all required fields and share your creation with the world.
+          </p>
         </div>
 
-        {/* Team Info */}
-        <div
-          className={`p-4 mb-6 border-2 ${teamConfig.borderRadius} ${userTeam.side === 'ai' ? 'border-dashed' : ''}`}
-          style={{ borderColor: teamConfig.borderColor, backgroundColor: teamConfig.bgColor }}
-        >
-          <div className="flex items-center gap-3">
-            {userTeam.side === 'ai' ? (
-              <Cpu className="w-6 h-6" style={{ color: teamConfig.color }} />
-            ) : (
-              <Heart className="w-6 h-6" style={{ color: teamConfig.color }} />
-            )}
-            <div>
-              <div className={`font-bold text-gray-900 ${userTeam.side === 'ai' ? 'font-mono' : ''}`}>
-                {userTeam.name}
-              </div>
-              <div className="text-xs text-gray-500">
-                You are the team captain
+        {/* Status Badge + Team Info Row */}
+        <div className="flex flex-col sm:flex-row gap-4 mb-6">
+          {/* Team Info */}
+          <div
+            className="flex-1 p-4 border-l-4 border border-arena-border rounded-xl bg-arena-card"
+            style={{ borderLeftColor: teamConfig.color }}
+          >
+            <div className="flex items-center gap-3">
+              {userTeam.side === 'ai' ? (
+                <Cpu className="w-6 h-6" style={{ color: teamConfig.color }} />
+              ) : (
+                <Heart className="w-6 h-6" style={{ color: teamConfig.color }} />
+              )}
+              <div>
+                <div className={`font-bold text-white ${userTeam.side === 'ai' ? 'font-mono' : ''}`}>
+                  {userTeam.name}
+                </div>
+                <div className="text-xs text-arena-secondary">
+                  You are the team captain
+                </div>
               </div>
             </div>
+          </div>
+
+          {/* Status Badge */}
+          <div
+            className="flex items-center justify-center gap-2 px-6 py-3 rounded-xl text-sm font-bold"
+            style={{ backgroundColor: statusInfo.bgColor, color: statusInfo.color }}
+          >
+            <StatusIcon className="w-4 h-4" />
+            {statusInfo.label}
           </div>
         </div>
 
@@ -376,83 +405,83 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
           {/* Form Section */}
           <div className="lg:col-span-2 space-y-4">
             {/* Project Name */}
-            <div className="bg-white border-2 border-gray-200 p-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Project Name <span className="text-red-500">*</span>
+            <div className="bg-arena-card border border-arena-border rounded-xl p-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Project Name <span className="text-human">*</span>
               </label>
               <input
                 type="text"
                 value={formData.projectName}
                 onChange={(e) => handleChange('projectName', e.target.value)}
                 placeholder="Enter your project name"
-                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-base"
+                className="w-full p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
               />
             </div>
 
             {/* Description */}
-            <div className="bg-white border-2 border-gray-200 p-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Project Description <span className="text-red-500">*</span>
+            <div className="bg-arena-card border border-arena-border rounded-xl p-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Project Description <span className="text-human">*</span>
               </label>
               <textarea
                 value={formData.description}
                 onChange={(e) => handleChange('description', e.target.value)}
                 placeholder="Describe what your project does, the problem it solves, and how it works..."
                 rows={5}
-                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-base resize-none"
+                className="w-full p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base resize-none"
               />
             </div>
 
             {/* Demo Video URL */}
-            <div className="bg-white border-2 border-gray-200 p-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Demo Video URL <span className="text-red-500">*</span>
+            <div className="bg-arena-card border border-arena-border rounded-xl p-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Demo Video URL <span className="text-human">*</span>
               </label>
               <div className="flex items-center gap-2">
-                <Video className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <Video className="w-5 h-5 text-arena-muted flex-shrink-0" />
                 <input
                   type="url"
                   value={formData.demoVideoUrl}
                   onChange={(e) => handleChange('demoVideoUrl', e.target.value)}
                   placeholder="https://youtube.com/watch?v=..."
-                  className="flex-1 p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-base"
+                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
                 />
               </div>
-              <p className="mt-2 text-xs text-gray-400">
+              <p className="mt-2 text-xs text-arena-muted">
                 Upload to YouTube, Loom, or Vimeo (max 3 minutes)
               </p>
             </div>
 
             {/* Repository URL */}
-            <div className="bg-white border-2 border-gray-200 p-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Repository URL <span className="text-red-500">*</span>
+            <div className="bg-arena-card border border-arena-border rounded-xl p-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Repository URL <span className="text-human">*</span>
               </label>
               <div className="flex items-center gap-2">
-                <Github className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <Github className="w-5 h-5 text-arena-muted flex-shrink-0" />
                 <input
                   type="url"
                   value={formData.repoUrl}
                   onChange={(e) => handleChange('repoUrl', e.target.value)}
                   placeholder="https://github.com/your-team/project"
-                  className="flex-1 p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-base"
+                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
                 />
               </div>
             </div>
 
             {/* Live Demo URL (Optional) */}
-            <div className="bg-white border-2 border-gray-200 p-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Live Demo URL <span className="text-gray-400">(optional)</span>
+            <div className="bg-arena-card border border-arena-border rounded-xl p-4">
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Live Demo URL <span className="text-arena-muted">(optional)</span>
               </label>
               <div className="flex items-center gap-2">
-                <Globe className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                <Globe className="w-5 h-5 text-arena-muted flex-shrink-0" />
                 <input
                   type="url"
                   value={formData.liveDemoUrl}
                   onChange={(e) => handleChange('liveDemoUrl', e.target.value)}
                   placeholder="https://your-project.vercel.app"
-                  className="flex-1 p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-base"
+                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
                 />
               </div>
             </div>
@@ -461,8 +490,8 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
           {/* Sidebar - Progress & Actions */}
           <div className="space-y-4">
             {/* Progress Checklist */}
-            <div className="bg-white border-2 border-gray-200 p-4">
-              <h3 className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-4">
+            <div className="bg-arena-card border border-arena-border rounded-xl p-4">
+              <h3 className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-4">
                 Submission Progress
               </h3>
               <div className="space-y-3">
@@ -472,35 +501,35 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                     <div key={field.id} className="flex items-center gap-3">
                       <div
                         className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
-                          isComplete ? 'bg-green-100' : 'bg-gray-100'
+                          isComplete ? 'bg-success/20' : 'bg-arena-border'
                         }`}
                       >
                         {isComplete ? (
-                          <Check className="w-4 h-4 text-green-600" />
+                          <Check className="w-4 h-4 text-success" />
                         ) : (
-                          <Circle className="w-4 h-4 text-gray-300" />
+                          <Circle className="w-4 h-4 text-arena-muted" />
                         )}
                       </div>
-                      <span className={`text-sm ${isComplete ? 'text-gray-900' : 'text-gray-400'}`}>
+                      <span className={`text-sm ${isComplete ? 'text-white' : 'text-arena-muted'}`}>
                         {field.label}
                         {field.required && !isComplete && (
-                          <span className="text-red-500 ml-1">*</span>
+                          <span className="text-human ml-1">*</span>
                         )}
                       </span>
                     </div>
                   );
                 })}
               </div>
-              <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="mt-4 pt-4 border-t border-arena-border">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Progress</span>
-                  <span className="font-bold text-gray-900">
+                  <span className="text-arena-secondary">Progress</span>
+                  <span className="font-bold text-white">
                     {completedRequired.length}/{requiredFields.length} required
                   </span>
                 </div>
-                <div className="mt-2 h-2 bg-gray-100 rounded-full overflow-hidden">
+                <div className="mt-2 h-2 bg-arena-border rounded-full overflow-hidden">
                   <div
-                    className="h-full bg-green-500 rounded-full transition-all duration-300"
+                    className="h-full bg-success rounded-full transition-all duration-300"
                     style={{ width: `${(completedRequired.length / requiredFields.length) * 100}%` }}
                   />
                 </div>
@@ -508,10 +537,10 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
             </div>
 
             {/* Action Buttons */}
-            <div className="bg-white border-2 border-gray-200 p-4 space-y-3">
+            <div className="bg-arena-card border border-arena-border rounded-xl p-4 space-y-3">
               {/* Save Message */}
               {saveMessage && (
-                <div className="flex items-center gap-2 p-3 bg-green-50 text-green-700 text-sm rounded">
+                <div className="flex items-center gap-2 p-3 bg-success/10 text-success text-sm rounded-lg">
                   <Check className="w-4 h-4" />
                   {saveMessage}
                 </div>
@@ -523,8 +552,8 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                 onClick={handleSaveDraft}
                 disabled={isSaving}
                 className="w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
-                           border-2 border-gray-200 text-gray-700 hover:border-gray-400 
-                           transition-colors disabled:opacity-50"
+                           border border-arena-border text-arena-secondary hover:border-brand hover:text-white
+                           transition-colors disabled:opacity-50 rounded-lg"
               >
                 <Save className="w-4 h-4" />
                 {isSaving ? 'Saving...' : 'Save Draft'}
@@ -533,9 +562,8 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
               {/* Submit */}
               {submissionStatus === 'submitted' ? (
                 <div
-                  className={`w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
-                             text-white ${teamConfig.borderRadius}`}
-                  style={{ backgroundColor: 'rgb(34, 197, 94)' }}
+                  className="w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
+                             text-white rounded-lg bg-success"
                 >
                   <CheckCircle2 className="w-4 h-4" />
                   SUBMITTED
@@ -545,10 +573,9 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                   type="button"
                   onClick={handleSubmit}
                   disabled={!canSubmit || isSaving}
-                  className={`w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
-                             text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed
-                             ${teamConfig.borderRadius}`}
-                  style={{ backgroundColor: canSubmit ? teamConfig.color : '#9ca3af' }}
+                  className="w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
+                             text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
+                  style={{ backgroundColor: canSubmit ? teamConfig.color : '#666666' }}
                 >
                   <Send className="w-4 h-4" />
                   Submit Project
@@ -556,7 +583,7 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
               )}
 
               {!canSubmit && submissionStatus !== 'submitted' && (
-                <div className="flex items-start gap-2 p-3 bg-amber-50 text-amber-700 text-xs">
+                <div className="flex items-start gap-2 p-3 bg-human/10 text-human text-xs rounded-lg">
                   <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                   <span>Complete all required fields to submit your project.</span>
                 </div>
@@ -565,7 +592,7 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
 
             {/* Last Updated */}
             {userTeam.submission?.lastUpdated && (
-              <div className="text-xs text-gray-400 text-center flex items-center justify-center gap-1">
+              <div className="text-xs text-arena-muted text-center flex items-center justify-center gap-1">
                 <Clock className="w-3 h-3" />
                 Last saved: {new Date(userTeam.submission.lastUpdated).toLocaleString()}
               </div>

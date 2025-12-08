@@ -1,6 +1,7 @@
 /**
  * TeamCard Component
  * Display a team with members, allegiance styling, and status.
+ * Dark Mode Cyber Arena Theme
  * 
  * @example
  * <TeamCard team={team} onClick={() => navigateToTeam(team.id)} />
@@ -42,9 +43,13 @@ const TeamCard = forwardRef(({
 
   const config = getAllegianceConfig(team.side);
   const AllegianceIcon = team.side === 'ai' ? Cpu : Heart;
+  const isAI = team.side === 'ai';
   
-  // Get card variant based on allegiance
-  const cardVariant = team.side === 'ai' ? 'ai' : team.side === 'human' ? 'human' : 'default';
+  // Team colors
+  const borderColor = isAI ? 'border-l-ai' : 'border-l-human';
+  const glowClass = isAI ? 'hover:shadow-card-ai' : 'hover:shadow-card-human';
+  const textColor = isAI ? 'text-ai' : 'text-human';
+  const bgLight = isAI ? 'bg-ai/10' : 'bg-human/10';
 
   // Calculate member stats
   const memberCount = team.members?.length || 0;
@@ -54,59 +59,64 @@ const TeamCard = forwardRef(({
   // Compact variant
   if (variant === 'compact') {
     return (
-      <Card
+      <div
         ref={ref}
-        variant={cardVariant}
-        padding="sm"
-        clickable={clickable}
-        onClick={onClick}
-        className={cn(className)}
+        onClick={clickable ? onClick : undefined}
+        className={cn(
+          'bg-arena-card border border-arena-border border-l-4 rounded-card p-3',
+          'transition-all duration-200',
+          borderColor,
+          clickable && cn('cursor-pointer', glowClass, 'hover:-translate-y-0.5'),
+          className
+        )}
         {...props}
       >
         <div className="flex items-center gap-3">
           {/* Allegiance Icon */}
           <div
             className={cn(
-              'w-10 h-10 flex items-center justify-center flex-shrink-0',
-              team.side === 'ai' ? 'rounded-sm' : 'rounded-xl'
+              'w-10 h-10 flex items-center justify-center flex-shrink-0 rounded-lg',
+              bgLight
             )}
-            style={{ backgroundColor: config.bgColor }}
           >
-            <AllegianceIcon className="w-5 h-5" style={{ color: config.color }} />
+            <AllegianceIcon className={cn('w-5 h-5', textColor)} />
           </div>
           
           {/* Team Info */}
           <div className="flex-1 min-w-0">
             <h4 className={cn(
-              'font-bold text-neutral-900 truncate',
-              team.side === 'ai' && 'font-mono'
+              'font-bold text-white truncate',
+              isAI && 'font-mono'
             )}>
               {team.name}
             </h4>
-            <div className="flex items-center gap-2 text-xs text-neutral-500">
+            <div className="flex items-center gap-2 text-xs text-text-muted">
               <Users className="w-3 h-3" />
               {memberCount}/{maxMembers}
             </div>
           </div>
 
           {clickable && (
-            <ChevronRight className="w-4 h-4 text-neutral-400" />
+            <ChevronRight className="w-4 h-4 text-text-muted" />
           )}
         </div>
-      </Card>
+      </div>
     );
   }
 
   // Full variant
   if (variant === 'full') {
     return (
-      <Card
+      <div
         ref={ref}
-        variant={cardVariant}
-        padding="lg"
-        clickable={clickable}
-        onClick={onClick}
-        className={cn(className)}
+        onClick={clickable ? onClick : undefined}
+        className={cn(
+          'bg-arena-card border border-arena-border border-l-4 rounded-card p-5',
+          'transition-all duration-200',
+          borderColor,
+          clickable && cn('cursor-pointer', glowClass, 'hover:-translate-y-0.5'),
+          className
+        )}
         {...props}
       >
         {/* Header */}
@@ -114,22 +124,21 @@ const TeamCard = forwardRef(({
           <div className="flex items-center gap-3">
             <div
               className={cn(
-                'w-12 h-12 flex items-center justify-center',
-                team.side === 'ai' ? 'rounded-sm' : 'rounded-xl'
+                'w-12 h-12 flex items-center justify-center rounded-lg',
+                bgLight
               )}
-              style={{ backgroundColor: config.bgColor }}
             >
-              <AllegianceIcon className="w-6 h-6" style={{ color: config.color }} />
+              <AllegianceIcon className={cn('w-6 h-6', textColor)} />
             </div>
             <div>
               <h3 className={cn(
-                'text-lg font-bold text-neutral-900',
-                team.side === 'ai' && 'font-mono'
+                'text-lg font-bold text-white',
+                isAI && 'font-mono'
               )}>
                 {team.name}
               </h3>
-              <Badge variant={team.side === 'ai' ? 'ai' : 'human'} size="xs">
-                {team.side === 'ai' ? 'AI Side' : 'Human Side'}
+              <Badge variant={isAI ? 'ai' : 'human'} size="xs">
+                {isAI ? 'AI Side' : 'Human Side'}
               </Badge>
             </div>
           </div>
@@ -141,7 +150,7 @@ const TeamCard = forwardRef(({
 
         {/* Description */}
         {team.description && (
-          <p className="text-sm text-neutral-600 mb-4">
+          <p className="text-sm text-text-secondary mb-4">
             {team.description}
           </p>
         )}
@@ -149,7 +158,7 @@ const TeamCard = forwardRef(({
         {/* Members */}
         {showMembers && team.members && team.members.length > 0 && (
           <div className="mb-4">
-            <div className="text-xs font-bold uppercase tracking-wide text-neutral-400 mb-2">
+            <div className="text-xs font-bold uppercase tracking-wide text-text-muted mb-2">
               Members ({memberCount}/{maxMembers})
             </div>
             <div className="flex items-center gap-2">
@@ -162,7 +171,7 @@ const TeamCard = forwardRef(({
                 size="sm"
               />
               {hasOpenSlots && (
-                <span className="text-xs text-neutral-500">
+                <span className={cn('text-xs', textColor)}>
                   {maxMembers - memberCount} slots open
                 </span>
               )}
@@ -173,7 +182,7 @@ const TeamCard = forwardRef(({
         {/* Looking For */}
         {showLookingFor && team.lookingFor && team.lookingFor.length > 0 && (
           <div>
-            <div className="text-xs font-bold uppercase tracking-wide text-neutral-400 mb-2">
+            <div className="text-xs font-bold uppercase tracking-wide text-text-muted mb-2">
               Looking For
             </div>
             <div className="flex flex-wrap gap-1">
@@ -185,19 +194,22 @@ const TeamCard = forwardRef(({
             </div>
           </div>
         )}
-      </Card>
+      </div>
     );
   }
 
   // Default variant
   return (
-    <Card
+    <div
       ref={ref}
-      variant={cardVariant}
-      padding="md"
-      clickable={clickable}
-      onClick={onClick}
-      className={cn(className)}
+      onClick={clickable ? onClick : undefined}
+      className={cn(
+        'bg-arena-card border border-arena-border border-l-4 rounded-card p-4',
+        'transition-all duration-200',
+        borderColor,
+        clickable && cn('cursor-pointer', glowClass, 'hover:-translate-y-0.5'),
+        className
+      )}
       {...props}
     >
       {/* Header Row */}
@@ -205,38 +217,37 @@ const TeamCard = forwardRef(({
         <div className="flex items-center gap-3">
           <div
             className={cn(
-              'w-10 h-10 flex items-center justify-center flex-shrink-0',
-              team.side === 'ai' ? 'rounded-sm' : 'rounded-xl'
+              'w-10 h-10 flex items-center justify-center flex-shrink-0 rounded-lg',
+              bgLight
             )}
-            style={{ backgroundColor: config.bgColor }}
           >
-            <AllegianceIcon className="w-5 h-5" style={{ color: config.color }} />
+            <AllegianceIcon className={cn('w-5 h-5', textColor)} />
           </div>
           <div>
             <h4 className={cn(
-              'font-bold text-neutral-900',
-              team.side === 'ai' && 'font-mono'
+              'font-bold text-white',
+              isAI && 'font-mono'
             )}>
               {team.name}
             </h4>
-            <div className="flex items-center gap-2 text-xs text-neutral-500">
+            <div className="flex items-center gap-2 text-xs text-text-muted">
               <Users className="w-3 h-3" />
               <span>{memberCount}/{maxMembers}</span>
               {hasOpenSlots && (
-                <span className="text-human-600">• Open</span>
+                <span className={textColor}>• Open</span>
               )}
             </div>
           </div>
         </div>
 
         {clickable && (
-          <ChevronRight className="w-5 h-5 text-neutral-400" />
+          <ChevronRight className="w-5 h-5 text-text-muted" />
         )}
       </div>
 
       {/* Description */}
       {team.description && (
-        <p className="text-sm text-neutral-600 line-clamp-2 mb-3">
+        <p className="text-sm text-text-secondary line-clamp-2 mb-3">
           {team.description}
         </p>
       )}
@@ -256,7 +267,7 @@ const TeamCard = forwardRef(({
           )}
         </div>
       )}
-    </Card>
+    </div>
   );
 });
 
@@ -276,7 +287,7 @@ export const TeamList = ({
 }) => {
   if (teams.length === 0) {
     return (
-      <div className={cn('text-sm text-neutral-400 text-center py-8', className)}>
+      <div className={cn('text-sm text-text-muted text-center py-8', className)}>
         {emptyMessage}
       </div>
     );
@@ -316,6 +327,8 @@ export const TeamMemberItem = ({
   className,
 }) => {
   const config = getAllegianceConfig(allegiance);
+  const isAI = allegiance === 'ai';
+  const textColor = isAI ? 'text-ai' : 'text-human';
 
   return (
     <div className={cn(
@@ -331,17 +344,17 @@ export const TeamMemberItem = ({
         <div>
           <div className="flex items-center gap-2">
             <span className={cn(
-              'font-bold text-sm text-neutral-900',
-              allegiance === 'ai' && 'font-mono'
+              'font-bold text-sm text-white',
+              isAI && 'font-mono'
             )}>
               {member.name}
             </span>
             {isCaptain && (
-              <Crown className="w-4 h-4 text-accent-500" />
+              <Crown className="w-4 h-4 text-brand" />
             )}
           </div>
           {member.callsign && (
-            <span className="text-xs" style={{ color: config.color }}>
+            <span className={cn('text-xs', textColor)}>
               "{member.callsign}"
             </span>
           )}
@@ -353,7 +366,7 @@ export const TeamMemberItem = ({
           variant="ghost"
           size="sm"
           onClick={() => onRemove(member.id)}
-          className="text-error-500 hover:text-error-600"
+          className="text-error hover:text-error/80"
         >
           Remove
         </Button>
@@ -365,4 +378,3 @@ export const TeamMemberItem = ({
 TeamMemberItem.displayName = 'TeamMemberItem';
 
 export default TeamCard;
-

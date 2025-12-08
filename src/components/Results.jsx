@@ -141,32 +141,32 @@ function Results({
 
     const awardStyles = {
       grand_champion: {
-        gradient: 'from-amber-400 via-yellow-300 to-amber-500',
-        border: 'border-amber-400',
-        bg: 'bg-amber-50',
-        text: 'text-amber-900',
-        glow: 'shadow-amber-200',
+        gradient: 'from-brand via-orange-400 to-brand',
+        border: 'border-brand',
+        bg: 'bg-arena-card',
+        text: 'text-brand',
+        glow: 'shadow-brand/20',
       },
       best_human: {
-        gradient: 'from-green-400 via-emerald-300 to-green-500',
-        border: 'border-green-400',
-        bg: 'bg-green-50',
-        text: 'text-green-900',
-        glow: 'shadow-green-200',
+        gradient: 'from-human via-red-400 to-human',
+        border: 'border-human',
+        bg: 'bg-arena-card',
+        text: 'text-human',
+        glow: 'shadow-human/20',
       },
       best_ai: {
-        gradient: 'from-cyan-400 via-sky-300 to-cyan-500',
-        border: 'border-cyan-400',
-        bg: 'bg-cyan-50',
-        text: 'text-cyan-900',
-        glow: 'shadow-cyan-200',
+        gradient: 'from-ai via-cyan-400 to-ai',
+        border: 'border-ai',
+        bg: 'bg-arena-card',
+        text: 'text-ai',
+        glow: 'shadow-ai/20',
       },
       peoples_champion: {
-        gradient: 'from-purple-400 via-violet-300 to-purple-500',
-        border: 'border-purple-400',
-        bg: 'bg-purple-50',
-        text: 'text-purple-900',
-        glow: 'shadow-purple-200',
+        gradient: 'from-violet via-purple-400 to-violet',
+        border: 'border-violet',
+        bg: 'bg-arena-card',
+        text: 'text-violet',
+        glow: 'shadow-violet/20',
       },
     };
 
@@ -175,14 +175,14 @@ function Results({
     return (
       <div
         key={awardKey}
-        className={`relative overflow-hidden border-4 ${style.border} ${style.bg} p-6 
+        className={`relative overflow-hidden border-2 ${style.border} ${style.bg} p-6 rounded-xl
           shadow-lg ${style.glow} transform transition-all duration-500 hover:scale-105
           animate-fade-in-up`}
         style={{ animationDelay: `${index * 200}ms` }}
       >
         {/* Gradient header */}
         <div
-          className={`absolute top-0 left-0 right-0 h-2 bg-gradient-to-r ${style.gradient}`}
+          className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${style.gradient}`}
         />
 
         {/* Trophy icon */}
@@ -199,12 +199,11 @@ function Results({
         <h3 className={`text-xl font-black ${style.text} text-center mb-1`}>
           {award.label}
         </h3>
-        <p className="text-xs text-gray-500 text-center mb-4">{award.description}</p>
+        <p className="text-xs text-arena-muted text-center mb-4">{award.description}</p>
 
         {/* Winner info */}
         <div
-          className={`p-4 border-2 ${winner.side === 'ai' ? 'border-dashed' : ''} ${config.borderRadius}`}
-          style={{ borderColor: config.borderColor, backgroundColor: config.bgColor }}
+          className="p-4 border border-arena-border rounded-lg bg-arena-black/50"
         >
           <div className="flex items-center gap-2 mb-2">
             {winner.side === 'ai' ? (
@@ -219,16 +218,16 @@ function Results({
               {winner.submission?.projectName}
             </span>
           </div>
-          <p className="text-sm text-gray-600 mb-2">{winner.name}</p>
-          <div className="flex items-center gap-4 text-xs text-gray-500">
+          <p className="text-sm text-arena-secondary mb-2">{winner.name}</p>
+          <div className="flex items-center gap-4 text-xs text-arena-muted">
             {award.determinedBy === 'votes' ? (
               <span className="flex items-center gap-1">
-                <Star className="w-3 h-3 text-amber-400" />
+                <Star className="w-3 h-3 text-brand" />
                 {winner.submission?.participantVotes} votes
               </span>
             ) : (
               <span className="flex items-center gap-1">
-                <Award className="w-3 h-3 text-purple-500" />
+                <Award className="w-3 h-3 text-violet" />
                 {calculateJudgeAverage(winner).toFixed(0)}% judge score
               </span>
             )}
@@ -249,29 +248,28 @@ function Results({
     const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
 
     const medalColors = {
-      1: 'bg-amber-400 text-amber-900',
-      2: 'bg-gray-300 text-gray-700',
-      3: 'bg-amber-600 text-amber-100',
+      1: 'bg-brand text-white',
+      2: 'bg-arena-secondary text-arena-black',
+      3: 'bg-brand/60 text-white',
     };
 
     return (
       <div
         key={team.id}
-        className={`flex items-center gap-3 p-3 border-b border-gray-100 last:border-0
-          ${rank <= 3 ? 'bg-gray-50' : ''}`}
+        className={`flex items-center gap-3 p-3 border-b border-arena-border last:border-0
+          ${rank <= 3 ? 'bg-arena-black/30' : ''}`}
       >
         {/* Rank */}
         <div
-          className={`w-8 h-8 flex-shrink-0 flex items-center justify-center font-black text-sm
-            ${medalColors[rank] || 'bg-gray-100 text-gray-500'}`}
+          className={`w-8 h-8 flex-shrink-0 flex items-center justify-center font-black text-sm rounded
+            ${medalColors[rank] || 'bg-arena-border text-arena-muted'}`}
         >
           {rank <= 3 ? <Medal className="w-4 h-4" /> : rank}
         </div>
 
         {/* Side icon */}
         <div
-          className={`w-8 h-8 flex-shrink-0 flex items-center justify-center ${config.borderRadius}`}
-          style={{ backgroundColor: config.bgColor }}
+          className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded bg-arena-border"
         >
           {team.side === 'ai' ? (
             <Cpu className="w-4 h-4" style={{ color: config.color }} />
@@ -283,22 +281,22 @@ function Results({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div
-            className={`font-bold text-sm truncate ${team.side === 'ai' ? 'font-mono' : ''}`}
+            className={`font-bold text-sm truncate text-white ${team.side === 'ai' ? 'font-mono' : ''}`}
           >
             {team.submission?.projectName}
           </div>
-          <div className="text-xs text-gray-500 truncate">{team.name}</div>
+          <div className="text-xs text-arena-muted truncate">{team.name}</div>
         </div>
 
         {/* Score */}
         <div className="text-right">
           {showVotes ? (
-            <div className="flex items-center gap-1 text-amber-600 font-bold">
+            <div className="flex items-center gap-1 text-brand font-bold">
               <Star className="w-4 h-4" />
               {team.submission?.participantVotes || 0}
             </div>
           ) : (
-            <div className="flex items-center gap-1 text-purple-600 font-bold">
+            <div className="flex items-center gap-1 text-violet font-bold">
               <Award className="w-4 h-4" />
               {calculateJudgeAverage(team).toFixed(0)}%
             </div>
@@ -314,18 +312,18 @@ function Results({
   const renderComingSoon = () => (
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center max-w-md px-4">
-        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gray-100 flex items-center justify-center">
-          <Lock className="w-12 h-12 text-gray-300" />
+        <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-arena-card flex items-center justify-center">
+          <Lock className="w-12 h-12 text-arena-muted" />
         </div>
-        <h2 className="text-2xl font-black text-gray-900 mb-3">Results Coming Soon</h2>
-        <p className="text-gray-500 mb-6">
+        <h2 className="text-2xl font-black text-white mb-3">Results Coming Soon</h2>
+        <p className="text-arena-secondary mb-6">
           The winners will be announced during the Results phase. Check back after judging
           is complete!
         </p>
         <button
           type="button"
           onClick={() => onNavigate('dashboard')}
-          className="px-6 py-3 bg-gray-900 text-white font-bold hover:bg-gray-800 transition-colors"
+          className="px-6 py-3 bg-brand text-white font-bold hover:bg-brand/90 transition-colors rounded-lg"
         >
           Back to Dashboard
         </button>
@@ -349,10 +347,10 @@ function Results({
         {/* Celebration background */}
         {canViewResults && (
           <div className="absolute inset-0 -z-10 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-amber-50 via-white to-purple-50" />
-            <div className="absolute top-0 left-0 w-96 h-96 bg-amber-200/20 rounded-full blur-3xl animate-blob" />
-            <div className="absolute top-1/2 right-0 w-96 h-96 bg-purple-200/20 rounded-full blur-3xl animate-blob animation-delay-2000" />
-            <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-cyan-200/20 rounded-full blur-3xl animate-blob animation-delay-4000" />
+            <div className="absolute inset-0 bg-arena-black" />
+            <div className="absolute top-0 left-0 w-96 h-96 bg-brand/10 rounded-full blur-3xl animate-blob" />
+            <div className="absolute top-1/2 right-0 w-96 h-96 bg-violet/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
+            <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-ai/10 rounded-full blur-3xl animate-blob animation-delay-4000" />
           </div>
         )}
         {!canViewResults ? (
@@ -361,14 +359,16 @@ function Results({
           <>
             {/* Page Header */}
             <div className="text-center mb-12">
-              <div className="inline-flex items-center gap-2 px-4 py-2 bg-amber-100 text-amber-800 text-sm font-bold rounded-full mb-4">
-                <Sparkles className="w-4 h-4" />
-                {isResultsPhase ? 'WINNERS ANNOUNCED' : 'PREVIEW MODE (Admin Only)'}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+                <Trophy className="w-5 h-5 text-brand" />
+                <span className="font-bold text-sm text-white">
+                  {isResultsPhase ? 'WINNERS ANNOUNCED' : 'PREVIEW MODE (Admin Only)'}
+                </span>
               </div>
-              <h1 className="text-4xl sm:text-5xl font-black text-gray-900 mb-3">
+              <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
                 HACKDAY 2026 RESULTS
               </h1>
-              <p className="text-gray-600 max-w-2xl mx-auto">
+              <p className="text-arena-secondary max-w-2xl mx-auto">
                 Congratulations to all participants! Here are the winners of this year's
                 Human vs AI HackDay.
               </p>
@@ -376,29 +376,29 @@ function Results({
 
             {/* Stats Bar */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-12">
-              <div className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 p-4 text-center">
-                <div className="text-3xl font-black text-gray-900">{stats.totalTeams}</div>
-                <div className="text-xs text-gray-500 uppercase font-bold">Teams</div>
+              <div className="bg-arena-card border border-arena-border rounded-xl p-4 text-center">
+                <div className="text-3xl font-black text-brand">{stats.totalTeams}</div>
+                <div className="text-xs text-arena-secondary uppercase font-bold">Teams</div>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 p-4 text-center">
-                <div className="text-3xl font-black text-gray-900">{stats.totalMembers}</div>
-                <div className="text-xs text-gray-500 uppercase font-bold">Participants</div>
+              <div className="bg-arena-card border border-arena-border rounded-xl p-4 text-center">
+                <div className="text-3xl font-black text-brand">{stats.totalMembers}</div>
+                <div className="text-xs text-arena-secondary uppercase font-bold">Participants</div>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 p-4 text-center">
-                <div className="text-3xl font-black text-gray-900">{stats.totalVotes}</div>
-                <div className="text-xs text-gray-500 uppercase font-bold">Votes Cast</div>
+              <div className="bg-arena-card border border-arena-border rounded-xl p-4 text-center">
+                <div className="text-3xl font-black text-brand">{stats.totalVotes}</div>
+                <div className="text-xs text-arena-secondary uppercase font-bold">Votes Cast</div>
               </div>
-              <div className="bg-white/80 backdrop-blur-sm border-2 border-gray-200 p-4 text-center">
-                <div className="text-3xl font-black text-gray-900">{stats.totalProjects}</div>
-                <div className="text-xs text-gray-500 uppercase font-bold">Projects</div>
+              <div className="bg-arena-card border border-arena-border rounded-xl p-4 text-center">
+                <div className="text-3xl font-black text-brand">{stats.totalProjects}</div>
+                <div className="text-xs text-arena-secondary uppercase font-bold">Projects</div>
               </div>
             </div>
 
             {/* Award Winners */}
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-6">
-                <Trophy className="w-8 h-8 text-amber-500" />
-                <h2 className="text-2xl font-black text-gray-900">AWARD WINNERS</h2>
+                <Trophy className="w-8 h-8 text-brand" />
+                <h2 className="text-2xl font-black text-white">AWARD WINNERS</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Object.entries(awards).map(([key, award], index) =>
@@ -410,10 +410,10 @@ function Results({
             {/* Leaderboards */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Judge Rankings */}
-              <div className="bg-white/80 backdrop-blur-sm border-2 border-purple-200 overflow-hidden">
-                <div className="px-4 py-3 bg-purple-50 border-b border-purple-200 flex items-center gap-2">
-                  <Award className="w-5 h-5 text-purple-600" />
-                  <h3 className="font-black text-purple-900">Judge Rankings</h3>
+              <div className="bg-arena-card border border-arena-border rounded-xl overflow-hidden">
+                <div className="px-4 py-3 bg-violet/10 border-b border-arena-border flex items-center gap-2">
+                  <Award className="w-5 h-5 text-violet" />
+                  <h3 className="font-black text-white">Judge Rankings</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
                   {judgesRanked.map((team, idx) =>
@@ -423,10 +423,10 @@ function Results({
               </div>
 
               {/* People's Vote Rankings */}
-              <div className="bg-white/80 backdrop-blur-sm border-2 border-amber-200 overflow-hidden">
-                <div className="px-4 py-3 bg-amber-50 border-b border-amber-200 flex items-center gap-2">
-                  <Crown className="w-5 h-5 text-amber-600" />
-                  <h3 className="font-black text-amber-900">People's Vote</h3>
+              <div className="bg-arena-card border border-arena-border rounded-xl overflow-hidden">
+                <div className="px-4 py-3 bg-brand/10 border-b border-arena-border flex items-center gap-2">
+                  <Crown className="w-5 h-5 text-brand" />
+                  <h3 className="font-black text-white">People's Vote</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
                   {peoplesRanked.map((team, idx) =>
@@ -438,7 +438,7 @@ function Results({
 
             {/* Footer message */}
             <div className="mt-12 text-center">
-              <p className="text-gray-500 text-sm">
+              <p className="text-arena-secondary text-sm">
                 Thank you to all participants, judges, and organizers for making HackDay 2026
                 a success!
               </p>

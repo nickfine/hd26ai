@@ -1,11 +1,13 @@
 /**
  * Progress Component
  * Display progress indicators as bars or circular displays.
+ * Dark Mode Cyber Arena Theme
  * 
  * @example
  * <Progress value={75} />
  * <Progress value={50} variant="human" showLabel />
  * <CircularProgress value={80} size="lg" />
+ * <WarStatusBar humanPercent={45} aiPercent={55} />
  */
 
 import { forwardRef } from 'react';
@@ -30,23 +32,23 @@ const SIZE_MAP = {
 };
 
 const VARIANT_COLORS = {
-  default: 'bg-neutral-900',
-  human: 'bg-human-500',
-  ai: 'bg-ai-500',
-  success: 'bg-success-500',
-  warning: 'bg-warning-500',
-  error: 'bg-error-500',
-  accent: 'bg-accent-500',
+  default: 'bg-brand',
+  human: 'bg-human',
+  ai: 'bg-ai',
+  success: 'bg-success',
+  warning: 'bg-warning',
+  error: 'bg-error',
+  accent: 'bg-brand',
 };
 
 const TRACK_COLORS = {
-  default: 'bg-neutral-200',
-  human: 'bg-human-100',
-  ai: 'bg-ai-100',
-  success: 'bg-success-100',
-  warning: 'bg-warning-100',
-  error: 'bg-error-100',
-  accent: 'bg-accent-100',
+  default: 'bg-arena-elevated',
+  human: 'bg-human/20',
+  ai: 'bg-ai/20',
+  success: 'bg-success/20',
+  warning: 'bg-warning/20',
+  error: 'bg-error/20',
+  accent: 'bg-brand/20',
 };
 
 const Progress = forwardRef(({
@@ -65,23 +67,16 @@ const Progress = forwardRef(({
   const barColor = VARIANT_COLORS[variant] || VARIANT_COLORS.default;
   const trackColor = TRACK_COLORS[variant] || TRACK_COLORS.default;
 
-  // Determine border radius based on variant/allegiance
-  const radiusClass = variant === 'ai' 
-    ? 'rounded-sm' 
-    : variant === 'human' 
-      ? 'rounded-full' 
-      : 'rounded-full';
-
   return (
     <div ref={ref} className={cn('w-full', className)} {...props}>
       {/* Label Row */}
       {(showLabel || label) && (
         <div className="flex justify-between items-center mb-1">
           {label && (
-            <span className="text-sm font-medium text-neutral-700">{label}</span>
+            <span className="text-sm font-medium text-text-secondary">{label}</span>
           )}
           {showLabel && (
-            <span className="text-sm font-mono text-neutral-500">
+            <span className="text-sm font-mono text-text-muted">
               {Math.round(percentage)}%
             </span>
           )}
@@ -91,10 +86,9 @@ const Progress = forwardRef(({
       {/* Progress Track */}
       <div
         className={cn(
-          'w-full overflow-hidden',
+          'w-full overflow-hidden rounded-full',
           trackColor,
-          sizeClass,
-          radiusClass
+          sizeClass
         )}
         role="progressbar"
         aria-valuenow={value}
@@ -104,9 +98,8 @@ const Progress = forwardRef(({
         {/* Progress Bar */}
         <div
           className={cn(
-            'h-full',
+            'h-full rounded-full',
             barColor,
-            radiusClass,
             animated && 'transition-all duration-500 ease-out'
           )}
           style={{ width: `${percentage}%` }}
@@ -147,13 +140,13 @@ export const CircularProgress = forwardRef(({
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   const variantStrokeColors = {
-    default: '#111827',
-    human: '#22c55e',
-    ai: '#06b6d4',
-    success: '#22c55e',
-    warning: '#f59e0b',
-    error: '#ef4444',
-    accent: '#f59e0b',
+    default: '#FF5722',
+    human: '#FF2E63',
+    ai: '#00D4FF',
+    success: '#00FF9D',
+    warning: '#FF2E63',
+    error: '#FF2E63',
+    accent: '#FF5722',
   };
 
   const strokeColor = variantStrokeColors[variant] || variantStrokeColors.default;
@@ -175,7 +168,7 @@ export const CircularProgress = forwardRef(({
           cy={config.size / 2}
           r={radius}
           fill="none"
-          stroke="#e5e7eb"
+          stroke="#1F1F1F"
           strokeWidth={actualStrokeWidth}
         />
         {/* Progress circle */}
@@ -195,7 +188,7 @@ export const CircularProgress = forwardRef(({
 
       {/* Center Label */}
       {showLabel && (
-        <span className="absolute text-sm font-bold text-neutral-700">
+        <span className="absolute text-sm font-bold text-white font-mono">
           {Math.round(percentage)}%
         </span>
       )}
@@ -204,6 +197,94 @@ export const CircularProgress = forwardRef(({
 });
 
 CircularProgress.displayName = 'CircularProgress';
+
+/**
+ * WarStatusBar - The "battle line" showing Human vs AI recruitment
+ * Features a sharp gradient split with a glowing divider
+ */
+export const WarStatusBar = forwardRef(({
+  humanPercent = 50,
+  aiPercent = 50,
+  showLabels = true,
+  showDivider = true,
+  height = 'md',
+  animated = true,
+  className,
+  ...props
+}, ref) => {
+  // Normalize percentages
+  const total = humanPercent + aiPercent;
+  const normalizedHuman = total > 0 ? (humanPercent / total) * 100 : 50;
+  const normalizedAi = total > 0 ? (aiPercent / total) * 100 : 50;
+  
+  // Calculate background position (100% = all AI, 0% = all Human)
+  // We want AI on left, Human on right
+  const backgroundPosition = normalizedAi;
+
+  const heightMap = {
+    sm: 'h-2',
+    md: 'h-3',
+    lg: 'h-4',
+    xl: 'h-6',
+  };
+
+  const heightClass = heightMap[height] || heightMap.md;
+
+  return (
+    <div ref={ref} className={cn('w-full', className)} {...props}>
+      {/* Labels */}
+      {showLabels && (
+        <div className="flex justify-between items-center mb-2">
+          <div className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-ai" />
+            <span className="text-sm font-mono text-ai">{Math.round(normalizedAi)}%</span>
+            <span className="text-xs text-text-muted">AI</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-text-muted">Human</span>
+            <span className="text-sm font-mono text-human">{Math.round(normalizedHuman)}%</span>
+            <span className="w-3 h-3 rounded-full bg-human" />
+          </div>
+        </div>
+      )}
+
+      {/* War Bar */}
+      <div
+        className={cn(
+          'relative w-full rounded-full overflow-hidden',
+          heightClass
+        )}
+        style={{
+          background: `linear-gradient(to right, #00D4FF 0%, #00D4FF 50%, #FF2E63 50%, #FF2E63 100%)`,
+          backgroundSize: '200% 100%',
+          backgroundPosition: `${backgroundPosition}% 0`,
+          transition: animated ? 'background-position 800ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+        }}
+        role="progressbar"
+        aria-valuenow={normalizedHuman}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Human vs AI recruitment status"
+      >
+        {/* Battle line divider */}
+        {showDivider && (
+          <div
+            className="absolute top-0 bottom-0 w-0.5"
+            style={{
+              left: `${normalizedAi}%`,
+              transform: 'translateX(-50%)',
+              background: 'linear-gradient(to bottom, rgba(0, 212, 255, 0.6), white, rgba(255, 46, 99, 0.6))',
+              boxShadow: '-4px 0 8px rgba(0, 212, 255, 0.4), 4px 0 8px rgba(255, 46, 99, 0.4), 0 0 12px white',
+              transition: animated ? 'left 800ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+});
+
+WarStatusBar.displayName = 'WarStatusBar';
 
 /**
  * ProgressSteps - Step-based progress indicator
@@ -216,10 +297,26 @@ export const ProgressSteps = ({
   ...props
 }) => {
   const variantColors = {
-    default: { active: 'bg-neutral-900 text-white', complete: 'bg-neutral-900 text-white', pending: 'bg-neutral-200 text-neutral-500' },
-    human: { active: 'bg-human-500 text-white', complete: 'bg-human-500 text-white', pending: 'bg-human-100 text-human-500' },
-    ai: { active: 'bg-ai-500 text-white', complete: 'bg-ai-500 text-white', pending: 'bg-ai-100 text-ai-500' },
-    accent: { active: 'bg-accent-500 text-white', complete: 'bg-accent-500 text-white', pending: 'bg-accent-100 text-accent-600' },
+    default: { 
+      active: 'bg-brand text-white', 
+      complete: 'bg-brand text-white', 
+      pending: 'bg-arena-elevated text-text-muted border border-arena-border' 
+    },
+    human: { 
+      active: 'bg-human text-white shadow-glow-human', 
+      complete: 'bg-human text-white', 
+      pending: 'bg-human/20 text-human/50' 
+    },
+    ai: { 
+      active: 'bg-ai text-arena-black shadow-glow-ai', 
+      complete: 'bg-ai text-arena-black', 
+      pending: 'bg-ai/20 text-ai/50' 
+    },
+    accent: { 
+      active: 'bg-brand text-white shadow-glow-brand', 
+      complete: 'bg-brand text-white', 
+      pending: 'bg-brand/20 text-brand/50' 
+    },
   };
 
   const colors = variantColors[variant] || variantColors.default;
@@ -237,9 +334,9 @@ export const ProgressSteps = ({
             <div className="flex flex-col items-center">
               <div
                 className={cn(
-                  'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold',
+                  'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-200',
                   isComplete && colors.complete,
-                  isActive && cn(colors.active, 'ring-4 ring-offset-2 ring-neutral-900/20'),
+                  isActive && cn(colors.active, 'ring-4 ring-offset-2 ring-offset-arena-black ring-brand/20'),
                   isPending && colors.pending
                 )}
               >
@@ -248,7 +345,7 @@ export const ProgressSteps = ({
               {step.label && (
                 <span className={cn(
                   'mt-2 text-xs font-medium whitespace-nowrap',
-                  isActive ? 'text-neutral-900' : 'text-neutral-500'
+                  isActive ? 'text-white' : 'text-text-muted'
                 )}>
                   {step.label}
                 </span>
@@ -259,8 +356,8 @@ export const ProgressSteps = ({
             {index < steps.length - 1 && (
               <div
                 className={cn(
-                  'w-12 h-0.5 mx-2',
-                  isComplete ? colors.complete.split(' ')[0] : 'bg-neutral-200'
+                  'w-12 h-0.5 mx-2 transition-colors duration-200',
+                  isComplete ? colors.complete.split(' ')[0] : 'bg-arena-border'
                 )}
               />
             )}
@@ -274,4 +371,3 @@ export const ProgressSteps = ({
 ProgressSteps.displayName = 'ProgressSteps';
 
 export default Progress;
-

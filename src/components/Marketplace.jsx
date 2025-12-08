@@ -228,31 +228,34 @@ function Marketplace({
             </div>
           </div>
         )}
-        {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-black text-gray-900">
-                TEAMS
-              </h1>
-              <p className="text-sm text-gray-500">
-                Find your team or recruit free agents
-              </p>
-            </div>
-
-            {/* Search */}
-            <div className="relative w-full sm:w-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder={activeTab === 'teams' ? 'Search teams or skills...' : 'Search people or skills...'}
-                className="w-full sm:w-64 pl-10 pr-4 py-2 border-2 border-gray-200 
-                           focus:border-gray-900 focus:outline-none
-                           text-sm"
-              />
-            </div>
+        {/* Page Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+            <Users className="w-5 h-5 text-brand" />
+            <span className="font-bold text-sm text-white">FIND YOUR SQUAD</span>
           </div>
+          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+            TEAMS
+          </h1>
+          <p className="text-arena-secondary max-w-2xl mx-auto mb-6">
+            Browse open teams looking for members or discover free agents with matching skills.
+            Form your alliance and prepare for battle.
+          </p>
+
+          {/* Search */}
+          <div className="relative w-full max-w-md mx-auto">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-arena-muted" />
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder={activeTab === 'teams' ? 'Search teams or skills...' : 'Search people or skills...'}
+              className="w-full pl-12 pr-4 py-3 border border-arena-border bg-arena-card
+                         focus:border-brand focus:outline-none text-white placeholder-arena-muted
+                         text-sm rounded-xl"
+            />
+          </div>
+        </div>
 
           {/* Filter and Tab Switcher Row */}
           <div className="flex flex-col gap-4 mb-6">
@@ -261,14 +264,14 @@ function Marketplace({
               <button
                 type="button"
                 onClick={() => setActiveTab('teams')}
-                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap
+                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg
                            ${activeTab === 'teams' 
-                             ? 'bg-gray-900 text-white' 
-                             : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
+                             ? 'bg-brand text-white' 
+                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'}`}
               >
                 TEAMS
                 <span className={`px-1.5 py-0.5 text-xs rounded-full ${
-                  activeTab === 'teams' ? 'bg-white/20' : 'bg-gray-100'
+                  activeTab === 'teams' ? 'bg-white/20' : 'bg-arena-elevated'
                 }`}>
                   {allegianceFilteredTeams.length}
                 </span>
@@ -276,14 +279,14 @@ function Marketplace({
               <button
                 type="button"
                 onClick={() => setActiveTab('people')}
-                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap
+                className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg
                            ${activeTab === 'people' 
-                             ? 'bg-gray-900 text-white' 
-                             : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'}`}
+                             ? 'bg-brand text-white' 
+                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'}`}
               >
                 FREE AGENTS
                 <span className={`px-1.5 py-0.5 text-xs rounded-full ${
-                  activeTab === 'people' ? 'bg-white/20' : 'bg-gray-100'
+                  activeTab === 'people' ? 'bg-white/20' : 'bg-arena-elevated'
                 }`}>
                   {allegianceFilteredAgents.length}
                 </span>
@@ -296,7 +299,7 @@ function Marketplace({
                 <button
                   type="button"
                   onClick={() => setShowCreateTeamModal(true)}
-                  className="px-4 py-2 font-bold text-sm bg-green-600 text-white hover:bg-green-700 transition-all flex items-center gap-2 whitespace-nowrap"
+                  className="px-4 py-2 font-bold text-sm bg-success text-arena-black hover:bg-success/90 transition-all flex items-center gap-2 whitespace-nowrap rounded-lg"
                 >
                   <Plus className="w-4 h-4" />
                   CREATE TEAM
@@ -316,10 +319,10 @@ function Marketplace({
                     type="button"
                     key={side}
                     onClick={() => setFilterAllegiance(side)}
-                    className={`px-3 py-2 flex items-center gap-2 text-xs font-bold transition-all
+                    className={`px-3 py-2 flex items-center gap-2 text-xs font-bold transition-all rounded-lg
                       ${isActive
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'
+                        ? 'bg-brand text-white'
+                        : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
                       }`}
                   >
                     <Icon className="w-3 h-3" />
@@ -338,53 +341,53 @@ function Marketplace({
                   const teamConfig = ALLEGIANCE_CONFIG[team.side];
                   const TeamIcon = team.side === 'ai' ? Cpu : Heart;
                   const hasApplied = team.joinRequests?.some((r) => r.userName === user?.name);
+                  const teamColor = team.side === 'ai' ? '#00D4FF' : '#FF2E63';
 
                   return (
                     <div
                       key={team.id}
-                      className={`p-4 sm:p-5 bg-white transition-all duration-200 hover:shadow-lg
-                                 border-2 ${teamConfig.borderRadius}
-                                 ${team.side === 'ai' ? 'border-dashed' : ''}`}
-                      style={{ borderColor: teamConfig.borderColor }}
+                      className={`p-4 sm:p-5 bg-arena-card transition-all duration-200 hover:shadow-lg
+                                 border-l-4 border border-arena-border rounded-xl`}
+                      style={{ borderLeftColor: teamColor }}
                     >
                       {/* Team Header */}
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
+                            className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg"
                             style={{
-                              backgroundColor: teamConfig.bgColor,
+                              backgroundColor: `${teamColor}20`,
                             }}
                           >
                             <TeamIcon
                               className="w-5 h-5"
-                              style={{ color: teamConfig.color }}
+                              style={{ color: teamColor }}
                             />
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <h3
-                                className={`font-bold text-gray-900 truncate ${
+                                className={`font-bold text-white truncate ${
                                   team.side === 'ai' ? 'font-mono' : ''
                                 }`}
                               >
                                 {team.name}
                               </h3>
                               {hasApplied && (
-                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-amber-100 text-amber-600 rounded-full">
+                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-amber-900/30 text-amber-400 rounded-full">
                                   Applied
                                 </span>
                               )}
                             </div>
                             <span
                               className="text-xs font-bold uppercase"
-                              style={{ color: teamConfig.color }}
+                              style={{ color: teamColor }}
                             >
                               {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
+                        <div className="flex items-center gap-1 text-sm text-arena-secondary flex-shrink-0">
                           <Users className="w-4 h-4" />
                           <span>
                             {team.members.length}/{team.maxMembers}
@@ -393,29 +396,29 @@ function Marketplace({
                       </div>
 
                       {/* Description */}
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{team.description}</p>
+                      <p className="text-sm text-arena-secondary mb-4 line-clamp-2">{team.description}</p>
 
                       {/* Looking For */}
                       <div className="mb-4">
-                        <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
+                        <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-2">
                           Looking For
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {team.lookingFor.slice(0, 3).map((skill) => (
                             <span
                               key={skill}
-                              className={`px-2 py-1 text-xs border ${teamConfig.borderRadius}`}
+                              className="px-2 py-1 text-xs border rounded-lg"
                               style={{
-                                borderColor: teamConfig.borderColor,
-                                color: teamConfig.color,
-                                backgroundColor: teamConfig.bgColor,
+                                borderColor: `${teamColor}40`,
+                                color: teamColor,
+                                backgroundColor: `${teamColor}10`,
                               }}
                             >
                               {skill}
                             </span>
                           ))}
                           {team.lookingFor.length > 3 && (
-                            <span className="px-2 py-1 text-xs text-gray-400">
+                            <span className="px-2 py-1 text-xs text-arena-muted">
                               +{team.lookingFor.length - 3} more
                             </span>
                           )}
@@ -426,11 +429,10 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onNavigateToTeam(team.id)}
-                        className={`w-full py-2 flex items-center justify-center gap-2
-                                   font-bold text-sm transition-all
-                                   ${teamConfig.borderRadius}`}
+                        className="w-full py-2 flex items-center justify-center gap-2
+                                   font-bold text-sm transition-all rounded-lg"
                         style={{
-                          backgroundColor: teamConfig.color,
+                          backgroundColor: teamColor,
                           color: 'white',
                         }}
                       >
@@ -444,7 +446,7 @@ function Marketplace({
 
               {/* Empty State - Teams */}
               {filteredTeams.length === 0 && (
-                <div className="text-center py-12 text-gray-400">
+                <div className="text-center py-12 text-arena-muted">
                   <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>
                     {searchTerm
@@ -464,81 +466,81 @@ function Marketplace({
                   const agentConfig = ALLEGIANCE_CONFIG[agent.allegiance] || ALLEGIANCE_CONFIG.neutral;
                   const AgentIcon = { human: Heart, neutral: Scale, ai: Cpu }[agent.allegiance] || Scale;
                   const hasInvited = agent.teamInvites?.some((i) => i.teamId === captainedTeam?.id);
+                  const agentColor = agent.allegiance === 'ai' ? '#00D4FF' : agent.allegiance === 'human' ? '#FF2E63' : '#A855F7';
 
                   return (
                     <div
                       key={agent.id}
-                      className={`p-4 sm:p-5 bg-white transition-all duration-200 hover:shadow-lg
-                                 border-2 ${agentConfig.borderRadius}
-                                 ${agent.allegiance === 'ai' ? 'border-dashed' : ''}`}
-                      style={{ borderColor: agentConfig.borderColor }}
+                      className="p-4 sm:p-5 bg-arena-card transition-all duration-200 hover:shadow-lg
+                                 border-l-4 border border-arena-border rounded-xl"
+                      style={{ borderLeftColor: agentColor }}
                     >
                       {/* Agent Header */}
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${agentConfig.borderRadius}`}
+                            className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg"
                             style={{
-                              backgroundColor: agentConfig.bgColor,
+                              backgroundColor: `${agentColor}20`,
                             }}
                           >
                             <AgentIcon
                               className="w-5 h-5"
-                              style={{ color: agentConfig.color }}
+                              style={{ color: agentColor }}
                             />
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <h3
-                                className={`font-bold text-gray-900 truncate ${
+                                className={`font-bold text-white truncate ${
                                   agent.allegiance === 'ai' ? 'font-mono' : ''
                                 }`}
                               >
                                 {agent.name}
                               </h3>
                               {hasInvited && (
-                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-blue-100 text-blue-600 rounded-full">
+                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-ai/20 text-ai rounded-full">
                                   Invited
                                 </span>
                               )}
                             </div>
                             <span
                               className="text-xs font-bold uppercase"
-                              style={{ color: agentConfig.color }}
+                              style={{ color: agentColor }}
                             >
                               {agentConfig.label} · FREE AGENT
                             </span>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-gray-500 flex-shrink-0">
+                        <div className="flex items-center gap-1 text-sm text-arena-secondary flex-shrink-0">
                           <User className="w-4 h-4" />
                         </div>
                       </div>
 
                       {/* Bio */}
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-2">{agent.bio}</p>
+                      <p className="text-sm text-arena-secondary mb-4 line-clamp-2">{agent.bio}</p>
 
                       {/* Skills */}
                       <div className="mb-4">
-                        <div className="text-xs font-bold uppercase tracking-wide text-gray-400 mb-2">
+                        <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-2">
                           Skills
                         </div>
                         <div className="flex flex-wrap gap-1">
                           {agent.skills?.slice(0, 3).map((skill) => (
                             <span
                               key={skill}
-                              className={`px-2 py-1 text-xs border ${agentConfig.borderRadius}`}
+                              className="px-2 py-1 text-xs border rounded-lg"
                               style={{
-                                borderColor: agentConfig.borderColor,
-                                color: agentConfig.color,
-                                backgroundColor: agentConfig.bgColor,
+                                borderColor: `${agentColor}40`,
+                                color: agentColor,
+                                backgroundColor: `${agentColor}10`,
                               }}
                             >
                               {skill}
                             </span>
                           ))}
                           {agent.skills?.length > 3 && (
-                            <span className="px-2 py-1 text-xs text-gray-400">
+                            <span className="px-2 py-1 text-xs text-arena-muted">
                               +{agent.skills.length - 3} more
                             </span>
                           )}
@@ -550,11 +552,10 @@ function Marketplace({
                         <button
                           type="button"
                           onClick={() => setInviteModalAgent(agent)}
-                          className={`w-full py-2 flex items-center justify-center gap-2
-                                     font-bold text-sm transition-all
-                                     ${agentConfig.borderRadius}`}
+                          className="w-full py-2 flex items-center justify-center gap-2
+                                     font-bold text-sm transition-all rounded-lg"
                           style={{
-                            backgroundColor: agentConfig.color,
+                            backgroundColor: agentColor,
                             color: 'white',
                           }}
                         >
@@ -564,9 +565,8 @@ function Marketplace({
                       )}
                       {captainedTeam && hasInvited && (
                         <div
-                          className={`w-full py-2 flex items-center justify-center gap-2
-                                     font-bold text-sm text-gray-400 border-2 border-gray-200
-                                     ${agentConfig.borderRadius}`}
+                          className="w-full py-2 flex items-center justify-center gap-2
+                                     font-bold text-sm text-arena-muted border border-arena-border rounded-lg"
                         >
                           <Check className="w-4 h-4" />
                           INVITE SENT
@@ -574,9 +574,8 @@ function Marketplace({
                       )}
                       {!captainedTeam && (
                         <div
-                          className={`w-full py-2 flex items-center justify-center gap-2
-                                     text-sm text-gray-400 border border-gray-200 bg-gray-50
-                                     ${agentConfig.borderRadius}`}
+                          className="w-full py-2 flex items-center justify-center gap-2
+                                     text-sm text-arena-muted border border-arena-border bg-arena-elevated rounded-lg"
                         >
                           Create a team to send invites
                         </div>
@@ -588,7 +587,7 @@ function Marketplace({
 
               {/* Empty State - People */}
               {filteredAgents.length === 0 && (
-                <div className="text-center py-12 text-gray-400">
+                <div className="text-center py-12 text-arena-muted">
                   <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
                   <p>
                     {searchTerm

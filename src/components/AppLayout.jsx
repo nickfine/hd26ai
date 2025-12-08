@@ -163,11 +163,11 @@ function AppLayout({
   };
 
   return (
-    <div className={cn('min-h-screen bg-white', config.font)}>
+    <div className={cn('min-h-screen bg-arena-black text-white', config.font)}>
       {/* ================================================================== */}
       {/* HEADER */}
       {/* ================================================================== */}
-      <header className="border-b-2 border-neutral-900 px-4 sm:px-6 py-4 bg-white sticky top-0 z-40">
+      <header className="border-b border-arena-border px-4 sm:px-6 py-4 bg-arena-black sticky top-0 z-40">
         <Container size="xl" padding="none">
           <HStack justify="between" align="center">
             {/* Mobile menu button */}
@@ -175,7 +175,7 @@ function AppLayout({
               <button
                 type="button"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden p-2 -ml-2 text-neutral-600 hover:text-neutral-900"
+                className="lg:hidden p-2 -ml-2 text-arena-secondary hover:text-white"
               >
                 <Menu className="w-5 h-5" />
               </button>
@@ -185,28 +185,28 @@ function AppLayout({
             <HStack gap="3" align="center">
               <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
               <div className="hidden sm:block">
-                <div className="font-black text-lg tracking-tight">HACKDAY 2026</div>
-                <div className="text-xs text-neutral-500 font-mono">HUMAN VS AI</div>
+                <div className="font-black text-lg tracking-tight text-white">HACKDAY 2026</div>
+                <div className="text-xs text-arena-muted font-mono">HUMAN VS AI</div>
               </div>
             </HStack>
 
             {/* War Timer */}
             <div className={cn(
-              'hidden md:flex items-center gap-3 px-4 py-2 text-white',
+              'hidden md:flex items-center gap-3 px-4 py-2 text-white rounded-card',
               timeRemaining.status === 'live' 
-                ? 'bg-gradient-to-r from-ai-600 to-human-600 animate-pulse' 
+                ? 'bg-gradient-to-r from-ai to-human animate-pulse' 
                 : timeRemaining.status === 'ended'
-                  ? 'bg-neutral-600'
-                  : 'bg-neutral-900'
+                  ? 'bg-arena-card'
+                  : 'bg-arena-card'
             )}>
-              <Clock className="w-5 h-5" />
+              <Clock className="w-5 h-5 text-arena-secondary" />
               <div>
-                <div className="font-mono text-2xl font-bold tracking-wider">
+                <div className="font-mono text-2xl font-bold tracking-wider text-white">
                   {timeRemaining.display}
                 </div>
                 <div className={cn(
                   'text-xs uppercase tracking-wide',
-                  timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-neutral-400'
+                  timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-arena-secondary'
                 )}>
                   {timeRemaining.label}
                 </div>
@@ -222,13 +222,13 @@ function AppLayout({
               <div className="relative">
                 <AllegianceAvatar allegiance={user?.allegiance || 'neutral'} size="md" />
                 {captainedTeam?.joinRequests?.length > 0 && (
-                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-error-500 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                  <div className="absolute -top-1 -right-1 w-5 h-5 bg-human text-white text-xs font-bold rounded-full flex items-center justify-center">
                     {captainedTeam.joinRequests.length}
                   </div>
                 )}
               </div>
               <div className="text-left hidden sm:block">
-                <div className="font-bold text-neutral-900 text-sm flex items-center gap-1 flex-wrap">
+                <div className="font-bold text-white text-sm flex items-center gap-1 flex-wrap">
                   {(() => {
                     const formatted = formatNameWithCallsign(user?.name, userCallsign);
                     if (!formatted.hasCallsign) return user?.name || 'Operator';
@@ -248,7 +248,7 @@ function AppLayout({
                 </div>
                 {captainedTeam ? (
                   <>
-                    <div className="text-xs text-neutral-500">Captain</div>
+                    <div className="text-xs text-arena-secondary">Captain</div>
                     <div className="text-xs font-medium" style={{ color: config.color }}>
                       {captainedTeam.name}
                     </div>
@@ -258,7 +258,7 @@ function AppLayout({
                     {userTeam.name}
                   </div>
                 ) : (
-                  <div className="text-xs text-neutral-500">Free Agent</div>
+                  <div className="text-xs text-arena-secondary">Free Agent</div>
                 )}
               </div>
             </button>
@@ -269,7 +269,7 @@ function AppLayout({
       {/* ================================================================== */}
       {/* EVENT STATUS BAR */}
       {/* ================================================================== */}
-      <div className="border-b-2 border-neutral-200 bg-surface-1 px-4 sm:px-6 py-3">
+      <div className="border-b border-arena-border bg-arena-card px-4 sm:px-6 py-3">
         <Container size="xl" padding="none">
           <HStack justify="center" gap="2" className="sm:gap-4 overflow-x-auto">
             {EVENT_PHASE_ORDER.map((phaseKey, index) => {
@@ -281,18 +281,18 @@ function AppLayout({
                 <HStack key={phaseKey} gap="0" align="center">
                   <HStack gap="1" align="center">
                     <div className={cn(
-                      'w-6 h-6 flex items-center justify-center text-xs font-bold',
+                      'w-6 h-6 flex items-center justify-center text-xs font-bold rounded',
                       isComplete 
-                        ? 'bg-neutral-900 text-white' 
+                        ? 'bg-white text-arena-bg' 
                         : isActive 
-                          ? 'bg-ai-500 text-white animate-pulse' 
-                          : 'bg-neutral-300 text-neutral-500'
+                          ? 'bg-ai text-white animate-pulse' 
+                          : 'bg-arena-border text-arena-muted'
                     )}>
                       {isComplete ? '✓' : index + 1}
                     </div>
                     <span className={cn(
                       'text-xs font-bold whitespace-nowrap hidden sm:inline',
-                      isActive ? 'text-ai-600' : isComplete ? 'text-neutral-900' : 'text-neutral-400'
+                      isActive ? 'text-ai' : isComplete ? 'text-white' : 'text-arena-muted'
                     )}>
                       {phase?.label}
                     </span>
@@ -300,7 +300,7 @@ function AppLayout({
                   {index < EVENT_PHASE_ORDER.length - 1 && (
                     <div className={cn(
                       'w-4 sm:w-8 h-0.5 mx-1 sm:mx-2',
-                      isComplete ? 'bg-neutral-900' : 'bg-neutral-300'
+                      isComplete ? 'bg-white' : 'bg-arena-border'
                     )} />
                   )}
                 </HStack>
@@ -329,7 +329,7 @@ function AppLayout({
           {showSidebar && (
             <aside className={cn(
               'fixed lg:static inset-y-0 left-0 z-50',
-              'w-[280px] border-r-0 lg:border-r-2 border-neutral-200 bg-white',
+              'w-[280px] bg-arena-black',
               'transform transition-transform duration-300 ease-in-out',
               sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
               'overflow-y-auto'
@@ -339,7 +339,7 @@ function AppLayout({
                 <button
                   type="button"
                   onClick={() => setSidebarOpen(false)}
-                  className="lg:hidden absolute top-4 right-4 p-2 text-neutral-400 hover:text-neutral-600"
+                  className="lg:hidden absolute top-4 right-4 p-2 text-arena-muted hover:text-white"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -347,23 +347,23 @@ function AppLayout({
                 {/* Role Badge */}
                 {user?.role && user.role !== 'participant' && (
                   <div className={cn(
-                    'p-3 border-2 flex items-center gap-2',
-                    user.role === 'judge' && 'border-accent-300 bg-accent-50',
-                    user.role === 'admin' && 'border-special-300 bg-special-50',
-                    user.role === 'ambassador' && 'border-human-300 bg-human-50'
+                    'p-3 border-2 rounded-card flex items-center gap-2',
+                    user.role === 'judge' && 'border-brand/50 bg-brand/10',
+                    user.role === 'admin' && 'border-ai/50 bg-ai/10',
+                    user.role === 'ambassador' && 'border-human/50 bg-human/10'
                   )}>
-                    {user.role === 'judge' && <Gavel className="w-5 h-5 text-accent-600" />}
-                    {user.role === 'admin' && <Shield className="w-5 h-5 text-special-600" />}
+                    {user.role === 'judge' && <Gavel className="w-5 h-5 text-brand" />}
+                    {user.role === 'admin' && <Shield className="w-5 h-5 text-ai" />}
                     <div>
                       <div className={cn(
                         'text-xs font-bold uppercase tracking-wide',
-                        user.role === 'judge' && 'text-accent-700',
-                        user.role === 'admin' && 'text-special-700',
-                        user.role === 'ambassador' && 'text-human-700'
+                        user.role === 'judge' && 'text-brand',
+                        user.role === 'admin' && 'text-ai',
+                        user.role === 'ambassador' && 'text-human'
                       )}>
                         {user.role === 'judge' ? 'Judge' : user.role === 'admin' ? 'Admin' : 'Ambassador'}
                       </div>
-                      <div className="text-xs text-neutral-500">
+                      <div className="text-xs text-arena-secondary">
                         {user.role === 'judge' && 'Score submitted projects'}
                         {user.role === 'admin' && 'Full event access'}
                         {user.role === 'ambassador' && 'Recruit for your side'}
@@ -388,41 +388,41 @@ function AppLayout({
                   <NavItem
                     icon={<LogOut />}
                     onClick={() => onNavigate('landing')}
-                    className="mt-4 text-neutral-400 hover:text-neutral-600"
+                    className="mt-4 text-arena-muted hover:text-white"
                   >
                     Sign Out
                   </NavItem>
                 </NavGroup>
 
                 {/* War Recruitment Status */}
-                <div className="p-4 border-2 border-neutral-200">
-                  <div className="text-xs font-bold uppercase tracking-wide text-neutral-400 mb-3">
+                <div className="p-4 border-2 border-arena-border rounded-card">
+                  <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-3">
                     War Recruitment Status
                   </div>
                   <VStack gap="3">
                     {/* Human Bar */}
                     <div>
                       <HStack justify="between" className="text-sm mb-1">
-                        <HStack gap="1" align="center" className="font-bold text-human-600">
+                        <HStack gap="1" align="center" className="font-bold text-human">
                           <Heart className="w-3 h-3" /> Human
                         </HStack>
-                        <span className="font-mono font-bold">{humanPercent}%</span>
+                        <span className="font-mono font-bold text-white">{humanPercent}%</span>
                       </HStack>
                       <Progress value={humanPercent} variant="human" size="sm" />
                     </div>
                     {/* AI Bar */}
                     <div>
                       <HStack justify="between" className="text-sm mb-1">
-                        <HStack gap="1" align="center" className="font-bold font-mono text-ai-600">
+                        <HStack gap="1" align="center" className="font-bold font-mono text-ai">
                           <Cpu className="w-3 h-3" /> AI
                         </HStack>
-                        <span className="font-mono font-bold">{aiPercent}%</span>
+                        <span className="font-mono font-bold text-white">{aiPercent}%</span>
                       </HStack>
                       <Progress value={aiPercent} variant="ai" size="sm" />
                     </div>
                     {/* Total */}
-                    <div className="pt-2 border-t border-neutral-100 text-center">
-                      <span className="text-xs text-neutral-400">{totalTeams} teams registered</span>
+                    <div className="pt-2 border-t border-arena-border text-center">
+                      <span className="text-xs text-arena-secondary">{totalTeams} teams registered</span>
                     </div>
                   </VStack>
                 </div>
@@ -440,9 +440,9 @@ function AppLayout({
       </Container>
 
       {/* Footer */}
-      <footer className="border-t-2 border-neutral-200 px-4 sm:px-6 py-4 bg-white mt-6">
+      <footer className="border-t border-arena-border px-4 sm:px-6 py-4 bg-arena-black mt-6">
         <Container size="xl" padding="none">
-          <HStack justify="between" className="text-xs text-neutral-400">
+          <HStack justify="between" className="text-xs text-arena-muted">
             <span>MISSION CONTROL v1.0</span>
             <span>
               ALLEGIANCE:{' '}

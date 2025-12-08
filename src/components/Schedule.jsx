@@ -261,18 +261,6 @@ const SCHEDULE_DATA = {
   },
 };
 
-// Category styling
-const CATEGORY_STYLES = {
-  logistics: { bg: 'bg-slate-100', border: 'border-slate-300', text: 'text-slate-700' },
-  ceremony: { bg: 'bg-amber-50', border: 'border-amber-300', text: 'text-amber-700' },
-  social: { bg: 'bg-purple-50', border: 'border-purple-300', text: 'text-purple-700' },
-  hacking: { bg: 'bg-cyan-50', border: 'border-cyan-300', text: 'text-cyan-700' },
-  meal: { bg: 'bg-green-50', border: 'border-green-300', text: 'text-green-700' },
-  break: { bg: 'bg-orange-50', border: 'border-orange-300', text: 'text-orange-700' },
-  deadline: { bg: 'bg-red-50', border: 'border-red-300', text: 'text-red-700' },
-  presentation: { bg: 'bg-blue-50', border: 'border-blue-300', text: 'text-blue-700' },
-  judging: { bg: 'bg-indigo-50', border: 'border-indigo-300', text: 'text-indigo-700' },
-};
 
 // ============================================================================
 // CALENDAR HELPERS
@@ -459,14 +447,14 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
       <div className="p-4 sm:p-6 max-w-4xl">
         {/* Page Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-900 rounded-full mb-4">
-            <Calendar className="w-5 h-5" />
-            <span className="font-bold text-sm">JUNE 1ST - 22ND, 2026</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+            <Calendar className="w-5 h-5 text-brand" />
+            <span className="font-bold text-sm text-white">JUNE 1ST - 22ND, 2026</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-gray-900 mb-3">
+          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
             EVENT SCHEDULE
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
+          <p className="text-arena-secondary max-w-2xl mx-auto">
             From launch to celebration — your complete guide to HackDay 2026. 
             Team formation starts June 1st, hacking kicks off June 21st!
           </p>
@@ -477,8 +465,8 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           <button
             type="button"
             onClick={handleAddAllToCalendar}
-            className="flex items-center gap-2 px-6 py-3 bg-gray-900 text-white font-bold 
-                       hover:bg-gray-800 transition-colors rounded-lg shadow-lg"
+            className="flex items-center gap-2 px-6 py-3 bg-brand text-white font-bold 
+                       hover:bg-brand/90 transition-all hover:scale-[1.02] rounded-lg shadow-lg"
           >
             <Download className="w-5 h-5" />
             Add All Events to Calendar
@@ -492,14 +480,14 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               key={key}
               type="button"
               onClick={() => setActiveDay(key)}
-              className={`flex-1 py-3 px-4 font-bold text-center transition-all border-2 
+              className={`flex-1 py-3 px-4 font-bold text-center transition-all border rounded-lg
                 ${activeDay === key
-                  ? 'bg-gray-900 text-white border-gray-900'
-                  : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
+                  ? 'bg-brand text-white border-brand'
+                  : 'bg-arena-card text-arena-secondary border-arena-border hover:border-brand/50 hover:text-white'
                 }`}
             >
               <div className="text-lg">{day.label}</div>
-              <div className={`text-xs ${activeDay === key ? 'text-gray-300' : 'text-gray-500'}`}>
+              <div className={`text-xs ${activeDay === key ? 'text-white/70' : 'text-arena-muted'}`}>
                 {day.subtitle}
               </div>
             </button>
@@ -509,57 +497,56 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
         {/* Timeline */}
         <div className="relative">
           {/* Timeline Line */}
-          <div className="absolute left-[23px] sm:left-[31px] top-0 bottom-0 w-0.5 bg-gray-200" />
+          <div className="absolute left-[23px] sm:left-[31px] top-0 bottom-0 w-0.5 bg-arena-border" />
 
           {/* Events */}
           <div className="space-y-4">
             {currentDayData.events.map((event, index) => {
               const Icon = event.icon;
-              const categoryStyle = CATEGORY_STYLES[event.category] || CATEGORY_STYLES.logistics;
               
               return (
                 <div key={event.id} className="relative flex gap-4">
                   {/* Timeline Node */}
                   <div className="relative z-10 flex-shrink-0">
                     <div
-                      className={`w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-white 
-                                  flex items-center justify-center shadow-md ${categoryStyle.bg}`}
+                      className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-arena-black 
+                                  flex items-center justify-center shadow-md bg-arena-card"
                     >
-                      <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${categoryStyle.text}`} />
+                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
                     </div>
                   </div>
 
                   {/* Event Card */}
                   <div
-                    className={`flex-1 p-4 sm:p-5 bg-white border-2 rounded-lg shadow-sm 
-                                hover:shadow-md transition-shadow ${categoryStyle.border}`}
+                    className="flex-1 p-4 sm:p-5 bg-arena-card border border-arena-border rounded-xl 
+                                hover:border-brand/50 transition-all"
                   >
                     {/* Time Badge */}
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                       {isPreEvent && event.date && (
                         <span className="inline-flex items-center gap-1 px-2 py-1 text-xs 
-                                          font-bold rounded bg-gray-900 text-white">
+                                          font-bold rounded bg-brand text-white">
                           <Calendar className="w-3 h-3" />
                           {event.date}
                         </span>
                       )}
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs 
-                                        font-bold rounded ${categoryStyle.bg} ${categoryStyle.text}`}>
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs 
+                                        font-bold rounded bg-arena-elevated text-brand">
                         <Clock className="w-3 h-3" />
                         {event.time}{event.time !== event.endTime ? ` - ${event.endTime}` : ''}
                       </span>
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 text-xs 
-                                        font-medium rounded bg-gray-100 text-gray-600`}>
+                      <span className="inline-flex items-center gap-1 px-2 py-1 text-xs 
+                                        font-medium rounded bg-arena-elevated text-arena-secondary">
                         <MapPin className="w-3 h-3" />
                         {event.location}
                       </span>
                     </div>
 
                     {/* Title & Description */}
-                    <h3 className="text-lg font-bold text-gray-900 mb-1">
+                    <h3 className="text-lg font-bold text-white mb-1">
                       {event.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="text-sm text-arena-secondary mb-3">
                       {event.description}
                     </p>
 
@@ -568,7 +555,7 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
                       type="button"
                       onClick={() => handleAddToCalendar(event)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold 
-                                 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded transition-colors"
+                                 text-white bg-arena-elevated hover:bg-arena-border rounded transition-colors"
                     >
                       <Calendar className="w-3.5 h-3.5" />
                       Add to Google Calendar
@@ -583,28 +570,28 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
 
         {/* Bottom Info */}
         <div className="mt-10 text-center">
-          <div className="inline-block p-6 bg-white border-2 border-gray-200 rounded-lg">
+          <div className="inline-block p-6 bg-arena-card border border-arena-border rounded-xl">
             <div className="flex items-center justify-center gap-2 mb-3">
-              <Clock className="w-5 h-5 text-gray-600" />
-              <span className="font-bold text-gray-900">Remote Hackathon</span>
+              <Clock className="w-5 h-5 text-brand" />
+              <span className="font-bold text-white">Remote Hackathon</span>
             </div>
-            <p className="text-sm text-gray-600 mb-4">
+            <p className="text-sm text-arena-secondary mb-4">
               All times are in your local timezone. Hack from anywhere in the world!
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               <button
                 type="button"
                 onClick={() => onNavigate('rules')}
-                className="px-4 py-2 text-sm font-bold text-gray-700 bg-gray-100 
-                           hover:bg-gray-200 rounded transition-colors"
+                className="px-4 py-2 text-sm font-bold text-white bg-arena-elevated 
+                           hover:bg-arena-border rounded transition-colors"
               >
                 View Rules
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('dashboard')}
-                className="px-4 py-2 text-sm font-bold text-white bg-gray-900 
-                           hover:bg-gray-800 rounded transition-colors"
+                className="px-4 py-2 text-sm font-bold text-white bg-brand 
+                           hover:bg-brand/90 rounded transition-colors"
               >
                 Back to Dashboard
               </button>

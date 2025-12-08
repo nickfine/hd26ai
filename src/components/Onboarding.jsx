@@ -102,22 +102,22 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
   const config = getAllegianceConfig(allegiance);
 
   return (
-    <div className="min-h-screen bg-surface-1 flex flex-col">
+    <div className="min-h-screen bg-arena-black flex flex-col">
       {/* Header */}
-      <header className="border-b border-neutral-200 px-4 sm:px-6 py-4">
+      <header className="border-b border-arena-border px-4 sm:px-6 py-4">
         <Container size="lg" padding="none">
           <HStack justify="between" align="center">
             <button
               type="button"
               onClick={() => onNavigate('login')}
-              className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors"
+              className="flex items-center gap-2 text-arena-muted hover:text-white transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="text-sm hidden sm:inline">Back</span>
             </button>
             <HStack gap="2" align="center">
               <img src={adaptLogo} alt="Adaptavist" className="h-6 w-auto" />
-              <span className="font-bold text-sm tracking-tight">HACKDAY 2026</span>
+              <span className="font-bold text-sm tracking-tight text-white">HACKDAY 2026</span>
             </HStack>
           </HStack>
         </Container>
@@ -129,17 +129,17 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
           {/* Card with dynamic border */}
           <div
             className={cn(
-              'bg-white p-5 sm:p-8 transition-all duration-300',
+              'bg-arena-card p-5 sm:p-8 transition-all duration-300',
               config.borderRadius,
               allegiance === 'ai' ? 'border-2 border-dashed' : 'border-2'
             )}
             style={{ borderColor: config.borderColor }}
           >
             <VStack align="center" gap="2" className="mb-6 sm:mb-8">
-              <h1 className="text-xl sm:text-2xl font-black text-neutral-900">
+              <h1 className="text-xl sm:text-2xl font-black text-white font-display">
                 CONFIGURE YOUR AGENT
               </h1>
-              <p className="text-sm text-neutral-500">
+              <p className="text-sm text-arena-secondary">
                 Set up your profile and declare your allegiance
               </p>
             </VStack>
@@ -157,10 +157,10 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
               {/* Skills */}
               <div>
                 <HStack gap="2" align="center" className="mb-3">
-                  <label className="text-xs font-bold text-neutral-700 uppercase tracking-wide">
+                  <label className="text-xs font-bold text-arena-secondary uppercase tracking-wide">
                     Areas of Interest
                   </label>
-                  <span className="text-xs text-neutral-400">
+                  <span className="text-xs text-arena-muted">
                     ({selectedSkills.length}/{MAX_SKILLS})
                   </span>
                 </HStack>
@@ -175,7 +175,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                         size="md"
                         removable
                         onRemove={() => removeSkill(skill)}
-                        className="bg-neutral-900 text-white border-neutral-900"
+                        className="bg-brand text-white border-brand"
                       >
                         {skill}
                       </Badge>
@@ -185,7 +185,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
 
                 {/* Predefined Skills */}
                 <div className="mb-4">
-                  <p className="text-xs text-neutral-500 mb-2">
+                  <p className="text-xs text-arena-muted mb-2">
                     Suggested skills (click to add)
                   </p>
                   <HStack gap="2" wrap>
@@ -198,8 +198,8 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                         className={cn(
                           'px-3 py-1.5 text-sm border-2 transition-all rounded',
                           selectedSkills.length >= MAX_SKILLS
-                            ? 'border-neutral-100 text-neutral-300 cursor-not-allowed'
-                            : 'border-neutral-200 text-neutral-700 hover:border-neutral-400'
+                            ? 'border-arena-border text-arena-muted cursor-not-allowed'
+                            : 'border-arena-border text-arena-secondary hover:border-arena-secondary hover:text-white'
                         )}
                       >
                         <HStack gap="1" align="center">
@@ -213,7 +213,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
 
                 {/* Custom Skill Input */}
                 <div>
-                  <p className="text-xs text-neutral-500 mb-2">
+                  <p className="text-xs text-arena-muted mb-2">
                     Or add your own
                   </p>
                   <HStack gap="2">
@@ -229,11 +229,11 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                       maxLength={30}
                       disabled={selectedSkills.length >= MAX_SKILLS}
                       className={cn(
-                        'flex-1 px-3 py-2 border-2 focus:outline-none text-sm transition-colors rounded',
+                        'flex-1 px-3 py-2 border-2 focus:outline-none text-sm transition-colors rounded bg-arena-black text-white placeholder:text-arena-muted',
                         customSkillError 
-                          ? 'border-error-300 focus:border-error-500' 
-                          : 'border-neutral-200 focus:border-neutral-900',
-                        selectedSkills.length >= MAX_SKILLS && 'bg-neutral-50 cursor-not-allowed'
+                          ? 'border-human focus:border-human' 
+                          : 'border-arena-border focus:border-brand',
+                        selectedSkills.length >= MAX_SKILLS && 'opacity-50 cursor-not-allowed'
                       )}
                     />
                     <Button
@@ -246,16 +246,19 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                     </Button>
                   </HStack>
                   {customSkillError && (
-                    <p className="text-xs text-error-500 mt-1">{customSkillError}</p>
+                    <p className="text-xs text-human mt-1">{customSkillError}</p>
                   )}
                 </div>
               </div>
 
               {/* Allegiance Toggle */}
               <div>
-                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">
+                <label className="block text-xs font-bold text-arena-secondary uppercase tracking-wide mb-1">
                   Declare Allegiance
                 </label>
+                <p className="text-xs text-arena-muted mb-3">
+                  You can change your allegiance at any time
+                </p>
                 <div className="grid grid-cols-3 gap-2 sm:gap-4">
                   {/* Human */}
                   <button
@@ -264,23 +267,23 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                     className={cn(
                       'p-3 sm:p-4 border-2 transition-all duration-200 rounded-human',
                       allegiance === 'human'
-                        ? 'border-human-500 bg-human-50'
-                        : 'border-neutral-200 hover:border-neutral-400'
+                        ? 'border-human bg-human/10 shadow-human-glow'
+                        : 'border-arena-border hover:border-arena-secondary'
                     )}
                   >
                     <Heart
                       className={cn(
                         'w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2',
-                        allegiance === 'human' ? 'text-human-500' : 'text-neutral-400'
+                        allegiance === 'human' ? 'text-human' : 'text-arena-muted'
                       )}
                     />
                     <div className={cn(
                       'text-xs sm:text-sm font-bold',
-                      allegiance === 'human' ? 'text-human-600' : 'text-neutral-600'
+                      allegiance === 'human' ? 'text-human' : 'text-arena-secondary'
                     )}>
                       HUMAN
                     </div>
-                    <div className="text-xs text-neutral-400 mt-1 hidden sm:block">
+                    <div className="text-xs text-arena-muted mt-1 hidden sm:block">
                       Organic creativity
                     </div>
                   </button>
@@ -295,23 +298,23 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                     className={cn(
                       'p-3 sm:p-4 border-2 transition-all duration-200 rounded-neutral',
                       allegiance === 'neutral'
-                        ? 'border-neutral-500 bg-neutral-50'
-                        : 'border-neutral-200 hover:border-neutral-400'
+                        ? 'border-arena-secondary bg-arena-secondary/10'
+                        : 'border-arena-border hover:border-arena-secondary'
                     )}
                   >
                     <Scale
                       className={cn(
                         'w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2',
-                        allegiance === 'neutral' ? 'text-neutral-500' : 'text-neutral-400'
+                        allegiance === 'neutral' ? 'text-arena-secondary' : 'text-arena-muted'
                       )}
                     />
                     <div className={cn(
                       'text-xs sm:text-sm font-bold',
-                      allegiance === 'neutral' ? 'text-neutral-600' : 'text-neutral-600'
+                      allegiance === 'neutral' ? 'text-white' : 'text-arena-secondary'
                     )}>
                       NEUTRAL
                     </div>
-                    <div className="text-xs text-neutral-400 mt-1 hidden sm:block">
+                    <div className="text-xs text-arena-muted mt-1 hidden sm:block">
                       Free agent
                     </div>
                   </button>
@@ -323,23 +326,23 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                     className={cn(
                       'p-3 sm:p-4 border-2 transition-all duration-200 rounded-ai',
                       allegiance === 'ai'
-                        ? 'border-ai-500 bg-ai-50 border-dashed'
-                        : 'border-neutral-200 hover:border-neutral-400'
+                        ? 'border-ai bg-ai/10 border-dashed shadow-ai-glow'
+                        : 'border-arena-border hover:border-arena-secondary'
                     )}
                   >
                     <Cpu
                       className={cn(
                         'w-6 sm:w-8 h-6 sm:h-8 mx-auto mb-1 sm:mb-2',
-                        allegiance === 'ai' ? 'text-ai-500' : 'text-neutral-400'
+                        allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'
                       )}
                     />
                     <div className={cn(
                       'text-xs sm:text-sm font-bold font-mono',
-                      allegiance === 'ai' ? 'text-ai-600' : 'text-neutral-600'
+                      allegiance === 'ai' ? 'text-ai' : 'text-arena-secondary'
                     )}>
                       AI
                     </div>
-                    <div className="text-xs text-neutral-400 mt-1 hidden sm:block">
+                    <div className="text-xs text-arena-muted mt-1 hidden sm:block">
                       Silicon supremacy
                     </div>
                   </button>
@@ -348,7 +351,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
 
               {/* Auto-Assign Toggle */}
               <div>
-                <label className="block text-xs font-bold text-neutral-700 uppercase tracking-wide mb-3">
+                <label className="block text-xs font-bold text-arena-secondary uppercase tracking-wide mb-3">
                   Team Assignment
                 </label>
                 <button
@@ -362,24 +365,24 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                   className={cn(
                     'w-full p-4 border-2 transition-all duration-200 text-left',
                     allegiance === 'neutral' 
-                      ? 'border-neutral-100 bg-neutral-50 cursor-not-allowed opacity-60 rounded-lg'
+                      ? 'border-arena-border bg-arena-black cursor-not-allowed opacity-60 rounded-lg'
                       : autoAssignEnabled
                         ? allegiance === 'ai'
-                          ? 'border-ai-500 bg-ai-50 border-dashed rounded-ai'
-                          : 'border-human-500 bg-human-50 rounded-human'
-                        : 'border-neutral-200 hover:border-neutral-400 rounded-lg'
+                          ? 'border-ai bg-ai/10 border-dashed rounded-ai shadow-ai-glow'
+                          : 'border-human bg-human/10 rounded-human shadow-human-glow'
+                        : 'border-arena-border hover:border-arena-secondary rounded-lg'
                   )}
                 >
                   <HStack gap="3" align="start">
                     <div className={cn(
                       'mt-0.5 w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0',
                       allegiance === 'neutral'
-                        ? 'border-neutral-300'
+                        ? 'border-arena-muted'
                         : autoAssignEnabled
                           ? allegiance === 'ai'
-                            ? 'border-ai-500 bg-ai-500'
-                            : 'border-human-500 bg-human-500'
-                          : 'border-neutral-300'
+                            ? 'border-ai bg-ai'
+                            : 'border-human bg-human'
+                          : 'border-arena-muted'
                     )}>
                       {autoAssignEnabled && allegiance !== 'neutral' && (
                         <Check className="w-3 h-3 text-white" />
@@ -390,25 +393,25 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                         <Zap className={cn(
                           'w-4 h-4',
                           allegiance === 'neutral'
-                            ? 'text-neutral-400'
+                            ? 'text-arena-muted'
                             : autoAssignEnabled
-                              ? allegiance === 'ai' ? 'text-ai-600' : 'text-human-600'
-                              : 'text-neutral-500'
+                              ? allegiance === 'ai' ? 'text-ai' : 'text-human'
+                              : 'text-arena-secondary'
                         )} />
                         <span className={cn(
                           'font-bold text-sm',
                           allegiance === 'neutral'
-                            ? 'text-neutral-400'
+                            ? 'text-arena-muted'
                             : autoAssignEnabled
-                              ? allegiance === 'ai' ? 'text-ai-700' : 'text-human-700'
-                              : 'text-neutral-700'
+                              ? allegiance === 'ai' ? 'text-ai' : 'text-human'
+                              : 'text-white'
                         )}>
                           Auto-assign me to a team
                         </span>
                       </HStack>
                       <p className={cn(
                         'text-xs mt-1',
-                        allegiance === 'neutral' ? 'text-neutral-400' : 'text-neutral-500'
+                        allegiance === 'neutral' ? 'text-arena-muted' : 'text-arena-secondary'
                       )}>
                         {allegiance === 'neutral'
                           ? 'Choose Human or AI side to enable auto-assignment'
@@ -419,10 +422,10 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                     <Users className={cn(
                       'w-5 h-5 flex-shrink-0',
                       allegiance === 'neutral'
-                        ? 'text-neutral-300'
+                        ? 'text-arena-muted'
                         : autoAssignEnabled
-                          ? allegiance === 'ai' ? 'text-ai-500' : 'text-human-500'
-                          : 'text-neutral-400'
+                          ? allegiance === 'ai' ? 'text-ai' : 'text-human'
+                          : 'text-arena-secondary'
                     )} />
                   </HStack>
                 </button>
@@ -459,7 +462,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
                   });
                   onNavigate('dashboard');
                 }}
-                className="w-full py-2 text-xs text-neutral-400 hover:text-neutral-600 underline"
+                className="w-full py-2 text-xs text-arena-muted hover:text-brand underline"
               >
                 [DEV] Skip to Dashboard
               </button>
@@ -467,7 +470,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
           </div>
 
           {/* Footer note */}
-          <p className="text-center text-xs text-neutral-400 mt-4 sm:mt-6">
+          <p className="text-center text-xs text-arena-muted mt-4 sm:mt-6">
             Your allegiance affects team recommendations in the marketplace
           </p>
         </div>
