@@ -444,7 +444,7 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
       eventPhase={eventPhase}
       activeNav="schedule"
     >
-      <div className="p-4 sm:p-6 max-w-4xl">
+      <div className="p-4 sm:p-6">
         {/* Page Header */}
         <div className="text-center mb-8">
           <div className="glass-card inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 backdrop-blur-md border border-white/10">
