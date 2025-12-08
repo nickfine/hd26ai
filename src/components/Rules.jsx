@@ -221,17 +221,18 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
     const isAI = type === 'ai';
     const textColorClass = isAI ? 'text-ai' : 'text-human';
     const borderColorClass = isAI ? 'border-ai' : 'border-human';
+    const panelColor = isAI ? '#00E5FF' : '#FF6B35';
     const bgGradient = isAI 
       ? 'bg-gradient-to-b from-ai/10 to-transparent'
       : 'bg-gradient-to-b from-human/10 to-transparent';
 
     return (
       <div
-        className={cn(
-          'border rounded-card overflow-hidden relative',
-          'bg-arena-card',
-          isAI ? 'border-ai/30' : 'border-human/30'
-        )}
+        className="glass-card human-glow overflow-hidden relative border-l-8 shadow-2xl rounded-card"
+        style={{ 
+          borderLeftColor: `${panelColor}B3`,
+          boxShadow: `inset 8px 0 30px -15px ${panelColor}40, 0 25px 50px -12px rgba(0, 0, 0, 0.25)`
+        }}
       >
         {/* Gradient overlay for team feel */}
         <div className={cn('absolute inset-0 pointer-events-none', bgGradient)} />
@@ -247,14 +248,15 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           <div className="flex items-center gap-4">
             <div
               className={cn(
-                'w-14 h-14 flex items-center justify-center rounded-lg',
-                isAI ? 'bg-ai' : 'bg-human'
+                'w-14 h-14 flex items-center justify-center rounded-lg shadow-lg',
+                isAI ? 'bg-gradient-to-br from-ai to-ai/70' : 'bg-gradient-to-br from-human to-brand'
               )}
             >
               <Icon className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h2 className="text-2xl font-heading font-black text-white">
+              <h2 className="text-2xl font-heading font-black text-white"
+                  style={{ textShadow: `0 0 20px ${panelColor}60` }}>
                 {rules.title}
               </h2>
               <p className="text-sm text-text-secondary">{rules.subtitle}</p>
@@ -266,23 +268,25 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           {/* Allowed Section */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
-                <Check className="w-5 h-5 text-success" />
+              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+                <Check className="w-5 h-5 text-emerald-400" />
               </div>
-              <h3 className="text-lg font-bold text-success">What's Allowed</h3>
+              <h3 className="text-lg font-bold text-emerald-400">What's Allowed</h3>
             </div>
             <div className="grid gap-3">
               {rules.allowed.map((item, index) => (
                 <div
                   key={index}
-                  className="p-4 border border-success/20 bg-success/5 rounded-lg"
+                  className="glass-card !bg-white/5 border border-white/10 p-5 rounded-lg
+                             hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  <div className="flex items-start gap-3">
-                    <Check className="w-5 h-5 text-success flex-shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-4">
+                    <Check className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-bold text-white">{item.title}</div>
-                      <div className="text-sm text-text-secondary mb-2">{item.description}</div>
-                      <div className="text-xs text-success bg-success/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+                      <div className="font-semibold text-white">{item.title}</div>
+                      <div className="text-sm text-gray-300 mt-1">{item.description}</div>
+                      <div className="text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full 
+                                      inline-flex items-center gap-1 mt-2 border border-emerald-500/20">
                         <Lightbulb className="w-3 h-3" />
                         Example: {item.example}
                       </div>
@@ -296,23 +300,25 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           {/* Not Allowed Section */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-error/20 flex items-center justify-center">
-                <X className="w-5 h-5 text-error" />
+              <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center shadow-lg shadow-red-500/20">
+                <X className="w-5 h-5 text-red-400" />
               </div>
-              <h3 className="text-lg font-bold text-error">What's NOT Allowed</h3>
+              <h3 className="text-lg font-bold text-red-400">What's NOT Allowed</h3>
             </div>
             <div className="grid gap-3">
               {rules.notAllowed.map((item, index) => (
                 <div
                   key={index}
-                  className="p-4 border border-error/20 bg-error/5 rounded-lg"
+                  className="glass-card !bg-white/5 border border-white/10 p-5 rounded-lg
+                             hover:-translate-y-0.5 transition-all duration-200"
                 >
-                  <div className="flex items-start gap-3">
-                    <X className="w-5 h-5 text-error flex-shrink-0 mt-0.5" />
+                  <div className="flex items-start gap-4">
+                    <X className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-bold text-white">{item.title}</div>
-                      <div className="text-sm text-text-secondary mb-2">{item.description}</div>
-                      <div className="text-xs text-error bg-error/10 px-3 py-1.5 rounded-full inline-flex items-center gap-1">
+                      <div className="font-semibold text-white">{item.title}</div>
+                      <div className="text-sm text-gray-300 mt-1">{item.description}</div>
+                      <div className="text-xs text-red-400 bg-red-500/10 px-3 py-1.5 rounded-full 
+                                      inline-flex items-center gap-1 mt-2 border border-red-500/20">
                         <AlertTriangle className="w-3 h-3" />
                         Example: {item.example}
                       </div>
@@ -325,10 +331,11 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
 
           {/* Tips Section */}
           <div
-            className={cn(
-              'p-4 rounded-lg',
-              isAI ? 'bg-ai/10' : 'bg-human/10'
-            )}
+            className="glass-card p-5 rounded-lg border-t-4"
+            style={{ 
+              borderTopColor: `${panelColor}99`,
+              boxShadow: `0 -4px 20px -5px ${panelColor}30`
+            }}
           >
             <div className="flex items-center gap-2 mb-3">
               <Zap className={cn('w-5 h-5', textColorClass)} />
@@ -338,7 +345,7 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
             </div>
             <ul className="space-y-2">
               {rules.tips.map((tip, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-text-secondary">
+                <li key={index} className="flex items-start gap-2 text-sm text-gray-300">
                   <span className={textColorClass}>•</span>
                   {tip}
                 </li>
@@ -362,11 +369,12 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
       <div className="p-4 sm:p-6">
         {/* Page Header */}
         <div className="text-center mb-10">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+          <div className="glass-card inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 backdrop-blur-md border border-white/10">
             <FileText className="w-5 h-5 text-brand" />
             <span className="font-bold text-sm text-white">RULES OF ENGAGEMENT</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-heading font-black text-brand mb-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-heading font-black text-brand mb-3 font-display"
+              style={{ textShadow: '0 0 30px rgba(255, 107, 53, 0.4)' }}>
             HACKDAY RULES
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto">
@@ -377,7 +385,8 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
 
         {/* General Rules */}
         <div className="mb-10">
-          <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"
+              style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.3)' }}>
             <AlertTriangle className="w-5 h-5 text-brand" />
             General Rules (All Teams)
           </h2>
@@ -387,11 +396,12 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               return (
                 <div
                   key={index}
-                  className="p-4 bg-arena-card border border-arena-border rounded-card hover:border-brand/50 transition-colors"
+                  className="glass-card human-glow p-4 rounded-card 
+                             hover:border-brand/30 hover:-translate-y-1 transition-all duration-300"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-arena-elevated flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-text-secondary" />
+                    <div className="w-10 h-10 rounded-lg bg-brand/20 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-5 h-5 text-brand" />
                     </div>
                     <div>
                       <div className="font-bold text-white">{rule.title}</div>
@@ -412,17 +422,22 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
 
         {/* Bottom CTA */}
         <div className="mt-10 text-center">
-          <div className="inline-block p-6 bg-arena-card border border-arena-border rounded-card">
-            <h3 className="text-lg font-bold text-white mb-2">
+          <div className="glass-card inline-block p-6 rounded-card">
+            <h3 className="text-lg font-bold text-white mb-2"
+                style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.3)' }}>
               Questions about the rules?
             </h3>
-            <p className="text-sm text-text-secondary mb-4">
+            <p className="text-sm text-gray-300 mb-4">
               Reach out to the organizers on Slack or check the FAQ section.
             </p>
             <button
               type="button"
               onClick={() => onNavigate('dashboard')}
-              className="px-6 py-2 bg-brand text-white font-bold text-sm rounded-card hover:bg-brand/90 hover:shadow-glow-brand transition-all"
+              className="px-6 py-3 font-bold text-sm text-white rounded-lg
+                         bg-gradient-to-r from-[#FF8A50] to-[#FF4500]
+                         hover:from-[#FF9966] hover:to-[#FF5722]
+                         hover:-translate-y-0.5 transition-all shadow-lg
+                         hover:shadow-[0_8px_30px_rgba(255,107,53,0.3)]"
             >
               Back to Dashboard
             </button>
