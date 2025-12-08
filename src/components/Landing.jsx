@@ -125,7 +125,13 @@ function Landing({ onNavigate }) {
 
       {/* ============================================
           DESKTOP HERO FIGURES - Hidden on mobile
-          Capped positioning for ultra-wide screens
+          Responsive positioning with ultra-wide support
+          
+          Breakpoint strategy:
+          - md (768-1023px): Heads peek in from edges
+          - lg (1024-1279px): More visible, partially overlapping
+          - xl (1280-1535px): Optimal positioning
+          - 2xl (1536px+): Capped to prevent heads crowding center
           ============================================ */}
       
       {/* AI Figure - Left Side */}
@@ -144,11 +150,7 @@ function Landing({ onNavigate }) {
           scale: { duration: 0.5, ease: "easeOut" },
           filter: { duration: 0.5, ease: "easeOut" }
         }}
-        className="hidden md:block absolute top-[28%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
-        style={{
-          left: 'clamp(-350px, calc(50% - 750px), -5%)',
-          maxWidth: 'min(45vw, 600px)'
-        }}
+        className="hidden md:block absolute top-[28%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse hero-figure-left"
       >
         <img
           src="/promo/ai_transparent.png"
@@ -176,11 +178,7 @@ function Landing({ onNavigate }) {
           scale: { duration: 0.5, ease: "easeOut" },
           filter: { duration: 0.5, ease: "easeOut" }
         }}
-        className="hidden md:block absolute top-[28%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
-        style={{
-          right: 'clamp(-350px, calc(50% - 750px), -5%)',
-          maxWidth: 'min(45vw, 600px)'
-        }}
+        className="hidden md:block absolute top-[28%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse hero-figure-right"
       >
         <img
           src="/promo/human_transparent.png"
@@ -253,57 +251,74 @@ function Landing({ onNavigate }) {
       </header>
 
       {/* Hero */}
-      <main className="relative z-20 flex items-start justify-center px-4 sm:px-6 -mt-6 pb-4">
-        <Container size="md" padding="none">
-          <VStack align="center" gap="6">
-            {/* VS Badge */}
-            <HStack gap="4" align="center" className="sm:gap-8">
-              <HStack gap="2" align="center" className="text-ai sm:gap-3">
-                <Cpu className="w-8 sm:w-12 h-8 sm:h-12" style={{ filter: 'drop-shadow(0 0 12px rgba(0, 212, 255, 0.5))' }} />
-                <span className="text-xl sm:text-3xl font-mono font-bold">AI</span>
+      <main className="landing-main relative z-20 flex items-start justify-center px-4 sm:px-6 -mt-6 pb-4">
+        <Container size="md" padding="none" className="landing-container">
+          <VStack align="center" gap="6" className="landing-hero-content">
+            
+            {/* ==========================================
+                ZONE A: THE HEADER (Top ~40%)
+                VS Badge + Headline + Subhead grouped
+                ========================================== */}
+            <div className="landing-zone-header flex flex-col items-center">
+              {/* VS Badge */}
+              <HStack gap="4" align="center" className="sm:gap-8 landing-vs-badge">
+                <HStack gap="2" align="center" className="text-ai sm:gap-3">
+                  <Cpu className="w-8 sm:w-12 h-8 sm:h-12" style={{ filter: 'drop-shadow(0 0 12px rgba(0, 212, 255, 0.5))' }} />
+                  <span className="text-xl sm:text-3xl font-mono font-bold">AI</span>
+                </HStack>
+                
+                <div className="w-12 sm:w-20 h-12 sm:h-20 rounded-full border-2 sm:border-4 border-brand flex items-center justify-center bg-arena-black/50 backdrop-blur-sm"
+                     style={{ boxShadow: '0 0 20px rgba(255, 87, 34, 0.3)' }}>
+                  <span className="text-base sm:text-2xl font-black text-brand">VS</span>
+                </div>
+                
+                <HStack gap="2" align="center" className="text-human sm:gap-3">
+                  <span className="text-xl sm:text-3xl font-bold">HUMAN</span>
+                  <Heart className="w-8 sm:w-12 h-8 sm:h-12" style={{ filter: 'drop-shadow(0 0 12px rgba(255, 69, 0, 0.5))' }} />
+                </HStack>
               </HStack>
-              
-              <div className="w-12 sm:w-20 h-12 sm:h-20 rounded-full border-2 sm:border-4 border-brand flex items-center justify-center bg-arena-black/50 backdrop-blur-sm"
-                   style={{ boxShadow: '0 0 20px rgba(255, 87, 34, 0.3)' }}>
-                <span className="text-base sm:text-2xl font-black text-brand">VS</span>
-              </div>
-              
-              <HStack gap="2" align="center" className="text-human sm:gap-3">
-                <span className="text-xl sm:text-3xl font-bold">HUMAN</span>
-                <Heart className="w-8 sm:w-12 h-8 sm:h-12" style={{ filter: 'drop-shadow(0 0 12px rgba(255, 69, 0, 0.5))' }} />
-              </HStack>
-            </HStack>
 
-            {/* Title */}
-            <VStack align="center" gap="2">
-              <h1 className="text-4xl sm:text-6xl md:text-8xl font-heading font-black text-white tracking-tight text-center">
-                THE WAR IS ON
-              </h1>
-              <p className="text-lg sm:text-2xl text-text-secondary text-center max-w-lg mt-6">
-                Choose your side. Build your team.<br />Make awesome together
-              </p>
-              <p className="text-sm text-text-muted text-center font-mono">
-                Adaptavist HackDay 2026 — Where allegiances are tested
-              </p>
-            </VStack>
+              {/* Title */}
+              <VStack align="center" gap="2" className="landing-title-group mt-4">
+                <h1 className="landing-title text-4xl sm:text-6xl md:text-8xl font-heading font-black text-white tracking-tight text-center">
+                  THE WAR IS ON
+                </h1>
+                <p className="landing-subhead text-lg sm:text-2xl text-text-secondary text-center max-w-lg mt-6">
+                  Choose your side. Build your team.<br />Make awesome together
+                </p>
+                <p className="landing-tagline text-sm text-text-muted text-center font-mono">
+                  Adaptavist HackDay 2026 — Where allegiances are tested
+                </p>
+              </VStack>
+            </div>
 
-            {/* CTA - with hover tracking for figure interaction */}
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => onNavigate('login')}
-              onMouseEnter={() => setButtonHover(true)}
-              onMouseLeave={() => setButtonHover(false)}
-              className="relative group px-10 sm:px-14 py-4 text-lg font-black uppercase tracking-wide mt-8"
-            >
-              <span className="relative z-10">ENTER THE ARENA</span>
-              {/* Hover gradient overlay */}
-              <div className="absolute inset-0 bg-gradient-to-r from-ai/20 to-human/20 
-                              opacity-0 group-hover:opacity-100 transition-opacity rounded-card" />
-            </Button>
+            {/* ==========================================
+                ZONE B: THE ACTION (Middle ~20%)
+                Button isolated with massive spacing
+                ========================================== */}
+            <div className="landing-zone-action flex items-center justify-center">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => onNavigate('login')}
+                onMouseEnter={() => setButtonHover(true)}
+                onMouseLeave={() => setButtonHover(false)}
+                className="landing-cta relative group px-10 sm:px-14 py-4 text-lg font-black uppercase tracking-wide"
+              >
+                <span className="relative z-10">ENTER THE ARENA</span>
+                {/* Hover gradient overlay */}
+                <div className="absolute inset-0 bg-gradient-to-r from-ai/20 to-human/20 
+                                opacity-0 group-hover:opacity-100 transition-opacity rounded-card" />
+              </Button>
+            </div>
 
-            {/* Stats */}
-            <HStack gap="4" className="sm:gap-8 mt-6">
+            {/* ==========================================
+                ZONE C: THE FOOTER (Bottom ~30%)
+                Stats + Recruitment anchored at bottom
+                ========================================== */}
+            <div className="landing-zone-footer flex flex-col items-center">
+              {/* Stats */}
+              <HStack gap="4" className="landing-stats sm:gap-8">
               <Card 
                 variant="outlined" 
                 padding="sm" 
@@ -331,7 +346,7 @@ function Landing({ onNavigate }) {
             </HStack>
 
             {/* Team Recruitment Teaser - with hover tracking for figure interaction */}
-            <div className="w-full max-w-md">
+            <div className="w-full max-w-md landing-recruitment">
               <div className="text-center mb-3">
                 <span className="text-xs text-text-muted uppercase tracking-widest font-mono">
                   Current Recruitment
@@ -377,6 +392,8 @@ function Landing({ onNavigate }) {
                   52% Human
                 </span>
               </div>
+            </div>
+            {/* End Zone C: Footer */}
             </div>
           </VStack>
         </Container>

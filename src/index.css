@@ -824,6 +824,334 @@
 }
 
 /* =============================================================================
+   HERO FIGURES - Responsive Positioning for Landing Page
+   Designed to work across all screen sizes without breaking middle resolutions
+   ============================================================================= */
+
+/* Base styles for hero figures (md and up - 768px+) */
+.hero-figure-left,
+.hero-figure-right {
+  max-width: min(45vw, 550px);
+  transition: left 0.3s ease, right 0.3s ease;
+}
+
+/* md breakpoint (768px - 1023px): Heads peek from edges */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .hero-figure-left {
+    left: -30%;
+    max-width: 45vw;
+  }
+  .hero-figure-right {
+    right: -30%;
+    max-width: 45vw;
+  }
+}
+
+/* lg breakpoint (1024px - 1279px): More visible */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .hero-figure-left {
+    left: -20%;
+    max-width: 42vw;
+  }
+  .hero-figure-right {
+    right: -20%;
+    max-width: 42vw;
+  }
+}
+
+/* xl breakpoint (1280px - 1535px): Optimal positioning */
+@media (min-width: 1280px) and (max-width: 1535px) {
+  .hero-figure-left {
+    left: -12%;
+    max-width: 38vw;
+  }
+  .hero-figure-right {
+    right: -12%;
+    max-width: 38vw;
+  }
+}
+
+/* 2xl breakpoint (1536px - 1919px): Heads anchored to bottom */
+@media (min-width: 1536px) and (max-width: 1919px) {
+  .hero-figure-left {
+    left: -8%;
+  }
+  .hero-figure-right {
+    right: -8%;
+  }
+  
+  /* Anchor heads to bottom */
+  .hero-figure-left,
+  .hero-figure-right {
+    top: auto !important;
+    bottom: 0 !important;
+    transform: none !important;
+    height: 85vh;
+    max-width: 500px;
+  }
+  
+  .hero-figure-left img,
+  .hero-figure-right img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    object-position: bottom;
+  }
+}
+
+/* =============================================================================
+   LARGE DESKTOP POLISH (1440px+) - Shifted visual center upwards
+   ============================================================================= */
+
+@media (min-width: 1440px) {
+  /* Header - tighter grouping */
+  .landing-title-group {
+    gap: 0.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+  
+  .landing-title {
+    margin-bottom: 0 !important;
+  }
+  
+  .landing-subhead {
+    margin-top: 0.5rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .landing-tagline {
+    margin-top: 0.25rem !important;
+  }
+  
+  /* CTA - tighter lockup to subhead */
+  .landing-cta {
+    margin-top: 1.5rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  /* Stats - more breathing room */
+  .landing-stats {
+    margin-top: 3rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Recruitment bar - anchored */
+  .landing-recruitment {
+    margin-bottom: 30px;
+  }
+}
+
+/* Ultra-wide (1920px - 2559px): Heads anchored to bottom */
+@media (min-width: 1920px) and (max-width: 2559px) {
+  .hero-figure-left {
+    left: max(-5%, calc(50% - 1000px));
+  }
+  .hero-figure-right {
+    right: max(-5%, calc(50% - 1000px));
+  }
+  
+  /* Anchor heads to bottom - bottom of image level with screen bottom */
+  .hero-figure-left,
+  .hero-figure-right {
+    top: auto !important;
+    bottom: 0 !important;
+    transform: none !important;
+    height: 90vh;
+    max-width: none;
+  }
+  
+  .hero-figure-left img,
+  .hero-figure-right img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    object-position: bottom;
+  }
+  
+  /* Header - tighter grouping */
+  .landing-title-group {
+    gap: 0.5rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  /* CTA - tighter lockup to subhead */
+  .landing-cta {
+    margin-top: 2rem !important;
+  }
+  
+  /* Stats - breathing room */
+  .landing-stats {
+    margin-top: 4rem !important;
+    margin-bottom: 1.5rem !important;
+  }
+  
+  /* Recruitment anchored */
+  .landing-recruitment {
+    margin-bottom: 40px;
+  }
+}
+
+/* Super ultra-wide (2560px+): ANCHORED LAYOUT STRATEGY */
+@media (min-width: 2560px) {
+  /* =========================================
+     BACKGROUND FIGURES
+     Bottom of image level with bottom of screen
+     Heads shifted upwards with increased height
+     ========================================= */
+  .hero-figure-left,
+  .hero-figure-right {
+    top: auto;
+    bottom: 0;              /* Anchor to bottom of screen */
+    transform: none;
+    height: 105vh;          /* Increased height - pushes heads UP */
+    max-width: none;
+  }
+  
+  .hero-figure-left img,
+  .hero-figure-right img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+    object-position: bottom; /* Align image bottom to container bottom */
+  }
+  
+  .hero-figure-left {
+    left: calc(50% - 1650px);
+  }
+  .hero-figure-right {
+    right: calc(50% - 1650px);
+  }
+  
+  /* =========================================
+     1. THE CANVAS (Main Container)
+     h-screen + flex-col + items-center + justify-start
+     ========================================= */
+  .landing-main {
+    min-height: 100vh !important;
+    height: 100vh !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  .landing-container {
+    height: 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .landing-hero-content {
+    min-height: calc(100vh - 60px) !important;
+    height: calc(100vh - 60px) !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;       /* Perfect horizontal centering */
+    justify-content: flex-start !important; /* Manual spacing with margins */
+    gap: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* =========================================
+     2. HEADER ZONE (Headline + Subhead)
+     Optical center in TOP 40% of viewport
+     ========================================= */
+  .landing-zone-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding-top: 8vh; /* Shifted UP - optical center in top 40% */
+    padding-bottom: 0;
+  }
+  
+  .landing-vs-badge {
+    margin-bottom: 0.75rem !important;
+  }
+  
+  .landing-title-group {
+    gap: 0.75rem !important; /* Tighter grouping */
+    margin-top: 0.25rem !important;
+    text-align: center;
+  }
+  
+  .landing-title {
+    font-size: 8rem !important;
+    white-space: nowrap;
+    margin-bottom: 0 !important;
+    text-align: center;
+  }
+  
+  .landing-subhead {
+    margin-top: 0.75rem !important; /* Tighter spacing */
+    text-align: center;
+  }
+  
+  .landing-tagline {
+    margin-top: 0.25rem !important;
+    text-align: center;
+  }
+  
+  /* =========================================
+     3. ACTION ZONE (Button)
+     TIGHTER LOCKUP - closer to subhead
+     Protected above the fold
+     ========================================= */
+  .landing-zone-action {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 2rem !important; /* TIGHTER - closer to subhead */
+  }
+  
+  .landing-cta {
+    margin: 0 !important;
+  }
+  
+  /* =========================================
+     4. FOOTER ZONE (Stats + Recruitment)
+     BREATHING ROOM from hero content
+     Anchored at bottom with generous spacing
+     ========================================= */
+  .landing-zone-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    width: 100%;
+    margin-top: auto !important; /* GRAVITY - pushes to bottom */
+    padding-top: 6rem;           /* BREATHING ROOM from hero */
+    padding-bottom: 4rem;        /* Off the bezel */
+    gap: 2rem;                   /* Internal spacing */
+  }
+  
+  .landing-stats {
+    margin-bottom: 0 !important;
+  }
+  
+  .landing-recruitment {
+    margin: 0 !important;
+  }
+}
+
+/* 4K and beyond (3840px+): Even larger heads, more spacing */
+@media (min-width: 3840px) {
+  .hero-figure-left,
+  .hero-figure-right {
+    height: 98vh; /* Nearly full height for 4K */
+  }
+  
+  .hero-figure-left {
+    left: calc(50% - 2100px);
+  }
+  .hero-figure-right {
+    right: calc(50% - 2100px);
+  }
+}
+
+/* =============================================================================
    SCHEDULE TIMELINE - Animated Glowing Line
    ============================================================================= */
 
