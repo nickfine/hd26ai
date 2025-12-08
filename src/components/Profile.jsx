@@ -93,8 +93,8 @@ function AvatarPickerModal({
             className={cn(
               'flex-1 py-2 px-4 text-sm font-bold rounded-xl border-2 transition-all',
               activeTab === 'human'
-                ? 'border-green-500 bg-green-50 text-green-700'
-                : 'border-gray-200 text-gray-500 hover:border-green-300'
+                ? 'border-human bg-human-10 text-human'
+                : 'border-arena-border text-arena-muted hover:border-human/50'
             )}
           >
             <Heart className="w-4 h-4 inline mr-2" />
@@ -106,8 +106,8 @@ function AvatarPickerModal({
             className={cn(
               'flex-1 py-2 px-4 text-sm font-bold border-2 transition-all',
               activeTab === 'ai'
-                ? 'border-cyan-500 bg-cyan-50 text-cyan-700 border-dashed'
-                : 'border-gray-200 text-gray-500 hover:border-cyan-300'
+                ? 'border-ai bg-ai-10 text-ai border-dashed'
+                : 'border-arena-border text-arena-muted hover:border-ai/50'
             )}
           >
             <Cpu className="w-4 h-4 inline mr-2" />
@@ -127,16 +127,16 @@ function AvatarPickerModal({
               'relative aspect-square rounded-lg overflow-hidden border-3 transition-all hover:scale-105',
               selectedAvatar === avatar.src
                 ? activeTab === 'ai'
-                  ? 'border-cyan-500 ring-2 ring-cyan-200 border-dashed'
-                  : 'border-green-500 ring-2 ring-green-200'
-                : 'border-gray-200 hover:border-gray-400'
+                  ? 'border-ai ring-2 ring-ai/30 border-dashed'
+                  : 'border-human ring-2 ring-human/30'
+                : 'border-arena-border hover:border-arena-secondary'
             )}
           >
             {/* Avatar Image */}
             <div 
               className={cn(
                 'w-full h-full flex items-center justify-center',
-                activeTab === 'ai' ? 'bg-cyan-50' : 'bg-green-50'
+                activeTab === 'ai' ? 'bg-ai-10' : 'bg-human-10'
               )}
             >
               <img
@@ -157,7 +157,7 @@ function AvatarPickerModal({
                 <User 
                   className={cn(
                     'w-8 h-8',
-                    activeTab === 'ai' ? 'text-cyan-300' : 'text-green-300'
+                    activeTab === 'ai' ? 'text-ai/50' : 'text-human/50'
                   )} 
                 />
               </div>
@@ -168,7 +168,7 @@ function AvatarPickerModal({
               <div 
                 className={cn(
                   'absolute top-1 right-1 w-5 h-5 rounded-full flex items-center justify-center',
-                  activeTab === 'ai' ? 'bg-cyan-500' : 'bg-green-500'
+                  activeTab === 'ai' ? 'bg-ai' : 'bg-human'
                 )}
               >
                 <Check className="w-3 h-3 text-white" />
@@ -180,7 +180,7 @@ function AvatarPickerModal({
 
       {/* Empty state if no avatars */}
       {avatarsToShow.length === 0 && (
-        <div className="text-center py-8 text-gray-400">
+        <div className="text-center py-8 text-arena-muted">
           <User className="w-12 h-12 mx-auto mb-2 opacity-50" />
           <p className="text-sm">No avatars available yet</p>
           <p className="text-xs mt-1">Check back soon!</p>
@@ -193,7 +193,7 @@ function AvatarPickerModal({
           <Button
             variant="ghost"
             onClick={handleClear}
-            className="mr-auto text-gray-500"
+            className="mr-auto text-arena-muted hover:text-human"
           >
             Remove Avatar
           </Button>
@@ -409,9 +409,9 @@ function Profile({
       <div className="p-4 sm:p-6">
         {/* Captain Alert Banner */}
         {isCaptain && pendingRequestCount > 0 && (
-          <div className="bg-amber-50 border-2 border-amber-300 px-4 py-3 mb-6">
+          <div className="bg-human-10 border-2 border-human/50 px-4 py-3 mb-6 rounded-lg">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3 text-amber-700">
+              <div className="flex items-center gap-3 text-human">
                 <Bell className="w-5 h-5 flex-shrink-0" />
                 <span className="font-bold text-sm sm:text-base">
                   You have {pendingRequestCount} pending application{pendingRequestCount > 1 ? 's' : ''} to review
@@ -420,7 +420,7 @@ function Profile({
               <button
                 type="button"
                 onClick={() => onNavigateToTeam(userTeam.id)}
-                className="w-full sm:w-auto px-4 py-2 bg-amber-500 text-white font-bold text-sm rounded hover:bg-amber-600 transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-4 py-2 bg-human text-white font-bold text-sm rounded hover:bg-human/80 transition-colors flex items-center justify-center gap-2"
               >
                 Review Applications
                 <ChevronRight className="w-4 h-4" />
@@ -429,41 +429,45 @@ function Profile({
           </div>
         )}
 
-        <h1 className="text-xl sm:text-2xl font-black text-gray-900 mb-6">YOUR PROFILE</h1>
+        <h1 className="text-xl sm:text-2xl font-black text-brand mb-6">YOUR PROFILE</h1>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Left Column - Unified Identity Card */}
           <div className="lg:col-span-1">
             <div
-              className={`bg-white p-6 border-2 ${allegianceStyle.borderRadius}`}
+              className={`bg-arena-card p-6 border-2 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
-              {/* Name with Live Callsign Preview - At Top */}
+              {/* Name, Callsign, and Role - Stacked */}
               <div className="text-center mb-5">
-                <div className="text-lg sm:text-xl font-bold text-gray-900 flex items-center justify-center gap-2 flex-wrap">
-                  {typeof formattedName === 'string' ? (
-                    <span>{formattedName}</span>
-                  ) : (
-                    <>
-                      <span>{formattedName.firstName}</span>
-                      <span
-                        className={`px-2 py-0.5 text-sm font-bold rounded-full border
-                          ${user?.allegiance === 'ai' 
-                            ? 'border-cyan-500 text-cyan-700 bg-cyan-50' 
-                            : user?.allegiance === 'human' 
-                              ? 'border-green-500 text-green-700 bg-green-50' 
-                              : 'border-gray-400 text-gray-600 bg-gray-50'}`}
-                      >
-                        {formattedName.callsign}
-                      </span>
-                      <span>{formattedName.lastName}</span>
-                    </>
-                  )}
+                {/* Full Name */}
+                <div className="text-lg sm:text-xl font-bold text-white flex items-center justify-center gap-2">
+                  <span>{user?.name || 'Unknown'}</span>
                   {isCaptain && <Crown className="w-5 h-5 text-yellow-500 flex-shrink-0" />}
                 </div>
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wide">
-                  {isCaptain ? 'Team Captain' : userTeam ? 'Team Member' : 'Free Agent'}
-                </span>
+                
+                {/* Callsign - shown below name if exists */}
+                {displayCallsign && (
+                  <div className="mt-1">
+                    <span
+                      className={`inline-block px-3 py-1 text-sm font-bold rounded-full border
+                        ${user?.allegiance === 'ai' 
+                          ? 'border-ai/50 text-ai bg-ai-10' 
+                          : user?.allegiance === 'human' 
+                            ? 'border-human/50 text-human bg-human-10' 
+                            : 'border-arena-border text-text-secondary bg-arena-elevated'}`}
+                    >
+                      "{displayCallsign}"
+                    </span>
+                  </div>
+                )}
+                
+                {/* Role */}
+                <div className="mt-2">
+                  <span className="text-xs font-medium text-arena-secondary uppercase tracking-wide">
+                    {isCaptain ? 'Team Captain' : userTeam ? 'Team Member' : 'Free Agent'}
+                  </span>
+                </div>
               </div>
 
               {/* Avatar Section - Below Name */}
@@ -510,16 +514,17 @@ function Profile({
                     onChange={(e) => handleCallsignChange(e.target.value)}
                     placeholder="Enter your callsign"
                     maxLength={20}
-                    className={`w-full px-3 py-2 border-2 focus:outline-none text-sm transition-colors
+                    className={`w-full px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted 
+                      focus:outline-none text-sm transition-colors rounded
                       ${callsignError 
-                        ? 'border-red-300 focus:border-red-500' 
-                        : 'border-gray-200 focus:border-gray-900'}`}
+                        ? 'border-human focus:border-human' 
+                        : 'border-arena-border focus:border-brand'}`}
                   />
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs ${callsignError ? 'text-red-500' : 'text-gray-400'}`}>
+                    <span className={`text-xs ${callsignError ? 'text-human' : 'text-arena-muted'}`}>
                       {callsignError || 'Letters, numbers, spaces'}
                     </span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-arena-muted">
                       {callsign.length}/20
                     </span>
                   </div>
@@ -527,7 +532,7 @@ function Profile({
                     <button
                       type="button"
                       onClick={handleCancelCallsign}
-                      className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors rounded"
+                      className="px-3 py-1.5 text-sm font-medium text-arena-secondary bg-arena-elevated hover:bg-arena-border transition-colors rounded"
                     >
                       Cancel
                     </button>
@@ -553,7 +558,7 @@ function Profile({
                   >
                     {user?.avatar ? 'Change avatar' : 'Choose avatar'}
                   </button>
-                  <span className="text-gray-300">|</span>
+                  <span className="text-arena-border">|</span>
                   <button
                     type="button"
                     onClick={() => setIsEditingCallsign(true)}
@@ -568,10 +573,10 @@ function Profile({
 
             {/* Allegiance Card */}
             <div
-              className={`bg-white p-6 border-2 mt-4 ${allegianceStyle.borderRadius}`}
+              className={`bg-arena-card p-6 border-2 mt-4 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
-              <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-4">
+              <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-4">
                 Your Allegiance
               </div>
 
@@ -582,31 +587,31 @@ function Profile({
                     <div
                       className={`flex-1 max-w-[120px] p-3 border-2 text-center
                         ${user?.allegiance === 'human'
-                          ? 'border-green-500 bg-green-50 rounded-xl'
+                          ? 'border-human bg-human-10 rounded-xl'
                           : user?.allegiance === 'ai'
-                            ? 'border-cyan-500 bg-cyan-50 border-dashed'
-                            : 'border-gray-200 rounded-lg'}`}
+                            ? 'border-ai bg-ai-10 border-dashed'
+                            : 'border-arena-border bg-arena-elevated rounded-lg'}`}
                     >
                       {user?.allegiance === 'human' ? (
-                        <Heart className="w-6 h-6 mx-auto mb-1 text-green-600" />
+                        <Heart className="w-6 h-6 mx-auto mb-1 text-human" />
                       ) : user?.allegiance === 'ai' ? (
-                        <Cpu className="w-6 h-6 mx-auto mb-1 text-cyan-600" />
+                        <Cpu className="w-6 h-6 mx-auto mb-1 text-ai" />
                       ) : (
-                        <Scale className="w-6 h-6 mx-auto mb-1 text-gray-400" />
+                        <Scale className="w-6 h-6 mx-auto mb-1 text-arena-muted" />
                       )}
                       <div
                         className={`text-xs font-bold
                           ${user?.allegiance === 'human'
-                            ? 'text-green-600'
+                            ? 'text-human'
                             : user?.allegiance === 'ai'
-                              ? 'text-cyan-600 font-mono'
-                              : 'text-gray-400'}`}
+                              ? 'text-ai font-mono'
+                              : 'text-arena-muted'}`}
                       >
                         {user?.allegiance === 'human' ? 'Human' : user?.allegiance === 'ai' ? 'AI' : 'Neutral'}
                       </div>
                     </div>
                   </div>
-                  <p className="text-xs text-gray-400 italic">
+                  <p className="text-xs text-arena-muted italic">
                     Inherited from your team
                   </p>
                 </div>
@@ -619,11 +624,11 @@ function Profile({
                       onClick={() => updateUser({ allegiance: 'human' })}
                       className={`flex-1 p-3 border-2 rounded-xl text-center transition-all hover:scale-105
                         ${user?.allegiance === 'human'
-                          ? 'border-green-500 bg-green-50'
-                          : 'border-gray-200 hover:border-green-300'}`}
+                          ? 'border-human bg-human-10'
+                          : 'border-arena-border hover:border-human/50'}`}
                     >
-                      <Heart className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'human' ? 'text-green-600' : 'text-gray-300'}`} />
-                      <div className={`text-xs font-bold ${user?.allegiance === 'human' ? 'text-green-600' : 'text-gray-400'}`}>
+                      <Heart className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'human' ? 'text-human' : 'text-arena-muted'}`} />
+                      <div className={`text-xs font-bold ${user?.allegiance === 'human' ? 'text-human' : 'text-arena-muted'}`}>
                         Human
                       </div>
                     </button>
@@ -632,16 +637,16 @@ function Profile({
                       onClick={() => updateUser({ allegiance: 'ai' })}
                       className={`flex-1 p-3 border-2 text-center transition-all hover:scale-105
                         ${user?.allegiance === 'ai'
-                          ? 'border-cyan-500 bg-cyan-50 border-dashed'
-                          : 'border-gray-200 hover:border-cyan-300'}`}
+                          ? 'border-ai bg-ai-10 border-dashed'
+                          : 'border-arena-border hover:border-ai/50'}`}
                     >
-                      <Cpu className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-300'}`} />
-                      <div className={`text-xs font-bold font-mono ${user?.allegiance === 'ai' ? 'text-cyan-600' : 'text-gray-400'}`}>
+                      <Cpu className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'}`} />
+                      <div className={`text-xs font-bold font-mono ${user?.allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'}`}>
                         AI
                       </div>
                     </button>
                   </div>
-                  <p className="text-xs text-gray-400 text-center">
+                  <p className="text-xs text-arena-muted text-center">
                     Choose your side before joining a team
                   </p>
                 </div>
@@ -653,11 +658,11 @@ function Profile({
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Bio Section */}
             <div
-              className={`bg-white p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
+              className={`bg-arena-card p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
               <div className="flex items-center justify-between mb-4">
-                <div className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
                   What I'm Looking For in HackDay
                 </div>
                 {!isEditingBio && (
@@ -682,8 +687,8 @@ function Profile({
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     placeholder="Tell everyone what you're hoping to learn, build, or achieve during HackDay..."
-                    className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none
-                               text-sm resize-none transition-colors"
+                    className="w-full p-3 border-2 border-arena-border bg-arena-black text-white placeholder-arena-muted
+                               focus:border-brand focus:outline-none text-sm resize-none transition-colors"
                     rows={4}
                   />
                   <div className="flex gap-2 justify-end">
@@ -693,14 +698,14 @@ function Profile({
                         setBio(user?.bio || '');
                         setIsEditingBio(false);
                       }}
-                      className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-arena-secondary bg-arena-elevated hover:bg-arena-border transition-colors rounded"
                     >
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSaveBio}
-                      className="px-4 py-2 text-sm font-medium text-white transition-colors"
+                      className="px-4 py-2 text-sm font-medium text-white transition-colors rounded"
                       style={{ backgroundColor: allegianceStyle.color }}
                     >
                       Save
@@ -708,9 +713,9 @@ function Profile({
                   </div>
                 </div>
               ) : (
-                <p className="text-gray-700 text-sm sm:text-base">
+                <p className="text-white text-sm sm:text-base">
                   {user?.bio || (
-                    <span className="text-gray-400 italic">
+                    <span className="text-arena-muted italic">
                       Click Edit to share what you're looking for in HackDay...
                     </span>
                   )}
@@ -720,15 +725,15 @@ function Profile({
 
             {/* Skills Section */}
             <div
-              className={`bg-white p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
+              className={`bg-arena-card p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
               style={{ borderColor: allegianceStyle.borderColor }}
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                  <span className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
                     Your Skills
                   </span>
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-arena-muted">
                     ({(isEditingSkills ? selectedSkills : user?.skills)?.length || 0}/{MAX_SKILLS})
                   </span>
                 </div>
@@ -756,13 +761,13 @@ function Profile({
                       {selectedSkills.map((skill) => (
                         <span
                           key={skill}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-gray-900 text-white rounded"
+                          className="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium bg-brand text-white rounded"
                         >
                           {skill}
                           <button
                             type="button"
                             onClick={() => removeSkill(skill)}
-                            className="ml-1 hover:bg-gray-700 rounded-full p-0.5"
+                            className="ml-1 hover:bg-brand/80 rounded-full p-0.5"
                           >
                             <X className="w-3 h-3" />
                           </button>
@@ -773,7 +778,7 @@ function Profile({
 
                   {/* Predefined Skills Grid */}
                   <div>
-                    <p className="text-xs text-gray-500 mb-2">
+                    <p className="text-xs text-arena-secondary mb-2">
                       Suggested skills (click to add)
                     </p>
                     <div className="flex flex-wrap gap-2">
@@ -785,8 +790,8 @@ function Profile({
                           disabled={selectedSkills.length >= MAX_SKILLS}
                           className={`px-3 py-1.5 text-sm border-2 transition-all rounded
                             ${selectedSkills.length >= MAX_SKILLS
-                              ? 'border-gray-100 text-gray-300 cursor-not-allowed'
-                              : 'border-gray-200 text-gray-700 hover:border-gray-400'
+                              ? 'border-arena-border text-arena-muted cursor-not-allowed'
+                              : 'border-arena-border text-arena-secondary hover:border-brand hover:text-brand'
                             }`}
                         >
                           <span className="flex items-center gap-1">
@@ -800,7 +805,7 @@ function Profile({
 
                   {/* Custom Skill Input */}
                   <div>
-                    <p className="text-xs text-gray-500 mb-2">
+                    <p className="text-xs text-arena-secondary mb-2">
                       Or add your own
                     </p>
                     <div className="flex gap-2">
@@ -815,11 +820,12 @@ function Profile({
                         placeholder="Type a skill and press Enter"
                         maxLength={30}
                         disabled={selectedSkills.length >= MAX_SKILLS}
-                        className={`flex-1 px-3 py-2 border-2 focus:outline-none text-sm transition-colors rounded
+                        className={`flex-1 px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted 
+                          focus:outline-none text-sm transition-colors rounded
                           ${customSkillError 
-                            ? 'border-red-300 focus:border-red-500' 
-                            : 'border-gray-200 focus:border-gray-900'}
-                          ${selectedSkills.length >= MAX_SKILLS ? 'bg-gray-50 cursor-not-allowed' : ''}`}
+                            ? 'border-human focus:border-human' 
+                            : 'border-arena-border focus:border-brand'}
+                          ${selectedSkills.length >= MAX_SKILLS ? 'opacity-50 cursor-not-allowed' : ''}`}
                       />
                       <button
                         type="button"
@@ -832,15 +838,15 @@ function Profile({
                       </button>
                     </div>
                     {customSkillError && (
-                      <p className="text-xs text-red-500 mt-1">{customSkillError}</p>
+                      <p className="text-xs text-human mt-1">{customSkillError}</p>
                     )}
                   </div>
 
-                  <div className="flex gap-2 justify-end pt-2 border-t border-gray-100">
+                  <div className="flex gap-2 justify-end pt-2 border-t border-arena-border">
                     <button
                       type="button"
                       onClick={handleCancelSkills}
-                      className="px-4 py-2 text-sm font-medium text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors rounded"
+                      className="px-4 py-2 text-sm font-medium text-arena-secondary bg-arena-elevated hover:bg-arena-border transition-colors rounded"
                     >
                       Cancel
                     </button>
@@ -873,7 +879,7 @@ function Profile({
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-400 italic text-sm">
+                    <p className="text-arena-muted italic text-sm">
                       No skills added yet
                     </p>
                   )}
@@ -884,16 +890,16 @@ function Profile({
             {/* My Team Section */}
             {userTeam && (
               <div
-                className={`bg-white p-4 sm:p-6 border-2 ${teamConfig.borderRadius}
+                className={`bg-arena-card p-4 sm:p-6 border-2 ${teamConfig.borderRadius}
                            ${userTeam.side === 'ai' ? 'border-dashed' : ''}`}
                 style={{ borderColor: teamConfig.borderColor }}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <div className="text-xs font-bold uppercase tracking-wide text-gray-500">
+                  <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
                     My Team
                   </div>
                   {isCaptain && (
-                    <div className="flex items-center gap-1 px-2 py-1 bg-yellow-100 text-yellow-700 rounded-full">
+                    <div className="flex items-center gap-1 px-2 py-1 bg-yellow-500/20 border border-yellow-500 text-yellow-500 rounded-full">
                       <Crown className="w-3 h-3" />
                       <span className="text-xs font-bold">Captain</span>
                     </div>
@@ -914,7 +920,7 @@ function Profile({
                   
                   <div className="flex-1 min-w-0">
                     <h3
-                      className={`text-base sm:text-lg font-bold text-gray-900 ${
+                      className={`text-base sm:text-lg font-bold text-white ${
                         userTeam.side === 'ai' ? 'font-mono' : ''
                       }`}
                     >
@@ -927,14 +933,14 @@ function Profile({
                       {userTeam.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
                     </span>
                     
-                    <div className="flex items-center gap-2 mt-2 text-sm text-gray-500">
+                    <div className="flex items-center gap-2 mt-2 text-sm text-arena-secondary">
                       <Users className="w-4 h-4" />
                       <span>
                         {userTeam.members.length}/{userTeam.maxMembers} members
                       </span>
                     </div>
 
-                    <p className="text-sm text-gray-600 mt-2 line-clamp-2">{userTeam.description}</p>
+                    <p className="text-sm text-arena-secondary mt-2 line-clamp-2">{userTeam.description}</p>
                   </div>
                 </div>
 
@@ -955,13 +961,13 @@ function Profile({
                   <button
                     type="button"
                     onClick={() => setShowLeaveConfirm(true)}
-                    className="w-full mt-2 py-2 text-sm text-gray-500 hover:text-red-600 transition-colors"
+                    className="w-full mt-2 py-2 text-sm text-arena-muted hover:text-human transition-colors"
                   >
                     Leave Team
                   </button>
                 ) : (
-                  <div className="mt-3 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <p className="text-sm text-red-700 mb-3">
+                  <div className="mt-3 p-3 bg-human-10 border border-human/50 rounded-lg">
+                    <p className="text-sm text-human mb-3">
                       {isCaptain && userTeam.members.length > 1
                         ? 'As captain, leaving will transfer leadership to another member.'
                         : isCaptain
@@ -972,7 +978,7 @@ function Profile({
                       <button
                         type="button"
                         onClick={() => setShowLeaveConfirm(false)}
-                        className="flex-1 px-3 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                        className="flex-1 px-3 py-2 text-sm font-medium text-arena-secondary bg-arena-elevated border border-arena-border rounded hover:bg-arena-border transition-colors"
                       >
                         Cancel
                       </button>
@@ -982,7 +988,7 @@ function Profile({
                           onLeaveTeam(userTeam.id);
                           setShowLeaveConfirm(false);
                         }}
-                        className="flex-1 px-3 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 transition-colors"
+                        className="flex-1 px-3 py-2 text-sm font-medium text-white bg-human rounded hover:bg-human/80 transition-colors"
                       >
                         Leave Team
                       </button>
@@ -994,15 +1000,15 @@ function Profile({
 
             {/* No Team State */}
             {!userTeam && (
-              <div className="bg-white p-4 sm:p-6 border-2 border-gray-200 rounded-lg">
-                <div className="text-xs font-bold uppercase tracking-wide text-gray-500 mb-4">
+              <div className="bg-arena-card p-4 sm:p-6 border-2 border-arena-border rounded-lg">
+                <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-4">
                   My Team
                 </div>
                 
                 {/* Success Message */}
                 {autoAssignSuccess && (
-                  <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-                    <div className="flex items-center gap-2 text-green-700">
+                  <div className="mb-4 p-3 bg-ai-10 border border-ai/50 rounded-lg">
+                    <div className="flex items-center gap-2 text-ai">
                       <Check className="w-4 h-4" />
                       <span className="font-medium text-sm">{autoAssignSuccess}</span>
                     </div>
@@ -1011,8 +1017,8 @@ function Profile({
                 
                 {/* Error Message */}
                 {autoAssignError && (
-                  <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-                    <div className="flex items-center gap-2 text-red-700">
+                  <div className="mb-4 p-3 bg-human-10 border border-human/50 rounded-lg">
+                    <div className="flex items-center gap-2 text-human">
                       <X className="w-4 h-4" />
                       <span className="font-medium text-sm">{autoAssignError}</span>
                     </div>
@@ -1020,8 +1026,8 @@ function Profile({
                 )}
                 
                 <div className="text-center py-4">
-                  <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                  <p className="text-gray-500 mb-6">You're not on a team yet</p>
+                  <Users className="w-12 h-12 mx-auto mb-3 text-arena-muted" />
+                  <p className="text-arena-secondary mb-6">You're not on a team yet</p>
                   
                   {/* Auto-Assign Section */}
                   {user?.allegiance !== 'neutral' && onAutoAssign && (
@@ -1032,10 +1038,10 @@ function Profile({
                         disabled={isAutoAssigning}
                         className={`w-full py-3 font-bold text-sm transition-all flex items-center justify-center gap-2 rounded-lg
                           ${isAutoAssigning
-                            ? 'bg-gray-200 text-gray-500 cursor-wait'
+                            ? 'bg-arena-elevated text-arena-muted cursor-wait'
                             : user?.allegiance === 'ai'
-                              ? 'bg-cyan-600 text-white hover:bg-cyan-700'
-                              : 'bg-green-600 text-white hover:bg-green-700'
+                              ? 'bg-ai text-arena-black hover:bg-ai/80'
+                              : 'bg-human text-white hover:bg-human/80'
                           }`}
                       >
                         {isAutoAssigning ? (
@@ -1050,7 +1056,7 @@ function Profile({
                           </>
                         )}
                       </button>
-                      <p className="text-xs text-gray-400 mt-2">
+                      <p className="text-xs text-arena-muted mt-2">
                         Instantly join an existing team or start a new one
                       </p>
                     </div>
@@ -1058,12 +1064,12 @@ function Profile({
                   
                   {/* Neutral user needs to pick a side first */}
                   {user?.allegiance === 'neutral' && onAutoAssign && (
-                    <div className="mb-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-                      <div className="flex items-center gap-2 text-gray-600 mb-2">
-                        <Zap className="w-4 h-4 text-gray-400" />
+                    <div className="mb-4 p-3 bg-arena-elevated border border-arena-border rounded-lg">
+                      <div className="flex items-center gap-2 text-arena-secondary mb-2">
+                        <Zap className="w-4 h-4 text-brand" />
                         <span className="font-medium text-sm">Auto-Join Available</span>
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs text-arena-muted">
                         Choose Human or AI side above to enable quick team assignment
                       </p>
                     </div>
@@ -1072,17 +1078,17 @@ function Profile({
                   <div className="relative">
                     {user?.allegiance !== 'neutral' && onAutoAssign && (
                       <div className="flex items-center gap-3 mb-4">
-                        <div className="flex-1 h-px bg-gray-200" />
-                        <span className="text-xs text-gray-400 uppercase">or</span>
-                        <div className="flex-1 h-px bg-gray-200" />
+                        <div className="flex-1 h-px bg-arena-border" />
+                        <span className="text-xs text-arena-muted uppercase">or</span>
+                        <div className="flex-1 h-px bg-arena-border" />
                       </div>
                     )}
                     
                     <button
                       type="button"
                       onClick={() => onNavigate('marketplace')}
-                      className="px-6 py-2 bg-gray-900 text-white font-bold text-sm
-                                 hover:bg-gray-800 transition-colors"
+                      className="px-6 py-2 bg-brand text-white font-bold text-sm rounded
+                                 hover:bg-brand/80 transition-colors"
                     >
                       Browse Teams
                     </button>

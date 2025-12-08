@@ -23,7 +23,7 @@ import {
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
 import Card from './ui/Card';
-import Badge from './ui/Badge';
+import Badge, { CallsignBadge, HeartbeatDot } from './ui/Badge';
 import { HStack, VStack } from './layout';
 import { cn, getAllegianceConfig, formatNameWithCallsign } from '../lib/design-system';
 import { PROMO_IMAGES } from '../data/mockData';
@@ -233,44 +233,40 @@ function Dashboard({
           <Card variant="default" padding="md">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Live Activity</Card.Label>
-              <HStack gap="1" align="center" className="text-xs text-success">
-                <Activity className="w-3 h-3 animate-pulse" />
-                Live
+              <HStack gap="1.5" align="center" className="text-xs text-success">
+                <HeartbeatDot className="text-success" />
+                <span className="font-bold tracking-wider uppercase">Live</span>
               </HStack>
             </HStack>
-            <VStack gap="3" className="max-h-48 overflow-y-auto">
+            <VStack gap="0" className="max-h-48 overflow-y-auto">
               {MOCK_ACTIVITY_FEED.map((activity) => {
                 const config = getAllegianceConfig(activity.side);
                 const formatted = formatNameWithCallsign(activity.user, activity.callsign);
+                const borderColor = activity.side === 'ai' ? 'border-ai' : activity.side === 'human' ? 'border-human' : 'border-arena-border';
+                
                 return (
-                  <HStack key={activity.id} gap="3" align="start" className="text-sm">
-                    <div
-                      className={cn(
-                        'w-6 h-6 flex-shrink-0 flex items-center justify-center text-xs',
-                        activity.side === 'ai' ? 'rounded-ai' : 'rounded-full'
-                      )}
-                      style={{ backgroundColor: config.bgColor }}
-                    >
-                      {activity.side === 'ai' 
-                        ? <Cpu className="w-3 h-3" style={{ color: config.color }} />
-                        : <Heart className="w-3 h-3" style={{ color: config.color }} />
-                      }
-                    </div>
+                  <div 
+                    key={activity.id} 
+                    className={cn(
+                      'flex items-start gap-3 py-2.5 pl-3 border-l-2 text-sm',
+                      borderColor
+                    )}
+                  >
+                    {/* Team-colored pulsing dot */}
+                    <HeartbeatDot className={activity.side === 'ai' ? 'text-ai' : 'text-human'} />
+                    
                     <div className="flex-1 min-w-0">
                       <span className={cn(
-                        'font-bold text-white inline-flex items-center gap-1 flex-wrap',
+                        'font-bold text-white',
                         activity.side === 'ai' && 'font-mono'
                       )}>
                         {formatted.hasCallsign ? (
                           <>
                             {formatted.firstName}
-                            <Badge 
-                              variant={activity.side === 'ai' ? 'ai' : activity.side === 'human' ? 'human' : 'neutral'} 
-                              size="xs"
-                            >
+                            <CallsignBadge allegiance={activity.side}>
                               {formatted.callsign}
-                            </Badge>
-                            {formatted.lastName}
+                            </CallsignBadge>
+                            {formatted.lastName && ` ${formatted.lastName}`}
                           </>
                         ) : activity.user}
                       </span>
@@ -284,9 +280,9 @@ function Dashboard({
                           {activity.team}
                         </span>
                       )}
-                      <div className="text-xs text-arena-muted">{activity.time}</div>
+                      <div className="text-xs text-arena-muted mt-0.5">{activity.time}</div>
                     </div>
-                  </HStack>
+                  </div>
                 );
               })}
             </VStack>

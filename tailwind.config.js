@@ -7,10 +7,12 @@ export default {
   // Safelist dynamic classes that Tailwind JIT can't detect
   safelist: [
     'bg-human', 'bg-ai', 'bg-brand',
+    'bg-human-10', 'bg-human-20', 'bg-ai-10', 'bg-ai-20', 'bg-brand-20',
     'text-human', 'text-ai', 'text-brand',
     'border-human', 'border-ai', 'border-brand',
     'glow-human', 'glow-ai', 'glow-brand',
     'hover:glow-human', 'hover:glow-ai', 'hover:glow-brand',
+    'shadow-human-glow', 'shadow-ai-glow', 'shadow-brand-glow',
   ],
   theme: {
     extend: {
@@ -21,6 +23,12 @@ export default {
         // Brand - Adaptavist Orange
         brand: {
           DEFAULT: '#FF5722',
+          // Opacity tokens for capsule badges
+          10: '#FF57221A',   // 10% opacity
+          20: '#FF572233',   // 20% opacity
+          30: '#FF57224D',   // 30% opacity
+          60: '#FF572299',   // 60% opacity
+          // Standard scale
           50: '#FFF3E0',
           100: '#FFE0B2',
           200: '#FFCC80',
@@ -36,6 +44,11 @@ export default {
         // Team Human - Electric Coral
         human: {
           DEFAULT: '#FF2E63',
+          // Opacity tokens for capsule badges
+          10: '#FF2E631A',   // 10% opacity
+          20: '#FF2E6333',   // 20% opacity
+          30: '#FF2E634D',   // 30% opacity
+          // Standard scale
           50: '#FFF0F3',
           100: '#FFE0E6',
           200: '#FFC2D1',
@@ -52,6 +65,11 @@ export default {
         // Team AI - Electric Blue
         ai: {
           DEFAULT: '#00D4FF',
+          // Opacity tokens for capsule badges
+          10: '#00D4FF1A',   // 10% opacity
+          20: '#00D4FF33',   // 20% opacity
+          30: '#00D4FF4D',   // 30% opacity
+          // Standard scale
           50: '#E0F7FF',
           100: '#B3ECFF',
           200: '#80E0FF',
@@ -173,13 +191,19 @@ export default {
         'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4)',
         'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.3)',
         'none': 'none',
-        // Team glows
+        // Team glows (original naming)
         'glow-human': '0 0 12px rgba(255, 46, 99, 0.22)',
         'glow-human-strong': '0 0 20px rgba(255, 46, 99, 0.4)',
         'glow-ai': '0 0 12px rgba(0, 212, 255, 0.22)',
         'glow-ai-strong': '0 0 20px rgba(0, 212, 255, 0.4)',
         'glow-brand': '0 0 12px rgba(255, 87, 34, 0.3)',
         'glow-brand-strong': '0 0 20px rgba(255, 87, 34, 0.5)',
+        // Alternate naming (for badge capsules)
+        'human-glow': '0 0 20px rgba(255, 46, 99, 0.3)',
+        'ai-glow': '0 0 20px rgba(0, 212, 255, 0.3)',
+        'brand-glow': '0 0 20px rgba(255, 87, 34, 0.4)',
+        // Skill chip hover glow
+        'skill-glow': '0 4px 12px rgba(255, 46, 99, 0.1)',
         // Card hover
         'card-hover': '0 8px 25px -5px rgba(0, 0, 0, 0.6)',
         'card-human': '0 0 12px rgba(255, 46, 99, 0.22), 0 8px 25px -5px rgba(0, 0, 0, 0.6)',

@@ -20,7 +20,13 @@ export {
   StatusBadge, 
   RoleBadge, 
   CountBadge,
-  LiveBadge 
+  LiveBadge,
+  // New capsule badge system
+  HeartbeatDot,
+  AllegianceCapsule,
+  SkillChip,
+  StatusCapsule,
+  CallsignBadge,
 } from './Badge';
 
 // Input

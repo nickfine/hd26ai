@@ -24,9 +24,10 @@ import {
   LayoutDashboard,
   Menu,
   X,
+  Star,
 } from 'lucide-react';
 import Progress from './ui/Progress';
-import Badge, { RoleBadge } from './ui/Badge';
+import Badge, { RoleBadge, AllegianceCapsule, StatusCapsule, HeartbeatDot } from './ui/Badge';
 import NavItem, { NavGroup } from './shared/NavItem';
 import { Container, HStack, VStack } from './layout';
 import { AllegianceAvatar } from './ui/Avatar';
@@ -228,38 +229,48 @@ function AppLayout({
                 )}
               </div>
               <div className="text-left hidden sm:block">
-                <div className="font-bold text-white text-sm flex items-center gap-1 flex-wrap">
-                  {(() => {
-                    const formatted = formatNameWithCallsign(user?.name, userCallsign);
-                    if (!formatted.hasCallsign) return user?.name || 'Operator';
+                {/* User name with callsign - AllegianceCapsule style */}
+                {(() => {
+                  const formatted = formatNameWithCallsign(user?.name, userCallsign);
+                  if (!formatted.hasCallsign) {
                     return (
-                      <>
-                        {formatted.firstName}
-                        <Badge 
-                          variant={user?.allegiance === 'ai' ? 'ai' : user?.allegiance === 'human' ? 'human' : 'neutral'} 
-                          size="xs"
-                        >
-                          {formatted.callsign}
-                        </Badge>
-                        {formatted.lastName}
-                      </>
+                      <div className="font-bold text-white text-sm">
+                        {user?.name || 'Operator'}
+                      </div>
                     );
-                  })()}
+                  }
+                  return (
+                    <AllegianceCapsule
+                      allegiance={user?.allegiance || 'neutral'}
+                      firstName={formatted.firstName}
+                      callsign={formatted.callsign}
+                      lastName={formatted.lastName}
+                      showDot
+                      showIcon
+                    />
+                  );
+                })()}
+                
+                {/* Status and team info */}
+                <div className="flex items-center gap-2 mt-1">
+                  {captainedTeam ? (
+                    <>
+                      <StatusCapsule pulse={false}>
+                        <Star className="w-2.5 h-2.5 mr-0.5" />
+                        Captain
+                      </StatusCapsule>
+                      <span className="text-xs font-medium" style={{ color: config.color }}>
+                        {captainedTeam.name}
+                      </span>
+                    </>
+                  ) : userTeam ? (
+                    <span className="text-xs font-medium" style={{ color: config.color }}>
+                      {userTeam.name}
+                    </span>
+                  ) : (
+                    <StatusCapsule>Free Agent</StatusCapsule>
+                  )}
                 </div>
-                {captainedTeam ? (
-                  <>
-                    <div className="text-xs text-arena-secondary">Captain</div>
-                    <div className="text-xs font-medium" style={{ color: config.color }}>
-                      {captainedTeam.name}
-                    </div>
-                  </>
-                ) : userTeam ? (
-                  <div className="text-xs font-medium" style={{ color: config.color }}>
-                    {userTeam.name}
-                  </div>
-                ) : (
-                  <div className="text-xs text-arena-secondary">Free Agent</div>
-                )}
               </div>
             </button>
           </HStack>

@@ -220,6 +220,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                       onDemoLogin({
                         id: 202,
                         name: 'Casey Brooks',
+                        callsign: 'CSS Wizard',
                         email: 'casey.brooks@company.com',
                         skills: ['Frontend Development', 'UI/UX Design'],
                         allegiance: 'human',
@@ -238,6 +239,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                       onDemoLogin({
                         id: 101,
                         name: 'Alex Chen',
+                        callsign: 'Keyboard Bandit',
                         email: 'alex.chen@company.com',
                         skills: ['Backend Development', 'DevOps'],
                         allegiance: 'ai',

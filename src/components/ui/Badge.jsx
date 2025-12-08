@@ -10,7 +10,7 @@
  */
 
 import { forwardRef } from 'react';
-import { X } from 'lucide-react';
+import { X, Heart, Cpu, Scale } from 'lucide-react';
 import { cn, BADGE_VARIANTS, SIZE_CLASSES } from '../../lib/design-system';
 
 /**
@@ -159,8 +159,6 @@ export const AllegianceBadge = forwardRef(({
   className,
   ...props
 }, ref) => {
-  const { Heart, Cpu, Scale } = require('lucide-react');
-  
   const config = {
     human: {
       variant: 'human',
@@ -321,5 +319,260 @@ export const LiveBadge = forwardRef(({
 });
 
 LiveBadge.displayName = 'LiveBadge';
+
+// =============================================================================
+// NEW BADGE SYSTEM - Capsules, Chips, and Status Indicators
+// =============================================================================
+
+/**
+ * HeartbeatDot - Smooth dual-layer pulsing indicator
+ * Uses animate-ping for a "heartbeat" effect
+ */
+export const HeartbeatDot = forwardRef(({
+  className,
+  ...props
+}, ref) => {
+  return (
+    <span ref={ref} className={cn('relative flex h-2 w-2', className)} {...props}>
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-current opacity-75" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-current" />
+    </span>
+  );
+});
+
+HeartbeatDot.displayName = 'HeartbeatDot';
+
+/**
+ * AllegianceCapsule - User name display with callsign and team-colored glow
+ * 
+ * @example
+ * <AllegianceCapsule 
+ *   allegiance="human"
+ *   firstName="Casey" 
+ *   callsign="CSS Wizard" 
+ *   lastName="Brooks"
+ *   showDot
+ * />
+ */
+export const AllegianceCapsule = forwardRef(({
+  allegiance = 'neutral',
+  firstName,
+  callsign,
+  lastName,
+  fullName, // Alternative: pass full formatted name
+  showDot = true,
+  showIcon = false,
+  isElite = false, // Show level-up arrow for rare/elite callsigns
+  className,
+  children,
+  ...props
+}, ref) => {
+  const config = {
+    human: {
+      bgClass: 'bg-human-10',
+      borderClass: 'border-human/50',
+      shadowClass: 'shadow-human-glow',
+      textClass: 'text-human',
+      Icon: Heart,
+    },
+    ai: {
+      bgClass: 'bg-ai-10',
+      borderClass: 'border-ai/50',
+      shadowClass: 'shadow-ai-glow',
+      textClass: 'text-ai',
+      Icon: Cpu,
+    },
+    neutral: {
+      bgClass: 'bg-arena-elevated',
+      borderClass: 'border-arena-border',
+      shadowClass: '',
+      textClass: 'text-text-secondary',
+      Icon: Scale,
+    },
+  };
+
+  const { bgClass, borderClass, shadowClass, textClass, Icon } = config[allegiance] || config.neutral;
+
+  return (
+    <span
+      ref={ref}
+      className={cn(
+        'inline-flex items-center gap-1.5 px-3 py-1 rounded-full',
+        'text-xs font-medium tracking-wider',
+        'border',
+        bgClass,
+        borderClass,
+        shadowClass,
+        'text-white',
+        className
+      )}
+      {...props}
+    >
+      {/* Heartbeat dot */}
+      {showDot && (
+        <HeartbeatDot className={textClass} />
+      )}
+      
+      {/* Optional icon */}
+      {showIcon && (
+        <Icon className={cn('w-3 h-3', textClass)} />
+      )}
+      
+      {/* Name with callsign */}
+      {children || (
+        <>
+          {firstName}
+          {callsign && (
+            <span className={textClass}>
+              ({callsign}
+              {isElite && <sup className="text-brand animate-pulse ml-0.5">↑</sup>}
+              )
+            </span>
+          )}
+          {lastName && ` ${lastName}`}
+        </>
+      )}
+      
+      {/* Fallback for fullName */}
+      {!children && !firstName && fullName}
+    </span>
+  );
+});
+
+AllegianceCapsule.displayName = 'AllegianceCapsule';
+
+/**
+ * SkillChip - Ultra-minimal gray chip for skill tags
+ * 
+ * @example
+ * <SkillChip>Stack Overflow</SkillChip>
+ * <SkillChip allegiance="human">HTML Hotshot</SkillChip>
+ */
+export const SkillChip = forwardRef(({
+  allegiance, // Optional: add team-colored hover glow
+  removable = false,
+  onRemove,
+  className,
+  children,
+  ...props
+}, ref) => {
+  // Determine hover glow based on allegiance
+  const hoverGlow = allegiance === 'ai' 
+    ? 'hover:shadow-lg hover:shadow-ai/10' 
+    : allegiance === 'human'
+      ? 'hover:shadow-lg hover:shadow-human/10'
+      : 'hover:shadow-skill-glow';
+
+  return (
+    <span
+      ref={ref}
+      className={cn(
+        'inline-flex items-center gap-1',
+        'px-2 py-0.5',
+        'text-[10px] font-medium tracking-wider uppercase',
+        'rounded-md',
+        'bg-[#1F1F1F] border border-[#333] text-[#AAAAAA]',
+        'hover:border-transparent transition-all duration-200',
+        hoverGlow,
+        className
+      )}
+      {...props}
+    >
+      {children}
+      
+      {/* Remove button */}
+      {removable && onRemove && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="flex-shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors -mr-0.5"
+          aria-label="Remove"
+        >
+          <X className="w-2.5 h-2.5" />
+        </button>
+      )}
+    </span>
+  );
+});
+
+SkillChip.displayName = 'SkillChip';
+
+/**
+ * StatusCapsule - Special status indicator (Captain, Free Agent, etc.)
+ * Same style as allegiance capsule but in brand orange with pulse
+ * 
+ * @example
+ * <StatusCapsule>Free Agent</StatusCapsule>
+ * <StatusCapsule icon={<Star />}>Captain</StatusCapsule>
+ */
+export const StatusCapsule = forwardRef(({
+  icon,
+  pulse = true,
+  className,
+  children,
+  ...props
+}, ref) => {
+  return (
+    <span
+      ref={ref}
+      className={cn(
+        'inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full',
+        'text-xs font-semibold',
+        'bg-brand-20 border border-brand-60 text-brand',
+        'shadow-brand-glow',
+        pulse && 'animate-pulse',
+        className
+      )}
+      {...props}
+    >
+      {icon && (
+        <span className="w-3 h-3 flex-shrink-0">
+          {icon}
+        </span>
+      )}
+      {children}
+    </span>
+  );
+});
+
+StatusCapsule.displayName = 'StatusCapsule';
+
+/**
+ * CallsignBadge - Inline callsign display for activity feeds
+ * Just the callsign part with team coloring
+ * 
+ * @example
+ * Maya <CallsignBadge allegiance="ai">Prompt Wizard</CallsignBadge> Lee joined...
+ */
+export const CallsignBadge = forwardRef(({
+  allegiance = 'neutral',
+  isElite = false,
+  className,
+  children,
+  ...props
+}, ref) => {
+  const textClass = allegiance === 'ai' 
+    ? 'text-ai' 
+    : allegiance === 'human' 
+      ? 'text-human' 
+      : 'text-text-secondary';
+
+  return (
+    <span
+      ref={ref}
+      className={cn(textClass, className)}
+      {...props}
+    >
+      ({children}
+      {isElite && <sup className="text-brand animate-pulse ml-0.5">↑</sup>}
+      )
+    </span>
+  );
+});
+
+CallsignBadge.displayName = 'CallsignBadge';
 
 export default Badge;

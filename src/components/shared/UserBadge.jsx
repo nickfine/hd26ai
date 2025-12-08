@@ -9,7 +9,7 @@
 
 import { forwardRef } from 'react';
 import Avatar, { AllegianceAvatar } from '../ui/Avatar';
-import Badge, { AllegianceBadge, RoleBadge } from '../ui/Badge';
+import Badge, { AllegianceBadge, RoleBadge, CallsignBadge, SkillChip } from '../ui/Badge';
 import { cn, formatNameWithCallsign, getAllegianceConfig } from '../../lib/design-system';
 
 /**
@@ -73,7 +73,7 @@ const UserBadge = forwardRef(({
           size={sizeConfig.avatar}
           allegiance={user.allegiance}
         />
-        <span className={cn('font-bold text-neutral-900', sizeConfig.text)}>
+        <span className={cn('font-bold text-white', sizeConfig.text)}>
           {user.name}
         </span>
       </Component>
@@ -88,8 +88,8 @@ const UserBadge = forwardRef(({
         type={clickable ? 'button' : undefined}
         onClick={clickable ? onClick : undefined}
         className={cn(
-          'flex items-start gap-3 p-3 rounded-lg border border-neutral-200 bg-white',
-          clickable && 'cursor-pointer hover:bg-neutral-50 transition-colors',
+          'flex items-start gap-3 p-3 rounded-card border border-arena-border bg-arena-card',
+          clickable && 'cursor-pointer hover:bg-arena-elevated transition-colors',
           className
         )}
         {...props}
@@ -102,22 +102,15 @@ const UserBadge = forwardRef(({
           showBorder
         />
         <div className="flex-1 min-w-0 text-left">
-          {/* Name with callsign */}
-          <div className={cn('font-bold text-neutral-900 flex items-center gap-1 flex-wrap', sizeConfig.text)}>
+          {/* Name with callsign - new capsule style */}
+          <div className={cn('font-bold text-white flex items-center gap-1 flex-wrap', sizeConfig.text)}>
             {nameFormatted.hasCallsign ? (
               <>
                 {nameFormatted.firstName}
-                <span className={cn(
-                  'px-1.5 py-0.5 text-xs font-bold rounded-full border bg-white',
-                  user.allegiance === 'ai' 
-                    ? 'border-ai-500 text-ai-700' 
-                    : user.allegiance === 'human' 
-                      ? 'border-human-500 text-human-700' 
-                      : 'border-neutral-400 text-neutral-600'
-                )}>
+                <CallsignBadge allegiance={user.allegiance}>
                   {nameFormatted.callsign}
-                </span>
-                {nameFormatted.lastName}
+                </CallsignBadge>
+                {nameFormatted.lastName && ` ${nameFormatted.lastName}`}
               </>
             ) : (
               user.name
@@ -127,7 +120,7 @@ const UserBadge = forwardRef(({
           {/* Badges row */}
           <div className="flex items-center gap-2 mt-1 flex-wrap">
             {showAllegiance && user.allegiance && (
-              <AllegianceBadge allegiance={user.allegiance} size="xs" />
+              <AllegianceBadge allegiance={user.allegiance} size="xs" glow />
             )}
             {showRole && user.role && user.role !== 'participant' && (
               <RoleBadge role={user.role} size="xs" />
@@ -136,23 +129,21 @@ const UserBadge = forwardRef(({
 
           {/* Bio */}
           {user.bio && (
-            <p className="text-xs text-neutral-500 mt-2 line-clamp-2">
+            <p className="text-xs text-arena-secondary mt-2 line-clamp-2">
               {user.bio}
             </p>
           )}
 
-          {/* Skills */}
+          {/* Skills - new SkillChip style */}
           {showSkills && user.skills && user.skills.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
               {user.skills.slice(0, 3).map((skill, idx) => (
-                <Badge key={idx} variant="default" size="xs">
+                <SkillChip key={idx} allegiance={user.allegiance}>
                   {skill}
-                </Badge>
+                </SkillChip>
               ))}
               {user.skills.length > 3 && (
-                <Badge variant="default" size="xs">
-                  +{user.skills.length - 3}
-                </Badge>
+                <SkillChip>+{user.skills.length - 3}</SkillChip>
               )}
             </div>
           )}
@@ -182,22 +173,15 @@ const UserBadge = forwardRef(({
         showBorder
       />
       <div className="flex-1 min-w-0 text-left">
-        {/* Name with callsign */}
-        <div className={cn('font-bold text-neutral-900 flex items-center gap-1 flex-wrap', sizeConfig.text)}>
+        {/* Name with callsign - new style */}
+        <div className={cn('font-bold text-white flex items-center gap-1 flex-wrap', sizeConfig.text)}>
           {nameFormatted.hasCallsign ? (
             <>
               {nameFormatted.firstName}
-              <span className={cn(
-                'px-1.5 py-0.5 text-xs font-bold rounded-full border bg-white',
-                user.allegiance === 'ai' 
-                  ? 'border-ai-500 text-ai-700' 
-                  : user.allegiance === 'human' 
-                    ? 'border-human-500 text-human-700' 
-                    : 'border-neutral-400 text-neutral-600'
-              )}>
+              <CallsignBadge allegiance={user.allegiance}>
                 {nameFormatted.callsign}
-              </span>
-              {nameFormatted.lastName}
+              </CallsignBadge>
+              {nameFormatted.lastName && ` ${nameFormatted.lastName}`}
             </>
           ) : (
             user.name
@@ -205,7 +189,7 @@ const UserBadge = forwardRef(({
         </div>
         
         {/* Subtitle row */}
-        <div className={cn('text-neutral-500 flex items-center gap-2', sizeConfig.subtext)}>
+        <div className={cn('text-arena-secondary flex items-center gap-2', sizeConfig.subtext)}>
           {showAllegiance && user.allegiance && (
             <span style={{ color: config.color }}>{config.label}</span>
           )}
@@ -233,7 +217,7 @@ export const UserList = ({
 }) => {
   if (users.length === 0) {
     return (
-      <div className={cn('text-sm text-neutral-400 text-center py-4', className)}>
+      <div className={cn('text-sm text-arena-muted text-center py-4', className)}>
         {emptyMessage}
       </div>
     );
