@@ -139,7 +139,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           }}
         >
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
-            <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+            <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
               <div
                 className={`w-12 sm:w-16 h-12 sm:h-16 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
                 style={{ backgroundColor: teamConfig.bgColor }}
@@ -175,36 +175,34 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                     </button>
                   )}
                 </div>
-                <div className="flex items-center justify-between w-full mt-2">
-                  <div className="flex items-center gap-3 text-sm">
-                    <span
-                      className="font-bold uppercase"
-                      style={{ color: teamConfig.color }}
-                    >
-                      {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
-                    </span>
-                    <span className="text-gray-500">•</span>
-                    <span className="text-text-secondary">
-                      {team.members.length} / {team.maxMembers} members
-                    </span>
-                  </div>
-                  {isMember && (
-                    <span 
-                      className="inline-flex items-center backdrop-blur-md text-white font-bold 
-                                 px-5 py-2 rounded-full text-sm uppercase tracking-wider 
-                                 shadow-lg border"
-                      style={{ 
-                        backgroundColor: `${teamConfig.color}E6`,
-                        borderColor: `${teamConfig.color}66`,
-                        boxShadow: `0 10px 25px -5px ${teamConfig.color}40`
-                      }}
-                    >
-                      You're on this team
-                    </span>
-                  )}
+                <div className="flex items-center gap-3 text-sm mt-1">
+                  <span
+                    className="font-bold uppercase"
+                    style={{ color: teamConfig.color }}
+                  >
+                    {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
+                  </span>
+                  <span className="text-gray-500">•</span>
+                  <span className="text-text-secondary">
+                    {team.members.length} / {team.maxMembers} members
+                  </span>
                 </div>
               </div>
             </div>
+            {isMember && (
+              <span 
+                className="inline-flex items-center backdrop-blur-md text-white font-bold 
+                           px-5 py-2 rounded-full text-sm uppercase tracking-wider 
+                           shadow-lg border flex-shrink-0"
+                style={{ 
+                  backgroundColor: `${teamConfig.color}E6`,
+                  borderColor: `${teamConfig.color}66`,
+                  boxShadow: `0 10px 25px -5px ${teamConfig.color}40`
+                }}
+              >
+                You're on this team
+              </span>
+            )}
           </div>
         </div>
 
