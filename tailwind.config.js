@@ -20,83 +20,91 @@ export default {
       // COLORS - Dark Mode Cyber Arena Palette
       // =======================================================================
       colors: {
-        // Brand - Adaptavist Orange
+        // Brand - Adaptavist Orange (Orange is King)
         brand: {
-          DEFAULT: '#FF5722',
+          DEFAULT: '#FF4500',
+          hover: '#FF7033',        // 15% white mix - backlit
+          pressed: '#CC3700',      // Darker for active
+          amber: '#FF8A00',        // Deep amber accent
+          dark: '#CC3700',         // Dark orange for depth
           // Opacity tokens for capsule badges
-          10: '#FF57221A',   // 10% opacity
-          20: '#FF572233',   // 20% opacity
-          30: '#FF57224D',   // 30% opacity
-          60: '#FF572299',   // 60% opacity
+          10: '#FF45001A',   // 10% opacity
+          20: '#FF450033',   // 20% opacity
+          30: '#FF45004D',   // 30% opacity
+          60: '#FF450099',   // 60% opacity
           // Standard scale
           50: '#FFF3E0',
           100: '#FFE0B2',
           200: '#FFCC80',
           300: '#FFB74D',
           400: '#FFA726',
-          500: '#FF5722',
-          600: '#F4511E',
-          700: '#E64A19',
-          800: '#D84315',
-          900: '#BF360C',
+          500: '#FF4500',
+          600: '#E63E00',
+          700: '#CC3700',
+          800: '#B33000',
+          900: '#992900',
         },
         
-        // Team Human - Electric Coral
+        // Team Human - Brand Orange (Orange is King)
         human: {
-          DEFAULT: '#FF2E63',
+          DEFAULT: '#FF4500',
           // Opacity tokens for capsule badges
-          10: '#FF2E631A',   // 10% opacity
-          20: '#FF2E6333',   // 20% opacity
-          30: '#FF2E634D',   // 30% opacity
+          10: '#FF45001A',   // 10% opacity
+          20: '#FF450033',   // 20% opacity
+          30: '#FF45004D',   // 30% opacity
           // Standard scale
-          50: '#FFF0F3',
-          100: '#FFE0E6',
-          200: '#FFC2D1',
-          300: '#FF94AD',
-          400: '#FF5C82',
-          500: '#FF2E63',
-          600: '#E6264F',
-          700: '#CC1E3F',
-          800: '#B3172F',
-          900: '#990F1F',
-          glow: 'rgba(255, 46, 99, 0.4)',
+          50: '#FFF3E0',
+          100: '#FFE4CC',
+          200: '#FFCA99',
+          300: '#FFB066',
+          400: '#FF8533',
+          500: '#FF4500',
+          600: '#E63E00',
+          700: '#CC3700',
+          800: '#B33000',
+          900: '#992900',
+          'gradient-end': '#FF6200',  // Gradient terminus
+          glow: 'rgba(255, 69, 0, 0.4)',
         },
         
-        // Team AI - Electric Blue
+        // Team AI - Electric Cyan
         ai: {
-          DEFAULT: '#00D4FF',
+          DEFAULT: '#00E5FF',
           // Opacity tokens for capsule badges
-          10: '#00D4FF1A',   // 10% opacity
-          20: '#00D4FF33',   // 20% opacity
-          30: '#00D4FF4D',   // 30% opacity
+          10: '#00E5FF1A',   // 10% opacity
+          20: '#00E5FF33',   // 20% opacity
+          30: '#00E5FF4D',   // 30% opacity
           // Standard scale
-          50: '#E0F7FF',
-          100: '#B3ECFF',
-          200: '#80E0FF',
-          300: '#4DD4FF',
-          400: '#26CCFF',
-          500: '#00D4FF',
-          600: '#00B8E6',
-          700: '#009DCC',
-          800: '#0082B3',
-          900: '#006699',
-          glow: 'rgba(0, 212, 255, 0.4)',
+          50: '#E0FBFF',
+          100: '#B3F5FF',
+          200: '#80EEFF',
+          300: '#4DE8FF',
+          400: '#26E3FF',
+          500: '#00E5FF',
+          600: '#00CCE6',
+          700: '#00B3CC',
+          800: '#0099B3',
+          900: '#008099',
+          glow: 'rgba(0, 229, 255, 0.4)',
         },
         
         // Arena surfaces (dark mode)
         arena: {
-          black: '#0A0A0A',      // Main background
+          black: '#0B0A08',      // Warm black - makes orange glow
           card: '#111111',       // Card/panel bg
           elevated: '#1A1A1A',   // Elevated surfaces
           border: '#1F1F1F',     // Subtle borders
           'border-strong': '#2A2A2A',
+          'glass': 'rgba(15, 15, 15, 0.72)',
+          'glass-border': 'rgba(255, 100, 0, 0.18)',  // Warm orange-tinted
         },
         
         // Text colors
         text: {
           primary: '#FFFFFF',
+          body: '#E0E0E0',       // Body text
           secondary: '#AAAAAA',
-          muted: '#666666',
+          muted: '#888888',
         },
         
         // Status Colors
@@ -113,13 +121,13 @@ export default {
         },
         
         warning: {
-          DEFAULT: '#FF2E63',
-          500: '#FF2E63',
+          DEFAULT: '#FF8A00',
+          500: '#FF8A00',
         },
         
         error: {
-          DEFAULT: '#FF2E63',
-          500: '#FF2E63',
+          DEFAULT: '#FF4500',
+          500: '#FF4500',
         },
         
         // Legacy neutral (for compatibility)
@@ -142,10 +150,10 @@ export default {
       // TYPOGRAPHY
       // =======================================================================
       fontFamily: {
-        heading: ['Space Grotesk', 'system-ui', 'sans-serif'],
-        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+        heading: ['Satoshi', 'system-ui', '-apple-system', 'sans-serif'],
+        sans: ['Satoshi', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
         mono: ['JetBrains Mono', 'Fira Code', 'SF Mono', 'Consolas', 'monospace'],
-        display: ['Space Grotesk', 'system-ui', 'sans-serif'],
+        display: ['Satoshi', 'system-ui', '-apple-system', 'sans-serif'],
       },
       
       fontSize: {
@@ -176,7 +184,7 @@ export default {
         'xl': '1rem',
         '2xl': '1.25rem',
         '3xl': '1.5rem',
-        'card': '12px',
+        'card': '24px',           // Premium 24px corners
         'full': '9999px',
       },
       
@@ -191,23 +199,28 @@ export default {
         'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4)',
         'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.3)',
         'none': 'none',
-        // Team glows (original naming)
-        'glow-human': '0 0 12px rgba(255, 46, 99, 0.22)',
-        'glow-human-strong': '0 0 20px rgba(255, 46, 99, 0.4)',
-        'glow-ai': '0 0 12px rgba(0, 212, 255, 0.22)',
-        'glow-ai-strong': '0 0 20px rgba(0, 212, 255, 0.4)',
-        'glow-brand': '0 0 12px rgba(255, 87, 34, 0.3)',
-        'glow-brand-strong': '0 0 20px rgba(255, 87, 34, 0.5)',
+        // Team glows (updated to brand orange)
+        'glow-human': '0 0 12px rgba(255, 69, 0, 0.22)',
+        'glow-human-strong': '0 0 20px rgba(255, 69, 0, 0.4)',
+        'glow-ai': '0 0 12px rgba(0, 229, 255, 0.22)',
+        'glow-ai-strong': '0 0 20px rgba(0, 229, 255, 0.4)',
+        'glow-brand': '0 0 12px rgba(255, 69, 0, 0.3)',
+        'glow-brand-strong': '0 0 20px rgba(255, 69, 0, 0.5)',
+        // Inner glow for backlit button effect
+        'inner-glow': 'inset 0 0 20px rgba(255, 255, 255, 0.15)',
+        'btn-lift': '0 4px 12px rgba(0, 0, 0, 0.4)',
         // Alternate naming (for badge capsules)
-        'human-glow': '0 0 20px rgba(255, 46, 99, 0.3)',
-        'ai-glow': '0 0 20px rgba(0, 212, 255, 0.3)',
-        'brand-glow': '0 0 20px rgba(255, 87, 34, 0.4)',
+        'human-glow': '0 0 20px rgba(255, 69, 0, 0.3)',
+        'ai-glow': '0 0 20px rgba(0, 229, 255, 0.3)',
+        'brand-glow': '0 0 20px rgba(255, 69, 0, 0.4)',
         // Skill chip hover glow
-        'skill-glow': '0 4px 12px rgba(255, 46, 99, 0.1)',
+        'skill-glow': '0 4px 12px rgba(255, 69, 0, 0.1)',
         // Card hover
         'card-hover': '0 8px 25px -5px rgba(0, 0, 0, 0.6)',
-        'card-human': '0 0 12px rgba(255, 46, 99, 0.22), 0 8px 25px -5px rgba(0, 0, 0, 0.6)',
-        'card-ai': '0 0 12px rgba(0, 212, 255, 0.22), 0 8px 25px -5px rgba(0, 0, 0, 0.6)',
+        'card-human': '0 0 12px rgba(255, 69, 0, 0.22), 0 8px 25px -5px rgba(0, 0, 0, 0.6)',
+        'card-ai': '0 0 12px rgba(0, 229, 255, 0.22), 0 8px 25px -5px rgba(0, 0, 0, 0.6)',
+        // Icon glow on hover
+        'icon-glow': '0 0 8px rgba(255, 69, 0, 0.5)',
       },
       
       // =======================================================================
@@ -223,6 +236,11 @@ export default {
         'blob-delay-4': 'blob 8s ease-in-out 4s infinite',
         'countdown-pulse': 'countdownPulse 120ms ease-out',
         'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+        // Orange load pulse - brightness flash on mount
+        'orange-pulse': 'orangePulse 0.6s ease-out',
+        'orange-pulse-delay-1': 'orangePulse 0.6s ease-out 0.1s',
+        'orange-pulse-delay-2': 'orangePulse 0.6s ease-out 0.2s',
+        'orange-pulse-delay-3': 'orangePulse 0.6s ease-out 0.3s',
       },
       keyframes: {
         fadeIn: {
@@ -259,6 +277,12 @@ export default {
         glowPulse: {
           '0%, 100%': { opacity: '0.6' },
           '50%': { opacity: '1' },
+        },
+        // Orange brightness pulse for load animations
+        orangePulse: {
+          '0%': { filter: 'brightness(1)', opacity: '0.8' },
+          '50%': { filter: 'brightness(1.3)', opacity: '1' },
+          '100%': { filter: 'brightness(1)', opacity: '1' },
         },
       },
       

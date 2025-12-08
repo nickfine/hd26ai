@@ -8,39 +8,52 @@
      CORE COLORS
      ========================================================================= */
   
-  /* Brand - Adaptavist Orange */
-  --color-brand: #FF5722;
-  --color-brand-rgb: 255, 87, 34;
+  /* Brand - Adaptavist Orange (Orange is King) */
+  --color-brand: #FF4500;
+  --color-brand-rgb: 255, 69, 0;
+  --color-brand-hover: #FF7033;      /* 15% white mix - backlit effect */
+  --color-brand-pressed: #CC3700;    /* Darker for active state */
+  
+  /* Secondary Orange Palette */
+  --color-amber: #FF8A00;            /* Deep amber accent */
+  --color-orange-dark: #CC3700;      /* Dark orange for depth */
   
   /* Background Surfaces */
-  --color-bg-primary: #0A0A0A;      /* Almost-black main background */
+  --color-bg-primary: #0B0A08;       /* Warm black - makes orange glow like molten metal */
   --color-bg-card: #111111;          /* Card/panel background */
   --color-bg-elevated: #1A1A1A;      /* Elevated surfaces */
+  
+  /* Glass Card Effect */
+  --color-bg-glass: rgba(15, 15, 15, 0.72);
+  --color-border-glass: rgba(255, 100, 0, 0.18);  /* Warm orange-tinted border */
+  --glass-blur: blur(24px);
   
   /* Borders */
   --color-border: #1F1F1F;           /* Subtle borders/dividers */
   --color-border-strong: #2A2A2A;    /* Stronger borders */
   
-  /* Text */
-  --color-text-primary: #FFFFFF;     /* Pure white for max contrast */
+  /* Text Hierarchy */
+  --color-text-primary: #FFFFFF;     /* Headlines - 700-900 weight */
+  --color-text-body: #E0E0E0;        /* Body text */
   --color-text-secondary: #AAAAAA;   /* Secondary/labels */
-  --color-text-muted: #666666;       /* Muted text */
+  --color-text-muted: #888888;       /* Muted text */
   
   /* =========================================================================
      ALLEGIANCE COLORS
      ========================================================================= */
   
-  /* Team Human - Electric Coral */
-  --color-human: #FF2E63;
-  --color-human-rgb: 255, 46, 99;
-  --color-human-light: rgba(255, 46, 99, 0.1);
-  --color-human-glow: rgba(255, 46, 99, 0.4);
+  /* Team Human - Brand Orange (Orange is King) */
+  --color-human: #FF4500;
+  --color-human-rgb: 255, 69, 0;
+  --color-human-light: rgba(255, 69, 0, 0.1);
+  --color-human-glow: rgba(255, 69, 0, 0.4);
+  --color-human-gradient-end: #FF6200;  /* Gradient terminus */
   
-  /* Team AI - Electric Blue */
-  --color-ai: #00D4FF;
-  --color-ai-rgb: 0, 212, 255;
-  --color-ai-light: rgba(0, 212, 255, 0.1);
-  --color-ai-glow: rgba(0, 212, 255, 0.4);
+  /* Team AI - Electric Cyan */
+  --color-ai: #00E5FF;
+  --color-ai-rgb: 0, 229, 255;
+  --color-ai-light: rgba(0, 229, 255, 0.1);
+  --color-ai-glow: rgba(0, 229, 255, 0.4);
   
   /* Neutral */
   --color-neutral: #666666;
@@ -63,8 +76,8 @@
      TYPOGRAPHY
      ========================================================================= */
   
-  --font-heading: 'Space Grotesk', system-ui, sans-serif;
-  --font-body: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Satoshi', system-ui, -apple-system, sans-serif;
+  --font-body: 'Satoshi', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   
   /* =========================================================================
@@ -72,12 +85,16 @@
      ========================================================================= */
   
   /* Team Glows */
-  --glow-human: 0 0 12px rgba(255, 46, 99, 0.22);
-  --glow-human-strong: 0 0 20px rgba(255, 46, 99, 0.4);
-  --glow-ai: 0 0 12px rgba(0, 212, 255, 0.22);
-  --glow-ai-strong: 0 0 20px rgba(0, 212, 255, 0.4);
-  --glow-brand: 0 0 12px rgba(255, 87, 34, 0.3);
-  --glow-brand-strong: 0 0 20px rgba(255, 87, 34, 0.5);
+  --glow-human: 0 0 12px rgba(255, 69, 0, 0.22);
+  --glow-human-strong: 0 0 20px rgba(255, 69, 0, 0.4);
+  --glow-ai: 0 0 12px rgba(0, 229, 255, 0.22);
+  --glow-ai-strong: 0 0 20px rgba(0, 229, 255, 0.4);
+  --glow-brand: 0 0 12px rgba(255, 69, 0, 0.3);
+  --glow-brand-strong: 0 0 20px rgba(255, 69, 0, 0.5);
+  
+  /* Button Inner Glow - backlit effect */
+  --shadow-inner-glow: inset 0 0 20px rgba(255, 255, 255, 0.15);
+  --shadow-btn-lift: 0 4px 12px rgba(0, 0, 0, 0.4);
   
   /* Drop shadows for filter */
   --drop-glow-human: drop-shadow(0 0 12px rgba(255, 46, 99, 0.22));
@@ -116,7 +133,8 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
-  --radius-card: 12px;
+  --radius-2xl: 1.25rem;
+  --radius-card: 24px;              /* Premium 24px corners */
   --radius-full: 9999px;
   
   /* =========================================================================
@@ -315,13 +333,13 @@
   transform: translateX(-50%);
   background: linear-gradient(
     to bottom,
-    rgba(0, 212, 255, 0.6),
+    rgba(0, 229, 255, 0.6),
     white,
-    rgba(255, 46, 99, 0.6)
+    rgba(255, 69, 0, 0.6)
   );
   box-shadow: 
-    -4px 0 8px rgba(0, 212, 255, 0.4),
-    4px 0 8px rgba(255, 46, 99, 0.4),
+    -4px 0 8px rgba(0, 229, 255, 0.4),
+    4px 0 8px rgba(255, 69, 0, 0.4),
     0 0 12px white;
 }
 

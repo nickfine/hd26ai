@@ -163,28 +163,28 @@ function Dashboard({
       activeNav="dashboard"
     >
       <div className="p-4 sm:p-6">
-        {/* Page Header */}
+        {/* Page Header with orange pulse animation */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
-            <Zap className="w-5 h-5 text-brand" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full mb-4 animate-orange-pulse">
+            <Zap className="w-5 h-5 text-brand icon-orange" />
             <span className="font-bold text-sm text-white">MISSION CONTROL</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display animate-orange-pulse-delay-1">
             DASHBOARD
           </h1>
-          <p className="text-arena-secondary max-w-2xl mx-auto">
+          <p className="text-text-body max-w-2xl mx-auto">
             Your command center for HackDay 2026. Track your progress, find teammates, 
             and stay updated on the latest events.
           </p>
         </div>
 
-        {/* Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        {/* Bento Grid - 24px gap for premium breathing room */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Team Finder Feature Box */}
-          <Card variant="outlined" padding="md">
+          <Card variant="outlined" padding="md" className="animate-fade-in stagger-1">
             <Card.Label>Team Finder</Card.Label>
             <Card.Title className="mb-3">Find Your Squad</Card.Title>
-            <p className="text-sm text-arena-secondary mb-4">
+            <p className="text-sm text-text-body mb-4">
               Browse open teams looking for members or discover free agents with matching skills.
             </p>
             <HStack gap="3">
@@ -211,14 +211,14 @@ function Dashboard({
 
           {/* Project Gallery Feature Box - Only show during voting phase */}
           {eventPhase === 'voting' && (
-            <Card variant="accent" padding="md">
+            <Card variant="accent" padding="md" className="animate-fade-in stagger-2">
               <Card.Label className="text-brand">Project Gallery</Card.Label>
               <Card.Title className="text-white mb-3">Vote for Projects</Card.Title>
-              <p className="text-sm text-arena-secondary mb-4">
+              <p className="text-sm text-text-body mb-4">
                 Browse all submitted hackathon projects and vote for your favorites!
               </p>
               <Button
-                variant="accent"
+                variant="primary"
                 size="md"
                 fullWidth
                 onClick={() => onNavigate('voting')}
@@ -230,7 +230,7 @@ function Dashboard({
           )}
 
           {/* Live Activity Feed Widget */}
-          <Card variant="default" padding="md">
+          <Card variant="default" padding="md" className="animate-fade-in stagger-2">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Live Activity</Card.Label>
               <HStack gap="1.5" align="center" className="text-xs text-success">
@@ -270,17 +270,17 @@ function Dashboard({
                           </>
                         ) : activity.user}
                       </span>
-                      {activity.type === 'join' && <span className="text-arena-secondary"> joined </span>}
-                      {activity.type === 'create' && <span className="text-arena-secondary"> created </span>}
+                      {activity.type === 'join' && <span className="text-text-body"> joined </span>}
+                      {activity.type === 'create' && <span className="text-text-body"> created </span>}
                       {activity.type === 'allegiance' && (
-                        <span className="text-arena-secondary"> chose {activity.side.toUpperCase()} side</span>
+                        <span className="text-text-body"> chose {activity.side.toUpperCase()} side</span>
                       )}
                       {activity.team && (
                         <span className="font-bold" style={{ color: config.color }}>
                           {activity.team}
                         </span>
                       )}
-                      <div className="text-xs text-arena-muted mt-0.5">{activity.time}</div>
+                      <div className="text-xs text-text-muted mt-0.5">{activity.time}</div>
                     </div>
                   </div>
                 );
@@ -289,10 +289,10 @@ function Dashboard({
           </Card>
 
           {/* Schedule Preview Widget */}
-          <Card variant="default" padding="md">
+          <Card variant="default" padding="md" className="animate-fade-in stagger-3">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Schedule Preview</Card.Label>
-              <Calendar className="w-4 h-4 text-arena-secondary" />
+              <Calendar className="w-4 h-4 icon-orange" />
             </HStack>
             <VStack gap="3">
               {MOCK_SCHEDULE.map((item, index) => (
@@ -306,7 +306,7 @@ function Dashboard({
                   </div>
                   <div>
                     <div className="text-sm font-bold text-white">{item.title}</div>
-                    <div className="text-xs text-arena-secondary">{item.description}</div>
+                    <div className="text-xs text-text-body">{item.description}</div>
                   </div>
                 </HStack>
               ))}
@@ -323,13 +323,13 @@ function Dashboard({
           </Card>
 
           {/* Awards List Widget */}
-          <Card variant="default" padding="md">
+          <Card variant="default" padding="md" className="animate-fade-in stagger-4">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Awards & Prizes</Card.Label>
-              <Trophy className="w-4 h-4 text-brand" />
+              <Trophy className="w-4 h-4 icon-orange" />
             </HStack>
             <VStack gap="3">
-              {MOCK_AWARDS.map((award) => {
+              {MOCK_AWARDS.map((award, index) => {
                 const Icon = award.icon;
                 const isAI = award.title.includes('AI');
                 const isHuman = award.title.includes('Human');
@@ -340,11 +340,13 @@ function Dashboard({
                     variant={isChampion ? 'accent' : isAI ? 'ai' : isHuman ? 'human' : 'default'}
                     padding="sm"
                     hoverable
-                    className="flex items-center gap-3"
+                    className={cn('flex items-center gap-3', isChampion && 'animate-orange-pulse')}
                   >
                     <Icon className={cn(
-                      'w-8 h-8 flex-shrink-0',
-                      isAI ? 'text-ai' : isHuman ? 'text-human' : 'text-brand'
+                      'w-8 h-8 flex-shrink-0 transition-all duration-200',
+                      isAI ? 'text-ai opacity-80 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]' 
+                        : isHuman ? 'text-human opacity-80 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(255,69,0,0.5)]' 
+                        : 'icon-orange'
                     )} />
                     <div className="min-w-0">
                       <div className={cn(
@@ -353,7 +355,7 @@ function Dashboard({
                       )}>
                         {award.title}
                       </div>
-                      <div className="text-xs text-arena-secondary">{award.prize}</div>
+                      <div className="text-xs text-text-body">{award.prize}</div>
                     </div>
                   </Card>
                 );
@@ -371,14 +373,14 @@ function Dashboard({
           )}
 
           {/* FAQ Widget */}
-          <Card variant="default" padding="md" className="md:col-span-2">
+          <Card variant="default" padding="md" className="md:col-span-2 animate-fade-in stagger-5">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Frequently Asked Questions</Card.Label>
-              <HelpCircle className="w-4 h-4 text-arena-secondary" />
+              <HelpCircle className="w-4 h-4 icon-orange" />
             </HStack>
             <VStack gap="2">
               {MOCK_FAQ.map((faq) => (
-                <div key={faq.id} className="border border-arena-border rounded-lg overflow-hidden">
+                <div key={faq.id} className="border border-arena-border rounded-card overflow-hidden">
                   <button
                     type="button"
                     onClick={() => toggleFaq(faq.id)}
@@ -386,12 +388,12 @@ function Dashboard({
                   >
                     <span className="font-bold text-sm text-white">{faq.question}</span>
                     {expandedFaq === faq.id 
-                      ? <ChevronUp className="w-4 h-4 text-arena-secondary" />
-                      : <ChevronDown className="w-4 h-4 text-arena-secondary" />
+                      ? <ChevronUp className="w-4 h-4 text-text-muted" />
+                      : <ChevronDown className="w-4 h-4 text-text-muted" />
                     }
                   </button>
                   {expandedFaq === faq.id && (
-                    <div className="px-4 pb-4 text-sm text-arena-secondary border-t border-arena-border pt-3">
+                    <div className="px-4 pb-4 text-sm text-text-body border-t border-arena-border pt-3">
                       {faq.answer}
                     </div>
                   )}

@@ -31,14 +31,15 @@ const SIZE_MAP = {
   lg: 'h-4',
 };
 
-const VARIANT_COLORS = {
-  default: 'bg-brand',
-  human: 'bg-human',
-  ai: 'bg-ai',
-  success: 'bg-success',
-  warning: 'bg-warning',
-  error: 'bg-error',
-  accent: 'bg-brand',
+// Human uses gradient for glossy effect, AI uses solid cyan
+const VARIANT_STYLES = {
+  default: { gradient: false, color: 'bg-brand' },
+  human: { gradient: true, from: '#FF4500', to: '#FF6200' },
+  ai: { gradient: false, color: 'bg-ai' },
+  success: { gradient: false, color: 'bg-success' },
+  warning: { gradient: false, color: 'bg-warning' },
+  error: { gradient: false, color: 'bg-error' },
+  accent: { gradient: true, from: '#FF4500', to: '#FF6200' },
 };
 
 const TRACK_COLORS = {
@@ -59,13 +60,22 @@ const Progress = forwardRef(({
   showLabel = false,
   label,
   animated = true,
+  glossy = true,
   className,
   ...props
 }, ref) => {
   const percentage = Math.min(Math.max((value / max) * 100, 0), 100);
   const sizeClass = SIZE_MAP[size] || SIZE_MAP.md;
-  const barColor = VARIANT_COLORS[variant] || VARIANT_COLORS.default;
+  const variantStyle = VARIANT_STYLES[variant] || VARIANT_STYLES.default;
   const trackColor = TRACK_COLORS[variant] || TRACK_COLORS.default;
+
+  // Build bar style - gradient or solid
+  const barStyle = variantStyle.gradient
+    ? {
+        width: `${percentage}%`,
+        background: `linear-gradient(90deg, ${variantStyle.from} 0%, ${variantStyle.to} 100%)`,
+      }
+    : { width: `${percentage}%` };
 
   return (
     <div ref={ref} className={cn('w-full', className)} {...props}>
@@ -95,15 +105,23 @@ const Progress = forwardRef(({
         aria-valuemin={0}
         aria-valuemax={max}
       >
-        {/* Progress Bar */}
+        {/* Progress Bar with optional glossy shine */}
         <div
           className={cn(
-            'h-full rounded-full',
-            barColor,
+            'h-full rounded-full relative overflow-hidden',
+            !variantStyle.gradient && variantStyle.color,
             animated && 'transition-all duration-500 ease-out'
           )}
-          style={{ width: `${percentage}%` }}
-        />
+          style={barStyle}
+        >
+          {/* Glossy shine overlay */}
+          {glossy && (
+            <div 
+              className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/10 pointer-events-none"
+              aria-hidden="true"
+            />
+          )}
+        </div>
       </div>
     </div>
   );
@@ -140,13 +158,13 @@ export const CircularProgress = forwardRef(({
   const strokeDashoffset = circumference - (percentage / 100) * circumference;
 
   const variantStrokeColors = {
-    default: '#FF5722',
-    human: '#FF2E63',
-    ai: '#00D4FF',
+    default: '#FF4500',
+    human: '#FF4500',           // Brand orange
+    ai: '#00E5FF',              // Electric cyan
     success: '#00FF9D',
-    warning: '#FF2E63',
-    error: '#FF2E63',
-    accent: '#FF5722',
+    warning: '#FF8A00',
+    error: '#FF4500',
+    accent: '#FF4500',
   };
 
   const strokeColor = variantStrokeColors[variant] || variantStrokeColors.default;
@@ -248,14 +266,14 @@ export const WarStatusBar = forwardRef(({
         </div>
       )}
 
-      {/* War Bar */}
+      {/* War Bar - Orange vs Cyan with glossy shine */}
       <div
         className={cn(
           'relative w-full rounded-full overflow-hidden',
           heightClass
         )}
         style={{
-          background: `linear-gradient(to right, #00D4FF 0%, #00D4FF 50%, #FF2E63 50%, #FF2E63 100%)`,
+          background: `linear-gradient(to right, #00E5FF 0%, #00E5FF 50%, #FF4500 50%, #FF6200 100%)`,
           backgroundSize: '200% 100%',
           backgroundPosition: `${backgroundPosition}% 0`,
           transition: animated ? 'background-position 800ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
@@ -266,6 +284,12 @@ export const WarStatusBar = forwardRef(({
         aria-valuemax={100}
         aria-label="Human vs AI recruitment status"
       >
+        {/* Glossy shine overlay */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/10 pointer-events-none"
+          aria-hidden="true"
+        />
+        
         {/* Battle line divider */}
         {showDivider && (
           <div
@@ -273,8 +297,8 @@ export const WarStatusBar = forwardRef(({
             style={{
               left: `${normalizedAi}%`,
               transform: 'translateX(-50%)',
-              background: 'linear-gradient(to bottom, rgba(0, 212, 255, 0.6), white, rgba(255, 46, 99, 0.6))',
-              boxShadow: '-4px 0 8px rgba(0, 212, 255, 0.4), 4px 0 8px rgba(255, 46, 99, 0.4), 0 0 12px white',
+              background: 'linear-gradient(to bottom, rgba(0, 229, 255, 0.6), white, rgba(255, 69, 0, 0.6))',
+              boxShadow: '-4px 0 8px rgba(0, 229, 255, 0.4), 4px 0 8px rgba(255, 69, 0, 0.4), 0 0 12px white',
               transition: animated ? 'left 800ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
             }}
           />

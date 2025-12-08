@@ -11,32 +11,40 @@ import { Heart, Cpu, Scale } from 'lucide-react';
 // =============================================================================
 
 export const COLORS = {
-  // Brand
-  brand: '#FF5722',
+  // Brand - Orange is King
+  brand: '#FF4500',
+  brandHover: '#FF7033',
+  brandPressed: '#CC3700',
+  amber: '#FF8A00',
+  orangeDark: '#CC3700',
   
   // Backgrounds
-  bgPrimary: '#0A0A0A',
+  bgPrimary: '#0B0A08',        // Warm black
   bgCard: '#111111',
   bgElevated: '#1A1A1A',
+  bgGlass: 'rgba(15, 15, 15, 0.72)',
   
   // Borders
   border: '#1F1F1F',
   borderStrong: '#2A2A2A',
+  borderGlass: 'rgba(255, 100, 0, 0.18)',  // Warm orange-tinted
   
-  // Text
+  // Text Hierarchy
   textPrimary: '#FFFFFF',
+  textBody: '#E0E0E0',
   textSecondary: '#AAAAAA',
-  textMuted: '#666666',
+  textMuted: '#888888',
   
-  // Team colors
-  human: '#FF2E63',
-  ai: '#00D4FF',
-  neutral: '#666666',
+  // Team colors - Orange vs Cyan
+  human: '#FF4500',            // Brand orange
+  humanGradientEnd: '#FF6200',
+  ai: '#00E5FF',               // Electric cyan
+  neutral: '#888888',
   
   // Status
   success: '#00FF9D',
-  warning: '#FF2E63',
-  error: '#FF2E63',
+  warning: '#FF8A00',
+  error: '#FF4500',
 };
 
 // =============================================================================
@@ -48,11 +56,12 @@ export const ALLEGIANCE_CONFIG = {
   human: {
     id: 'human',
     label: 'Human',
-    color: '#FF2E63',
-    bgColor: 'rgba(255, 46, 99, 0.1)',
-    borderColor: '#FF2E63',
-    textColor: '#FF2E63',
-    glowColor: 'rgba(255, 46, 99, 0.4)',
+    color: '#FF4500',              // Brand orange
+    bgColor: 'rgba(255, 69, 0, 0.1)',
+    borderColor: '#FF4500',
+    textColor: '#FF4500',
+    glowColor: 'rgba(255, 69, 0, 0.4)',
+    gradientEnd: '#FF6200',
     font: 'font-sans',
     borderRadius: 'rounded-card',
     borderStyle: 'border-l-4',
@@ -73,11 +82,11 @@ export const ALLEGIANCE_CONFIG = {
   ai: {
     id: 'ai',
     label: 'AI',
-    color: '#00D4FF',
-    bgColor: 'rgba(0, 212, 255, 0.1)',
-    borderColor: '#00D4FF',
-    textColor: '#00D4FF',
-    glowColor: 'rgba(0, 212, 255, 0.4)',
+    color: '#00E5FF',              // Electric cyan
+    bgColor: 'rgba(0, 229, 255, 0.1)',
+    borderColor: '#00E5FF',
+    textColor: '#00E5FF',
+    glowColor: 'rgba(0, 229, 255, 0.4)',
     font: 'font-mono',
     borderRadius: 'rounded-card',
     borderStyle: 'border-l-4',
@@ -98,9 +107,9 @@ export const ALLEGIANCE_CONFIG = {
   neutral: {
     id: 'neutral',
     label: 'Neutral',
-    color: '#666666',
-    bgColor: 'rgba(102, 102, 102, 0.1)',
-    borderColor: '#666666',
+    color: '#888888',
+    bgColor: 'rgba(136, 136, 136, 0.1)',
+    borderColor: '#888888',
     textColor: '#AAAAAA',
     glowColor: 'transparent',
     font: 'font-sans',
@@ -237,15 +246,15 @@ export const SIZE_CLASSES = {
 
 export const BUTTON_VARIANTS = {
   primary: {
-    base: 'bg-brand text-white border-2 border-brand',
-    hover: 'hover:bg-brand/90 hover:shadow-glow-brand hover:scale-[1.04]',
-    active: 'active:scale-[0.98]',
+    base: 'bg-brand text-white border border-brand-dark',
+    hover: 'hover:bg-brand-hover hover:shadow-inner-glow hover:-translate-y-1 hover:shadow-btn-lift',
+    active: 'active:bg-brand-pressed active:translate-y-0',
     focus: 'focus-visible:ring-brand',
   },
   secondary: {
     base: 'bg-transparent text-white border-2 border-arena-border',
-    hover: 'hover:bg-arena-card hover:border-text-secondary',
-    active: 'active:bg-arena-elevated',
+    hover: 'hover:bg-arena-card hover:border-text-secondary hover:-translate-y-0.5',
+    active: 'active:bg-arena-elevated active:translate-y-0',
     focus: 'focus-visible:ring-text-secondary',
   },
   ghost: {
@@ -255,52 +264,52 @@ export const BUTTON_VARIANTS = {
     focus: 'focus-visible:ring-text-secondary',
   },
   danger: {
-    base: 'bg-error text-white border-2 border-error',
-    hover: 'hover:bg-error/90 hover:shadow-glow-human',
-    active: 'active:bg-error/80',
+    base: 'bg-error text-white border border-brand-dark',
+    hover: 'hover:bg-brand-hover hover:shadow-inner-glow hover:-translate-y-1',
+    active: 'active:bg-brand-pressed active:translate-y-0',
     focus: 'focus-visible:ring-error',
   },
   human: {
-    base: 'bg-human text-white border-2 border-human rounded-card',
-    hover: 'hover:bg-human/90 hover:shadow-glow-human-strong hover:scale-[1.04]',
-    active: 'active:scale-[0.98]',
+    base: 'bg-human text-white border border-brand-dark rounded-card',
+    hover: 'hover:bg-brand-hover hover:shadow-inner-glow hover:-translate-y-1 hover:shadow-glow-human-strong',
+    active: 'active:bg-brand-pressed active:translate-y-0',
     focus: 'focus-visible:ring-human',
   },
   'human-ghost': {
     base: 'bg-transparent text-human border border-human rounded-card',
-    hover: 'hover:bg-human/10 hover:shadow-glow-human',
-    active: 'active:bg-human/20',
+    hover: 'hover:bg-human/10 hover:shadow-glow-human hover:-translate-y-0.5',
+    active: 'active:bg-human/20 active:translate-y-0',
     focus: 'focus-visible:ring-human',
   },
   ai: {
     base: 'bg-ai text-arena-black border-2 border-ai rounded-card font-mono',
-    hover: 'hover:bg-ai/90 hover:shadow-glow-ai-strong hover:scale-[1.04]',
-    active: 'active:scale-[0.98]',
+    hover: 'hover:bg-ai/90 hover:shadow-glow-ai-strong hover:-translate-y-1',
+    active: 'active:bg-ai/80 active:translate-y-0',
     focus: 'focus-visible:ring-ai',
   },
   'ai-ghost': {
     base: 'bg-transparent text-ai border border-ai rounded-card font-mono',
-    hover: 'hover:bg-ai/10 hover:shadow-glow-ai',
-    active: 'active:bg-ai/20',
+    hover: 'hover:bg-ai/10 hover:shadow-glow-ai hover:-translate-y-0.5',
+    active: 'active:bg-ai/20 active:translate-y-0',
     focus: 'focus-visible:ring-ai',
   },
   accent: {
     base: 'bg-success text-arena-black border-2 border-success',
-    hover: 'hover:bg-success/90',
-    active: 'active:bg-success/80',
+    hover: 'hover:bg-success/90 hover:-translate-y-0.5',
+    active: 'active:bg-success/80 active:translate-y-0',
     focus: 'focus-visible:ring-success',
   },
 };
 
 export const CARD_VARIANTS = {
-  default: 'bg-arena-card border border-arena-border rounded-card',
-  outlined: 'bg-arena-card border-2 border-arena-border-strong rounded-card',
+  default: 'glass-card rounded-card',
+  outlined: 'glass-card border-2 border-arena-border-strong rounded-card',
   elevated: 'bg-arena-elevated border border-arena-border rounded-card shadow-lg',
   ghost: 'bg-transparent border border-transparent rounded-card',
-  human: 'bg-arena-card border-l-4 border border-arena-border border-l-human rounded-card',
-  ai: 'bg-arena-card border-l-4 border border-arena-border border-l-ai rounded-card',
-  accent: 'bg-arena-card border-l-4 border border-arena-border border-l-brand rounded-card',
-  special: 'bg-arena-elevated border-2 border-brand rounded-card',
+  human: 'glass-card border-l-4 border-l-human rounded-card',
+  ai: 'glass-card border-l-4 border-l-ai rounded-card',
+  accent: 'glass-card border-l-4 border-l-brand rounded-card',
+  special: 'glass-card border-2 border-brand rounded-card',
 };
 
 export const BADGE_VARIANTS = {

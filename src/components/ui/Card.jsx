@@ -32,9 +32,9 @@ const CardContext = createContext({ variant: 'default' });
 
 const PADDING_MAP = {
   none: '',
-  sm: 'p-3',
-  md: 'p-4 sm:p-5',
-  lg: 'p-5 sm:p-6',
+  sm: 'p-4',
+  md: 'p-5 sm:p-6',           // 24px default
+  lg: 'p-6 sm:p-10',          // 40px for premium breathing room
 };
 
 const Card = forwardRef(({

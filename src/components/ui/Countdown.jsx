@@ -89,24 +89,27 @@ const calculateTimeLeft = (targetDate) => {
 const pad = (num) => String(num).padStart(2, '0');
 
 /**
- * DigitDisplay - Individual digit display
+ * DigitDisplay - Individual digit display with premium styling
+ * White numbers with soft orange glow (scales better on retina than hard stroke)
  */
-const DigitDisplay = ({ value, label, isSeconds, allegiance, size, isPulsing }) => {
+const DigitDisplay = ({ value, label, isSeconds, allegiance, size, isPulsing, heroMode }) => {
   const sizeConfig = SIZE_CONFIG[size];
   const paddedValue = pad(value);
 
-  // Get color for seconds based on allegiance
-  const getSecondsColor = () => {
-    if (allegiance === 'ai') return 'text-ai';
-    if (allegiance === 'human') return 'text-human';
-    return 'text-brand';
+  // Get soft glow for seconds based on allegiance
+  const getSecondsGlow = () => {
+    if (allegiance === 'ai') return '0 0 20px rgba(0, 229, 255, 0.6), 0 0 40px rgba(0, 229, 255, 0.3)';
+    if (allegiance === 'human') return '0 0 20px rgba(255, 69, 0, 0.6), 0 0 40px rgba(255, 69, 0, 0.3)';
+    return '0 0 20px rgba(255, 69, 0, 0.5), 0 0 40px rgba(255, 69, 0, 0.25)';
   };
 
-  // Get glow for seconds
-  const getSecondsGlow = () => {
-    if (allegiance === 'ai') return '0 0 30px rgba(0, 212, 255, 0.5)';
-    if (allegiance === 'human') return '0 0 30px rgba(255, 46, 99, 0.5)';
-    return '0 0 30px rgba(255, 87, 34, 0.4)';
+  // Hero mode gets white numbers with orange glow
+  const getHeroStyle = () => {
+    if (!heroMode) return {};
+    return {
+      textShadow: '0 0 20px #FF4500, 0 0 40px rgba(255, 69, 0, 0.4)',
+      WebkitTextStroke: '0.5px rgba(255, 69, 0, 0.3)',
+    };
   };
 
   return (
@@ -114,21 +117,27 @@ const DigitDisplay = ({ value, label, isSeconds, allegiance, size, isPulsing }) 
       <div
         className={cn(
           'relative flex items-center justify-center',
-          'bg-arena-card border border-arena-border rounded-lg',
+          heroMode ? 'glass-card grain-overlay' : 'bg-arena-card border border-arena-border',
+          'rounded-card',
           sizeConfig.padding,
           isPulsing && 'animate-countdown-pulse'
         )}
+        style={heroMode ? {
+          background: 'radial-gradient(ellipse at center, rgba(255, 69, 0, 0.15) 0%, rgba(15, 15, 15, 0.72) 70%)',
+        } : {}}
       >
         <span
           className={cn(
-            'font-mono font-bold tracking-tight',
+            'font-mono tracking-tight',
+            heroMode ? 'font-black' : 'font-bold',
             isSeconds ? sizeConfig.seconds : sizeConfig.digit,
-            isSeconds ? getSecondsColor() : 'text-white',
+            'text-white',
             'transition-colors duration-150'
           )}
           style={{
             fontVariantNumeric: 'tabular-nums',
-            textShadow: isSeconds ? getSecondsGlow() : 'none',
+            textShadow: isSeconds ? getSecondsGlow() : (heroMode ? getHeroStyle().textShadow : 'none'),
+            ...(heroMode && !isSeconds ? getHeroStyle() : {}),
           }}
         >
           {paddedValue}
@@ -172,6 +181,7 @@ const Countdown = forwardRef(({
   showLabels = true,
   showDays = true,
   showPulse = true,
+  heroMode = false,   // Enable premium hero styling with grain + radial gradient
   onComplete,
   className,
   ...props
@@ -242,6 +252,7 @@ const Countdown = forwardRef(({
             label={showLabels ? 'Days' : undefined}
             allegiance={allegiance}
             size={size}
+            heroMode={heroMode}
           />
           <Separator size={size} />
         </>
@@ -253,6 +264,7 @@ const Countdown = forwardRef(({
         label={showLabels ? 'Hours' : undefined}
         allegiance={allegiance}
         size={size}
+        heroMode={heroMode}
       />
       <Separator size={size} />
 
@@ -262,6 +274,7 @@ const Countdown = forwardRef(({
         label={showLabels ? 'Min' : undefined}
         allegiance={allegiance}
         size={size}
+        heroMode={heroMode}
       />
       <Separator size={size} />
 
@@ -273,6 +286,7 @@ const Countdown = forwardRef(({
         allegiance={allegiance}
         size={size}
         isPulsing={isPulsing}
+        heroMode={heroMode}
       />
     </div>
   );
