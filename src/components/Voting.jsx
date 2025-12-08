@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, memo, useCallback } from 'react';
 import {
   Heart,
   Cpu,
@@ -28,6 +28,237 @@ const FILTER_OPTIONS = [
   { id: 'human', label: 'Human Side', icon: Heart },
   { id: 'ai', label: 'AI Side', icon: Cpu },
 ];
+
+// ============================================================================
+// MEMOIZED PROJECT CARD COMPONENT
+// ============================================================================
+
+const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }) {
+  const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
+  const submission = team.submission;
+
+  return (
+    <div
+      className={`group relative bg-white border-2 transition-all duration-300 hover:shadow-lg overflow-hidden
+        ${team.side === 'ai' ? 'border-dashed' : ''} ${config.borderRadius}`}
+      style={{ borderColor: config.borderColor }}
+    >
+      {/* Header with team info */}
+      <div
+        className="px-4 py-3 border-b"
+        style={{ borderColor: config.borderColor, backgroundColor: config.bgColor }}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            {team.side === 'ai' ? (
+              <Cpu className="w-4 h-4" style={{ color: config.color }} />
+            ) : (
+              <Heart className="w-4 h-4" style={{ color: config.color }} />
+            )}
+            <span
+              className="text-xs font-bold uppercase tracking-wide"
+              style={{ color: config.color }}
+            >
+              {team.name}
+            </span>
+          </div>
+          <div className="flex items-center gap-1 text-xs text-gray-500">
+            <Users className="w-3 h-3" />
+            {team.members?.length || 0}
+          </div>
+        </div>
+      </div>
+
+      {/* Project content */}
+      <div className="p-4">
+        <h3 className="text-lg font-black text-gray-900 mb-2 line-clamp-1">
+          {submission?.projectName || 'Untitled Project'}
+        </h3>
+        <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+          {submission?.description || 'No description provided.'}
+        </p>
+
+        {/* Links */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          {submission?.demoVideoUrl && (
+            <a
+              href={submission.demoVideoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              <Video className="w-3 h-3" />
+              Demo
+            </a>
+          )}
+          {submission?.repoUrl && (
+            <a
+              href={submission.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              <Github className="w-3 h-3" />
+              Code
+            </a>
+          )}
+          {submission?.liveDemoUrl && (
+            <a
+              href={submission.liveDemoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              <Globe className="w-3 h-3" />
+              Live
+            </a>
+          )}
+        </div>
+      </div>
+
+      {/* Vote button */}
+      <div className="px-4 pb-4">
+        <button
+          type="button"
+          onClick={() => onVote(team.id)}
+          disabled={!isVoted && !canVote}
+          className={`w-full py-3 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-300
+            ${
+              isVoted
+                ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
+                : canVote
+                ? 'border-2 border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-600'
+                : 'border-2 border-gray-100 text-gray-300 cursor-not-allowed'
+            }`}
+        >
+          <Star
+            className={`w-5 h-5 transition-transform duration-300 ${
+              isVoted ? 'fill-amber-900 scale-110' : ''
+            }`}
+          />
+          {isVoted ? 'Voted!' : 'Vote for this project'}
+        </button>
+      </div>
+
+      {/* Voted indicator */}
+      {isVoted && (
+        <div className="absolute top-3 right-3">
+          <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center animate-pulse">
+            <Star className="w-4 h-4 fill-amber-900 text-amber-900" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+});
+
+// ============================================================================
+// MEMOIZED PROJECT ROW COMPONENT
+// ============================================================================
+
+const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) {
+  const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
+  const submission = team.submission;
+
+  return (
+    <div
+      className={`group bg-white border-2 transition-all duration-200 hover:shadow-md
+        ${team.side === 'ai' ? 'border-dashed' : ''}`}
+      style={{ borderColor: isVoted ? 'rgb(251, 191, 36)' : config.borderColor }}
+    >
+      <div className="flex items-center gap-4 p-4">
+        {/* Side indicator */}
+        <div
+          className={`w-12 h-12 flex-shrink-0 flex items-center justify-center ${config.borderRadius}`}
+          style={{ backgroundColor: config.bgColor }}
+        >
+          {team.side === 'ai' ? (
+            <Cpu className="w-6 h-6" style={{ color: config.color }} />
+          ) : (
+            <Heart className="w-6 h-6" style={{ color: config.color }} />
+          )}
+        </div>
+
+        {/* Project info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2 mb-1">
+            <h3 className="text-base font-black text-gray-900 truncate">
+              {submission?.projectName || 'Untitled Project'}
+            </h3>
+            <span
+              className="text-xs font-bold px-2 py-0.5"
+              style={{ backgroundColor: config.bgColor, color: config.color }}
+            >
+              {team.name}
+            </span>
+          </div>
+          <p className="text-sm text-gray-600 truncate">
+            {submission?.description || 'No description provided.'}
+          </p>
+        </div>
+
+        {/* Links */}
+        <div className="hidden sm:flex items-center gap-2">
+          {submission?.demoVideoUrl && (
+            <a
+              href={submission.demoVideoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Watch Demo"
+            >
+              <Video className="w-5 h-5" />
+            </a>
+          )}
+          {submission?.repoUrl && (
+            <a
+              href={submission.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              title="View Code"
+            >
+              <Github className="w-5 h-5" />
+            </a>
+          )}
+          {submission?.liveDemoUrl && (
+            <a
+              href={submission.liveDemoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              title="Try Live Demo"
+            >
+              <ExternalLink className="w-5 h-5" />
+            </a>
+          )}
+        </div>
+
+        {/* Vote button */}
+        <button
+          type="button"
+          onClick={() => onVote(team.id)}
+          disabled={!isVoted && !canVote}
+          className={`px-4 py-2 flex items-center gap-2 font-bold text-sm transition-all duration-300 flex-shrink-0
+            ${
+              isVoted
+                ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
+                : canVote
+                ? 'border-2 border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-600'
+                : 'border-2 border-gray-100 text-gray-300 cursor-not-allowed'
+            }`}
+        >
+          <Star
+            className={`w-4 h-4 transition-transform duration-300 ${
+              isVoted ? 'fill-amber-900' : ''
+            }`}
+          />
+          {isVoted ? 'Voted' : 'Vote'}
+        </button>
+      </div>
+    </div>
+  );
+});
 
 // ============================================================================
 // COMPONENT
@@ -82,248 +313,11 @@ function Voting({
   const canVote = votesRemaining > 0;
 
   // Handle vote toggle
-  const handleVote = (teamId) => {
+  const handleVote = useCallback((teamId) => {
     if (onVote) {
       onVote(teamId);
     }
-  };
-
-  // ============================================================================
-  // RENDER: PROJECT CARD (GRID VIEW)
-  // ============================================================================
-  const renderProjectCard = (team) => {
-    const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
-    const isVoted = hasVotedFor(team.id);
-    const submission = team.submission;
-
-    return (
-      <div
-        key={team.id}
-        className={`group relative bg-white border-2 transition-all duration-300 hover:shadow-lg overflow-hidden
-          ${team.side === 'ai' ? 'border-dashed' : ''} ${config.borderRadius}`}
-        style={{ borderColor: config.borderColor }}
-      >
-        {/* Header with team info */}
-        <div
-          className="px-4 py-3 border-b"
-          style={{ borderColor: config.borderColor, backgroundColor: config.bgColor }}
-        >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              {team.side === 'ai' ? (
-                <Cpu className="w-4 h-4" style={{ color: config.color }} />
-              ) : (
-                <Heart className="w-4 h-4" style={{ color: config.color }} />
-              )}
-              <span
-                className="text-xs font-bold uppercase tracking-wide"
-                style={{ color: config.color }}
-              >
-                {team.name}
-              </span>
-            </div>
-            <div className="flex items-center gap-1 text-xs text-gray-500">
-              <Users className="w-3 h-3" />
-              {team.members?.length || 0}
-            </div>
-          </div>
-        </div>
-
-        {/* Project content */}
-        <div className="p-4">
-          <h3
-            className="text-lg font-black text-gray-900 mb-2 line-clamp-1"
-          >
-            {submission?.projectName || 'Untitled Project'}
-          </h3>
-          <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-            {submission?.description || 'No description provided.'}
-          </p>
-
-          {/* Links */}
-          <div className="flex flex-wrap gap-2 mb-4">
-            {submission?.demoVideoUrl && (
-              <a
-                href={submission.demoVideoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
-              >
-                <Video className="w-3 h-3" />
-                Demo
-              </a>
-            )}
-            {submission?.repoUrl && (
-              <a
-                href={submission.repoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
-              >
-                <Github className="w-3 h-3" />
-                Code
-              </a>
-            )}
-            {submission?.liveDemoUrl && (
-              <a
-                href={submission.liveDemoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
-              >
-                <Globe className="w-3 h-3" />
-                Live
-              </a>
-            )}
-          </div>
-        </div>
-
-        {/* Vote button */}
-        <div className="px-4 pb-4">
-          <button
-            type="button"
-            onClick={() => handleVote(team.id)}
-            disabled={!isVoted && !canVote}
-            className={`w-full py-3 flex items-center justify-center gap-2 font-bold text-sm transition-all duration-300
-              ${
-                isVoted
-                  ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
-                  : canVote
-                  ? 'border-2 border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-600'
-                  : 'border-2 border-gray-100 text-gray-300 cursor-not-allowed'
-              }`}
-          >
-            <Star
-              className={`w-5 h-5 transition-transform duration-300 ${
-                isVoted ? 'fill-amber-900 scale-110' : ''
-              }`}
-            />
-            {isVoted ? 'Voted!' : 'Vote for this project'}
-          </button>
-        </div>
-
-        {/* Voted indicator */}
-        {isVoted && (
-          <div className="absolute top-3 right-3">
-            <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center animate-pulse">
-              <Star className="w-4 h-4 fill-amber-900 text-amber-900" />
-            </div>
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // ============================================================================
-  // RENDER: PROJECT ROW (LIST VIEW)
-  // ============================================================================
-  const renderProjectRow = (team) => {
-    const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
-    const isVoted = hasVotedFor(team.id);
-    const submission = team.submission;
-
-    return (
-      <div
-        key={team.id}
-        className={`group bg-white border-2 transition-all duration-200 hover:shadow-md
-          ${team.side === 'ai' ? 'border-dashed' : ''}`}
-        style={{ borderColor: isVoted ? 'rgb(251, 191, 36)' : config.borderColor }}
-      >
-        <div className="flex items-center gap-4 p-4">
-          {/* Side indicator */}
-          <div
-            className={`w-12 h-12 flex-shrink-0 flex items-center justify-center ${config.borderRadius}`}
-            style={{ backgroundColor: config.bgColor }}
-          >
-            {team.side === 'ai' ? (
-              <Cpu className="w-6 h-6" style={{ color: config.color }} />
-            ) : (
-              <Heart className="w-6 h-6" style={{ color: config.color }} />
-            )}
-          </div>
-
-          {/* Project info */}
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-1">
-              <h3
-                className="text-base font-black text-gray-900 truncate"
-              >
-                {submission?.projectName || 'Untitled Project'}
-              </h3>
-              <span
-                className="text-xs font-bold px-2 py-0.5"
-                style={{ backgroundColor: config.bgColor, color: config.color }}
-              >
-                {team.name}
-              </span>
-            </div>
-            <p className="text-sm text-gray-600 truncate">
-              {submission?.description || 'No description provided.'}
-            </p>
-          </div>
-
-          {/* Links */}
-          <div className="hidden sm:flex items-center gap-2">
-            {submission?.demoVideoUrl && (
-              <a
-                href={submission.demoVideoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                title="Watch Demo"
-              >
-                <Video className="w-5 h-5" />
-              </a>
-            )}
-            {submission?.repoUrl && (
-              <a
-                href={submission.repoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                title="View Code"
-              >
-                <Github className="w-5 h-5" />
-              </a>
-            )}
-            {submission?.liveDemoUrl && (
-              <a
-                href={submission.liveDemoUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                title="Try Live Demo"
-              >
-                <ExternalLink className="w-5 h-5" />
-              </a>
-            )}
-          </div>
-
-          {/* Vote button */}
-          <button
-            type="button"
-            onClick={() => handleVote(team.id)}
-            disabled={!isVoted && !canVote}
-            className={`px-4 py-2 flex items-center gap-2 font-bold text-sm transition-all duration-300 flex-shrink-0
-              ${
-                isVoted
-                  ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
-                  : canVote
-                  ? 'border-2 border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-600'
-                  : 'border-2 border-gray-100 text-gray-300 cursor-not-allowed'
-              }`}
-          >
-            <Star
-              className={`w-4 h-4 transition-transform duration-300 ${
-                isVoted ? 'fill-amber-900' : ''
-              }`}
-            />
-            {isVoted ? 'Voted' : 'Vote'}
-          </button>
-        </div>
-      </div>
-    );
-  };
+  }, [onVote]);
 
   // ============================================================================
   // RENDER: EMPTY STATE
@@ -470,15 +464,33 @@ function Voting({
           renderEmptyState()
         ) : viewMode === 'grid' ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProjects.map(renderProjectCard)}
+            {filteredProjects.map((team) => (
+              <ProjectCard
+                key={team.id}
+                team={team}
+                isVoted={hasVotedFor(team.id)}
+                canVote={canVote}
+                onVote={handleVote}
+              />
+            ))}
           </div>
         ) : (
-          <div className="space-y-4">{filteredProjects.map(renderProjectRow)}</div>
+          <div className="space-y-4">
+            {filteredProjects.map((team) => (
+              <ProjectRow
+                key={team.id}
+                team={team}
+                isVoted={hasVotedFor(team.id)}
+                canVote={canVote}
+                onVote={handleVote}
+              />
+            ))}
+          </div>
         )}
       </div>
     </AppLayout>
   );
 }
 
-export default Voting;
+export default memo(Voting);
 

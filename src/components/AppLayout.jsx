@@ -3,7 +3,7 @@
  * Main layout wrapper providing consistent header, sidebar navigation, and footer.
  */
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import adaptLogo from '../../adaptlogo.png';
 import {
   Clock,
@@ -78,6 +78,42 @@ const calculateTimeRemaining = () => {
   return { status: 'ended', display: '0h 0m 0s', label: 'Event Complete' };
 };
 
+// Isolated timer component to prevent parent re-renders
+const WarTimer = memo(function WarTimer() {
+  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeRemaining(calculateTimeRemaining());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  return (
+    <div className={cn(
+      'hidden md:flex items-center gap-3 px-4 py-2 text-white rounded-card',
+      timeRemaining.status === 'live' 
+        ? 'bg-gradient-to-r from-ai to-human animate-pulse' 
+        : timeRemaining.status === 'ended'
+          ? 'bg-arena-card'
+          : 'bg-arena-card'
+    )}>
+      <Clock className="w-5 h-5 text-arena-secondary" />
+      <div>
+        <div className="font-mono text-2xl font-bold tracking-wider text-white">
+          {timeRemaining.display}
+        </div>
+        <div className={cn(
+          'text-xs uppercase tracking-wide',
+          timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-arena-secondary'
+        )}>
+          {timeRemaining.label}
+        </div>
+      </div>
+    </div>
+  );
+});
+
 // ============================================================================
 // NAVIGATION ITEMS
 // ============================================================================
@@ -129,51 +165,77 @@ function AppLayout({
   showSidebar = true,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(calculateTimeRemaining);
 
-  // Timer countdown
+  // Mouse-reactive breathing vignette (throttled for performance)
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeRemaining(calculateTimeRemaining());
-    }, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  // Mouse-reactive breathing vignette
-  useEffect(() => {
+    let rafId = null;
+    let lastX = 0;
+    let lastY = 0;
+    
     const handleMouseMove = (e) => {
-      document.body.style.setProperty('--mouse-x', `${(e.clientX / window.innerWidth) * 100}%`);
-      document.body.style.setProperty('--mouse-y', `${(e.clientY / window.innerHeight) * 100}%`);
+      // Only update if significant movement (throttle)
+      const newX = (e.clientX / window.innerWidth) * 100;
+      const newY = (e.clientY / window.innerHeight) * 100;
+      
+      if (Math.abs(newX - lastX) > 2 || Math.abs(newY - lastY) > 2) {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => {
+          document.body.style.setProperty('--mouse-x', `${newX}%`);
+          document.body.style.setProperty('--mouse-y', `${newY}%`);
+          lastX = newX;
+          lastY = newY;
+        });
+      }
     };
-    window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
+    
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
-  const captainedTeam = teams.find((team) => team.captainId === user?.id);
-  const userTeam = teams.find((team) => 
-    team.captainId === user?.id || 
-    team.members?.some(m => m.id === user?.id)
+  // Memoize expensive calculations
+  const captainedTeam = useMemo(() => 
+    teams.find((team) => team.captainId === user?.id), 
+    [teams, user?.id]
   );
+  
+  const userTeam = useMemo(() => 
+    teams.find((team) => 
+      team.captainId === user?.id || 
+      team.members?.some(m => m.id === user?.id)
+    ),
+    [teams, user?.id]
+  );
+  
   const userCallsign = user?.callsign || userTeam?.members?.find(m => m.id === user?.id)?.callsign;
 
-  const navItems = getNavItems(user?.role, eventPhase);
-  const config = getAllegianceConfig(user?.allegiance || 'neutral');
+  const navItems = useMemo(() => getNavItems(user?.role, eventPhase), [user?.role, eventPhase]);
+  const config = useMemo(() => getAllegianceConfig(user?.allegiance || 'neutral'), [user?.allegiance]);
 
-  // War stats
-  const humanTeams = teams.filter(t => t.side === 'human').length;
-  const aiTeams = teams.filter(t => t.side === 'ai').length;
-  const totalTeams = humanTeams + aiTeams;
-  const humanPercent = totalTeams > 0 ? Math.round((humanTeams / totalTeams) * 100) : 50;
-  const aiPercent = totalTeams > 0 ? Math.round((aiTeams / totalTeams) * 100) : 50;
+  // War stats - memoized
+  const warStats = useMemo(() => {
+    const humanTeams = teams.filter(t => t.side === 'human').length;
+    const aiTeams = teams.filter(t => t.side === 'ai').length;
+    const totalTeams = humanTeams + aiTeams;
+    return {
+      humanTeams,
+      aiTeams,
+      totalTeams,
+      humanPercent: totalTeams > 0 ? Math.round((humanTeams / totalTeams) * 100) : 50,
+      aiPercent: totalTeams > 0 ? Math.round((aiTeams / totalTeams) * 100) : 50,
+    };
+  }, [teams]);
 
-  const handleNavClick = (itemId) => {
+  const handleNavClick = useCallback((itemId) => {
     setSidebarOpen(false);
     if (itemId === 'teams') {
       onNavigate('marketplace', { tab: 'teams' });
     } else {
       onNavigate(itemId);
     }
-  };
+  }, [onNavigate]);
 
   return (
     <div className={cn('min-h-screen bg-hackday text-white', config.font)}>
@@ -203,28 +265,8 @@ function AppLayout({
               </div>
             </HStack>
 
-            {/* War Timer */}
-            <div className={cn(
-              'hidden md:flex items-center gap-3 px-4 py-2 text-white rounded-card',
-              timeRemaining.status === 'live' 
-                ? 'bg-gradient-to-r from-ai to-human animate-pulse' 
-                : timeRemaining.status === 'ended'
-                  ? 'bg-arena-card'
-                  : 'bg-arena-card'
-            )}>
-              <Clock className="w-5 h-5 text-arena-secondary" />
-              <div>
-                <div className="font-mono text-2xl font-bold tracking-wider text-white">
-                  {timeRemaining.display}
-                </div>
-                <div className={cn(
-                  'text-xs uppercase tracking-wide',
-                  timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-arena-secondary'
-                )}>
-                  {timeRemaining.label}
-                </div>
-              </div>
-            </div>
+            {/* War Timer - Isolated component to prevent parent re-renders */}
+            <WarTimer />
 
             {/* User Quick Access - Premium Glass Card */}
             <button
@@ -476,9 +518,9 @@ function AppLayout({
                         <HStack gap="1" align="center" className="font-bold text-human">
                           <Heart className="w-3 h-3" /> Human
                         </HStack>
-                        <span className="font-mono font-bold text-white">{humanPercent}%</span>
+                        <span className="font-mono font-bold text-white">{warStats.humanPercent}%</span>
                       </HStack>
-                      <Progress value={humanPercent} variant="human" size="sm" />
+                      <Progress value={warStats.humanPercent} variant="human" size="sm" />
                     </div>
                     {/* AI Bar */}
                     <div>
@@ -486,13 +528,13 @@ function AppLayout({
                         <HStack gap="1" align="center" className="font-bold text-ai">
                           <Cpu className="w-3 h-3" /> AI
                         </HStack>
-                        <span className="font-mono font-bold text-white">{aiPercent}%</span>
+                        <span className="font-mono font-bold text-white">{warStats.aiPercent}%</span>
                       </HStack>
-                      <Progress value={aiPercent} variant="ai" size="sm" />
+                      <Progress value={warStats.aiPercent} variant="ai" size="sm" />
                     </div>
                     {/* Total */}
                     <div className="pt-2 border-t border-arena-border text-center">
-                      <span className="text-xs text-arena-secondary">{totalTeams} teams registered</span>
+                      <span className="text-xs text-arena-secondary">{warStats.totalTeams} teams registered</span>
                     </div>
                   </VStack>
                 </div>
@@ -527,4 +569,4 @@ function AppLayout({
   );
 }
 
-export default AppLayout;
+export default memo(AppLayout);

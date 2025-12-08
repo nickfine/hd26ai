@@ -1,5 +1,12 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+
+// Helper to check if data has changed (shallow compare for arrays)
+const hasDataChanged = (prev, next) => {
+  if (!prev || !next) return prev !== next;
+  if (prev.length !== next.length) return true;
+  return prev.some((item, i) => item.id !== next[i]?.id);
+};
 
 // ============================================================================
 // TEAMS HOOK
@@ -12,6 +19,7 @@ export function useTeams(eventId = null) {
   const [teams, setTeams] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const prevDataRef = useRef(null);
 
   const fetchTeams = useCallback(async () => {
     try {

@@ -2,9 +2,12 @@
  * Landing Page
  * The entry point for the HackDay app, introducing the Human vs AI theme.
  * Dark Mode Cyber Arena Theme - "Tron meets Squid Game meets GitHub"
+ * 
+ * Cinematic hero with AI (left) and Human (right) side figures
  */
 
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Cpu, Heart } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
 import Button from './ui/Button';
@@ -66,6 +69,10 @@ const CursorGlow = ({ allegiance = 'neutral' }) => {
 
 function Landing({ onNavigate }) {
   const containerRef = useRef(null);
+  
+  // Hover state for cinematic figure interactions
+  const [buttonHover, setButtonHover] = useState(false);
+  const [recruitHover, setRecruitHover] = useState(null); // 'ai' | 'human' | null
 
   // Mouse-reactive breathing vignette
   useEffect(() => {
@@ -84,6 +91,18 @@ function Landing({ onNavigate }) {
     >
       {/* Cursor Glow Effect */}
       <CursorGlow allegiance="neutral" />
+
+      {/* Ambient Side Glows - Cyan from left, Orange from right */}
+      <div className="pointer-events-none absolute inset-0 z-0">
+        <div 
+          className="absolute inset-y-0 left-0 w-1/2" 
+          style={{ background: 'radial-gradient(ellipse at left center, rgba(0, 240, 255, 0.08), transparent 70%)' }} 
+        />
+        <div 
+          className="absolute inset-y-0 right-0 w-1/2" 
+          style={{ background: 'radial-gradient(ellipse at right center, rgba(255, 107, 0, 0.08), transparent 70%)' }} 
+        />
+      </div>
 
       {/* Animated Background Blobs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
@@ -104,8 +123,120 @@ function Landing({ onNavigate }) {
         />
       </div>
 
+      {/* ============================================
+          DESKTOP HERO FIGURES - Hidden on mobile
+          Capped positioning for ultra-wide screens
+          ============================================ */}
+      
+      {/* AI Figure - Left Side */}
+      <motion.div
+        initial={{ opacity: 0, x: -80 }}
+        animate={{ 
+          opacity: 1, 
+          x: 0,
+          scale: buttonHover || recruitHover === 'ai' ? 1.05 : 1,
+          filter: buttonHover || recruitHover === 'ai' ? 'brightness(1.5) drop-shadow(0 0 70px #00F0FF)' : 'brightness(1.0)'
+        }}
+        transition={{ 
+          duration: 2.2, 
+          delay: 0.3, 
+          ease: [0.25, 0.1, 0.25, 1],
+          scale: { duration: 0.5, ease: "easeOut" },
+          filter: { duration: 0.5, ease: "easeOut" }
+        }}
+        className="hidden md:block absolute top-[35%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
+        style={{
+          left: 'clamp(-350px, calc(50% - 750px), -5%)',
+          maxWidth: 'min(45vw, 600px)'
+        }}
+      >
+        <img
+          src="/promo/ai_transparent.png"
+          alt="AI"
+          className="w-full object-contain"
+          style={{ 
+            transform: 'scaleX(-1)' 
+          }}
+        />
+      </motion.div>
+
+      {/* Human Figure - Right Side */}
+      <motion.div
+        initial={{ opacity: 0, x: 80 }}
+        animate={{ 
+          opacity: 1, 
+          x: 0,
+          scale: buttonHover || recruitHover === 'human' ? 1.05 : 1,
+          filter: buttonHover || recruitHover === 'human' ? 'brightness(1.5) drop-shadow(0 0 70px #FF6B00)' : 'brightness(1.0)'
+        }}
+        transition={{ 
+          duration: 2.2, 
+          delay: 0.5, 
+          ease: [0.25, 0.1, 0.25, 1],
+          scale: { duration: 0.5, ease: "easeOut" },
+          filter: { duration: 0.5, ease: "easeOut" }
+        }}
+        className="hidden md:block absolute top-[35%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
+        style={{
+          right: 'clamp(-350px, calc(50% - 750px), -5%)',
+          maxWidth: 'min(45vw, 600px)'
+        }}
+      >
+        <img
+          src="/promo/human_transparent.png"
+          alt="Human"
+          className="w-full object-contain"
+          style={{ 
+            filter: 'sepia(0.4) hue-rotate(15deg) saturate(2.5) brightness(1.15)',
+            transform: 'scaleX(-1)' 
+          }}
+        />
+      </motion.div>
+
+      {/* ============================================
+          MOBILE HERO FIGURES - Ambient background style
+          Smaller, subtle, flanking the content
+          ============================================ */}
+      
+      {/* Mobile AI Figure - Left side ambient */}
+      <motion.div
+        initial={{ opacity: 0, x: -30 }}
+        animate={{ opacity: 0.4, x: 0 }}
+        transition={{ duration: 1.8, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+        className="block md:hidden absolute left-[-15%] top-[25%] w-[50vw] z-0 pointer-events-none"
+      >
+        <img 
+          src="/promo/ai_transparent.png" 
+          alt="" 
+          className="w-full object-contain opacity-60" 
+          style={{ transform: 'scaleX(-1)' }} 
+        />
+        {/* Fade overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-arena-black/80" />
+      </motion.div>
+
+      {/* Mobile Human Figure - Right side ambient */}
+      <motion.div
+        initial={{ opacity: 0, x: 30 }}
+        animate={{ opacity: 0.4, x: 0 }}
+        transition={{ duration: 1.8, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        className="block md:hidden absolute right-[-15%] top-[25%] w-[50vw] z-0 pointer-events-none"
+      >
+        <img 
+          src="/promo/human_transparent.png" 
+          alt="" 
+          className="w-full object-contain opacity-60" 
+          style={{ 
+            filter: 'sepia(0.4) hue-rotate(15deg) saturate(2.5) brightness(1.15)',
+            transform: 'scaleX(-1)' 
+          }} 
+        />
+        {/* Fade overlay */}
+        <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-arena-black/80" />
+      </motion.div>
+
       {/* Header */}
-      <header className="relative z-10 border-b border-arena-border px-4 sm:px-6 py-4">
+      <header className="relative z-20 border-b border-arena-border px-4 sm:px-6 py-4">
         <Container size="lg" padding="none">
           <HStack justify="between" align="center">
             <HStack gap="3" align="center">
@@ -122,7 +253,7 @@ function Landing({ onNavigate }) {
       </header>
 
       {/* Hero */}
-      <main className="relative z-10 flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-0">
+      <main className="relative z-20 flex-1 flex items-center justify-center px-4 sm:px-6 py-8 sm:py-0">
         <Container size="md" padding="none">
           <VStack align="center" gap="8">
             {/* VS Badge */}
@@ -156,11 +287,13 @@ function Landing({ onNavigate }) {
               </p>
             </VStack>
 
-            {/* CTA */}
+            {/* CTA - with hover tracking for figure interaction */}
             <Button
               variant="primary"
               size="lg"
               onClick={() => onNavigate('login')}
+              onMouseEnter={() => setButtonHover(true)}
+              onMouseLeave={() => setButtonHover(false)}
               className="relative group px-10 sm:px-14 py-4 text-lg font-black uppercase tracking-wide"
             >
               <span className="relative z-10">ENTER THE ARENA</span>
@@ -197,7 +330,7 @@ function Landing({ onNavigate }) {
               </Card>
             </HStack>
 
-            {/* Team Recruitment Teaser */}
+            {/* Team Recruitment Teaser - with hover tracking for figure interaction */}
             <div className="w-full max-w-md mt-8">
               <div className="text-center mb-3">
                 <span className="text-xs text-text-muted uppercase tracking-widest font-mono">
@@ -205,15 +338,19 @@ function Landing({ onNavigate }) {
                 </span>
               </div>
               <div className="relative h-3 rounded-full overflow-hidden bg-arena-elevated">
-                {/* AI side */}
+                {/* AI side - with hover interaction */}
                 <div 
-                  className="absolute left-0 top-0 bottom-0 bg-ai transition-all duration-1000"
+                  className="absolute left-0 top-0 bottom-0 bg-ai transition-all duration-1000 cursor-pointer"
                   style={{ width: '48%' }}
+                  onMouseEnter={() => setRecruitHover('ai')}
+                  onMouseLeave={() => setRecruitHover(null)}
                 />
-                {/* Human side */}
+                {/* Human side - with hover interaction */}
                 <div 
-                  className="absolute right-0 top-0 bottom-0 bg-human transition-all duration-1000"
+                  className="absolute right-0 top-0 bottom-0 bg-human transition-all duration-1000 cursor-pointer"
                   style={{ width: '52%' }}
+                  onMouseEnter={() => setRecruitHover('human')}
+                  onMouseLeave={() => setRecruitHover(null)}
                 />
                 {/* Divider line */}
                 <div 
@@ -225,8 +362,20 @@ function Landing({ onNavigate }) {
                 />
               </div>
               <div className="flex justify-between mt-2 text-xs font-mono">
-                <span className="text-ai">48% AI</span>
-                <span className="text-human">52% Human</span>
+                <span 
+                  className={`text-ai transition-all duration-300 cursor-pointer ${recruitHover === 'ai' ? 'scale-110 drop-shadow-[0_0_8px_#00F0FF]' : ''}`}
+                  onMouseEnter={() => setRecruitHover('ai')}
+                  onMouseLeave={() => setRecruitHover(null)}
+                >
+                  48% AI
+                </span>
+                <span 
+                  className={`text-human transition-all duration-300 cursor-pointer ${recruitHover === 'human' ? 'scale-110 drop-shadow-[0_0_8px_#FF6B00]' : ''}`}
+                  onMouseEnter={() => setRecruitHover('human')}
+                  onMouseLeave={() => setRecruitHover(null)}
+                >
+                  52% Human
+                </span>
               </div>
             </div>
           </VStack>
@@ -234,7 +383,7 @@ function Landing({ onNavigate }) {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-arena-border px-4 sm:px-6 py-4">
+      <footer className="relative z-20 border-t border-arena-border px-4 sm:px-6 py-4">
         <Container size="lg" padding="none">
           <div className="text-center text-xs text-text-muted font-mono uppercase tracking-wider">
             HD26 // Human vs AI // May the best code win

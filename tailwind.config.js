@@ -240,6 +240,8 @@ export default {
         'blob-delay-4': 'blob 8s ease-in-out 4s infinite',
         'countdown-pulse': 'countdownPulse 120ms ease-out',
         'glow-pulse': 'glowPulse 2s ease-in-out infinite',
+        // Hero figure cinematic pulse
+        'hero-pulse': 'heroPulse 8s infinite ease-in-out',
         // Orange load pulse - brightness flash on mount
         'orange-pulse': 'orangePulse 0.6s ease-out',
         'orange-pulse-delay-1': 'orangePulse 0.6s ease-out 0.1s',
@@ -280,6 +282,11 @@ export default {
         },
         glowPulse: {
           '0%, 100%': { opacity: '0.6' },
+          '50%': { opacity: '1' },
+        },
+        // Hero figure cinematic pulse
+        heroPulse: {
+          '0%, 100%': { opacity: '0.96' },
           '50%': { opacity: '1' },
         },
         // Orange brightness pulse for load animations

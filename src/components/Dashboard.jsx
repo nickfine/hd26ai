@@ -3,7 +3,7 @@
  * Main hub showing activity feed, schedule, awards, and quick actions.
  */
 
-import { useState } from 'react';
+import { useState, memo, useCallback } from 'react';
 import {
   Users,
   User,
@@ -65,7 +65,7 @@ const MOCK_FAQ = [
 // PROMO TILE COMPONENT
 // ============================================================================
 
-function PromoTile({ src, alt, colorScheme = 'ai', className }) {
+const PromoTile = memo(function PromoTile({ src, alt, colorScheme = 'ai', className }) {
   const [imageError, setImageError] = useState(false);
 
   const colorConfig = {
@@ -134,7 +134,7 @@ function PromoTile({ src, alt, colorScheme = 'ai', className }) {
       />
     </Card>
   );
-}
+});
 
 // ============================================================================
 // COMPONENT
@@ -149,9 +149,9 @@ function Dashboard({
 }) {
   const [expandedFaq, setExpandedFaq] = useState(null);
 
-  const toggleFaq = (id) => {
-    setExpandedFaq(expandedFaq === id ? null : id);
-  };
+  const toggleFaq = useCallback((id) => {
+    setExpandedFaq(prev => prev === id ? null : id);
+  }, []);
 
   return (
     <AppLayout
@@ -404,4 +404,4 @@ function Dashboard({
   );
 }
 
-export default Dashboard;
+export default memo(Dashboard);

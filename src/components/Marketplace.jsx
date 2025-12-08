@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import {
   Cpu,
   Heart,
@@ -52,73 +52,82 @@ function Marketplace({
     maxMembers: 6,
   });
 
-  // Find the team the user is captain of (if any)
-  const captainedTeam = teams.find((team) => team.captainId === user?.id);
+  // Find the team the user is captain of (if any) - memoized
+  const captainedTeam = useMemo(() => 
+    teams.find((team) => team.captainId === user?.id),
+    [teams, user?.id]
+  );
 
-  // Filter teams based on selected filter allegiance
-  const allegianceFilteredTeams = teams.filter((team) => {
+  // Filter teams based on selected filter allegiance - memoized
+  const allegianceFilteredTeams = useMemo(() => teams.filter((team) => {
     if (filterAllegiance === 'human') return team.side === 'human';
     if (filterAllegiance === 'ai') return team.side === 'ai';
     return true; // neutral shows all
-  });
+  }), [teams, filterAllegiance]);
 
-  // Filter teams by search
-  const searchFilteredTeams = allegianceFilteredTeams.filter(
-    (team) =>
-      team.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      team.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      team.lookingFor.some((skill) =>
-        skill.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+  // Filter and sort teams - memoized
+  const filteredTeams = useMemo(() => {
+    const searchLower = searchTerm.toLowerCase();
+    const filtered = allegianceFilteredTeams.filter(
+      (team) =>
+        team.name.toLowerCase().includes(searchLower) ||
+        team.description.toLowerCase().includes(searchLower) ||
+        team.lookingFor.some((skill) =>
+          skill.toLowerCase().includes(searchLower)
+        )
+    );
+    
+    // Sort teams: applied teams first, then others
+    return [...filtered].sort((a, b) => {
+      const aApplied = a.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
+      const bApplied = b.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
+      return bApplied - aApplied;
+    });
+  }, [allegianceFilteredTeams, searchTerm, user?.name]);
 
-  // Sort teams: applied teams first, then others
-  const filteredTeams = [...searchFilteredTeams].sort((a, b) => {
-    const aApplied = a.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
-    const bApplied = b.joinRequests?.some((r) => r.userName === user?.name) ? 1 : 0;
-    return bApplied - aApplied;
-  });
-
-  // Filter free agents by allegiance (and exclude current user - you don't need to see yourself)
-  const allegianceFilteredAgents = freeAgents.filter((agent) => {
+  // Filter free agents by allegiance - memoized
+  const allegianceFilteredAgents = useMemo(() => freeAgents.filter((agent) => {
     // Exclude current user from the list
     if (agent.id === user?.id || agent.name === user?.name) return false;
     
     if (filterAllegiance === 'human') return agent.allegiance === 'human';
     if (filterAllegiance === 'ai') return agent.allegiance === 'ai';
     return true; // neutral shows all
-  });
+  }), [freeAgents, filterAllegiance, user?.id, user?.name]);
 
-  // Filter free agents by search
-  const filteredAgents = allegianceFilteredAgents.filter(
-    (agent) =>
-      agent.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agent.bio?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      agent.skills?.some((skill) =>
-        skill.toLowerCase().includes(searchTerm.toLowerCase())
-      )
-  );
+  // Filter free agents by search - memoized
+  const filteredAgents = useMemo(() => {
+    const searchLower = searchTerm.toLowerCase();
+    return allegianceFilteredAgents.filter(
+      (agent) =>
+        agent.name.toLowerCase().includes(searchLower) ||
+        agent.bio?.toLowerCase().includes(searchLower) ||
+        agent.skills?.some((skill) =>
+          skill.toLowerCase().includes(searchLower)
+        )
+    );
+  }, [allegianceFilteredAgents, searchTerm]);
 
   // Find current user's pending invites (if they are a free agent in the system)
   const currentUserAgent = freeAgents.find((a) => a.id === user?.id);
   const pendingInvites = currentUserAgent?.teamInvites || [];
 
-  // Handle sending invite
-  const handleSendInvite = () => {
+  // Handle sending invite - memoized
+  const handleSendInvite = useCallback(() => {
     if (inviteModalAgent && captainedTeam) {
       onSendInvite(inviteModalAgent.id, captainedTeam.id, inviteMessage);
       setInviteModalAgent(null);
       setInviteMessage('');
     }
-  };
+  }, [inviteModalAgent, captainedTeam, onSendInvite, inviteMessage]);
 
   // Check if user is already on a team
   const userTeam = teams.find(
     (team) => team.captainId === user?.id || team.members?.some((m) => m.id === user?.id)
   );
 
-  // Handle creating team
-  const handleCreateTeam = async () => {
+  // Handle creating team - memoized
+  const handleCreateTeam = useCallback(async () => {
     // Validation
     if (newTeam.name.trim().length < 3) return;
     if (newTeam.description.trim().length < 10) return;
@@ -143,17 +152,17 @@ function Marketplace({
     } finally {
       setIsCreatingTeam(false);
     }
-  };
+  }, [newTeam, onCreateTeam, onNavigateToTeam, user?.allegiance]);
 
-  // Toggle skill in lookingFor array
-  const toggleSkill = (skill) => {
+  // Toggle skill in lookingFor array - memoized
+  const toggleSkill = useCallback((skill) => {
     setNewTeam((prev) => ({
       ...prev,
       lookingFor: prev.lookingFor.includes(skill)
         ? prev.lookingFor.filter((s) => s !== skill)
         : [...prev.lookingFor, skill],
     }));
-  };
+  }, []);
 
   // Validation state
   const isFormValid =
@@ -866,5 +875,5 @@ function Marketplace({
   );
 }
 
-export default Marketplace;
+export default memo(Marketplace);
 
