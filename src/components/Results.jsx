@@ -145,28 +145,28 @@ function Results({
         border: 'border-brand',
         bg: 'bg-arena-card',
         text: 'text-brand',
-        glow: 'shadow-brand/20',
+        glow: 'shadow-glow-brand',
       },
       best_human: {
         gradient: 'from-human via-red-400 to-human',
         border: 'border-human',
         bg: 'bg-arena-card',
         text: 'text-human',
-        glow: 'shadow-human/20',
+        glow: 'shadow-glow-human',
       },
       best_ai: {
         gradient: 'from-ai via-cyan-400 to-ai',
         border: 'border-ai',
         bg: 'bg-arena-card',
         text: 'text-ai',
-        glow: 'shadow-ai/20',
+        glow: 'shadow-glow-ai',
       },
       peoples_champion: {
         gradient: 'from-violet via-purple-400 to-violet',
         border: 'border-violet',
         bg: 'bg-arena-card',
         text: 'text-violet',
-        glow: 'shadow-violet/20',
+        glow: 'shadow-glow-brand',
       },
     };
 

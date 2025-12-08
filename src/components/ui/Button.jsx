@@ -199,7 +199,7 @@ export const FillButton = forwardRef(({
       ref={ref}
       type="button"
       className={cn(
-        'relative inline-flex items-center justify-center font-bold',
+        'group relative inline-flex items-center justify-center font-bold',
         'transition-all duration-200 overflow-hidden rounded-card',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-arena-black',
         'bg-transparent border-2',
@@ -211,10 +211,10 @@ export const FillButton = forwardRef(({
       )}
       {...props}
     >
-      {/* Fill overlay */}
+      {/* Fill overlay - scales on hover */}
       <span 
         className={cn(
-          'absolute inset-0 transform scale-x-0 origin-left transition-transform duration-300',
+          'absolute inset-0 transform scale-x-0 group-hover:scale-x-100 origin-left transition-transform duration-300',
           fillColor
         )}
         aria-hidden="true"

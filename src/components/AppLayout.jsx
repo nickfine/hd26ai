@@ -271,7 +271,38 @@ function AppLayout({
       {/* ================================================================== */}
       <div className="border-b border-arena-border bg-arena-card px-4 sm:px-6 py-3">
         <Container size="xl" padding="none">
-          <HStack justify="center" gap="2" className="sm:gap-4 overflow-x-auto">
+          {/* Mobile: Compact current phase display */}
+          <div className="sm:hidden">
+            {(() => {
+              const currentPhaseIndex = EVENT_PHASE_ORDER.indexOf(eventPhase);
+              const currentPhase = EVENT_PHASES_CONFIG[eventPhase];
+              return (
+                <div className="flex items-center justify-center gap-3">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-xs text-arena-muted">Phase</span>
+                    <span className="text-xs font-bold text-ai">{currentPhaseIndex + 1}/{EVENT_PHASE_ORDER.length}</span>
+                  </div>
+                  <div className="h-4 w-px bg-arena-border" />
+                  <span className="text-sm font-bold text-white">{currentPhase?.label}</span>
+                  <div className="h-4 w-px bg-arena-border" />
+                  <div className="flex gap-1">
+                    {EVENT_PHASE_ORDER.map((_, idx) => (
+                      <div
+                        key={idx}
+                        className={cn(
+                          'w-2 h-2 rounded-full',
+                          idx < currentPhaseIndex ? 'bg-white' : idx === currentPhaseIndex ? 'bg-ai' : 'bg-arena-border'
+                        )}
+                      />
+                    ))}
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+
+          {/* Desktop: Full phase timeline */}
+          <HStack justify="center" gap="4" className="hidden sm:flex">
             {EVENT_PHASE_ORDER.map((phaseKey, index) => {
               const phase = EVENT_PHASES_CONFIG[phaseKey];
               const currentPhaseIndex = EVENT_PHASE_ORDER.indexOf(eventPhase);
@@ -291,7 +322,7 @@ function AppLayout({
                       {isComplete ? '✓' : index + 1}
                     </div>
                     <span className={cn(
-                      'text-xs font-bold whitespace-nowrap hidden sm:inline',
+                      'text-xs font-bold whitespace-nowrap',
                       isActive ? 'text-ai' : isComplete ? 'text-white' : 'text-arena-muted'
                     )}>
                       {phase?.label}
@@ -299,7 +330,7 @@ function AppLayout({
                   </HStack>
                   {index < EVENT_PHASE_ORDER.length - 1 && (
                     <div className={cn(
-                      'w-4 sm:w-8 h-0.5 mx-1 sm:mx-2',
+                      'w-8 h-0.5 mx-2',
                       isComplete ? 'bg-white' : 'bg-arena-border'
                     )} />
                   )}
