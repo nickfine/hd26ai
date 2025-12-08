@@ -144,7 +144,7 @@ function Landing({ onNavigate }) {
           scale: { duration: 0.5, ease: "easeOut" },
           filter: { duration: 0.5, ease: "easeOut" }
         }}
-        className="hidden md:block absolute top-[35%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
+        className="hidden md:block absolute top-[28%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
         style={{
           left: 'clamp(-350px, calc(50% - 750px), -5%)',
           maxWidth: 'min(45vw, 600px)'
@@ -176,7 +176,7 @@ function Landing({ onNavigate }) {
           scale: { duration: 0.5, ease: "easeOut" },
           filter: { duration: 0.5, ease: "easeOut" }
         }}
-        className="hidden md:block absolute top-[35%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
+        className="hidden md:block absolute top-[28%] -translate-y-1/2 z-10 pointer-events-none animate-hero-pulse"
         style={{
           right: 'clamp(-350px, calc(50% - 750px), -5%)',
           maxWidth: 'min(45vw, 600px)'
