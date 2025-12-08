@@ -306,10 +306,10 @@ export const CARD_VARIANTS = {
   outlined: 'glass-card border-2 border-arena-border-strong rounded-card',
   elevated: 'bg-arena-elevated border border-arena-border rounded-card shadow-lg',
   ghost: 'bg-transparent border border-transparent rounded-card',
-  human: 'glass-card border-l-4 border-l-human rounded-card',
+  human: 'glass-card-human border-l-4 border-l-human rounded-card',
   ai: 'glass-card border-l-4 border-l-ai rounded-card',
-  accent: 'glass-card border-l-4 border-l-brand rounded-card',
-  special: 'glass-card border-2 border-brand rounded-card',
+  accent: 'glass-card-human border-l-4 border-l-brand rounded-card',
+  special: 'glass-card-human border-2 border-brand rounded-card',
 };
 
 export const BADGE_VARIANTS = {

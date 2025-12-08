@@ -173,12 +173,12 @@ function Marketplace({
       <div className="p-4 sm:p-6">
         {/* Pending Invites - For Free Agents */}
         {pendingInvites.length > 0 && (
-          <div className="p-4 mb-6 border-2 border-blue-300 bg-blue-50 rounded-lg">
+          <div className="glass-card p-4 mb-6 border-2 border-ai/30 rounded-card">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-xs font-bold uppercase tracking-wide text-gray-500">
+              <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
                 Team Invites
               </div>
-              <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+              <div className="flex items-center gap-1 px-2 py-1 bg-ai/20 text-ai rounded-full">
                 <Mail className="w-3 h-3" />
                 <span className="text-xs font-bold">{pendingInvites.length}</span>
               </div>
@@ -189,14 +189,14 @@ function Marketplace({
                 const teamConfig = ALLEGIANCE_CONFIG[invite.teamSide] || ALLEGIANCE_CONFIG.neutral;
                 
                 return (
-                  <div key={invite.id} className="p-3 bg-white border border-gray-200 rounded">
+                  <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg">
                     <div 
-                      className="font-bold text-sm text-gray-900 mb-1"
+                      className="font-bold text-sm text-white mb-1"
                     >
                       {invite.teamName}
                     </div>
                     {invite.message && (
-                      <p className="text-xs text-gray-500 mb-2 line-clamp-2">
+                      <p className="text-xs text-arena-muted mb-2 line-clamp-2">
                         "{invite.message}"
                       </p>
                     )}
@@ -204,7 +204,7 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onInviteResponse(user?.id, invite.id, true)}
-                        className="flex-1 py-1.5 text-xs font-bold text-white rounded flex items-center justify-center gap-1"
+                        className="flex-1 py-1.5 text-xs font-bold text-white rounded-lg flex items-center justify-center gap-1"
                         style={{ backgroundColor: teamConfig.color }}
                       >
                         <Check className="w-3 h-3" />
@@ -213,8 +213,8 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onInviteResponse(user?.id, invite.id, false)}
-                        className="flex-1 py-1.5 text-xs font-bold text-gray-600 border border-gray-300 rounded
-                                   hover:bg-gray-100 flex items-center justify-center gap-1"
+                        className="flex-1 py-1.5 text-xs font-bold text-arena-secondary border border-arena-border rounded-lg
+                                   hover:bg-arena-card hover:text-white flex items-center justify-center gap-1 transition-colors"
                       >
                         <X className="w-3 h-3" />
                         Decline
@@ -596,40 +596,40 @@ function Marketplace({
 
       {/* Invite Modal */}
       {inviteModalAgent && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-4 sm:p-6 max-w-md w-full mx-4 shadow-2xl">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
+          <div className="glass-card p-4 sm:p-6 max-w-md w-full mx-4 shadow-2xl rounded-card">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Send Team Invite</h2>
+              <h2 className="text-lg font-bold text-white">Send Team Invite</h2>
               <button
                 type="button"
                 onClick={() => {
                   setInviteModalAgent(null);
                   setInviteMessage('');
                 }}
-                className="p-1 text-gray-400 hover:text-gray-600"
+                className="p-1 text-arena-muted hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="mb-4 p-3 bg-gray-50 border border-gray-200">
-              <div className="text-sm font-bold text-gray-900">{inviteModalAgent.name}</div>
-              <div className="text-xs text-gray-500 mb-2">
+            <div className="mb-4 p-3 bg-arena-elevated border border-arena-border rounded-lg">
+              <div className="text-sm font-bold text-white">{inviteModalAgent.name}</div>
+              <div className="text-xs text-arena-muted mb-2">
                 {inviteModalAgent.skills?.join(', ')}
               </div>
-              <div className="text-sm text-gray-600">{inviteModalAgent.bio}</div>
+              <div className="text-sm text-arena-secondary">{inviteModalAgent.bio}</div>
             </div>
 
             <div className="mb-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
                 Invitation Message
               </label>
               <textarea
                 value={inviteMessage}
                 onChange={(e) => setInviteMessage(e.target.value)}
                 placeholder={`Tell ${inviteModalAgent.name} why they'd be a great fit for ${captainedTeam?.name}...`}
-                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none
-                           text-sm resize-none h-24"
+                className="w-full p-3 border-2 border-arena-border bg-arena-card text-white placeholder-arena-muted
+                           focus:border-brand focus:outline-none text-sm resize-none h-24 rounded-lg"
               />
             </div>
 
@@ -640,16 +640,16 @@ function Marketplace({
                   setInviteModalAgent(null);
                   setInviteMessage('');
                 }}
-                className="flex-1 py-2 border-2 border-gray-200 text-gray-600 font-bold text-sm
-                           hover:border-gray-400 transition-colors"
+                className="flex-1 py-2 border-2 border-arena-border text-arena-secondary font-bold text-sm
+                           hover:border-brand/50 hover:text-white transition-colors rounded-lg"
               >
                 Cancel
               </button>
               <button
                 type="button"
                 onClick={handleSendInvite}
-                className="flex-1 py-2 bg-gray-900 text-white font-bold text-sm
-                           hover:bg-gray-800 transition-colors flex items-center justify-center gap-2"
+                className="flex-1 py-2 bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white font-bold text-sm
+                           hover:from-[#FF9966] hover:to-[#FF5722] transition-colors flex items-center justify-center gap-2 rounded-lg"
               >
                 <Send className="w-4 h-4" />
                 Send Invite
@@ -661,14 +661,14 @@ function Marketplace({
 
       {/* Create Team Modal */}
       {showCreateTeamModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 overflow-y-auto">
-          <div className="bg-white p-4 sm:p-6 max-w-lg w-full mx-4 shadow-2xl my-8">
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="glass-card p-4 sm:p-6 max-w-lg w-full mx-4 shadow-2xl my-8 rounded-card">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black text-gray-900">CREATE YOUR TEAM</h2>
+              <h2 className="text-xl font-black text-white">CREATE YOUR TEAM</h2>
               <button
                 type="button"
                 onClick={() => setShowCreateTeamModal(false)}
-                className="p-1 text-gray-400 hover:text-gray-600"
+                className="p-1 text-arena-muted hover:text-white transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -676,26 +676,27 @@ function Marketplace({
 
             {/* Team Name */}
             <div className="mb-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Team Name <span className="text-red-500">*</span>
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Team Name <span className="text-human">*</span>
               </label>
               <input
                 type="text"
                 value={newTeam.name}
                 onChange={(e) => setNewTeam((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="Enter your team name"
-                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-sm"
+                className="w-full p-3 border-2 border-arena-border bg-arena-card text-white placeholder-arena-muted
+                           focus:border-brand focus:outline-none text-sm rounded-lg"
                 maxLength={50}
               />
               {newTeam.name.length > 0 && newTeam.name.length < 3 && (
-                <p className="text-xs text-red-500 mt-1">Team name must be at least 3 characters</p>
+                <p className="text-xs text-human mt-1">Team name must be at least 3 characters</p>
               )}
             </div>
 
             {/* Allegiance */}
             <div className="mb-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Choose Your Side <span className="text-red-500">*</span>
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Choose Your Side <span className="text-human">*</span>
               </label>
               <div className="flex gap-3">
                 <button
@@ -703,12 +704,12 @@ function Marketplace({
                   onClick={() => setNewTeam((prev) => ({ ...prev, side: 'human' }))}
                   className={`flex-1 p-4 border-2 rounded-xl transition-all flex flex-col items-center gap-2
                     ${newTeam.side === 'human'
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-200 hover:border-gray-400'
+                      ? 'border-human bg-human/10'
+                      : 'border-arena-border hover:border-human/50'
                     }`}
                 >
-                  <Heart className={`w-8 h-8 ${newTeam.side === 'human' ? 'text-green-600' : 'text-gray-400'}`} />
-                  <span className={`font-bold text-sm ${newTeam.side === 'human' ? 'text-green-700' : 'text-gray-500'}`}>
+                  <Heart className={`w-8 h-8 ${newTeam.side === 'human' ? 'text-human' : 'text-arena-muted'}`} />
+                  <span className={`font-bold text-sm ${newTeam.side === 'human' ? 'text-human' : 'text-arena-muted'}`}>
                     Human
                   </span>
                 </button>
@@ -717,12 +718,12 @@ function Marketplace({
                   onClick={() => setNewTeam((prev) => ({ ...prev, side: 'ai' }))}
                   className={`flex-1 p-4 border-2 border-dashed transition-all flex flex-col items-center gap-2
                     ${newTeam.side === 'ai'
-                      ? 'border-cyan-500 bg-cyan-50'
-                      : 'border-gray-200 hover:border-gray-400'
+                      ? 'border-ai bg-ai/10'
+                      : 'border-arena-border hover:border-ai/50'
                     }`}
                 >
-                  <Cpu className={`w-8 h-8 ${newTeam.side === 'ai' ? 'text-cyan-600' : 'text-gray-400'}`} />
-                  <span className={`font-bold text-sm ${newTeam.side === 'ai' ? 'text-cyan-700' : 'text-gray-500'}`}>
+                  <Cpu className={`w-8 h-8 ${newTeam.side === 'ai' ? 'text-ai' : 'text-arena-muted'}`} />
+                  <span className={`font-bold text-sm ${newTeam.side === 'ai' ? 'text-ai' : 'text-arena-muted'}`}>
                     AI
                   </span>
                 </button>
@@ -731,32 +732,33 @@ function Marketplace({
 
             {/* Description */}
             <div className="mb-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Description <span className="text-red-500">*</span>
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Description <span className="text-human">*</span>
               </label>
               <textarea
                 value={newTeam.description}
                 onChange={(e) => setNewTeam((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe your team's mission, goals, or project idea..."
-                className="w-full p-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-sm resize-none h-24"
+                className="w-full p-3 border-2 border-arena-border bg-arena-card text-white placeholder-arena-muted
+                           focus:border-brand focus:outline-none text-sm resize-none h-24 rounded-lg"
                 maxLength={500}
               />
               <div className="flex justify-between mt-1">
                 {newTeam.description.length > 0 && newTeam.description.length < 10 ? (
-                  <p className="text-xs text-red-500">Description must be at least 10 characters</p>
+                  <p className="text-xs text-human">Description must be at least 10 characters</p>
                 ) : (
                   <span />
                 )}
-                <p className="text-xs text-gray-400">{newTeam.description.length}/500</p>
+                <p className="text-xs text-arena-muted">{newTeam.description.length}/500</p>
               </div>
             </div>
 
             {/* Looking For Skills */}
             <div className="mb-4">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
-                Looking For <span className="text-red-500">*</span>
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
+                Looking For <span className="text-human">*</span>
               </label>
-              <p className="text-xs text-gray-500 mb-3">Select skills you're looking for in teammates</p>
+              <p className="text-xs text-arena-muted mb-3">Select skills you're looking for in teammates</p>
               <div className="flex flex-wrap gap-2">
                 {SKILLS.map((skill) => {
                   const isSelected = newTeam.lookingFor.includes(skill);
@@ -770,7 +772,7 @@ function Marketplace({
                         ${newTeam.side === 'ai' ? '' : 'rounded-full'}
                         ${isSelected
                           ? `text-white ${newTeam.side === 'ai' ? 'border-dashed' : ''}`
-                          : 'border-gray-200 text-gray-600 hover:border-gray-400'
+                          : 'border-arena-border text-arena-secondary hover:border-brand/50'
                         }`}
                       style={isSelected ? {
                         backgroundColor: sideConfig.color,
@@ -783,13 +785,13 @@ function Marketplace({
                 })}
               </div>
               {newTeam.lookingFor.length === 0 && (
-                <p className="text-xs text-red-500 mt-2">Select at least one skill</p>
+                <p className="text-xs text-human mt-2">Select at least one skill</p>
               )}
             </div>
 
             {/* Max Members */}
             <div className="mb-6">
-              <label className="block text-xs font-bold uppercase tracking-wide text-gray-500 mb-2">
+              <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
                 Max Team Size
               </label>
               <div className="flex items-center gap-4">
@@ -799,11 +801,11 @@ function Marketplace({
                   max="6"
                   value={newTeam.maxMembers}
                   onChange={(e) => setNewTeam((prev) => ({ ...prev, maxMembers: parseInt(e.target.value, 10) }))}
-                  className="flex-1 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  className="flex-1 h-2 bg-arena-elevated rounded-lg appearance-none cursor-pointer accent-brand"
                 />
-                <div className="flex items-center gap-1 px-3 py-1 bg-gray-100 rounded">
-                  <Users className="w-4 h-4 text-gray-500" />
-                  <span className="font-bold text-gray-900">{newTeam.maxMembers}</span>
+                <div className="flex items-center gap-1 px-3 py-1 bg-arena-elevated border border-arena-border rounded">
+                  <Users className="w-4 h-4 text-arena-secondary" />
+                  <span className="font-bold text-white">{newTeam.maxMembers}</span>
                 </div>
               </div>
             </div>
@@ -813,8 +815,8 @@ function Marketplace({
               <button
                 type="button"
                 onClick={() => setShowCreateTeamModal(false)}
-                className="flex-1 py-3 border-2 border-gray-200 text-gray-600 font-bold text-sm
-                           hover:border-gray-400 transition-colors"
+                className="flex-1 py-3 border-2 border-arena-border text-arena-secondary font-bold text-sm
+                           hover:border-brand/50 hover:text-white transition-colors rounded-lg"
               >
                 Cancel
               </button>
@@ -822,15 +824,15 @@ function Marketplace({
                 type="button"
                 onClick={handleCreateTeam}
                 disabled={!isFormValid || isCreatingTeam}
-                className={`flex-1 py-3 font-bold text-sm transition-all flex items-center justify-center gap-2
+                className={`flex-1 py-3 font-bold text-sm transition-all flex items-center justify-center gap-2 rounded-lg
                   ${isFormValid && !isCreatingTeam
-                    ? 'bg-gray-900 text-white hover:bg-gray-800'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white hover:from-[#FF9966] hover:to-[#FF5722]'
+                    : 'bg-arena-elevated text-arena-muted cursor-not-allowed'
                   }`}
               >
                 {isCreatingTeam ? (
                   <>
-                    <div className="w-4 h-4 border-2 border-gray-400 border-t-transparent rounded-full animate-spin" />
+                    <div className="w-4 h-4 border-2 border-arena-muted border-t-white rounded-full animate-spin" />
                     Creating...
                   </>
                 ) : (

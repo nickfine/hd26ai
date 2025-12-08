@@ -102,7 +102,7 @@ function Onboarding({ user, updateUser, onNavigate, onAutoAssign }) {
   const config = getAllegianceConfig(allegiance);
 
   return (
-    <div className="min-h-screen bg-arena-black flex flex-col">
+    <div className="min-h-screen bg-hackday flex flex-col">
       {/* Header */}
       <header className="border-b border-arena-border px-4 sm:px-6 py-4">
         <Container size="lg" padding="none">

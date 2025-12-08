@@ -234,7 +234,7 @@ function Dashboard({
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Live Activity</Card.Label>
               <HStack gap="1.5" align="center" className="text-xs text-success">
-                <HeartbeatDot className="text-success" />
+                <HeartbeatDot className="text-success live-pulse-glow" />
                 <span className="font-bold tracking-wider uppercase">Live</span>
               </HStack>
             </HStack>
@@ -296,7 +296,7 @@ function Dashboard({
                 <HStack 
                   key={item.id} 
                   gap="3"
-                  className={cn('pb-3', index < MOCK_SCHEDULE.length - 1 && 'border-b border-arena-border')}
+                  className={cn('pb-3', index < MOCK_SCHEDULE.length - 1 && 'border-b border-arena-border divider-glow')}
                 >
                   <div className="w-16 flex-shrink-0">
                     <div className="text-xs font-mono font-bold text-brand">{item.time}</div>
