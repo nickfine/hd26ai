@@ -447,11 +447,12 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
       <div className="p-4 sm:p-6 max-w-4xl">
         {/* Page Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+          <div className="glass-card inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 backdrop-blur-md border border-white/10">
             <Calendar className="w-5 h-5 text-brand" />
             <span className="font-bold text-sm text-white">JUNE 1ST - 22ND, 2026</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display"
+              style={{ textShadow: '0 0 30px rgba(255, 107, 53, 0.4)' }}>
             EVENT SCHEDULE
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto">
@@ -465,8 +466,11 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           <button
             type="button"
             onClick={handleAddAllToCalendar}
-            className="flex items-center gap-2 px-6 py-3 bg-brand text-white font-bold 
-                       hover:bg-brand/90 transition-all hover:scale-[1.02] rounded-lg shadow-lg"
+            className="flex items-center gap-2 px-6 py-3 font-bold text-white
+                       bg-gradient-to-r from-[#FF8A50] to-[#FF4500] 
+                       hover:from-[#FF9966] hover:to-[#FF5722]
+                       hover:-translate-y-0.5 transition-all rounded-lg 
+                       shadow-lg hover:shadow-[0_8px_30px_rgba(255,107,53,0.3)]"
           >
             <Download className="w-5 h-5" />
             Add All Events to Calendar
@@ -480,10 +484,10 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               key={key}
               type="button"
               onClick={() => setActiveDay(key)}
-              className={`flex-1 py-3 px-4 font-bold text-center transition-all border rounded-lg
+              className={`flex-1 py-3 px-4 font-bold text-center transition-all rounded-card backdrop-blur-md
                 ${activeDay === key
-                  ? 'bg-brand text-white border-brand'
-                  : 'bg-arena-card text-arena-secondary border-arena-border hover:border-brand/50 hover:text-white'
+                  ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white border border-white/20 shadow-[0_0_20px_rgba(255,107,53,0.3)]'
+                  : 'glass-card text-arena-secondary hover:border-brand/30 hover:text-white'
                 }`}
             >
               <div className="text-lg">{day.label}</div>
@@ -496,8 +500,8 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
 
         {/* Timeline */}
         <div className="relative">
-          {/* Timeline Line */}
-          <div className="absolute left-[23px] sm:left-[31px] top-0 bottom-0 w-0.5 bg-arena-border" />
+          {/* Timeline Line - Animated glow */}
+          <div className="absolute left-[23px] sm:left-[31px] top-0 bottom-0 w-0.5 timeline-line" />
 
           {/* Events */}
           <div className="space-y-4">
@@ -506,20 +510,22 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               
               return (
                 <div key={event.id} className="relative flex gap-4">
-                  {/* Timeline Node */}
+                  {/* Timeline Node - with orange glow */}
                   <div className="relative z-10 flex-shrink-0">
+                    {/* Glow backdrop */}
+                    <div className="absolute inset-0 rounded-full bg-brand/20 blur-xl scale-125" />
                     <div
-                      className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-arena-black 
-                                  flex items-center justify-center shadow-md bg-arena-card"
+                      className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-arena-black 
+                                  flex items-center justify-center shadow-md glass-card"
                     >
                       <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
                     </div>
                   </div>
 
-                  {/* Event Card */}
+                  {/* Event Card - Glass styling */}
                   <div
-                    className="flex-1 p-4 sm:p-5 bg-arena-card border border-arena-border rounded-xl 
-                                hover:border-brand/50 transition-all"
+                    className="flex-1 p-4 sm:p-5 glass-card rounded-card 
+                                hover:border-brand/30 hover:-translate-y-1 transition-all duration-300"
                   >
                     {/* Time Badge */}
                     <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -543,7 +549,8 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
                     </div>
 
                     {/* Title & Description */}
-                    <h3 className="text-lg font-bold text-white mb-1">
+                    <h3 className="text-lg font-bold text-white mb-1"
+                        style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.4)' }}>
                       {event.title}
                     </h3>
                     <p className="text-sm text-arena-secondary mb-3">
@@ -570,10 +577,13 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
 
         {/* Bottom Info */}
         <div className="mt-10 text-center">
-          <div className="inline-block p-6 bg-arena-card border border-arena-border rounded-xl">
+          <div className="glass-card inline-block p-6 rounded-card">
             <div className="flex items-center justify-center gap-2 mb-3">
               <Clock className="w-5 h-5 text-brand" />
-              <span className="font-bold text-white">Remote Hackathon</span>
+              <span className="font-bold text-white"
+                    style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.4)' }}>
+                Remote Hackathon
+              </span>
             </div>
             <p className="text-sm text-arena-secondary mb-4">
               All times are in your local timezone. Hack from anywhere in the world!
@@ -582,16 +592,19 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               <button
                 type="button"
                 onClick={() => onNavigate('rules')}
-                className="px-4 py-2 text-sm font-bold text-white bg-arena-elevated 
-                           hover:bg-arena-border rounded transition-colors"
+                className="px-4 py-2 text-sm font-bold text-arena-secondary 
+                           glass-card hover:text-white hover:border-brand/30
+                           rounded-lg transition-all"
               >
                 View Rules
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('dashboard')}
-                className="px-4 py-2 text-sm font-bold text-white bg-brand 
-                           hover:bg-brand/90 rounded transition-colors"
+                className="px-4 py-2 text-sm font-bold text-white 
+                           bg-gradient-to-r from-[#FF8A50] to-[#FF4500]
+                           hover:from-[#FF9966] hover:to-[#FF5722]
+                           hover:-translate-y-0.5 transition-all rounded-lg"
               >
                 Back to Dashboard
               </button>
