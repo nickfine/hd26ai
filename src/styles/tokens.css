@@ -65,10 +65,10 @@
   
   --color-success: #00FF9D;          /* Neon mint */
   --color-success-light: rgba(0, 255, 157, 0.1);
-  --color-warning: #FF2E63;          /* Same as Human */
-  --color-warning-light: rgba(255, 46, 99, 0.1);
-  --color-error: #FF2E63;
-  --color-error-light: rgba(255, 46, 99, 0.1);
+  --color-warning: #FF8A00;          /* Amber warning */
+  --color-warning-light: rgba(255, 138, 0, 0.1);
+  --color-error: #FF4500;             /* Brand orange */
+  --color-error-light: rgba(255, 69, 0, 0.1);
   --color-info: #00D4FF;
   --color-info-light: rgba(0, 212, 255, 0.1);
   
@@ -97,8 +97,8 @@
   --shadow-btn-lift: 0 4px 12px rgba(0, 0, 0, 0.4);
   
   /* Drop shadows for filter */
-  --drop-glow-human: drop-shadow(0 0 12px rgba(255, 46, 99, 0.22));
-  --drop-glow-ai: drop-shadow(0 0 12px rgba(0, 212, 255, 0.22));
+  --drop-glow-human: drop-shadow(0 0 12px rgba(255, 69, 0, 0.22));
+  --drop-glow-ai: drop-shadow(0 0 12px rgba(0, 229, 255, 0.22));
   
   /* Elevation shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);

@@ -38,10 +38,10 @@ const CursorGlow = ({ allegiance = 'neutral' }) => {
   }, []);
 
   const glowColor = allegiance === 'ai' 
-    ? 'rgba(0, 212, 255, 0.6)' 
+    ? 'rgba(0, 229, 255, 0.6)' 
     : allegiance === 'human' 
-      ? 'rgba(255, 46, 99, 0.6)' 
-      : 'rgba(255, 87, 34, 0.6)';
+      ? 'rgba(255, 69, 0, 0.6)' 
+      : 'rgba(255, 69, 0, 0.6)';
 
   if (!isVisible) return null;
 
@@ -129,7 +129,7 @@ function Landing({ onNavigate }) {
               
               <HStack gap="2" align="center" className="text-human sm:gap-3">
                 <span className="text-xl sm:text-3xl font-bold">HUMAN</span>
-                <Heart className="w-8 sm:w-12 h-8 sm:h-12" style={{ filter: 'drop-shadow(0 0 12px rgba(255, 46, 99, 0.5))' }} />
+                <Heart className="w-8 sm:w-12 h-8 sm:h-12" style={{ filter: 'drop-shadow(0 0 12px rgba(255, 69, 0, 0.5))' }} />
               </HStack>
             </HStack>
 
@@ -209,8 +209,8 @@ function Landing({ onNavigate }) {
                 <div 
                   className="absolute top-0 bottom-0 w-0.5 left-[48%] transform -translate-x-1/2"
                   style={{
-                    background: 'linear-gradient(to bottom, rgba(0, 212, 255, 0.6), white, rgba(255, 46, 99, 0.6))',
-                    boxShadow: '-4px 0 8px rgba(0, 212, 255, 0.4), 4px 0 8px rgba(255, 46, 99, 0.4), 0 0 12px white',
+                    background: 'linear-gradient(to bottom, rgba(0, 229, 255, 0.6), white, rgba(255, 69, 0, 0.6))',
+                    boxShadow: '-4px 0 8px rgba(0, 229, 255, 0.4), 4px 0 8px rgba(255, 69, 0, 0.4), 0 0 12px white',
                   }}
                 />
               </div>

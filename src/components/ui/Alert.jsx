@@ -34,27 +34,27 @@ import { cn } from '../../lib/design-system';
 
 const VARIANT_STYLES = {
   info: {
-    container: 'bg-blue-50 border-blue-200 text-blue-800',
-    icon: 'text-blue-500',
-    title: 'text-blue-900',
+    container: 'bg-ai/10 border-ai/30 text-ai',
+    icon: 'text-ai',
+    title: 'text-ai',
     Icon: Info,
   },
   success: {
-    container: 'bg-success-50 border-success-200 text-success-800',
-    icon: 'text-success-500',
-    title: 'text-success-900',
+    container: 'bg-success/10 border-success/30 text-success',
+    icon: 'text-success',
+    title: 'text-success',
     Icon: CheckCircle,
   },
   warning: {
-    container: 'bg-warning-50 border-warning-200 text-warning-800',
-    icon: 'text-warning-500',
-    title: 'text-warning-900',
+    container: 'bg-warning/10 border-warning/30 text-warning',
+    icon: 'text-warning',
+    title: 'text-warning',
     Icon: AlertTriangle,
   },
   error: {
-    container: 'bg-error-50 border-error-200 text-error-800',
-    icon: 'text-error-500',
-    title: 'text-error-900',
+    container: 'bg-human/10 border-human/30 text-human',
+    icon: 'text-human',
+    title: 'text-human',
     Icon: AlertCircle,
   },
 };
@@ -153,10 +153,10 @@ export const InlineAlert = forwardRef(({
       role="alert"
       className={cn(
         'flex items-center gap-2 text-sm',
-        variant === 'error' && 'text-error-600',
-        variant === 'warning' && 'text-warning-600',
-        variant === 'success' && 'text-success-600',
-        variant === 'info' && 'text-blue-600',
+        variant === 'error' && 'text-human',
+        variant === 'warning' && 'text-warning',
+        variant === 'success' && 'text-success',
+        variant === 'info' && 'text-ai',
         className
       )}
       {...props}
@@ -191,7 +191,7 @@ export const Toast = forwardRef(({
       ref={ref}
       role="alert"
       className={cn(
-        'flex items-start gap-3 p-4 bg-white border-2 border-neutral-200 shadow-lg rounded-lg min-w-[300px] max-w-md',
+        'flex items-start gap-3 p-4 bg-arena-elevated border-2 border-arena-border shadow-lg rounded-card min-w-[300px] max-w-md',
         'animate-slide-up',
         className
       )}
@@ -201,12 +201,12 @@ export const Toast = forwardRef(({
       
       <div className="flex-1 min-w-0">
         {title && (
-          <h4 className="font-bold text-neutral-900 mb-0.5">
+          <h4 className="font-bold text-white mb-0.5">
             {title}
           </h4>
         )}
         {message && (
-          <p className="text-sm text-neutral-600">
+          <p className="text-sm text-text-secondary">
             {message}
           </p>
         )}
@@ -216,10 +216,10 @@ export const Toast = forwardRef(({
         <button
           type="button"
           onClick={onDismiss}
-          className="flex-shrink-0 p-1 -m-1 rounded hover:bg-neutral-100 transition-colors"
+          className="flex-shrink-0 p-1 -m-1 rounded hover:bg-arena-card transition-colors"
           aria-label="Dismiss"
         >
-          <X className="w-4 h-4 text-neutral-400" />
+          <X className="w-4 h-4 text-text-muted" />
         </button>
       )}
     </div>

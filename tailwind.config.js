@@ -91,12 +91,16 @@ export default {
         // Arena surfaces (dark mode)
         arena: {
           black: '#0B0A08',      // Warm black - makes orange glow
+          bg: '#0B0A08',         // Alias for bg-arena-bg
           card: '#111111',       // Card/panel bg
           elevated: '#1A1A1A',   // Elevated surfaces
           border: '#1F1F1F',     // Subtle borders
           'border-strong': '#2A2A2A',
           'glass': 'rgba(15, 15, 15, 0.72)',
           'glass-border': 'rgba(255, 100, 0, 0.18)',  // Warm orange-tinted
+          // Text colors for arena namespace (allows text-arena-secondary etc.)
+          secondary: '#AAAAAA',
+          muted: '#888888',
         },
         
         // Text colors

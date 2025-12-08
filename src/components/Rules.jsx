@@ -29,9 +29,9 @@ const HUMAN_RULES = {
   title: 'Human Team Rules',
   subtitle: 'Embrace your humanity — minimal AI assistance allowed',
   icon: Heart,
-  color: '#FF2E63',
-  bgColor: 'rgba(255, 46, 99, 0.1)',
-  borderColor: '#FF2E63',
+  color: '#FF4500',
+  bgColor: 'rgba(255, 69, 0, 0.1)',
+  borderColor: '#FF4500',
   allowed: [
     {
       title: 'Traditional Search Engines',

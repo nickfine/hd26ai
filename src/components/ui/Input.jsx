@@ -99,7 +99,7 @@ const Input = forwardRef(({
           aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
           className={cn(
             // Base styles
-            'w-full border-2 bg-arena-black text-white placeholder-arena-muted',
+            'w-full border-2 bg-arena-black text-white placeholder-arena-muted rounded-card',
             'transition-colors duration-200',
             'focus:outline-none focus:ring-0',
             // Size
@@ -248,7 +248,7 @@ export const TextArea = forwardRef(({
         aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
         className={cn(
           // Base styles
-          'w-full px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted text-sm',
+          'w-full px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted text-sm rounded-card',
           'transition-colors duration-200',
           'focus:outline-none focus:ring-0',
           // Resize

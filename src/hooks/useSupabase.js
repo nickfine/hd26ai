@@ -67,7 +67,7 @@ export function useTeams(eventId = null) {
           .filter(m => m.status === 'PENDING')
           .map(m => ({
             id: m.id,
-            odById: m.userId,
+            userId: m.userId,
             userName: m.user?.name || 'Unknown',
             userSkills: m.user?.skills ? m.user.skills.split(',').map(s => s.trim()) : [],
             message: '',
@@ -179,7 +179,7 @@ export function useTeam(teamId) {
           .filter(m => m.status === 'PENDING')
           .map(m => ({
             id: m.id,
-            odById: m.userId,
+            userId: m.userId,
             userName: m.user?.name || 'Unknown',
             userSkills: m.user?.skills ? m.user.skills.split(',').map(s => s.trim()) : [],
             message: '',
