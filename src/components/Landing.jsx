@@ -253,9 +253,9 @@ function Landing({ onNavigate }) {
       </header>
 
       {/* Hero */}
-      <main className="relative z-20 flex-1 flex items-start justify-center px-4 sm:px-6 pt-4 sm:pt-6 pb-4">
+      <main className="relative z-20 flex items-start justify-center px-4 sm:px-6 -mt-6 pb-4">
         <Container size="md" padding="none">
-          <VStack align="center" gap="8">
+          <VStack align="center" gap="6">
             {/* VS Badge */}
             <HStack gap="4" align="center" className="sm:gap-8">
               <HStack gap="2" align="center" className="text-ai sm:gap-3">
@@ -275,11 +275,11 @@ function Landing({ onNavigate }) {
             </HStack>
 
             {/* Title */}
-            <VStack align="center" gap="4">
+            <VStack align="center" gap="2">
               <h1 className="text-4xl sm:text-6xl md:text-8xl font-heading font-black text-white tracking-tight text-center">
                 THE WAR IS ON
               </h1>
-              <p className="text-lg sm:text-2xl text-text-secondary text-center max-w-lg">
+              <p className="text-lg sm:text-2xl text-text-secondary text-center max-w-lg mt-6">
                 Choose your side. Build your team.<br />Make awesome together
               </p>
               <p className="text-sm text-text-muted text-center font-mono">
@@ -294,7 +294,7 @@ function Landing({ onNavigate }) {
               onClick={() => onNavigate('login')}
               onMouseEnter={() => setButtonHover(true)}
               onMouseLeave={() => setButtonHover(false)}
-              className="relative group px-10 sm:px-14 py-4 text-lg font-black uppercase tracking-wide"
+              className="relative group px-10 sm:px-14 py-4 text-lg font-black uppercase tracking-wide mt-8"
             >
               <span className="relative z-10">ENTER THE ARENA</span>
               {/* Hover gradient overlay */}
@@ -303,7 +303,7 @@ function Landing({ onNavigate }) {
             </Button>
 
             {/* Stats */}
-            <HStack gap="4" className="sm:gap-8 mt-6 sm:mt-10">
+            <HStack gap="4" className="sm:gap-8 mt-6">
               <Card 
                 variant="outlined" 
                 padding="sm" 
@@ -331,7 +331,7 @@ function Landing({ onNavigate }) {
             </HStack>
 
             {/* Team Recruitment Teaser - with hover tracking for figure interaction */}
-            <div className="w-full max-w-md mt-8">
+            <div className="w-full max-w-md">
               <div className="text-center mb-3">
                 <span className="text-xs text-text-muted uppercase tracking-widest font-mono">
                   Current Recruitment
@@ -383,7 +383,7 @@ function Landing({ onNavigate }) {
       </main>
 
       {/* Footer */}
-      <footer className="relative z-20 border-t border-arena-border px-4 sm:px-6 py-4">
+      <footer className="relative z-20 mt-auto px-4 sm:px-6 py-4">
         <Container size="lg" padding="none">
           <div className="text-center text-xs text-text-muted font-mono uppercase tracking-wider">
             HD26 // Human vs AI // May the best code win
