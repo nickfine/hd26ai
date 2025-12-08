@@ -175,40 +175,35 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                     </button>
                   )}
                 </div>
-                <div className="flex items-center gap-3 mt-1">
-                  <span
-                    className="text-sm font-bold uppercase"
-                    style={{ color: teamConfig.color }}
-                  >
-                    {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
-                  </span>
-                  <span className="text-text-muted">•</span>
-                  <span className="text-sm text-text-secondary">
-                    {team.members.length}/{team.maxMembers} members
-                  </span>
+                <div className="flex items-center justify-between w-full mt-2">
+                  <div className="flex items-center gap-3 text-sm">
+                    <span
+                      className="font-bold uppercase"
+                      style={{ color: teamConfig.color }}
+                    >
+                      {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
+                    </span>
+                    <span className="text-gray-500">•</span>
+                    <span className="text-text-secondary">
+                      {team.members.length} / {team.maxMembers} members
+                    </span>
+                  </div>
                   {isMember && (
-                    <>
-                      <span className="text-text-muted">•</span>
-                      <span 
-                        className="text-sm font-bold uppercase px-3 py-1 rounded-full"
-                        style={{ 
-                          color: teamConfig.color,
-                          backgroundColor: `${teamConfig.color}20`,
-                          border: `1px solid ${teamConfig.color}40`
-                        }}
-                      >
-                        YOU'RE ON THIS TEAM
-                      </span>
-                    </>
+                    <span 
+                      className="inline-flex items-center backdrop-blur-md text-white font-bold 
+                                 px-5 py-2 rounded-full text-sm uppercase tracking-wider 
+                                 shadow-lg border"
+                      style={{ 
+                        backgroundColor: `${teamConfig.color}E6`,
+                        borderColor: `${teamConfig.color}66`,
+                        boxShadow: `0 10px 25px -5px ${teamConfig.color}40`
+                      }}
+                    >
+                      You're on this team
+                    </span>
                   )}
                 </div>
               </div>
-            </div>
-            <div className="flex items-center gap-2 text-text-secondary flex-shrink-0">
-              <Users className="w-5 h-5" />
-              <span className="text-lg font-bold">
-                {team.members.length}/{team.maxMembers}
-              </span>
             </div>
           </div>
         </div>
