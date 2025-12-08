@@ -956,7 +956,7 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-white ${getAllegianceStyle().font}`}>
+    <div className={`min-h-screen bg-arena-black ${getAllegianceStyle().font}`}>
       {renderView()}
     </div>
   );

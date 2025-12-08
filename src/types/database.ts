@@ -413,6 +413,7 @@ export type Database = {
         Row: {
           autoAssignOptIn: boolean
           bio: string | null
+          callsign: string | null
           createdAt: string
           email: string | null
           emailVerified: string | null
@@ -429,6 +430,7 @@ export type Database = {
         Insert: {
           autoAssignOptIn?: boolean
           bio?: string | null
+          callsign?: string | null
           createdAt?: string
           email?: string | null
           emailVerified?: string | null
@@ -445,6 +447,7 @@ export type Database = {
         Update: {
           autoAssignOptIn?: boolean
           bio?: string | null
+          callsign?: string | null
           createdAt?: string
           email?: string | null
           emailVerified?: string | null
@@ -528,6 +531,7 @@ export type Database = {
         | "TEAM_FORMATION"
         | "HACKING"
         | "SUBMISSION"
+        | "VOTING"
         | "JUDGING"
         | "RESULTS"
       MemberRole: "OWNER" | "MEMBER"

@@ -77,10 +77,10 @@ const Avatar = forwardRef(({
       : 'border-2 border-solid'
     : '';
 
-  // Border color
+  // Border color (dark theme compatible)
   const borderColorStyle = allegiance 
     ? { borderColor: config.borderColor }
-    : { borderColor: 'rgb(229, 231, 235)' };
+    : { borderColor: '#1F1F1F' }; // arena-border color
 
   return (
     <div className="relative inline-block">
@@ -92,8 +92,8 @@ const Avatar = forwardRef(({
           sizeStyles,
           borderRadiusClass,
           borderStyle,
-          // Background for fallback
-          !src && 'bg-neutral-100',
+          // Background for fallback (dark theme)
+          !src && 'bg-arena-elevated',
           className
         )}
         style={showBorder || allegiance ? borderColorStyle : undefined}
@@ -116,7 +116,7 @@ const Avatar = forwardRef(({
           className={cn(
             'flex items-center justify-center w-full h-full font-bold',
             src && 'hidden',
-            allegiance ? config.classes.text : 'text-neutral-500'
+            allegiance ? config.classes.text : 'text-text-secondary'
           )}
           style={allegiance ? { backgroundColor: config.bgColor } : undefined}
         >
@@ -128,7 +128,7 @@ const Avatar = forwardRef(({
       {indicator && (
         <span
           className={cn(
-            'absolute bottom-0 right-0 block rounded-full ring-2 ring-white',
+            'absolute bottom-0 right-0 block rounded-full ring-2 ring-arena-black',
             INDICATOR_SIZE[size],
             INDICATOR_COLORS[indicator]
           )}
@@ -173,7 +173,7 @@ export const AvatarGroup = ({
           allegiance={user.allegiance}
           className={cn(
             index > 0 && overlapClass[size],
-            'ring-2 ring-white'
+            'ring-2 ring-arena-black'
           )}
         />
       ))}
@@ -184,7 +184,7 @@ export const AvatarGroup = ({
             SIZE_CLASSES.avatar[size],
             overlapClass[size],
             'flex items-center justify-center rounded-full',
-            'bg-neutral-200 text-neutral-600 font-bold ring-2 ring-white'
+            'bg-arena-elevated text-text-secondary font-bold ring-2 ring-arena-black'
           )}
         >
           +{remaining}

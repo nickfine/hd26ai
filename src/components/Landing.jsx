@@ -149,7 +149,7 @@ function Landing({ onNavigate }) {
                 THE WAR IS ON
               </h1>
               <p className="text-lg sm:text-2xl text-text-secondary text-center max-w-lg">
-                Choose your side. Build your team.<br />Ship something legendary
+                Choose your side. Build your team.<br />Make awesome together
               </p>
               <p className="text-sm text-text-muted text-center font-mono">
                 Adaptavist HackDay 2026 — Where allegiances are tested

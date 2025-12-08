@@ -411,26 +411,7 @@
     background-color: var(--color-brand);
   }
 
-  /* Glow utilities */
-  .glow-human {
-    box-shadow: var(--glow-human);
-  }
-
-  .glow-human-strong {
-    box-shadow: var(--glow-human-strong);
-  }
-
-  .glow-ai {
-    box-shadow: var(--glow-ai);
-  }
-
-  .glow-ai-strong {
-    box-shadow: var(--glow-ai-strong);
-  }
-
-  .glow-brand {
-    box-shadow: var(--glow-brand);
-  }
+  /* Glow utilities - defined in tokens.css, Tailwind config provides shadow-glow-* classes */
 
   /* Team gradient backgrounds for Rules page */
   .gradient-human-overlay {

@@ -136,7 +136,7 @@
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.25rem;
-  --radius-card: 20px;              /* Premium 20px corners - feels more refined on large screens */
+  --radius-card: 24px;              /* Premium 24px corners - matches Tailwind config */
   --radius-full: 9999px;
   
   /* =========================================================================
