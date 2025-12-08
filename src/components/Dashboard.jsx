@@ -50,8 +50,8 @@ const MOCK_SCHEDULE = [
 
 const MOCK_AWARDS = [
   { id: 1, title: 'Grand HackDay Champion', prize: 'Personalised Callsign HackDay26 T-Shirts', icon: Trophy, description: 'Custom t-shirts with your callsign + digital swag' },
-  { id: 2, title: 'Best Human Team', prize: 'Digital Swag', icon: Heart, description: 'Human team Zoom backgrounds & Slack avatars' },
-  { id: 3, title: 'Best AI Team', prize: 'Digital Swag', icon: Cpu, description: 'AI team Zoom backgrounds & Slack avatars' },
+  { id: 2, title: 'Best Human Team', prize: 'Personalised Team Name Zoom Wallpaper', icon: Heart, description: 'Custom Zoom background featuring your team name' },
+  { id: 3, title: 'Best AI Team', prize: 'Personalised Team Name Zoom Wallpaper', icon: Cpu, description: 'Custom Zoom background featuring your team name' },
 ];
 
 const MOCK_FAQ = [
