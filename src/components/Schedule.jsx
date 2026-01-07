@@ -13,8 +13,19 @@ import {
   Download,
   ExternalLink,
   Users,
+  Globe,
 } from 'lucide-react';
 import AppLayout from './AppLayout';
+import {
+  getUserTimezone,
+  getTimezoneName,
+  getTimezoneAbbr,
+  convertUKTimeToLocal,
+  EVENT_TIMEZONE,
+  createUKDate,
+  formatDateForICS,
+  generateVTIMEZONE,
+} from '../lib/timezone';
 
 // ============================================================================
 // SCHEDULE DATA - Remote Hackathon
@@ -269,20 +280,20 @@ const SCHEDULE_DATA = {
 /**
  * Format date and time for Google Calendar URL
  * Google Calendar expects: YYYYMMDDTHHMMSS (in UTC or with timezone)
+ * Times are in UK timezone, convert to UTC for Google Calendar
  */
 function formatDateTimeForGoogle(date, time) {
-  const [hours, minutes] = time.split(':');
-  const dateObj = new Date(date);
-  dateObj.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
+  // Create UK date and convert to UTC
+  const ukDate = createUKDate(date, time);
   
-  // Format as YYYYMMDDTHHMMSS
-  const year = dateObj.getFullYear();
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const hour = String(dateObj.getHours()).padStart(2, '0');
-  const min = String(dateObj.getMinutes()).padStart(2, '0');
+  // Format as YYYYMMDDTHHMMSSZ (UTC)
+  const year = ukDate.getUTCFullYear();
+  const month = String(ukDate.getUTCMonth() + 1).padStart(2, '0');
+  const day = String(ukDate.getUTCDate()).padStart(2, '0');
+  const hour = String(ukDate.getUTCHours()).padStart(2, '0');
+  const min = String(ukDate.getUTCMinutes()).padStart(2, '0');
   
-  return `${year}${month}${day}T${hour}${min}00`;
+  return `${year}${month}${day}T${hour}${min}00Z`;
 }
 
 /**
@@ -305,20 +316,13 @@ function generateGoogleCalendarUrl(event, date) {
 }
 
 /**
- * Format date for ICS file (YYYYMMDDTHHMMSS)
+ * Format date for ICS file (YYYYMMDDTHHMMSSZ in UTC)
+ * Times are in UK timezone, convert to UTC for ICS
  */
 function formatDateTimeForICS(date, time) {
-  const [hours, minutes] = time.split(':');
-  const dateObj = new Date(date);
-  dateObj.setHours(parseInt(hours, 10), parseInt(minutes, 10), 0, 0);
-  
-  const year = dateObj.getFullYear();
-  const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-  const day = String(dateObj.getDate()).padStart(2, '0');
-  const hour = String(dateObj.getHours()).padStart(2, '0');
-  const min = String(dateObj.getMinutes()).padStart(2, '0');
-  
-  return `${year}${month}${day}T${hour}${min}00`;
+  // Create UK date and convert to UTC
+  const ukDate = createUKDate(date, time);
+  return formatDateForICS(ukDate, 'UTC');
 }
 
 // Pre-event date mapping
@@ -361,6 +365,8 @@ function generateICSContent() {
     });
   });
   
+  const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+  
   let icsContent = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
@@ -368,13 +374,13 @@ function generateICSContent() {
     'CALSCALE:GREGORIAN',
     'METHOD:PUBLISH',
     'X-WR-CALNAME:HackDay 2026 Schedule',
+    generateVTIMEZONE(EVENT_TIMEZONE),
   ];
   
   events.forEach(event => {
     const uid = `${event.id}@hackday2026.com`;
     const dtStart = formatDateTimeForICS(event.date, event.time);
-    const dtEnd = formatDateTimeForICS(event.date, event.endTime);
-    const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    const dtEnd = formatDateTimeForICS(event.date, event.endTime || event.time);
     
     icsContent.push(
       'BEGIN:VEVENT',
@@ -417,9 +423,15 @@ function downloadAllEventsAsICS() {
 
 function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
   const [activeDay, setActiveDay] = useState('preEvent');
+  const [showUKTime, setShowUKTime] = useState(false);
 
   const currentDayData = SCHEDULE_DATA[activeDay];
   const isPreEvent = activeDay === 'preEvent';
+  
+  // Get user's timezone info
+  const userTimezone = getUserTimezone();
+  const timezoneName = getTimezoneName();
+  const timezoneAbbr = getTimezoneAbbr();
 
   const handleAddToCalendar = (event) => {
     // For pre-event items, use the specific date mapping
@@ -455,10 +467,27 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               style={{ textShadow: '0 0 30px rgba(255, 107, 53, 0.4)' }}>
             EVENT SCHEDULE
           </h1>
-          <p className="text-arena-secondary max-w-2xl mx-auto">
+          <p className="text-arena-secondary max-w-2xl mx-auto mb-4">
             From launch to celebration — your complete guide to HackDay 2026. 
             Team formation starts June 1st, hacking kicks off June 21st!
           </p>
+          
+          {/* Timezone Indicator */}
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <div className="glass-card inline-flex items-center gap-2 px-4 py-2 rounded-full backdrop-blur-md border border-white/10">
+              <Globe className="w-4 h-4 text-brand" />
+              <span className="text-xs text-arena-secondary">
+                Showing times in{' '}
+                <button
+                  type="button"
+                  onClick={() => setShowUKTime(!showUKTime)}
+                  className="text-brand hover:text-white font-bold underline"
+                >
+                  {showUKTime ? `${EVENT_TIMEZONE} (UK)` : `${timezoneName} (${timezoneAbbr})`}
+                </button>
+              </span>
+            </div>
+          </div>
         </div>
 
         {/* Add All to Calendar Button */}
@@ -508,6 +537,36 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
             {currentDayData.events.map((event, index) => {
               const Icon = event.icon;
               
+              // Get event date for conversion
+              let eventDate = currentDayData.date;
+              if (isPreEvent && PRE_EVENT_DATES[event.id]) {
+                eventDate = PRE_EVENT_DATES[event.id];
+              }
+              
+              // Convert times to user's timezone
+              const startTimeConverted = convertUKTimeToLocal(
+                eventDate,
+                event.time,
+                showUKTime ? EVENT_TIMEZONE : null
+              );
+              const endTimeConverted = event.endTime && event.endTime !== event.time
+                ? convertUKTimeToLocal(
+                    eventDate,
+                    event.endTime,
+                    showUKTime ? EVENT_TIMEZONE : null
+                  )
+                : null;
+              
+              // Format time display
+              const timeDisplay = endTimeConverted
+                ? `${startTimeConverted.time} - ${endTimeConverted.time}`
+                : startTimeConverted.time;
+              
+              // Show UK time as well if not already showing it
+              const ukTimeDisplay = !showUKTime
+                ? ` (${event.time}${event.endTime && event.endTime !== event.time ? ` - ${event.endTime}` : ''} UK)`
+                : '';
+              
               return (
                 <div key={event.id} className="relative flex gap-4">
                   {/* Timeline Node - with orange glow */}
@@ -544,7 +603,17 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs 
                                         font-bold rounded bg-arena-elevated text-brand">
                         <Clock className="w-3 h-3" />
-                        {event.time}{event.time !== event.endTime ? ` - ${event.endTime}` : ''}
+                        {timeDisplay}
+                        {ukTimeDisplay && (
+                          <span className="text-arena-secondary font-normal ml-1">
+                            {ukTimeDisplay}
+                          </span>
+                        )}
+                        {!showUKTime && (
+                          <span className="text-arena-secondary font-normal ml-1 text-[10px]">
+                            ({timezoneAbbr})
+                          </span>
+                        )}
                       </span>
                       <span className="inline-flex items-center gap-1 px-2 py-1 text-xs 
                                         font-medium rounded bg-arena-elevated text-arena-secondary">
@@ -591,7 +660,9 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
               </span>
             </div>
             <p className="text-sm text-arena-secondary mb-4">
-              All times are in your local timezone. Hack from anywhere in the world!
+              Times are automatically converted to your local timezone ({timezoneAbbr}). 
+              Click the timezone indicator above to toggle between local and UK times. 
+              Hack from anywhere in the world!
             </p>
             <div className="flex flex-wrap justify-center gap-2">
               <button

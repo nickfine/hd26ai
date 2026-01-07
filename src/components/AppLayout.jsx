@@ -34,16 +34,27 @@ import { Container, HStack, VStack } from './layout';
 import { AllegianceAvatar } from './ui/Avatar';
 import { cn, getAllegianceConfig, formatNameWithCallsign, ALLEGIANCE_CONFIG } from '../lib/design-system';
 import { USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
+import { 
+  createUKDate, 
+  convertUKTimeToLocal, 
+  getUserTimezone, 
+  getTimezoneAbbr,
+  EVENT_TIMEZONE 
+} from '../lib/timezone';
 
 // ============================================================================
-// WAR TIMER - Countdown to June 21, 2026
+// WAR TIMER - Countdown to June 21, 2026 (UK time)
 // ============================================================================
 
-const EVENT_START = new Date('2026-06-21T09:00:00');
-const EVENT_END = new Date('2026-06-22T17:00:00');
+// Event times are in UK timezone (Europe/London)
+// June 21, 2026 09:00 UK time = BST (UTC+1)
+const EVENT_START = createUKDate('2026-06-21', '09:00');
+const EVENT_END = createUKDate('2026-06-22', '17:00');
 
 const calculateTimeRemaining = () => {
   const now = new Date();
+  const userTimezone = getUserTimezone();
+  const userTzAbbr = getTimezoneAbbr();
   
   if (now < EVENT_START) {
     const diff = EVENT_START - now;
@@ -63,7 +74,31 @@ const calculateTimeRemaining = () => {
       display = `${hours}h ${minutes}m ${seconds}s`;
     }
     
-    return { status: 'countdown', display, label: 'Until HackDay 2026' };
+    // Get event start time in user's local timezone
+    const localStart = convertUKTimeToLocal('2026-06-21', '09:00', userTimezone);
+    const userLocale = navigator.language || 'en-US';
+    const localStartDate = EVENT_START.toLocaleDateString(userLocale, {
+      timeZone: userTimezone,
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+    });
+    const localStartTime = localStart.time;
+    
+    // Format label with timezone info
+    // If user is in UK, show simple label. Otherwise show both local and UK times
+    const label = userTimezone === EVENT_TIMEZONE
+      ? 'Until HackDay 2026 (09:00 UK)'
+      : `Until ${localStartDate} ${localStartTime} (${userTzAbbr}) / 09:00 UK`;
+    
+    return { 
+      status: 'countdown', 
+      display, 
+      label,
+      localStartDate,
+      localStartTime,
+      userTzAbbr,
+    };
   }
   
   if (now >= EVENT_START && now < EVENT_END) {
@@ -90,21 +125,27 @@ const WarTimer = memo(function WarTimer() {
   }, []);
 
   return (
-    <div className={cn(
-      'hidden md:flex items-center gap-3 px-4 py-2 text-white rounded-card',
-      timeRemaining.status === 'live' 
-        ? 'bg-gradient-to-r from-ai to-human animate-pulse' 
-        : timeRemaining.status === 'ended'
-          ? 'bg-arena-card'
-          : 'bg-arena-card'
-    )}>
+    <div 
+      className={cn(
+        'hidden md:flex items-center gap-3 px-4 py-2 text-white rounded-card',
+        timeRemaining.status === 'live' 
+          ? 'bg-gradient-to-r from-ai to-human animate-pulse' 
+          : timeRemaining.status === 'ended'
+            ? 'bg-arena-card'
+            : 'bg-arena-card'
+      )}
+      title={timeRemaining.status === 'countdown' && timeRemaining.localStartDate 
+        ? `Event starts: ${timeRemaining.localStartDate} at ${timeRemaining.localStartTime} (${timeRemaining.userTzAbbr})`
+        : undefined
+      }
+    >
       <Clock className="w-5 h-5 text-arena-secondary" />
-      <div>
+      <div className="min-w-0">
         <div className="font-mono text-2xl font-bold tracking-wider text-white">
           {timeRemaining.display}
         </div>
         <div className={cn(
-          'text-xs uppercase tracking-wide',
+          'text-xs uppercase tracking-wide truncate',
           timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-arena-secondary'
         )}>
           {timeRemaining.label}
