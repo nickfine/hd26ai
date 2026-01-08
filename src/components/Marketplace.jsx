@@ -3,6 +3,7 @@ import {
   Cpu,
   Heart,
   Scale,
+  Eye,
   Users,
   Plus,
   Search,
@@ -442,10 +443,10 @@ function Marketplace({
                   : 'grid-cols-1 md:grid-cols-2'
               )}>
                 {paginatedTeams.map((team) => {
-                  const teamConfig = ALLEGIANCE_CONFIG[team.side];
-                  const TeamIcon = team.side === 'ai' ? Cpu : Heart;
+                  const teamConfig = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
+                  const TeamIcon = team.side === 'ai' ? Cpu : team.side === 'observer' ? Eye : Heart;
                   const hasApplied = team.joinRequests?.some((r) => r.userName === user?.name);
-                  const teamColor = team.side === 'ai' ? '#00E5FF' : '#FF375F';
+                  const teamColor = team.side === 'ai' ? '#00E5FF' : team.side === 'observer' ? '#FFFFFF' : '#FF375F';
 
                   return (
                     <div
@@ -492,7 +493,7 @@ function Marketplace({
                               className="text-xs font-bold uppercase"
                               style={{ color: teamColor }}
                             >
-                              {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
+                              {team.side === 'ai' ? 'AI SIDE' : team.side === 'observer' ? 'OBSERVER' : 'HUMAN SIDE'}
                             </span>
                           </div>
                         </div>
@@ -544,6 +545,8 @@ function Marketplace({
                                    hover:-translate-y-1 hover:shadow-2xl rounded-xl shadow-lg
                                    ${team.side === 'ai' 
                                      ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
+                                     : team.side === 'observer'
+                                     ? 'bg-white/10 border-2 border-white text-white hover:bg-white/20'
                                      : 'bg-gradient-to-r from-[#FF375F] to-[#FF6B35] text-white'}`}
                       >
                         LEARN MORE

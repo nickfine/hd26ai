@@ -310,13 +310,17 @@ function AppLayout({
             )}
 
             {/* Logo */}
-            <HStack gap="3" align="center">
+            <button
+              type="button"
+              onClick={() => onNavigate('dashboard')}
+              className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
+            >
               <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
               <div className="hidden sm:block">
                 <div className="font-black text-lg tracking-tight text-white">HACKDAY 2026</div>
                 <div className="text-xs text-arena-muted font-mono">HUMAN VS AI</div>
               </div>
-            </HStack>
+            </button>
 
             {/* War Timer - Isolated component to prevent parent re-renders */}
             <WarTimer />

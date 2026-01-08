@@ -4,7 +4,7 @@
  * Dark Mode Cyber Arena Theme
  */
 
-import { Heart, Cpu, Scale } from 'lucide-react';
+import { Heart, Cpu, Scale, Eye } from 'lucide-react';
 
 // =============================================================================
 // COLOR CONSTANTS
@@ -127,6 +127,31 @@ export const ALLEGIANCE_CONFIG = {
       ring: 'ring-neutral-600',
       glow: '',
       glowStrong: '',
+    },
+  },
+  observer: {
+    id: 'observer',
+    label: 'Observer',
+    color: '#FFFFFF',
+    bgColor: 'rgba(255, 255, 255, 0.1)',
+    borderColor: '#FFFFFF',
+    textColor: '#FFFFFF',
+    glowColor: 'rgba(255, 255, 255, 0.3)',
+    font: 'font-sans',
+    borderRadius: 'rounded-card',
+    borderStyle: 'border-l-4',
+    icon: Eye,
+    // Tailwind classes for dark theme
+    classes: {
+      bg: 'bg-white',
+      bgLight: 'bg-white/10',
+      text: 'text-white',
+      textLight: 'text-white/80',
+      border: 'border-white',
+      borderLight: 'border-white/30',
+      ring: 'ring-white',
+      glow: 'shadow-glow-white',
+      glowStrong: 'shadow-glow-white-strong',
     },
   },
 };

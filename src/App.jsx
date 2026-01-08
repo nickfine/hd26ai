@@ -453,6 +453,65 @@ function App() {
   const handleAutoAssign = useCallback(async (optIn) => {
     if (!effectiveUser) return { success: false, error: 'No user logged in' };
     
+    // Handle observer assignment to Observers team
+    if (effectiveUser.allegiance === 'observer') {
+      // Find or create Observers team
+      let observersTeam = teams.find(t => t.name === 'Observers' && (t.side === 'observer' || t.side === 'neutral'));
+      
+      if (!observersTeam) {
+        // Create Observers team
+        const teamData = {
+          name: 'Observers',
+          side: 'observer',
+          description: 'System team for observers who want to watch and learn from the event.',
+          lookingFor: [],
+          maxMembers: 999, // Unlimited observers
+          isAutoCreated: true,
+        };
+        const result = await handleCreateTeam(teamData);
+        if (result?.id) {
+          // In demo mode, the team is already added to mockTeams
+          if (useDemoMode) {
+            observersTeam = { id: result.id, name: 'Observers', side: 'observer', members: [] };
+          } else {
+            // Refetch teams to get the new team
+            await refetchTeams();
+            // Wait a bit for state to update, then find the team
+            await new Promise(resolve => setTimeout(resolve, 200));
+            observersTeam = teams.find(t => t.id === result.id || (t.name === 'Observers' && t.side === 'observer'));
+          }
+        }
+      }
+      
+      if (observersTeam) {
+        // Add user to Observers team
+        if (useDemoMode) {
+          const newMember = {
+            id: effectiveUser.id,
+            name: effectiveUser.name,
+            callsign: effectiveUser.callsign || '',
+            skills: effectiveUser.skills || [],
+          };
+          
+          setMockTeams(prev =>
+            prev.map(team =>
+              team.id === observersTeam.id
+                ? { ...team, members: [...team.members, newMember] }
+                : team
+            )
+          );
+          
+          return { success: true, teamId: observersTeam.id, teamName: observersTeam.name };
+        } else {
+          // In Supabase mode, add member to team
+          await teamMutations.addMember(observersTeam.id, effectiveUser.id);
+          refetchTeams();
+          return { success: true, teamId: observersTeam.id, teamName: observersTeam.name };
+        }
+      }
+      return { success: false, error: 'Failed to create or find Observers team' };
+    }
+    
     // Validate allegiance - must be human or ai, not neutral
     if (effectiveUser.allegiance === 'neutral') {
       return { success: false, error: 'Choose Human or AI side before auto-assignment' };
@@ -819,6 +878,7 @@ function App() {
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
             eventPhase={eventPhase}
+            onCreateTeam={handleCreateTeam}
           />
         );
       

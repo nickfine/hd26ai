@@ -4,7 +4,7 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Cpu, Heart, Scale, Check, Plus, Users, Zap, ChevronRight, ChevronLeft, X, Search } from 'lucide-react';
+import { Cpu, Heart, Scale, Eye, Check, Plus, Users, Zap, ChevronRight, ChevronLeft, X, Search } from 'lucide-react';
 import { SKILLS } from '../data/mockData';
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
@@ -42,9 +42,14 @@ const ALLEGIANCE_DESCRIPTIONS = {
     description: 'Stay neutral and flexible. Choose teams based on project fit, not allegiance.',
     benefits: ['Maximum flexibility', 'Cross-side collaboration', 'Project-based choices'],
   },
+  observer: {
+    title: 'Observer',
+    description: 'Watch and learn from the sidelines. Join the Observers team to follow the event without participating.',
+    benefits: ['View all teams', 'Access to submissions', 'Event insights'],
+  },
 };
 
-function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceStyle, eventPhase }) {
+function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceStyle, eventPhase, onCreateTeam }) {
   // Step management
   const [currentStep, setCurrentStep] = useState(1);
   const [name, setName] = useState(user?.name || '');
@@ -127,12 +132,20 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
 
   // Handle next step
   const handleNext = useCallback(() => {
-    if (isStepValid(currentStep) && currentStep < STEPS.length) {
-      setCurrentStep(prev => prev + 1);
-      // Scroll to top on step change
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (isStepValid(currentStep)) {
+      // If observer is selected on step 3, this is the last step - submission will be handled by the button
+      if (currentStep === 3 && allegiance === 'observer') {
+        // Don't advance, let the submit button handle it
+        return;
+      }
+      // Otherwise proceed to next step
+      if (currentStep < STEPS.length) {
+        setCurrentStep(prev => prev + 1);
+        // Scroll to top on step change
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
     }
-  }, [currentStep, isStepValid]);
+  }, [currentStep, isStepValid, allegiance]);
 
   // Handle previous step
   const handleBack = useCallback(() => {
@@ -182,7 +195,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
   // Handle allegiance selection
   const handleAllegianceSelect = useCallback((selectedAllegiance) => {
     setAllegiance(selectedAllegiance);
-    if (selectedAllegiance === 'neutral') {
+    if (selectedAllegiance === 'neutral' || selectedAllegiance === 'observer') {
       setAutoAssignEnabled(false);
     }
     
@@ -214,7 +227,19 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
     // Small delay to ensure state update completes (especially in demo mode)
     await new Promise(resolve => setTimeout(resolve, 100));
     
-    if (autoAssignEnabled && allegiance !== 'neutral' && onAutoAssign) {
+    // Handle observer assignment to Observers team
+    if (allegiance === 'observer' && onAutoAssign) {
+      const result = await onAutoAssign(true);
+      if (result?.success) {
+        setShowConfetti(true);
+        setTimeout(() => {
+          onNavigate('dashboard');
+        }, 2000);
+        return;
+      }
+    }
+    
+    if (autoAssignEnabled && allegiance !== 'neutral' && allegiance !== 'observer' && onAutoAssign) {
       const result = await onAutoAssign(true);
       if (result?.success && result?.teamId) {
         setShowConfetti(true);
@@ -301,7 +326,10 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
 
   const progress = (currentStep / STEPS.length) * 100;
   const canProceed = isStepValid(currentStep);
-  const isLastStep = currentStep === STEPS.length;
+  // Skip step 4 (team assignment) if observer is selected
+  const isLastStep = allegiance === 'observer' 
+    ? currentStep === 3 
+    : currentStep === STEPS.length;
 
   return (
     <AppLayout
@@ -340,7 +368,12 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
           {/* Progress Bar */}
           <div className="mb-8" role="progressbar" aria-valuenow={currentStep} aria-valuemin={1} aria-valuemax={STEPS.length} aria-label="Signup progress">
             <div className="flex items-center justify-between mb-2">
-              {STEPS.map((step, index) => (
+              {STEPS.map((step, index) => {
+                // Skip step 4 (team assignment) if observer is selected
+                if (index === 3 && allegiance === 'observer') {
+                  return null;
+                }
+                return (
                 <div key={step.id} className="flex items-center flex-1">
                   <div className="flex flex-col items-center flex-1">
                     <button
@@ -371,14 +404,15 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
                       {step.shortLabel}
                     </button>
                   </div>
-                  {index < STEPS.length - 1 && (
+                  {index < STEPS.length - 1 && !(index === 2 && allegiance === 'observer') && (
                     <div className={cn(
                       'flex-1 h-1 mx-2 transition-all duration-300',
                       currentStep > step.id ? 'bg-brand' : 'bg-arena-border'
                     )} />
                   )}
                 </div>
-              ))}
+                );
+              })}
             </div>
             <div className="w-full h-2 bg-arena-border rounded-full overflow-hidden mt-4">
               <div
@@ -546,10 +580,13 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
             {currentStep === 3 && (
               <div className="space-y-6 animate-fade-in">
                 <div>
-                  <h2 className="text-2xl font-black text-white mb-6">
+                  <h2 className="text-2xl font-black text-white mb-2">
                     <span className="text-brand">{STEPS[2].id}.</span> Choose Your Side
                   </h2>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <p className="text-sm text-arena-muted mb-6">
+                    You can change your side and team at any time until the hack starts
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-11 gap-4">
                     {/* Human */}
                     <button
                       type="button"
@@ -557,7 +594,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
                       aria-label="Select Human side"
                       aria-pressed={allegiance === 'human'}
                       className={cn(
-                        'p-6 border-2 transition-all duration-300 rounded-lg text-left group relative overflow-hidden',
+                        'p-6 border-2 transition-all duration-300 rounded-lg text-left group relative overflow-hidden sm:col-span-3',
                         allegiance === 'human'
                           ? 'border-human bg-human/10 shadow-human-glow scale-105'
                           : 'border-arena-border hover:border-human/50 hover:bg-arena-elevated hover:scale-[1.02]'
@@ -600,7 +637,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
                       aria-label="Select Neutral side"
                       aria-pressed={allegiance === 'neutral'}
                       className={cn(
-                        'p-6 border-2 transition-all duration-300 rounded-lg text-left group relative overflow-hidden',
+                        'p-6 border-2 transition-all duration-300 rounded-lg text-left group relative overflow-hidden sm:col-span-3',
                         allegiance === 'neutral'
                           ? 'border-arena-secondary bg-arena-secondary/10 scale-105'
                           : 'border-arena-border hover:border-arena-secondary/50 hover:bg-arena-elevated hover:scale-[1.02]'
@@ -643,7 +680,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
                       aria-label="Select AI side"
                       aria-pressed={allegiance === 'ai'}
                       className={cn(
-                        'p-6 border-2 border-dashed transition-all duration-300 rounded-lg text-left group relative overflow-hidden',
+                        'p-6 border-2 border-dashed transition-all duration-300 rounded-lg text-left group relative overflow-hidden sm:col-span-3',
                         allegiance === 'ai'
                           ? 'border-ai bg-ai/10 shadow-ai-glow scale-105'
                           : 'border-arena-border hover:border-ai/50 hover:bg-arena-elevated hover:scale-[1.02]'
@@ -672,6 +709,49 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, allegianceS
                         </div>
                         {allegiance === 'ai' && (
                           <div className="mt-3 text-xs text-ai font-bold flex items-center gap-1">
+                            <Check className="w-3 h-3" />
+                            Selected
+                          </div>
+                        )}
+                      </div>
+                    </button>
+
+                    {/* Observer Option - Same row, smaller than main options */}
+                    <button
+                      type="button"
+                      onClick={() => handleAllegianceSelect('observer')}
+                      aria-label="Select Observer"
+                      aria-pressed={allegiance === 'observer'}
+                      className={cn(
+                        'p-6 border-2 transition-all duration-300 rounded-lg text-left group relative overflow-hidden sm:col-span-2',
+                        allegiance === 'observer'
+                          ? 'border-white bg-white/10 shadow-[0_0_20px_rgba(255,255,255,0.3)] scale-105'
+                          : 'border-arena-border hover:border-white/50 hover:bg-arena-elevated hover:scale-[1.02]'
+                      )}
+                    >
+                      {allegiance === 'observer' && (
+                        <div className="absolute inset-0 bg-white/5 animate-pulse" />
+                      )}
+                      <div className="relative flex flex-col items-center text-center">
+                        <Eye
+                          className={cn(
+                            'w-12 h-12 mb-3 transition-all duration-300',
+                            allegiance === 'observer'
+                              ? 'text-white scale-110'
+                              : 'text-arena-muted group-hover:text-white group-hover:scale-105'
+                          )}
+                        />
+                        <div className={cn(
+                          'text-lg font-black mb-1',
+                          allegiance === 'observer' ? 'text-white' : 'text-arena-secondary group-hover:text-white'
+                        )}>
+                          OBSERVER
+                        </div>
+                        <div className="text-xs text-arena-muted">
+                          Watch and learn
+                        </div>
+                        {allegiance === 'observer' && (
+                          <div className="mt-3 text-xs text-white font-bold flex items-center gap-1">
                             <Check className="w-3 h-3" />
                             Selected
                           </div>
