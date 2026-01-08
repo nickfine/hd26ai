@@ -745,8 +745,12 @@ function App() {
     setCurrentView('dashboard');
   }, [createUser]);
 
-  // Demo onboarding handler - creates a new user and goes to signup page
+  // Demo onboarding handler - creates a new user and goes to dashboard in signup mode
   const handleDemoOnboarding = useCallback((phase) => {
+    // Always force 'registration' phase for new user onboarding to show signup hero bento
+    setMockEventPhase('registration');
+    
+    // Create user with empty name (hasn't signed up yet)
     createUser({
       id: Date.now(),
       name: '',
@@ -756,10 +760,9 @@ function App() {
       role: 'participant',
       autoAssignOptIn: false,
     });
-    if (phase) {
-      setMockEventPhase(phase);
-    }
-    setCurrentView('signup');
+    
+    // Navigate to dashboard - state updates will be batched by React
+    setCurrentView('dashboard');
   }, [createUser]);
 
   // ============================================================================
