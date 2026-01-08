@@ -189,7 +189,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                 </div>
                 
                 <VStack gap="3">
-                  {/* New User - Goes to Onboarding */}
+                  {/* New User - Goes to Dashboard (onboarding is hidden) */}
                   <DemoRoleButton
                     icon={Sparkles}
                     label="New User (Onboarding)"
@@ -206,7 +206,8 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                           role: 'participant',
                           phase: selectedPhase,
                         });
-                        onNavigate('onboarding');
+                        // Navigate to signup page
+                        onNavigate('signup');
                       }
                     }}
                     className="bg-gradient-to-r from-pink-500 to-orange-500 hover:from-pink-600 hover:to-orange-600"

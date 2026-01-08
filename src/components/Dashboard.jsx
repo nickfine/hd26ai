@@ -19,6 +19,15 @@ import {
   Activity,
   Image as ImageIcon,
   Zap,
+  Sparkles,
+  UserPlus,
+  ArrowRight,
+  Clock,
+  AlertCircle,
+  CheckCircle,
+  MessageSquare,
+  Plus,
+  Eye,
 } from 'lucide-react';
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
@@ -137,6 +146,502 @@ const PromoTile = memo(function PromoTile({ src, alt, colorScheme = 'ai', classN
 });
 
 // ============================================================================
+// FIRST-TIME USER DETECTION
+// ============================================================================
+
+const isFirstTimeUser = (user, teams) => {
+  if (!user) return false;
+  
+  // Check if user has no allegiance set or is neutral
+  const hasNoAllegiance = !user.allegiance || user.allegiance === 'neutral';
+  
+  // Check if user is not on any team
+  const userTeam = teams.find((team) => 
+    team.captainId === user?.id || 
+    team.members?.some(m => m.id === user?.id)
+  );
+  const hasNoTeam = !userTeam;
+  
+  // First-time user: no allegiance (or neutral) AND no team
+  return hasNoAllegiance && hasNoTeam;
+};
+
+// ============================================================================
+// SIGNUP PROMO BOX
+// ============================================================================
+
+const SignupPromoBox = memo(function SignupPromoBox({ user, teams, onNavigate }) {
+  if (!isFirstTimeUser(user, teams)) {
+    return null;
+  }
+
+  return (
+    <Card variant="accent" padding="md" className="animate-fade-in stagger-1">
+      <Card.Label className="text-brand">Get Started</Card.Label>
+      <Card.Title className="text-white mb-3">Complete Your Setup</Card.Title>
+      <p className="text-sm text-text-body mb-4">
+        Choose your allegiance and join a team to start participating in HackDay 2026!
+      </p>
+      <Button
+        variant="primary"
+        size="md"
+        fullWidth
+        onClick={() => onNavigate('profile')}
+        leftIcon={<UserPlus className="w-4 h-4" />}
+        rightIcon={<ArrowRight className="w-4 h-4" />}
+      >
+        Complete Profile
+      </Button>
+    </Card>
+  );
+});
+
+// ============================================================================
+// NEW TO HACKDAY PROMO BOX
+// ============================================================================
+
+const NewToHackDayPromo = memo(function NewToHackDayPromo({ onNavigate }) {
+  return (
+    <Card variant="outlined" padding="lg" className="animate-fade-in stagger-2">
+      <VStack gap="3" align="start">
+        <h3 className="text-3xl font-black text-white leading-tight">
+          New to HackDay?{' '}
+          <button
+            onClick={() => onNavigate('new-to-hackday')}
+            className="text-brand hover:text-brand/80 underline underline-offset-4 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-bg-primary rounded"
+          >
+            Start here
+          </button>
+        </h3>
+      </VStack>
+    </Card>
+  );
+});
+
+// ============================================================================
+// HERO BENTO COMPONENT
+// ============================================================================
+
+const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNavigate, onNavigateToTeam }) {
+  // Check if user has a team (as a member or captain)
+  const userTeam = teams.find((team) => 
+    team.captainId === user?.id || 
+    team.members?.some(m => m.id === user?.id)
+  );
+  const hasTeam = !!userTeam;
+  
+  // Check if user has created a team (is captain)
+  const userCreatedTeam = teams.find((team) => team.captainId === user?.id);
+  const hasCreatedTeam = !!userCreatedTeam;
+  
+  // Check if user has applied to join any team (has pending join request)
+  const hasAppliedToTeam = teams.some((team) => 
+    team.joinRequests?.some((request) => request.userId === user?.id)
+  );
+  
+  const hasAllegiance = user?.allegiance && user.allegiance !== 'neutral';
+  const hasSignedUp = user?.name && user.name.trim().length > 0; // User has completed signup if they have a name
+
+  // Get MOTD from event (for hacking phase)
+  const motd = event?.motd || '';
+
+  // Render based on phase
+  switch (eventPhase) {
+    case 'registration':
+      // If user has a team, show team confirmation message
+      if (hasTeam) {
+        return (
+          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+            <VStack gap="4" align="start">
+              <HStack gap="3" align="center">
+                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-brand" />
+                </div>
+                <div>
+                  <Card.Label className="text-brand mb-0">Team Confirmed</Card.Label>
+                  <Card.Title className="text-white mb-0">You're All Set!</Card.Title>
+                </div>
+              </HStack>
+              <p className="text-base text-text-body">
+                {hasCreatedTeam
+                  ? `You've created ${userTeam.name}! ${userTeam.members?.length < userTeam.maxMembers ? 'Continue recruiting members to build your squad.' : 'Your team is complete and ready for HackDay!'}`
+                  : `You're part of ${userTeam.name}! Make sure your team is complete before hacking begins.`}
+              </p>
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
+                leftIcon={<Users className="w-5 h-5" />}
+                rightIcon={<ArrowRight className="w-5 h-5" />}
+              >
+                View Your Team
+              </Button>
+            </VStack>
+          </Card>
+        );
+      }
+      
+      // If user has applied to join a team, show pending application message
+      if (hasAppliedToTeam) {
+        const appliedTeam = teams.find((team) => 
+          team.joinRequests?.some((request) => request.userId === user?.id)
+        );
+        return (
+          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+            <VStack gap="4" align="start">
+              <HStack gap="3" align="center">
+                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-brand" />
+                </div>
+                <div>
+                  <Card.Label className="text-brand mb-0">Application Pending</Card.Label>
+                  <Card.Title className="text-white mb-0">Waiting for Approval</Card.Title>
+                </div>
+              </HStack>
+              <p className="text-base text-text-body">
+                Your application to join <span className="font-bold text-white">{appliedTeam?.name}</span> is pending approval from the team captain. 
+                You'll be notified once they respond.
+              </p>
+            </VStack>
+          </Card>
+        );
+      }
+      
+      // If user has signed up but no team and no pending applications, show team joining message
+      if (hasSignedUp && !hasTeam) {
+        return (
+          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+            <VStack gap="4" align="start">
+              <HStack gap="3" align="center">
+                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-brand" />
+                </div>
+                <div>
+                  <Card.Label className="text-brand mb-0">Welcome to HackDay!</Card.Label>
+                  <Card.Title className="text-white mb-0">Join Your Team</Card.Title>
+                </div>
+              </HStack>
+              <p className="text-base text-text-body">
+                {hasAllegiance 
+                  ? `You've chosen the ${user.allegiance === 'ai' ? 'AI' : 'Human'} side! Find a team that aligns with your interests and skills, or let us automatically match you with compatible teammates.`
+                  : 'Find a team that matches your interests and skill development needs, or browse teams manually. You can also enable auto-assignment if you\'ve chosen a side.'}
+              </p>
+              <HStack gap="3">
+                <Button
+                  variant="primary"
+                  size="lg"
+                  onClick={() => onNavigate('marketplace', { tab: 'teams' })}
+                  leftIcon={<Users className="w-5 h-5" />}
+                >
+                  Browse Teams
+                </Button>
+                {hasAllegiance && (
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    onClick={() => onNavigate('signup', { step: 4 })}
+                    leftIcon={<Zap className="w-5 h-5" />}
+                  >
+                    Enable Auto-Assign
+                  </Button>
+                )}
+              </HStack>
+            </VStack>
+          </Card>
+        );
+      }
+      // User hasn't signed up yet - show signup message
+      return (
+        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                <UserPlus className="w-6 h-6 text-brand" />
+              </div>
+              <div>
+                <Card.Label className="text-brand mb-0">Registration Open</Card.Label>
+                <Card.Title className="text-white mb-0">Join HackDay 2026</Card.Title>
+              </div>
+            </HStack>
+            <p className="text-base text-text-body">
+              Sign up now to participate in the ultimate Human vs AI hackathon! Create your profile, 
+              choose your allegiance, and get ready to build something amazing.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => onNavigate('signup')}
+              leftIcon={<UserPlus className="w-5 h-5" />}
+              rightIcon={<ArrowRight className="w-5 h-5" />}
+            >
+              Sign Up Now
+            </Button>
+          </VStack>
+        </Card>
+      );
+
+    case 'team_formation':
+      // If user has a team, show team confirmation message
+      if (hasTeam) {
+        return (
+          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+            <VStack gap="4" align="start">
+              <HStack gap="3" align="center">
+                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                  <CheckCircle className="w-6 h-6 text-brand" />
+                </div>
+                <div>
+                  <Card.Label className="text-brand mb-0">Team Confirmed</Card.Label>
+                  <Card.Title className="text-white mb-0">You're All Set!</Card.Title>
+                </div>
+              </HStack>
+              <p className="text-base text-text-body">
+                {hasCreatedTeam
+                  ? `You've created ${userTeam.name}! ${userTeam.members?.length < userTeam.maxMembers ? 'Continue recruiting members to build your squad.' : 'Your team is complete and ready for HackDay!'}`
+                  : `You're part of ${userTeam.name}! Make sure your team is complete before hacking begins.`}
+              </p>
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
+                leftIcon={<Users className="w-5 h-5" />}
+                rightIcon={<ArrowRight className="w-5 h-5" />}
+              >
+                View Your Team
+              </Button>
+            </VStack>
+          </Card>
+        );
+      }
+      
+      // If user has applied to join a team, show pending application message
+      if (hasAppliedToTeam) {
+        const appliedTeam = teams.find((team) => 
+          team.joinRequests?.some((request) => request.userId === user?.id)
+        );
+        return (
+          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+            <VStack gap="4" align="start">
+              <HStack gap="3" align="center">
+                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-brand" />
+                </div>
+                <div>
+                  <Card.Label className="text-brand mb-0">Application Pending</Card.Label>
+                  <Card.Title className="text-white mb-0">Waiting for Approval</Card.Title>
+                </div>
+              </HStack>
+              <p className="text-base text-text-body">
+                Your application to join <span className="font-bold text-white">{appliedTeam?.name}</span> is pending approval from the team captain. 
+                You'll be notified once they respond.
+              </p>
+            </VStack>
+          </Card>
+        );
+      }
+      
+      // User doesn't have a team and hasn't applied - show team formation message
+      return (
+        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                <Users className="w-6 h-6 text-brand" />
+              </div>
+              <div>
+                <Card.Label className="text-brand mb-0">Team Formation</Card.Label>
+                <Card.Title className="text-white mb-0">Find Your Squad</Card.Title>
+              </div>
+            </HStack>
+            <p className="text-base text-text-body">
+              {hasAllegiance 
+                ? `You've chosen the ${user.allegiance === 'ai' ? 'AI' : 'Human'} side! Now find your teammates and form your squad. Teams can have 2-6 members.`
+                : 'Choose your allegiance and join a team to start participating! Teams can have 2-6 members.'}
+            </p>
+            <HStack gap="3">
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => onNavigate('marketplace', { tab: 'teams' })}
+                leftIcon={<Users className="w-5 h-5" />}
+              >
+                Browse Teams
+              </Button>
+              {hasAllegiance && (
+                <Button
+                  variant="secondary"
+                  size="lg"
+                  onClick={() => onNavigate('marketplace', { tab: 'teams' })}
+                  leftIcon={<Plus className="w-5 h-5" />}
+                >
+                  Create Team
+                </Button>
+              )}
+            </HStack>
+          </VStack>
+        </Card>
+      );
+      return (
+        <Card variant="default" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center">
+                <CheckCircle className="w-6 h-6 text-success" />
+              </div>
+              <div>
+                <Card.Label className="mb-0">Team Formation</Card.Label>
+                <Card.Title className="mb-0">You're All Set!</Card.Title>
+              </div>
+            </HStack>
+            <p className="text-base text-text-body">
+              You're part of <span className="font-bold text-white">{userTeam.name}</span>. 
+              Make sure your team is complete before hacking begins!
+            </p>
+          </VStack>
+        </Card>
+      );
+
+    case 'hacking':
+      return (
+        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                <MessageSquare className="w-6 h-6 text-brand" />
+              </div>
+              <div>
+                <Card.Label className="text-brand mb-0">Message of the Day</Card.Label>
+                <Card.Title className="text-white mb-0">Hacking in Progress</Card.Title>
+              </div>
+            </HStack>
+            {motd ? (
+              <div className="text-base text-text-body whitespace-pre-wrap">
+                {motd}
+              </div>
+            ) : (
+              <p className="text-base text-text-body">
+                The hackathon is underway! Build something amazing with your team. 
+                Remember to submit your project before the deadline.
+              </p>
+            )}
+          </VStack>
+        </Card>
+      );
+
+    case 'submission':
+      return (
+        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-human/20 flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-human" />
+              </div>
+              <div>
+                <Card.Label className="text-human mb-0">Submission Deadline</Card.Label>
+                <Card.Title className="text-white mb-0">Time is Running Out!</Card.Title>
+              </div>
+            </HStack>
+            <p className="text-base text-text-body">
+              The submission deadline is approaching! Make sure your project is complete, 
+              your demo video is ready, and all submission materials are uploaded.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => onNavigate('submission')}
+              leftIcon={<ArrowRight className="w-5 h-5" />}
+            >
+              Submit Your Project
+            </Button>
+          </VStack>
+        </Card>
+      );
+
+    case 'voting':
+      return (
+        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                <Vote className="w-6 h-6 text-brand" />
+              </div>
+              <div>
+                <Card.Label className="text-brand mb-0">Voting Open</Card.Label>
+                <Card.Title className="text-white mb-0">Choose Your Favorites</Card.Title>
+              </div>
+            </HStack>
+            <p className="text-base text-text-body">
+              All projects have been submitted! Browse the project gallery and vote for your 
+              favorite projects. You can vote for up to 5 projects.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => onNavigate('voting')}
+              leftIcon={<Vote className="w-5 h-5" />}
+              rightIcon={<ArrowRight className="w-5 h-5" />}
+            >
+              Browse & Vote
+            </Button>
+          </VStack>
+        </Card>
+      );
+
+    case 'results':
+      return (
+        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                <Trophy className="w-6 h-6 text-brand" />
+              </div>
+              <div>
+                <Card.Label className="text-brand mb-0">HackDay 2026 Complete</Card.Label>
+                <Card.Title className="text-white mb-0">Thank You for Participating!</Card.Title>
+              </div>
+            </HStack>
+            <p className="text-base text-text-body">
+              HackDay 2026 has come to an end. Thank you to all participants for your amazing 
+              projects and contributions! Check out the results and winners.
+            </p>
+            <Button
+              variant="primary"
+              size="lg"
+              onClick={() => onNavigate('results')}
+              leftIcon={<Trophy className="w-5 h-5" />}
+              rightIcon={<ArrowRight className="w-5 h-5" />}
+            >
+              View Results
+            </Button>
+          </VStack>
+        </Card>
+      );
+
+    default:
+      // Fallback for other phases
+      return (
+        <Card variant="default" padding="lg" className="md:col-span-2 animate-fade-in">
+          <VStack gap="4" align="start">
+            <HStack gap="3" align="center">
+              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
+                <Zap className="w-6 h-6 text-brand" />
+              </div>
+              <div>
+                <Card.Label className="mb-0">HackDay 2026</Card.Label>
+                <Card.Title className="mb-0">Welcome to Mission Control</Card.Title>
+              </div>
+            </HStack>
+            <p className="text-base text-text-body">
+              Your command center for HackDay 2026. Track your progress, find teammates, 
+              and stay updated on the latest events.
+            </p>
+          </VStack>
+        </Card>
+      );
+  }
+});
+
+// ============================================================================
 // COMPONENT
 // ============================================================================
 
@@ -145,13 +650,18 @@ function Dashboard({
   teams = [],
   allegianceStyle,
   onNavigate,
+  onNavigateToTeam,
   eventPhase = 'voting',
+  event,
 }) {
   const [expandedFaq, setExpandedFaq] = useState(null);
 
   const toggleFaq = useCallback((id) => {
     setExpandedFaq(prev => prev === id ? null : id);
   }, []);
+  
+  const showSignupPromo = isFirstTimeUser(user, teams);
+  const isRegistrationPhase = eventPhase === 'registration';
 
   return (
     <AppLayout
@@ -180,38 +690,24 @@ function Dashboard({
 
         {/* Bento Grid - 24px gap for premium breathing room */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Team Finder Feature Box */}
-          <Card variant="outlined" padding="md" className="animate-fade-in stagger-1">
-            <Card.Label>Team Finder</Card.Label>
-            <Card.Title className="mb-3">Find Your Squad</Card.Title>
-            <p className="text-sm text-text-body mb-4">
-              Browse open teams looking for members or discover free agents with matching skills.
-            </p>
-            <HStack gap="3">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={() => onNavigate('marketplace', { tab: 'teams' })}
-                leftIcon={<Users className="w-4 h-4" />}
-                className="flex-1"
-              >
-                Browse Teams
-              </Button>
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => onNavigate('marketplace', { tab: 'people' })}
-                leftIcon={<User className="w-4 h-4" />}
-                className="flex-1"
-              >
-                Free Agents
-              </Button>
-            </HStack>
-          </Card>
+          {/* Hero Bento - Double width, phase-specific messages */}
+          <HeroBento 
+            eventPhase={eventPhase} 
+            user={user} 
+            teams={teams} 
+            event={event}
+            onNavigate={onNavigate}
+            onNavigateToTeam={onNavigateToTeam}
+          />
+          
+          {/* New to HackDay Promo Box - Show when not in registration phase */}
+          {!isRegistrationPhase && !showSignupPromo && (
+            <NewToHackDayPromo onNavigate={onNavigate} />
+          )}
 
           {/* Project Gallery Feature Box - Only show during voting phase */}
           {eventPhase === 'voting' && (
-            <Card variant="accent" padding="md" className="animate-fade-in stagger-2">
+            <Card variant="accent" padding="md" className="animate-fade-in stagger-3">
               <Card.Label className="text-brand">Project Gallery</Card.Label>
               <Card.Title className="text-white mb-3">Vote for Projects</Card.Title>
               <p className="text-sm text-text-body mb-4">
@@ -230,7 +726,7 @@ function Dashboard({
           )}
 
           {/* Live Activity Feed Widget */}
-          <Card variant="default" padding="md" className="animate-fade-in stagger-2">
+          <Card variant="default" padding="md" className="animate-fade-in stagger-3">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Live Activity</Card.Label>
               <HStack gap="1.5" align="center" className="text-xs text-success">
@@ -286,7 +782,7 @@ function Dashboard({
           </Card>
 
           {/* Schedule Preview Widget */}
-          <Card variant="default" padding="md" className="animate-fade-in stagger-3">
+          <Card variant="default" padding="md" className="animate-fade-in stagger-4">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Schedule Preview</Card.Label>
               <Calendar className="w-4 h-4 icon-orange" />
@@ -320,7 +816,7 @@ function Dashboard({
           </Card>
 
           {/* Awards List Widget */}
-          <Card variant="default" padding="md" className="animate-fade-in stagger-4">
+          <Card variant="default" padding="md" className="animate-fade-in stagger-5">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Awards & Prizes</Card.Label>
               <Trophy className="w-4 h-4 icon-orange" />
@@ -370,7 +866,7 @@ function Dashboard({
           )}
 
           {/* FAQ Widget */}
-          <Card variant="default" padding="md" className="md:col-span-2 animate-fade-in stagger-5">
+          <Card variant="default" padding="md" className="md:col-span-2 animate-fade-in stagger-6">
             <HStack justify="between" align="center" className="mb-4">
               <Card.Label className="mb-0">Frequently Asked Questions</Card.Label>
               <HelpCircle className="w-4 h-4 icon-orange" />

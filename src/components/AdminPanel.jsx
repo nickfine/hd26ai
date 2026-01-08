@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   Shield,
   Settings,
@@ -81,9 +81,18 @@ function AdminPanel({
   allUsers = [],
   usersLoading = false,
   onRefreshUsers,
+  event,
+  onUpdateMotd,
 }) {
   const [activeSection, setActiveSection] = useState('overview'); // 'overview' | 'phases' | 'users'
   const [confirmPhaseChange, setConfirmPhaseChange] = useState(null);
+  const [motd, setMotd] = useState(event?.motd || '');
+  const [isSavingMotd, setIsSavingMotd] = useState(false);
+
+  // Sync MOTD state when event changes
+  useEffect(() => {
+    setMotd(event?.motd || '');
+  }, [event?.motd]);
   
   // User management state
   const [userSearchTerm, setUserSearchTerm] = useState('');
@@ -289,11 +298,47 @@ function AdminPanel({
     </div>
   );
 
+  // Handle MOTD update
+  const handleSaveMotd = async () => {
+    if (!onUpdateMotd) return;
+    setIsSavingMotd(true);
+    const result = await onUpdateMotd(motd);
+    setIsSavingMotd(false);
+    if (result?.error) {
+      alert(`Error updating MOTD: ${result.error}`);
+    }
+  };
+
   // ============================================================================
   // RENDER: PHASES SECTION
   // ============================================================================
   const renderPhases = () => (
     <div className="space-y-6">
+      {/* MOTD Editor - Only show during hacking phase */}
+      {eventPhase === 'hacking' && (
+        <div className="bg-white border-2 border-gray-200 p-6">
+          <h3 className="font-bold text-gray-900 mb-2">Message of the Day (MOTD)</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Update the message displayed in the hero banner during the hacking phase.
+          </p>
+          <textarea
+            value={motd}
+            onChange={(e) => setMotd(e.target.value)}
+            placeholder="Enter your message of the day..."
+            className="w-full px-3 py-2 border-2 border-gray-200 rounded mb-3 min-h-[120px] focus:outline-none focus:border-purple-500"
+            disabled={isSavingMotd}
+          />
+          <button
+            type="button"
+            onClick={handleSaveMotd}
+            disabled={isSavingMotd}
+            className="px-4 py-2 bg-purple-600 text-white font-bold rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSavingMotd ? 'Saving...' : 'Save MOTD'}
+          </button>
+        </div>
+      )}
+
       <div className="bg-white border-2 border-gray-200 p-6">
         <h3 className="font-bold text-gray-900 mb-2">Event Phase Control</h3>
         <p className="text-sm text-gray-500 mb-6">

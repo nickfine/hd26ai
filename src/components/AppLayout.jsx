@@ -26,6 +26,8 @@ import {
   X,
   Star,
   ChevronRight,
+  Sparkles,
+  UserPlus,
 } from 'lucide-react';
 import Progress from './ui/Progress';
 import Badge, { RoleBadge, AllegianceCapsule, StatusCapsule, HeartbeatDot } from './ui/Badge';
@@ -159,14 +161,24 @@ const WarTimer = memo(function WarTimer() {
 // NAVIGATION ITEMS
 // ============================================================================
 
-const getNavItems = (userRole, eventPhase = 'voting') => {
+const getNavItems = (userRole, eventPhase = 'voting', user = null) => {
   const baseItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  ];
+
+  // Add Sign Up navigation item during registration phase or for users without allegiance
+  const showSignup = eventPhase === 'registration' || (user && (!user.allegiance || user.allegiance === 'neutral'));
+  if (showSignup) {
+    baseItems.push({ id: 'signup', label: 'Sign Up', icon: UserPlus });
+  }
+
+  baseItems.push(
+    { id: 'new-to-hackday', label: 'New to HackDay?', icon: Sparkles },
     { id: 'schedule', label: 'Schedule', icon: Calendar },
     { id: 'teams', label: 'Teams', icon: Users },
     { id: 'rules', label: 'Rules', icon: BookOpen },
     { id: 'submission', label: 'Submission', icon: Send },
-  ];
+  );
 
   const permissions = USER_ROLES[userRole] || USER_ROLES.participant;
 
@@ -252,7 +264,7 @@ function AppLayout({
   
   const userCallsign = user?.callsign || userTeam?.members?.find(m => m.id === user?.id)?.callsign;
 
-  const navItems = useMemo(() => getNavItems(user?.role, eventPhase), [user?.role, eventPhase]);
+  const navItems = useMemo(() => getNavItems(user?.role, eventPhase, user), [user?.role, eventPhase, user]);
   const config = useMemo(() => getAllegianceConfig(user?.allegiance || 'neutral'), [user?.allegiance]);
 
   // War stats - memoized

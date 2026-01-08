@@ -26,12 +26,13 @@ import {
 // Components
 import Landing from './components/Landing';
 import Login from './components/Login';
-import Onboarding from './components/Onboarding';
+import Signup from './components/Signup';
 import Dashboard from './components/Dashboard';
 import Marketplace from './components/Marketplace';
 import TeamDetail from './components/TeamDetail';
 import Profile from './components/Profile';
 import Rules from './components/Rules';
+import NewToHackDay from './components/NewToHackDay';
 import Submission from './components/Submission';
 import Voting from './components/Voting';
 import VotingAnalytics from './components/VotingAnalytics';
@@ -120,6 +121,7 @@ function App() {
   const [mockFreeAgents, setMockFreeAgents] = useState(MOCK_FREE_AGENTS);
   const [mockUserVotes, setMockUserVotes] = useState([]);
   const [mockEventPhase, setMockEventPhase] = useState('voting');
+  const [mockEventMotd, setMockEventMotd] = useState(''); // MOTD for demo mode
   
   // Flatten mock users for admin panel
   const [mockAllUsers, setMockAllUsers] = useState(() => [
@@ -155,6 +157,18 @@ function App() {
 
   const freeAgents = useDemoMode ? mockFreeAgents : supabaseFreeAgents;
   const eventPhase = useDemoMode ? mockEventPhase : (event?.phase || 'voting');
+  
+  // Effective event (Supabase or mock)
+  const effectiveEvent = useMemo(() => {
+    if (useDemoMode) {
+      return {
+        id: 'demo-event',
+        phase: mockEventPhase,
+        motd: mockEventMotd,
+      };
+    }
+    return event;
+  }, [useDemoMode, mockEventPhase, mockEventMotd, event]);
 
   // Convert project IDs to team IDs for voting component compatibility
   const userVotes = useMemo(() => {
@@ -627,6 +641,22 @@ function App() {
     }
   }, [useDemoMode, effectiveUser, updateEventPhase]);
 
+  const handleUpdateMotd = useCallback(async (motd) => {
+    if (!effectiveUser || effectiveUser.role !== 'admin') {
+      return { error: 'Only admins can update MOTD' };
+    }
+    
+    if (useDemoMode) {
+      setMockEventMotd(motd);
+      return { error: null };
+    } else {
+      // In Supabase mode, update MOTD in event table
+      // For now, we'll need to add this to the updatePhase function or create a separate update
+      // This is a placeholder - actual implementation would update the Event table
+      return { error: 'MOTD update not yet implemented for Supabase mode' };
+    }
+  }, [useDemoMode, effectiveUser]);
+
   const handleUpdateUserRole = useCallback(async (userId, newRole) => {
     if (!effectiveUser || effectiveUser.role !== 'admin') {
       return { error: 'Only admins can change user roles' };
@@ -667,6 +697,9 @@ function App() {
   const updateUser = useCallback(async (updates) => {
     if (useDemoMode) {
       setDemoUser(prev => (prev ? { ...prev, ...updates } : updates));
+      // In demo mode, state updates are synchronous but we need to ensure React has processed it
+      // Return a resolved promise to maintain async consistency
+      return Promise.resolve();
     } else {
       // Map app format to database format
       const dbUpdates = {};
@@ -712,7 +745,7 @@ function App() {
     setCurrentView('dashboard');
   }, [createUser]);
 
-  // Demo onboarding handler - creates a new user and goes to onboarding
+  // Demo onboarding handler - creates a new user and goes to signup page
   const handleDemoOnboarding = useCallback((phase) => {
     createUser({
       id: Date.now(),
@@ -726,21 +759,21 @@ function App() {
     if (phase) {
       setMockEventPhase(phase);
     }
-    setCurrentView('onboarding');
+    setCurrentView('signup');
   }, [createUser]);
 
   // ============================================================================
   // AUTH EFFECTS
   // ============================================================================
   useEffect(() => {
-    // If user logs in via OAuth, redirect to dashboard (or onboarding if new)
+    // If user logs in via OAuth, redirect to dashboard
+    // NOTE: Onboarding modal is hidden for now - all users go to dashboard
     if (auth.isAuthenticated && auth.profile && !useDemoMode) {
-      // Check if user needs onboarding (no allegiance set)
-      if (!auth.profile.trackSide) {
-        setCurrentView('onboarding');
-      } else if (currentView === 'login' || currentView === 'landing') {
+      // Always send users to dashboard (onboarding is hidden)
+      if (currentView === 'login' || currentView === 'landing') {
         setCurrentView('dashboard');
       }
+      // Previously: if (!auth.profile.trackSide) { setCurrentView('onboarding'); }
     }
   }, [auth.isAuthenticated, auth.profile, useDemoMode, currentView]);
 
@@ -773,13 +806,16 @@ function App() {
           />
         );
       
-      case 'onboarding':
+      case 'signup':
         return (
-          <Onboarding
+          <Signup
             user={effectiveUser}
             updateUser={updateUser}
-            onNavigate={setCurrentView}
+            onNavigate={handleNavigate}
             onAutoAssign={handleAutoAssign}
+            teams={teams}
+            allegianceStyle={getAllegianceStyle()}
+            eventPhase={eventPhase}
           />
         );
       
@@ -790,7 +826,9 @@ function App() {
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
+            onNavigateToTeam={navigateToTeam}
             eventPhase={eventPhase}
+            event={effectiveEvent}
           />
         );
       
@@ -829,6 +867,17 @@ function App() {
       case 'rules':
         return (
           <Rules
+            user={effectiveUser}
+            teams={teams}
+            allegianceStyle={getAllegianceStyle()}
+            onNavigate={handleNavigate}
+            eventPhase={eventPhase}
+          />
+        );
+      
+      case 'new-to-hackday':
+        return (
+          <NewToHackDay
             user={effectiveUser}
             teams={teams}
             allegianceStyle={getAllegianceStyle()}
@@ -903,6 +952,8 @@ function App() {
             allUsers={useDemoMode ? mockAllUsers : supabaseUsers}
             usersLoading={useDemoMode ? false : usersLoading}
             onRefreshUsers={useDemoMode ? () => {} : refetchUsers}
+            event={effectiveEvent}
+            onUpdateMotd={handleUpdateMotd}
           />
         );
       

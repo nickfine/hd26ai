@@ -14,6 +14,8 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
   const [teamNameInput, setTeamNameInput] = useState(team.name || '');
   const [isEditingDescription, setIsEditingDescription] = useState(false);
   const [descriptionInput, setDescriptionInput] = useState(team.description || '');
+  const [isEditingProblem, setIsEditingProblem] = useState(false);
+  const [problemInput, setProblemInput] = useState(team.problem || '');
   
   // Check if current user is the captain (for demo, we'll check by matching user id or name)
   const isCaptain = user?.id === team.captainId;
@@ -206,6 +208,87 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           </div>
         </div>
 
+        {/* Pending Requests - Captain Only */}
+        {isCaptain && team.joinRequests?.length > 0 && (
+          <div
+            className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card"
+            style={{ 
+              borderColor: `${teamConfig.color}60`,
+              boxShadow: `0 0 20px ${teamConfig.color}15`
+            }}
+          >
+            <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-4">
+              Pending Requests ({team.joinRequests.length})
+            </h2>
+            <div className="space-y-4">
+              {team.joinRequests.map((request) => (
+                <div
+                  key={request.id}
+                  className="glass-card p-3 sm:p-4 rounded-lg"
+                >
+                  <div className="flex items-start justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div
+                        className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: teamConfig.color }}
+                      >
+                        <User className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <span className="font-bold text-white">{request.userName}</span>
+                        <p className="text-xs text-text-muted">
+                          {new Date(request.timestamp).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Requester's Skills */}
+                  {request.userSkills?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mb-3">
+                      {request.userSkills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="px-2 py-1 text-xs bg-arena-card border border-arena-border text-text-secondary rounded"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Message */}
+                  {request.message && (
+                    <p className="text-sm text-text-body mb-4 p-3 bg-arena-card rounded border border-arena-border italic">
+                      "{request.message}"
+                    </p>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onRequestResponse(team.id, request.id, true)}
+                      className="flex-1 py-2 px-3 sm:px-4 flex items-center justify-center gap-2 text-sm font-bold text-arena-black bg-success rounded-lg hover:bg-success/90 transition-colors"
+                    >
+                      <Check className="w-4 h-4" />
+                      <span className="hidden xs:inline">Accept</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => onRequestResponse(team.id, request.id, false)}
+                      className="flex-1 py-2 px-3 sm:px-4 flex items-center justify-center gap-2 text-sm font-bold text-text-secondary bg-arena-border rounded-lg hover:bg-arena-border-strong transition-colors"
+                    >
+                      <XCircle className="w-4 h-4" />
+                      <span className="hidden xs:inline">Decline</span>
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Project Goal */}
         <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <div className="flex items-center justify-between mb-3">
@@ -270,6 +353,77 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
             </div>
           ) : (
             <p className="text-base sm:text-lg text-text-body">{team.description}</p>
+          )}
+        </div>
+
+        {/* Problem We're Going To Solve */}
+        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
+              Problem We're Going To Solve
+            </h2>
+            {isCaptain && !isEditingProblem && (
+              <button
+                type="button"
+                onClick={() => {
+                  setProblemInput(team.problem || '');
+                  setIsEditingProblem(true);
+                }}
+                className="text-xs font-medium px-3 py-1 rounded transition-colors"
+                style={{
+                  color: teamConfig.color,
+                  backgroundColor: teamConfig.bgColor,
+                  border: `1px solid ${teamConfig.borderColor}`,
+                }}
+              >
+                Edit
+              </button>
+            )}
+          </div>
+          {isEditingProblem ? (
+            <div className="space-y-3">
+              <textarea
+                value={problemInput}
+                onChange={(e) => setProblemInput(e.target.value)}
+                placeholder="Describe the problem your team is going to solve..."
+                className={`w-full p-3 border-2 focus:outline-none text-base sm:text-lg resize-none transition-colors bg-arena-elevated text-white placeholder:text-text-muted rounded-card
+                  ${problemInput.trim().length < 10 ? 'border-error/50' : 'border-arena-border focus:border-text-secondary'}`}
+                rows={3}
+                maxLength={500}
+              />
+              <div className="flex items-center justify-between">
+                {problemInput.trim().length < 10 ? (
+                  <p className="text-xs text-error">Problem description must be at least 10 characters</p>
+                ) : (
+                  <span />
+                )}
+                <p className="text-xs text-text-muted">{problemInput.length}/500</p>
+              </div>
+              <div className="flex gap-2 justify-end">
+                <button
+                  type="button"
+                  onClick={handleCancelProblem}
+                  className="px-4 py-2 text-sm font-medium text-text-secondary bg-arena-elevated rounded hover:bg-arena-border transition-colors"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveProblem}
+                  disabled={problemInput.trim().length < 10}
+                  className="px-4 py-2 text-sm font-medium text-white rounded transition-colors disabled:opacity-50"
+                  style={{ backgroundColor: teamConfig.color }}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          ) : (
+            <p className="text-base sm:text-lg text-text-body">{team.problem || (
+              <span className="text-text-muted italic">
+                {isCaptain ? 'Click Edit to describe the problem your team is going to solve.' : 'No problem description provided.'}
+              </span>
+            )}</p>
           )}
         </div>
 
@@ -468,8 +622,8 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           </div>
         </div>
 
-        {/* Project Submission Status - Visible to team members */}
-        {(isCaptain || isMember) && (
+        {/* Project Submission Status - Visible to team members only after submission phase */}
+        {(isCaptain || isMember) && eventPhase && ['submission', 'voting', 'judging', 'results'].includes(eventPhase) && (
           <div
             className={`glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card ${team.side === 'ai' ? 'border-dashed' : ''}`}
             style={{ 
@@ -580,87 +734,6 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 )}
               </div>
             )}
-          </div>
-        )}
-
-        {/* Pending Requests - Captain Only */}
-        {isCaptain && team.joinRequests?.length > 0 && (
-          <div
-            className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card"
-            style={{ 
-              borderColor: `${teamConfig.color}60`,
-              boxShadow: `0 0 20px ${teamConfig.color}15`
-            }}
-          >
-            <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-4">
-              Pending Requests ({team.joinRequests.length})
-            </h2>
-            <div className="space-y-4">
-              {team.joinRequests.map((request) => (
-                <div
-                  key={request.id}
-                  className="glass-card p-3 sm:p-4 rounded-lg"
-                >
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: teamConfig.color }}
-                      >
-                        <User className="w-5 h-5 text-white" />
-                      </div>
-                      <div>
-                        <span className="font-bold text-white">{request.userName}</span>
-                        <p className="text-xs text-text-muted">
-                          {new Date(request.timestamp).toLocaleDateString()}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Requester's Skills */}
-                  {request.userSkills?.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {request.userSkills.map((skill) => (
-                        <span
-                          key={skill}
-                          className="px-2 py-1 text-xs bg-arena-card border border-arena-border text-text-secondary rounded"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  {/* Message */}
-                  {request.message && (
-                    <p className="text-sm text-text-body mb-4 p-3 bg-arena-card rounded border border-arena-border italic">
-                      "{request.message}"
-                    </p>
-                  )}
-
-                  {/* Action Buttons */}
-                  <div className="flex gap-2">
-                    <button
-                      type="button"
-                      onClick={() => onRequestResponse(team.id, request.id, true)}
-                      className="flex-1 py-2 px-3 sm:px-4 flex items-center justify-center gap-2 text-sm font-bold text-arena-black bg-success rounded-lg hover:bg-success/90 transition-colors"
-                    >
-                      <Check className="w-4 h-4" />
-                      <span className="hidden xs:inline">Accept</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onRequestResponse(team.id, request.id, false)}
-                      className="flex-1 py-2 px-3 sm:px-4 flex items-center justify-center gap-2 text-sm font-bold text-text-secondary bg-arena-border rounded-lg hover:bg-arena-border-strong transition-colors"
-                    >
-                      <XCircle className="w-4 h-4" />
-                      <span className="hidden xs:inline">Decline</span>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
           </div>
         )}
 

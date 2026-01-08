@@ -543,6 +543,7 @@ export function useEvent() {
           rubricConfig: data.rubricConfig,
           prizesConfig: data.prizesConfig,
           milestones: data.milestones || [],
+          motd: data.motd || '', // Message of the Day for admin-editable messages
         });
       }
 
