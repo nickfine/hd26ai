@@ -7,11 +7,14 @@ import {
   Plus,
   Search,
   ChevronRight,
+  ChevronLeft,
   User,
   Send,
   X,
   Mail,
   Check,
+  Grid3x3,
+  Rows,
 } from 'lucide-react';
 import { SKILLS } from '../data/mockData';
 import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
@@ -33,6 +36,9 @@ function Marketplace({
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState(initialTab);
   const [inviteModalAgent, setInviteModalAgent] = useState(null);
+  const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'row'
+  const [currentPage, setCurrentPage] = useState(1);
+  const [teamsPerPage] = useState(12); // Items per page
 
   // Sync activeTab when initialTab prop changes
   useEffect(() => {
@@ -84,6 +90,57 @@ function Marketplace({
       return bApplied - aApplied;
     });
   }, [allegianceFilteredTeams, searchTerm, user?.name]);
+
+  // Pagination calculations for teams
+  const totalPages = useMemo(() => Math.ceil(filteredTeams.length / teamsPerPage), [filteredTeams.length, teamsPerPage]);
+  const startIndex = (currentPage - 1) * teamsPerPage;
+  const endIndex = startIndex + teamsPerPage;
+  const paginatedTeams = useMemo(() => filteredTeams.slice(startIndex, endIndex), [filteredTeams, startIndex, endIndex]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterAllegiance]);
+
+  // Generate page numbers for pagination
+  const getPageNumbers = useCallback(() => {
+    const pages = [];
+    const maxVisiblePages = 5;
+    
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      // Always show first page
+      pages.push(1);
+      
+      // Calculate start and end of visible range
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+      
+      // Adjust if at the beginning
+      if (currentPage <= 2) {
+        end = 4;
+      }
+      // Adjust if at the end
+      if (currentPage >= totalPages - 1) {
+        start = totalPages - 3;
+      }
+      
+      // Add ellipsis if needed
+      if (start > 2) pages.push('...');
+      
+      // Add middle pages
+      for (let i = start; i <= end; i++) pages.push(i);
+      
+      // Add ellipsis if needed
+      if (end < totalPages - 1) pages.push('...');
+      
+      // Always show last page
+      pages.push(totalPages);
+    }
+    
+    return pages;
+  }, [totalPages, currentPage]);
 
   // Filter free agents by allegiance - memoized
   const allegianceFilteredAgents = useMemo(() => freeAgents.filter((agent) => {
@@ -269,7 +326,7 @@ function Marketplace({
 
           {/* Filter and Tab Switcher Row */}
           <div className="flex flex-col gap-4 mb-6">
-            {/* Tab Switcher + Create Team */}
+            {/* Tab Switcher + Create Team + View Toggle */}
             <div className="flex flex-wrap items-center gap-2">
               <button
                 type="button"
@@ -304,6 +361,36 @@ function Marketplace({
               
               {/* Spacer to push Create Team and filters to the right on larger screens */}
               <div className="hidden sm:block flex-1" />
+              
+              {/* View Mode Toggle - Only show for teams tab */}
+              {activeTab === 'teams' && (
+                <div className="flex items-center gap-1 glass-card p-1 rounded-lg backdrop-blur-md">
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('grid')}
+                    className={`p-2 transition-all rounded ${
+                      viewMode === 'grid'
+                        ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_15px_rgba(255,107,53,0.25)]'
+                        : 'text-arena-secondary hover:text-white'
+                    }`}
+                    title="Grid View"
+                  >
+                    <Grid3x3 className="w-4 h-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setViewMode('row')}
+                    className={`p-2 transition-all rounded ${
+                      viewMode === 'row'
+                        ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_15px_rgba(255,107,53,0.25)]'
+                        : 'text-arena-secondary hover:text-white'
+                    }`}
+                    title="Row View"
+                  >
+                    <Rows className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
               
               {!userTeam && (
                 <button
@@ -348,8 +435,13 @@ function Marketplace({
           {/* Teams Grid */}
           {activeTab === 'teams' && (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-4">
-                {filteredTeams.map((team) => {
+              <div className={cn(
+                'grid gap-4',
+                viewMode === 'grid' 
+                  ? 'grid-cols-1 md:grid-cols-2 xl:grid-cols-2' 
+                  : 'grid-cols-1 md:grid-cols-2'
+              )}>
+                {paginatedTeams.map((team) => {
                   const teamConfig = ALLEGIANCE_CONFIG[team.side];
                   const TeamIcon = team.side === 'ai' ? Cpu : Heart;
                   const hasApplied = team.joinRequests?.some((r) => r.userName === user?.name);
@@ -358,9 +450,12 @@ function Marketplace({
                   return (
                     <div
                       key={team.id}
-                      className="glass-card p-4 sm:p-5 transition-all duration-300 
-                                 hover:-translate-y-1 hover:shadow-2xl
-                                 border-l-4 rounded-card"
+                      className={cn(
+                        "glass-card p-4 sm:p-5 transition-all duration-300",
+                        "hover:-translate-y-1 hover:shadow-2xl",
+                        "border-l-4 rounded-card",
+                        viewMode === 'row' && "md:col-span-2"
+                      )}
                       style={{ 
                         borderLeftColor: teamColor,
                         boxShadow: `inset 4px 0 20px -10px ${teamColor}40`
@@ -468,6 +563,68 @@ function Marketplace({
                       ? 'No teams found matching your search.'
                       : 'No teams available for the selected filter.'}
                   </p>
+                </div>
+              )}
+
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between pt-6 mt-6 border-t border-arena-border">
+                  <div className="text-sm text-arena-secondary">
+                    Page {currentPage} of {totalPages} ({filteredTeams.length} teams)
+                  </div>
+                  
+                  <div className="flex items-center gap-1">
+                    {/* Previous Button */}
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                      disabled={currentPage === 1}
+                      className={cn(
+                        "p-2 border-2 transition-colors rounded-lg",
+                        currentPage === 1
+                          ? 'border-arena-border text-arena-muted cursor-not-allowed'
+                          : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
+                      )}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                    </button>
+
+                    {/* Page Numbers */}
+                    {getPageNumbers().map((page, idx) => (
+                      page === '...' ? (
+                        <span key={`ellipsis-${idx}`} className="px-2 text-arena-muted">...</span>
+                      ) : (
+                        <button
+                          key={page}
+                          type="button"
+                          onClick={() => setCurrentPage(page)}
+                          className={cn(
+                            "min-w-[36px] h-9 px-2 border-2 text-sm font-medium transition-colors rounded-lg",
+                            currentPage === page
+                              ? 'border-brand bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_15px_rgba(255,107,53,0.25)]'
+                              : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
+                          )}
+                        >
+                          {page}
+                        </button>
+                      )
+                    ))}
+
+                    {/* Next Button */}
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((prev) => Math.min(totalPages, prev + 1))}
+                      disabled={currentPage === totalPages}
+                      className={cn(
+                        "p-2 border-2 transition-colors rounded-lg",
+                        currentPage === totalPages
+                          ? 'border-arena-border text-arena-muted cursor-not-allowed'
+                          : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
+                      )}
+                    >
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               )}
             </>
