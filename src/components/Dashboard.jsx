@@ -308,7 +308,8 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
       }
       
       // If user has signed up but no team and no pending applications, show team joining message
-      if (hasSignedUp && !hasTeam) {
+      // Skip this for observers (they are automatically assigned to Observers team)
+      if (hasSignedUp && !hasTeam && user?.allegiance !== 'observer') {
         return (
           <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
             <VStack gap="4" align="start">
