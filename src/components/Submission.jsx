@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
 import {
-  Heart,
-  Cpu,
   Send,
   Save,
   Check,
@@ -17,7 +15,7 @@ import {
   Edit3,
   Upload,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 // ============================================================================
@@ -36,14 +34,13 @@ const SUBMISSION_FIELDS = [
 // COMPONENT
 // ============================================================================
 
-function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmission, eventPhase }) {
+function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase }) {
   // Find the user's team (as captain or member)
   const userTeam = teams.find(
     (team) => team.captainId === user?.id || team.members?.some((m) => m.id === user?.id)
   );
   
   const isCaptain = userTeam?.captainId === user?.id;
-  const teamConfig = userTeam ? ALLEGIANCE_CONFIG[userTeam.side] : ALLEGIANCE_CONFIG.neutral;
   
   // Form state
   const [formData, setFormData] = useState({
@@ -156,7 +153,6 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
       <AppLayout
         user={user}
         teams={teams}
-        allegianceStyle={allegianceStyle}
         onNavigate={onNavigate}
         eventPhase={eventPhase}
         activeNav="submission"
@@ -203,7 +199,6 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
       <AppLayout
         user={user}
         teams={teams}
-        allegianceStyle={allegianceStyle}
         onNavigate={onNavigate}
         eventPhase={eventPhase}
         activeNav="submission"
@@ -224,16 +219,9 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
           </div>
 
           {/* Team Info */}
-          <div
-            className={`p-4 mb-6 border-l-4 border border-arena-border rounded-xl bg-arena-card`}
-            style={{ borderLeftColor: teamConfig.color }}
-          >
+          <div className="p-4 mb-6 border-l-4 border border-arena-border rounded-xl bg-arena-card">
             <div className="flex items-center gap-3">
-              {userTeam.side === 'ai' ? (
-                <Cpu className="w-6 h-6" style={{ color: teamConfig.color }} />
-              ) : (
-                <Heart className="w-6 h-6" style={{ color: teamConfig.color }} />
-              )}
+              <Users className="w-6 h-6 text-text-secondary" />
               <div>
                 <div className="font-bold text-white">
                   {userTeam.name}
@@ -347,7 +335,6 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="submission"
@@ -370,16 +357,9 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
         {/* Status Badge + Team Info Row */}
         <div className="flex flex-col sm:flex-row gap-4 mb-6">
           {/* Team Info */}
-          <div
-            className="flex-1 p-4 border-l-4 border border-arena-border rounded-xl bg-arena-card"
-            style={{ borderLeftColor: teamConfig.color }}
-          >
+          <div className="flex-1 p-4 border-l-4 border border-arena-border rounded-xl bg-arena-card">
             <div className="flex items-center gap-3">
-              {userTeam.side === 'ai' ? (
-                <Cpu className="w-6 h-6" style={{ color: teamConfig.color }} />
-              ) : (
-                <Heart className="w-6 h-6" style={{ color: teamConfig.color }} />
-              )}
+              <Users className="w-6 h-6 text-text-secondary" />
               <div>
                 <div className="font-bold text-white">
                   {userTeam.name}
@@ -573,9 +553,9 @@ function Submission({ user, teams, allegianceStyle, onNavigate, onUpdateSubmissi
                   type="button"
                   onClick={handleSubmit}
                   disabled={!canSubmit || isSaving}
-                  className="w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
-                             text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg"
-                  style={{ backgroundColor: canSubmit ? teamConfig.color : '#666666' }}
+                  className={`w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
+                             text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg
+                             ${canSubmit ? 'bg-arena-elevated border border-arena-border' : 'bg-gray-600'}`}
                 >
                   <Send className="w-4 h-4" />
                   Submit Project

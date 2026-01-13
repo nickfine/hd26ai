@@ -1,21 +1,19 @@
 /**
  * Badge Component
- * A label component for displaying status, skills, allegiance, and other tags.
- * Dark Mode Cyber Arena Theme
+ * A label component for displaying status, skills, and other tags.
  * 
  * @example
- * <Badge variant="human">Human Side</Badge>
- * <Badge variant="skill" removable onRemove={() => {}}>Frontend</Badge>
+ * <Badge variant="default">Status</Badge>
  * <Badge variant="success" icon={<Check />}>Complete</Badge>
  */
 
 import { forwardRef } from 'react';
-import { X, Heart, Cpu, Scale } from 'lucide-react';
+import { X } from 'lucide-react';
 import { cn, BADGE_VARIANTS, SIZE_CLASSES } from '../../lib/design-system';
 
 /**
  * @typedef {Object} BadgeProps
- * @property {'default' | 'outline' | 'human' | 'ai' | 'neutral' | 'success' | 'warning' | 'error' | 'accent' | 'special'} [variant='default']
+ * @property {'default' | 'outline' | 'neutral' | 'success' | 'warning' | 'error'} [variant='default']
  * @property {'xs' | 'sm' | 'md' | 'lg'} [size='sm']
  * @property {React.ReactNode} [icon]
  * @property {boolean} [removable=false]
@@ -47,26 +45,14 @@ const Badge = forwardRef(({
   const getDotColor = () => {
     if (dotColor) return dotColor;
     const dotColors = {
-      human: 'bg-human',
-      ai: 'bg-ai',
       success: 'bg-success',
       warning: 'bg-warning',
       error: 'bg-error',
-      accent: 'bg-brand',
-      special: 'bg-brand',
       default: 'bg-text-muted',
       outline: 'bg-text-muted',
       neutral: 'bg-text-muted',
     };
     return dotColors[variant] || dotColors.default;
-  };
-
-  // Get glow class for badge
-  const getGlowClass = () => {
-    if (!glow) return '';
-    if (variant === 'human') return 'shadow-glow-human';
-    if (variant === 'ai') return 'shadow-glow-ai';
-    return '';
   };
 
   return (
@@ -79,8 +65,6 @@ const Badge = forwardRef(({
         sizeStyles,
         // Variant
         variantStyles,
-        // Glow
-        getGlowClass(),
         // Custom
         className
       )}
@@ -148,53 +132,6 @@ export const SkillBadge = forwardRef(({
 
 SkillBadge.displayName = 'SkillBadge';
 
-/**
- * AllegianceBadge - Badge showing user's allegiance (Human/AI/Neutral)
- */
-export const AllegianceBadge = forwardRef(({
-  allegiance = 'neutral',
-  showIcon = false,
-  size = 'sm',
-  glow = false,
-  className,
-  ...props
-}, ref) => {
-  const config = {
-    human: {
-      variant: 'human',
-      label: 'Human',
-      Icon: Heart,
-    },
-    ai: {
-      variant: 'ai',
-      label: 'AI',
-      Icon: Cpu,
-    },
-    neutral: {
-      variant: 'neutral',
-      label: 'Neutral',
-      Icon: Scale,
-    },
-  };
-
-  const { variant, label, Icon } = config[allegiance] || config.neutral;
-
-  return (
-    <Badge
-      ref={ref}
-      variant={variant}
-      size={size}
-      glow={glow}
-      icon={showIcon ? <Icon className="w-3 h-3" /> : undefined}
-      className={className}
-      {...props}
-    >
-      {label}
-    </Badge>
-  );
-});
-
-AllegianceBadge.displayName = 'AllegianceBadge';
 
 /**
  * StatusBadge - Badge for status indicators
@@ -343,19 +280,17 @@ export const HeartbeatDot = forwardRef(({
 HeartbeatDot.displayName = 'HeartbeatDot';
 
 /**
- * AllegianceCapsule - User name display with callsign and team-colored glow
+ * UserCapsule - User name display with callsign
  * 
  * @example
- * <AllegianceCapsule 
- *   allegiance="human"
+ * <UserCapsule 
  *   firstName="Casey" 
  *   callsign="CSS Wizard" 
  *   lastName="Brooks"
  *   showDot
  * />
  */
-export const AllegianceCapsule = forwardRef(({
-  allegiance = 'neutral',
+export const UserCapsule = forwardRef(({
   firstName,
   callsign,
   lastName,
@@ -367,31 +302,9 @@ export const AllegianceCapsule = forwardRef(({
   children,
   ...props
 }, ref) => {
-  const config = {
-    human: {
-      bgClass: 'bg-human-10',
-      borderClass: 'border-human/50',
-      shadowClass: 'shadow-human-glow',
-      textClass: 'text-human',
-      Icon: Heart,
-    },
-    ai: {
-      bgClass: 'bg-ai-10',
-      borderClass: 'border-ai/50',
-      shadowClass: 'shadow-ai-glow',
-      textClass: 'text-ai',
-      Icon: Cpu,
-    },
-    neutral: {
-      bgClass: 'bg-arena-elevated',
-      borderClass: 'border-arena-border',
-      shadowClass: '',
-      textClass: 'text-text-secondary',
-      Icon: Scale,
-    },
-  };
-
-  const { bgClass, borderClass, shadowClass, textClass, Icon } = config[allegiance] || config.neutral;
+  const bgClass = 'bg-arena-elevated';
+  const borderClass = 'border-arena-border';
+  const textClass = 'text-text-secondary';
 
   return (
     <span
@@ -402,7 +315,6 @@ export const AllegianceCapsule = forwardRef(({
         'border',
         bgClass,
         borderClass,
-        shadowClass,
         'text-white',
         className
       )}
@@ -411,11 +323,6 @@ export const AllegianceCapsule = forwardRef(({
       {/* Heartbeat dot */}
       {showDot && (
         <HeartbeatDot className={textClass} />
-      )}
-      
-      {/* Optional icon */}
-      {showIcon && (
-        <Icon className={cn('w-3 h-3', textClass)} />
       )}
       
       {/* Name with callsign */}
@@ -439,29 +346,21 @@ export const AllegianceCapsule = forwardRef(({
   );
 });
 
-AllegianceCapsule.displayName = 'AllegianceCapsule';
+UserCapsule.displayName = 'UserCapsule';
 
 /**
  * SkillChip - Ultra-minimal gray chip for skill tags
  * 
  * @example
  * <SkillChip>Stack Overflow</SkillChip>
- * <SkillChip allegiance="human">HTML Hotshot</SkillChip>
  */
 export const SkillChip = forwardRef(({
-  allegiance, // Optional: add team-colored hover glow
   removable = false,
   onRemove,
   className,
   children,
   ...props
 }, ref) => {
-  // Determine hover glow based on allegiance
-  const hoverGlow = allegiance === 'ai' 
-    ? 'hover:shadow-lg hover:shadow-ai/10' 
-    : allegiance === 'human'
-      ? 'hover:shadow-lg hover:shadow-human/10'
-      : 'hover:shadow-skill-glow';
 
   return (
     <span
@@ -473,7 +372,6 @@ export const SkillChip = forwardRef(({
         'rounded-md',
         'bg-[#1F1F1F] border border-[#333] text-[#AAAAAA]',
         'hover:border-transparent transition-all duration-200',
-        hoverGlow,
         className
       )}
       {...props}
@@ -502,7 +400,7 @@ SkillChip.displayName = 'SkillChip';
 
 /**
  * StatusCapsule - Special status indicator (Captain, Free Agent, etc.)
- * Same style as allegiance capsule but in brand orange with pulse
+ * Same style as role capsule but in brand orange with pulse
  * 
  * @example
  * <StatusCapsule>Free Agent</StatusCapsule>
@@ -545,20 +443,15 @@ StatusCapsule.displayName = 'StatusCapsule';
  * Just the callsign part with team coloring
  * 
  * @example
- * Maya <CallsignBadge allegiance="ai">Prompt Wizard</CallsignBadge> Lee joined...
+ * Maya <CallsignBadge>Prompt Wizard</CallsignBadge> Lee joined...
  */
 export const CallsignBadge = forwardRef(({
-  allegiance = 'neutral',
   isElite = false,
   className,
   children,
   ...props
 }, ref) => {
-  const textClass = allegiance === 'ai' 
-    ? 'text-ai' 
-    : allegiance === 'human' 
-      ? 'text-human' 
-      : 'text-text-secondary';
+  const textClass = 'text-text-secondary';
 
   return (
     <span

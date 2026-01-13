@@ -54,7 +54,7 @@ const SCHEDULE_DATA = {
         time: '09:00',
         endTime: '23:59',
         title: 'Registration & Team Formation Opens',
-        description: 'Sign up, choose your allegiance (Human or AI), and start forming teams. Browse the marketplace to find teammates.',
+        description: 'Sign up and start forming teams. Browse the marketplace to find teammates.',
         location: 'HackDay Portal',
         category: 'logistics',
         icon: Users,
@@ -87,7 +87,7 @@ const SCHEDULE_DATA = {
         time: '23:59',
         endTime: '23:59',
         title: 'Team Formation Deadline',
-        description: 'Final deadline to form teams and lock in your allegiance. No changes after this date.',
+        description: 'Final deadline to form teams. No changes after this date.',
         location: 'HackDay Portal',
         category: 'deadline',
         icon: Clock,
@@ -253,7 +253,7 @@ const SCHEDULE_DATA = {
         time: '17:00',
         endTime: '18:00',
         title: 'Awards Ceremony',
-        description: 'Winners announced! Grand Champion, Best Human Team, Best AI Team, and People\'s Champion.',
+        description: 'Winners announced! Grand Champion and People\'s Champion.',
         location: 'Online - Live Stream',
         category: 'ceremony',
         icon: Trophy,
@@ -421,7 +421,7 @@ function downloadAllEventsAsICS() {
 // COMPONENT
 // ============================================================================
 
-function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
+function Schedule({ user, teams, onNavigate, eventPhase }) {
   const [activeDay, setActiveDay] = useState('preEvent');
   const [showUKTime, setShowUKTime] = useState(false);
 
@@ -451,7 +451,6 @@ function Schedule({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="schedule"

@@ -1,7 +1,5 @@
 import { useState, useMemo } from 'react';
 import {
-  Heart,
-  Cpu,
   Trophy,
   Star,
   Crown,
@@ -13,8 +11,9 @@ import {
   ChevronUp,
   Target,
   Sparkles,
+  Users,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 // ============================================================================
@@ -24,13 +23,11 @@ import AppLayout from './AppLayout';
 function VotingAnalytics({
   user,
   teams = [],
-  allegianceStyle,
   onNavigate,
   eventPhase,
   judgeCriteria = [],
   awards = {},
 }) {
-  const [filterSide, setFilterSide] = useState('all');
   const [expandedTeam, setExpandedTeam] = useState(null);
   const [activeTab, setActiveTab] = useState('leaderboard'); // 'leaderboard' | 'peoples' | 'judges' | 'awards'
 
@@ -39,11 +36,10 @@ function VotingAnalytics({
     return teams.filter((team) => team.submission?.status === 'submitted');
   }, [teams]);
 
-  // Apply side filter
+  // All submitted projects (no filtering)
   const filteredProjects = useMemo(() => {
-    if (filterSide === 'all') return submittedProjects;
-    return submittedProjects.filter((team) => team.side === filterSide);
-  }, [submittedProjects, filterSide]);
+    return submittedProjects;
+  }, [submittedProjects]);
 
   // Calculate judge score average for a team
   const calculateJudgeAverage = (team) => {
@@ -108,21 +104,9 @@ function VotingAnalytics({
   // Calculate award winners
   const awardWinners = useMemo(() => {
     const allSubmitted = teams.filter((t) => t.submission?.status === 'submitted');
-    const humanTeams = allSubmitted.filter((t) => t.side === 'human');
-    const aiTeams = allSubmitted.filter((t) => t.side === 'ai');
 
     // Grand Champion: highest judge score overall
     const grandChampion = [...allSubmitted].sort(
-      (a, b) => calculateJudgeTotal(b) - calculateJudgeTotal(a)
-    )[0];
-
-    // Best Human: highest judge score among human teams
-    const bestHuman = [...humanTeams].sort(
-      (a, b) => calculateJudgeTotal(b) - calculateJudgeTotal(a)
-    )[0];
-
-    // Best AI: highest judge score among AI teams
-    const bestAI = [...aiTeams].sort(
       (a, b) => calculateJudgeTotal(b) - calculateJudgeTotal(a)
     )[0];
 
@@ -134,8 +118,6 @@ function VotingAnalytics({
 
     return {
       grand_champion: grandChampion,
-      best_human: bestHuman,
-      best_ai: bestAI,
       peoples_champion: peoplesChampion,
     };
   }, [teams]);
@@ -146,12 +128,6 @@ function VotingAnalytics({
       (sum, t) => sum + (t.submission?.participantVotes || 0),
       0
     );
-    const humanVotes = submittedProjects
-      .filter((t) => t.side === 'human')
-      .reduce((sum, t) => sum + (t.submission?.participantVotes || 0), 0);
-    const aiVotes = submittedProjects
-      .filter((t) => t.side === 'ai')
-      .reduce((sum, t) => sum + (t.submission?.participantVotes || 0), 0);
 
     const totalJudgeScores = submittedProjects.reduce(
       (sum, t) => sum + (t.submission?.judgeScores?.length || 0),
@@ -233,7 +209,6 @@ function VotingAnalytics({
   // RENDER: LEADERBOARD ROW
   // ============================================================================
   const renderLeaderboardRow = (team, rank, showVotes = true, showJudge = true) => {
-    const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
     const judgeAvg = calculateJudgeAverage(team);
     const judgeScores = team.submission?.judgeScores || [];
     const isExpanded = expandedTeam === team.id;
@@ -256,16 +231,9 @@ function VotingAnalytics({
             {rank}
           </div>
 
-          {/* Side indicator */}
-          <div
-            className={`w-10 h-10 flex-shrink-0 flex items-center justify-center ${config.borderRadius}`}
-            style={{ backgroundColor: config.bgColor }}
-          >
-            {team.side === 'ai' ? (
-              <Cpu className="w-5 h-5" style={{ color: config.color }} />
-            ) : (
-              <Heart className="w-5 h-5" style={{ color: config.color }} />
-            )}
+          {/* Team indicator */}
+          <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100">
+            <Users className="w-5 h-5 text-gray-600" />
           </div>
 
           {/* Project info */}
@@ -360,29 +328,18 @@ function VotingAnalytics({
   // ============================================================================
   const renderAwardCard = (awardKey, award, winner) => {
     if (!winner) return null;
-    const config = ALLEGIANCE_CONFIG[winner.side] || ALLEGIANCE_CONFIG.neutral;
 
     return (
       <div
         key={awardKey}
-        className={`bg-gradient-to-br from-white to-gray-50 border-2 p-6 ${
-          winner.side === 'ai' ? 'border-dashed' : ''
-        }`}
-        style={{ borderColor: config.borderColor }}
+        className="bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 p-6"
       >
         <div className="text-4xl mb-3">{award.emoji}</div>
         <h3 className="text-lg font-black text-gray-900 mb-1">{award.label}</h3>
         <p className="text-xs text-gray-500 mb-4">{award.description}</p>
-        <div
-          className={`p-4 ${config.borderRadius}`}
-          style={{ backgroundColor: config.bgColor }}
-        >
+        <div className="p-4 rounded-lg bg-gray-100">
           <div className="flex items-center gap-2 mb-1">
-            {winner.side === 'ai' ? (
-              <Cpu className="w-4 h-4" style={{ color: config.color }} />
-            ) : (
-              <Heart className="w-4 h-4" style={{ color: config.color }} />
-            )}
+            <Users className="w-4 h-4 text-gray-600" />
             <span
               className="font-black"
               style={{ color: config.color }}
@@ -498,7 +455,6 @@ function VotingAnalytics({
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="analytics"
@@ -551,33 +507,6 @@ function VotingAnalytics({
             })}
           </div>
 
-          {/* Side Filter */}
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-gray-400" />
-            {[
-              { id: 'all', label: 'All' },
-              { id: 'human', label: 'Human', icon: Heart },
-              { id: 'ai', label: 'AI', icon: Cpu },
-            ].map((option) => {
-              const Icon = option.icon;
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => setFilterSide(option.id)}
-                  className={`px-3 py-2 text-xs font-bold transition-all flex items-center gap-1
-                    ${
-                      filterSide === option.id
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'
-                    }`}
-                >
-                  {Icon && <Icon className="w-3 h-3" />}
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
         </div>
 
         {/* Tab Content */}

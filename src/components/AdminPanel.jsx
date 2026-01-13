@@ -72,7 +72,6 @@ const ROLE_CONFIG = {
 function AdminPanel({
   user,
   teams = [],
-  allegianceStyle,
   onNavigate,
   eventPhase,
   onPhaseChange,
@@ -121,14 +120,10 @@ function AdminPanel({
       (t) => (t.submission?.judgeScores?.length || 0) >= 3
     ).length;
 
-    const humanTeams = teams.filter((t) => t.side === 'human');
-    const aiTeams = teams.filter((t) => t.side === 'ai');
     const totalMembers = teams.reduce((sum, t) => sum + (t.members?.length || 0), 0);
 
     return {
       totalTeams: teams.length,
-      humanTeams: humanTeams.length,
-      aiTeams: aiTeams.length,
       submittedProjects: submittedProjects.length,
       totalVotes,
       totalJudgeScores,
@@ -190,9 +185,7 @@ function AdminPanel({
           </div>
           <div className="text-3xl font-black text-gray-900">{stats.totalTeams}</div>
           <div className="text-xs text-gray-500 mt-1">
-            <span className="text-green-600">{stats.humanTeams} human</span>
-            {' · '}
-            <span className="text-cyan-600">{stats.aiTeams} AI</span>
+            Total teams
           </div>
         </div>
 
@@ -919,7 +912,6 @@ function AdminPanel({
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="admin"

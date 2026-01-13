@@ -73,7 +73,7 @@ const Input = forwardRef(({
           className="block text-sm font-bold text-arena-secondary mb-1.5"
         >
           {label}
-          {required && <span className="text-human ml-0.5">*</span>}
+          {required && <span className="text-error ml-0.5">*</span>}
         </label>
       )}
 
@@ -106,7 +106,7 @@ const Input = forwardRef(({
             SIZE_MAP[size],
             // States
             error
-              ? 'border-human focus:border-human'
+              ? 'border-error focus:border-error'
               : 'border-arena-border focus:border-brand',
             disabled && 'opacity-50 cursor-not-allowed',
             // Icon padding
@@ -157,7 +157,7 @@ const Input = forwardRef(({
 
       {/* Error Message */}
       {error && (
-        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-human">
+        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-error">
           {error}
         </p>
       )}
@@ -233,7 +233,7 @@ export const TextArea = forwardRef(({
           className="block text-sm font-bold text-arena-secondary mb-1.5"
         >
           {label}
-          {required && <span className="text-human ml-0.5">*</span>}
+          {required && <span className="text-error ml-0.5">*</span>}
         </label>
       )}
 
@@ -264,7 +264,7 @@ export const TextArea = forwardRef(({
 
       {/* Error Message */}
       {error && (
-        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-human">
+        <p id={`${inputId}-error`} className="mt-1.5 text-sm text-error">
           {error}
         </p>
       )}
@@ -304,7 +304,7 @@ export const FormField = forwardRef(({
           className="block text-sm font-bold text-arena-secondary mb-1.5"
         >
           {label}
-          {required && <span className="text-human ml-0.5">*</span>}
+          {required && <span className="text-error ml-0.5">*</span>}
         </label>
       )}
 
@@ -313,7 +313,7 @@ export const FormField = forwardRef(({
 
       {/* Error Message */}
       {error && (
-        <p className="mt-1.5 text-sm text-human">{error}</p>
+        <p className="mt-1.5 text-sm text-error">{error}</p>
       )}
 
       {/* Helper Text */}

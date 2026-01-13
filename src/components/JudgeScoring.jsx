@@ -1,7 +1,5 @@
 import { useState, useMemo } from 'react';
 import {
-  Heart,
-  Cpu,
   Gavel,
   CheckCircle2,
   Circle,
@@ -14,7 +12,7 @@ import {
   MessageSquare,
   AlertCircle,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 // ============================================================================
@@ -24,7 +22,6 @@ import AppLayout from './AppLayout';
 function JudgeScoring({
   user,
   teams = [],
-  allegianceStyle,
   onNavigate,
   onScore,
   judgeCriteria = [],
@@ -132,7 +129,6 @@ function JudgeScoring({
   // RENDER: PROJECT LIST ITEM
   // ============================================================================
   const renderProjectItem = (team) => {
-    const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
     const scored = hasScored(team.id);
     const isSelected = selectedTeamId === team.id;
 
@@ -142,8 +138,7 @@ function JudgeScoring({
         type="button"
         onClick={() => handleSelectTeam(team.id)}
         className={`w-full text-left p-4 border-2 transition-all flex items-center gap-3
-          ${isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300 bg-white'}
-          ${team.side === 'ai' ? 'border-dashed' : ''}`}
+          ${isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300 bg-white'}`}
       >
         {/* Status indicator */}
         {scored ? (
@@ -152,16 +147,9 @@ function JudgeScoring({
           <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
         )}
 
-        {/* Side icon */}
-        <div
-          className={`w-8 h-8 flex-shrink-0 flex items-center justify-center ${config.borderRadius}`}
-          style={{ backgroundColor: config.bgColor }}
-        >
-          {team.side === 'ai' ? (
-            <Cpu className="w-4 h-4" style={{ color: config.color }} />
-          ) : (
-            <Heart className="w-4 h-4" style={{ color: config.color }} />
-          )}
+        {/* Team icon */}
+        <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100">
+          <Users className="w-4 h-4 text-gray-600" />
         </div>
 
         {/* Info */}
@@ -195,22 +183,14 @@ function JudgeScoring({
       );
     }
 
-    const config = ALLEGIANCE_CONFIG[selectedTeam.side] || ALLEGIANCE_CONFIG.neutral;
     const submission = selectedTeam.submission;
 
     return (
       <div className="h-full overflow-auto">
         {/* Project Header */}
-        <div
-          className={`p-6 border-b-2 ${selectedTeam.side === 'ai' ? 'border-dashed' : ''}`}
-          style={{ borderColor: config.borderColor, backgroundColor: config.bgColor }}
-        >
+        <div className="p-6 border-b-2 border-gray-200 bg-gray-50">
           <div className="flex items-center gap-2 mb-2">
-            {selectedTeam.side === 'ai' ? (
-              <Cpu className="w-5 h-5" style={{ color: config.color }} />
-            ) : (
-              <Heart className="w-5 h-5" style={{ color: config.color }} />
-            )}
+            <Users className="w-5 h-5 text-gray-600" />
             <span
               className="text-sm font-bold uppercase tracking-wide"
               style={{ color: config.color }}
@@ -391,7 +371,6 @@ function JudgeScoring({
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="judge-scoring"

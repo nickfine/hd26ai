@@ -1,6 +1,6 @@
 /**
  * UserBadge Component
- * Display a user with their avatar, name, callsign, and allegiance.
+ * Display a user with their avatar, name, and callsign.
  * 
  * @example
  * <UserBadge user={user} showCallsign />
@@ -8,9 +8,9 @@
  */
 
 import { forwardRef } from 'react';
-import Avatar, { AllegianceAvatar } from '../ui/Avatar';
-import Badge, { AllegianceBadge, RoleBadge, CallsignBadge, SkillChip } from '../ui/Badge';
-import { cn, formatNameWithCallsign, getAllegianceConfig } from '../../lib/design-system';
+import Avatar from '../ui/Avatar';
+import Badge, { RoleBadge, CallsignBadge, SkillChip } from '../ui/Badge';
+import { cn, formatNameWithCallsign } from '../../lib/design-system';
 
 /**
  * @typedef {Object} UserBadgeProps
@@ -18,7 +18,6 @@ import { cn, formatNameWithCallsign, getAllegianceConfig } from '../../lib/desig
  * @property {'default' | 'compact' | 'full'} [variant='default']
  * @property {'sm' | 'md' | 'lg'} [size='md']
  * @property {boolean} [showCallsign=true]
- * @property {boolean} [showAllegiance=false]
  * @property {boolean} [showRole=false]
  * @property {boolean} [showSkills=false]
  * @property {boolean} [clickable=false]
@@ -37,7 +36,6 @@ const UserBadge = forwardRef(({
   variant = 'default',
   size = 'md',
   showCallsign = true,
-  showAllegiance = false,
   showRole = false,
   showSkills = false,
   clickable = false,
@@ -48,7 +46,6 @@ const UserBadge = forwardRef(({
   if (!user) return null;
 
   const sizeConfig = SIZE_MAP[size] || SIZE_MAP.md;
-  const config = getAllegianceConfig(user.allegiance);
   const nameFormatted = formatNameWithCallsign(user.name, showCallsign ? user.callsign : null);
 
   const Component = clickable ? 'button' : 'div';
@@ -71,7 +68,6 @@ const UserBadge = forwardRef(({
           src={user.image}
           name={user.name}
           size={sizeConfig.avatar}
-          allegiance={user.allegiance}
         />
         <span className={cn('font-bold text-white', sizeConfig.text)}>
           {user.name}
@@ -98,7 +94,6 @@ const UserBadge = forwardRef(({
           src={user.image}
           name={user.name}
           size="lg"
-          allegiance={user.allegiance}
           showBorder
         />
         <div className="flex-1 min-w-0 text-left">
@@ -107,7 +102,7 @@ const UserBadge = forwardRef(({
             {nameFormatted.hasCallsign ? (
               <>
                 {nameFormatted.firstName}
-                <CallsignBadge allegiance={user.allegiance}>
+                <CallsignBadge>
                   {nameFormatted.callsign}
                 </CallsignBadge>
                 {nameFormatted.lastName && ` ${nameFormatted.lastName}`}
@@ -119,9 +114,6 @@ const UserBadge = forwardRef(({
 
           {/* Badges row */}
           <div className="flex items-center gap-2 mt-1 flex-wrap">
-            {showAllegiance && user.allegiance && (
-              <AllegianceBadge allegiance={user.allegiance} size="xs" glow />
-            )}
             {showRole && user.role && user.role !== 'participant' && (
               <RoleBadge role={user.role} size="xs" />
             )}
@@ -138,7 +130,7 @@ const UserBadge = forwardRef(({
           {showSkills && user.skills && user.skills.length > 0 && (
             <div className="flex flex-wrap gap-1 mt-2">
               {user.skills.slice(0, 3).map((skill, idx) => (
-                <SkillChip key={idx} allegiance={user.allegiance}>
+                <SkillChip key={idx}>
                   {skill}
                 </SkillChip>
               ))}
@@ -169,7 +161,6 @@ const UserBadge = forwardRef(({
         src={user.image}
         name={user.name}
         size={sizeConfig.avatar}
-        allegiance={user.allegiance}
         showBorder
       />
       <div className="flex-1 min-w-0 text-left">
@@ -178,7 +169,7 @@ const UserBadge = forwardRef(({
           {nameFormatted.hasCallsign ? (
             <>
               {nameFormatted.firstName}
-              <CallsignBadge allegiance={user.allegiance}>
+              <CallsignBadge>
                 {nameFormatted.callsign}
               </CallsignBadge>
               {nameFormatted.lastName && ` ${nameFormatted.lastName}`}
@@ -190,9 +181,6 @@ const UserBadge = forwardRef(({
         
         {/* Subtitle row */}
         <div className={cn('text-arena-secondary flex items-center gap-2', sizeConfig.subtext)}>
-          {showAllegiance && user.allegiance && (
-            <span style={{ color: config.color }}>{config.label}</span>
-          )}
           {showRole && user.role && user.role !== 'participant' && (
             <RoleBadge role={user.role} size="xs" />
           )}
@@ -231,7 +219,6 @@ export const UserList = ({
           user={user}
           variant={variant}
           size={size}
-          showAllegiance
         />
       ))}
     </div>

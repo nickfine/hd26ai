@@ -1,12 +1,9 @@
 /**
  * Rules Page
- * Human vs AI rules with opposing gradient overlays.
- * Dark Mode Cyber Arena Theme
+ * General hackathon rules and guidelines.
  */
 
 import {
-  Heart,
-  Cpu,
   Check,
   X,
   AlertTriangle,
@@ -18,163 +15,65 @@ import {
   Clock,
   Award,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 // ============================================================================
 // RULES DATA
 // ============================================================================
 
-const HUMAN_RULES = {
-  title: 'Human Team Rules',
-  subtitle: 'Embrace your humanity — minimal AI assistance allowed',
-  icon: Heart,
-  color: '#FF4500',
-  bgColor: 'rgba(255, 69, 0, 0.1)',
-  borderColor: '#FF4500',
+const HACKATHON_RULES = {
+  title: 'Hackathon Rules',
+  subtitle: 'Guidelines and expectations for all participants',
   allowed: [
     {
-      title: 'Traditional Search Engines',
-      description: 'Google, DuckDuckGo, Bing for research and documentation lookup',
-      example: 'Searching "React useEffect cleanup function" on Google',
+      title: 'Search Engines & Documentation',
+      description: 'Google, DuckDuckGo, Bing, Stack Overflow, and official documentation',
+      example: 'Searching for solutions or reading documentation',
     },
     {
-      title: 'Stack Overflow & Documentation',
-      description: 'Reading docs, tutorials, and community Q&A sites',
-      example: 'Copying a code snippet from MDN or Stack Overflow',
+      title: 'IDE Features',
+      description: 'Standard IDE autocomplete, IntelliSense, and code formatting tools',
+      example: 'Using VS Code autocomplete or Prettier for formatting',
     },
     {
-      title: 'IDE Autocomplete (Basic)',
-      description: 'Standard IDE autocomplete and IntelliSense features',
-      example: 'VS Code suggesting method names as you type',
-    },
-    {
-      title: 'Linters & Formatters',
-      description: 'ESLint, Prettier, and similar code quality tools',
-      example: 'Auto-formatting code with Prettier on save',
-    },
-    {
-      title: 'Pre-built Libraries & Frameworks',
-      description: 'Using npm packages, UI libraries, and frameworks',
+      title: 'Libraries & Frameworks',
+      description: 'Using npm packages, UI libraries, and open-source frameworks',
       example: 'Installing and using React, Tailwind CSS, or Express.js',
     },
     {
       title: 'Templates & Boilerplates',
-      description: 'Starting from create-react-app, Vite templates, etc.',
+      description: 'Starting from project templates and scaffolding tools',
       example: 'Running "npm create vite@latest" to scaffold a project',
     },
-  ],
-  notAllowed: [
     {
-      title: 'AI Code Generation',
-      description: 'No GitHub Copilot, ChatGPT, Claude, or similar AI tools for writing code',
-      example: 'Asking ChatGPT to "write a function that validates email addresses"',
-    },
-    {
-      title: 'AI-Powered IDEs',
-      description: 'No Cursor AI, Windsurf, or AI-enhanced coding environments',
-      example: 'Using Cursor\'s AI features to generate or refactor code',
-    },
-    {
-      title: 'AI Chat for Problem Solving',
-      description: 'No asking AI to debug, explain errors, or suggest solutions',
-      example: 'Pasting an error message into ChatGPT and asking for help',
-    },
-    {
-      title: 'AI Image Generation',
-      description: 'No DALL-E, Midjourney, or Stable Diffusion for assets',
-      example: 'Generating a logo with Midjourney',
-    },
-    {
-      title: 'AI Writing Assistance',
-      description: 'No AI for documentation, READMEs, or copy',
-      example: 'Using ChatGPT to write your project description',
-    },
-    {
-      title: 'AI-Enhanced Search',
-      description: 'No Perplexity, Bing Chat, or Google AI Overviews',
-      example: 'Using Perplexity to research and summarize a topic',
-    },
-  ],
-  tips: [
-    'Pair programming with teammates is encouraged!',
-    'Take breaks — human brains need rest',
-    'Use whiteboarding to plan before coding',
-    'Leverage your team\'s diverse skills',
-  ],
-};
-
-const AI_RULES = {
-  title: 'AI Team Rules',
-  subtitle: 'Maximize AI leverage — push the boundaries of what\'s possible',
-  icon: Cpu,
-  color: '#00D4FF',
-  bgColor: 'rgba(0, 212, 255, 0.1)',
-  borderColor: '#00D4FF',
-  allowed: [
-    {
-      title: 'AI Code Generation',
-      description: 'Full use of GitHub Copilot, ChatGPT, Claude, Gemini, etc.',
-      example: 'Asking Claude to "build a REST API with authentication"',
-    },
-    {
-      title: 'AI-Powered IDEs',
-      description: 'Cursor, Windsurf, Copilot Workspace, and similar tools',
-      example: 'Using Cursor Agent to implement an entire feature',
-    },
-    {
-      title: 'AI Pair Programming',
-      description: 'Real-time AI assistance for debugging and problem-solving',
-      example: 'Having Copilot Chat explain and fix a complex bug',
-    },
-    {
-      title: 'AI Image & Design Tools',
-      description: 'DALL-E, Midjourney, Stable Diffusion, Figma AI, etc.',
-      example: 'Generating UI mockups with Midjourney or app icons with DALL-E',
-    },
-    {
-      title: 'AI Writing & Documentation',
-      description: 'AI-generated READMEs, documentation, and copy',
-      example: 'Using ChatGPT to write comprehensive API documentation',
-    },
-    {
-      title: 'AI Research & Planning',
-      description: 'Perplexity, Claude for research, architecture planning',
-      example: 'Asking Claude to design a system architecture for your app',
-    },
-    {
-      title: 'AI Testing & QA',
-      description: 'AI-generated tests, automated test creation',
-      example: 'Using Copilot to generate unit tests for your functions',
-    },
-    {
-      title: 'Voice & Multimodal AI',
-      description: 'Voice coding, screenshot-to-code, and similar tools',
-      example: 'Using GPT-4 Vision to convert a design mockup to code',
+      title: 'Collaboration Tools',
+      description: 'Pair programming, code reviews, and team collaboration',
+      example: 'Working together with teammates on code',
     },
   ],
   notAllowed: [
     {
-      title: 'Pre-built Complete Solutions',
-      description: 'Cannot submit an existing AI-generated project from before the hackathon',
-      example: 'Submitting a project you had ChatGPT build last month',
+      title: 'Pre-built Projects',
+      description: 'Cannot submit projects that were built before the hackathon started',
+      example: 'Submitting a project you worked on last month',
     },
     {
-      title: 'Fully Autonomous AI Agents',
-      description: 'A human must remain in the loop — no "set and forget" AI builds',
-      example: 'Letting an AI agent build the entire project without human review',
+      title: 'Purchased Solutions',
+      description: 'No buying pre-made code, designs, or complete solutions',
+      example: 'Purchasing templates or complete projects from marketplaces',
     },
     {
-      title: 'Purchased AI-Generated Assets',
-      description: 'No buying pre-made AI art or code from marketplaces',
-      example: 'Purchasing AI-generated templates from a marketplace',
+      title: 'Plagiarism',
+      description: 'All code must be original work created during the hackathon',
+      example: 'Copying entire projects or significant portions from elsewhere',
     },
   ],
   tips: [
-    'Experiment with multiple AI tools to find the best fit',
-    'Use AI for brainstorming and rapid prototyping',
-    'Combine different AI models for different tasks',
-    'Document your AI workflow — judges love seeing the process!',
+    'Work together with your team — collaboration is key!',
+    'Take breaks when needed — rest helps productivity',
+    'Plan before coding — whiteboarding and design help',
+    'Leverage your team\'s diverse skills and perspectives',
   ],
 };
 
@@ -215,52 +114,17 @@ const GENERAL_RULES = [
 // COMPONENT
 // ============================================================================
 
-function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
-  const renderRuleSection = (rules, type) => {
-    const Icon = rules.icon;
-    const isAI = type === 'ai';
-    const textColorClass = isAI ? 'text-ai' : 'text-human';
-    const borderColorClass = isAI ? 'border-ai' : 'border-human';
-    const panelColor = isAI ? '#00E5FF' : '#FF6B35';
-    const bgGradient = isAI 
-      ? 'bg-gradient-to-b from-ai/10 to-transparent'
-      : 'bg-gradient-to-b from-human/10 to-transparent';
-
+function Rules({ user, teams, onNavigate, eventPhase }) {
+  const renderRuleSection = (rules) => {
     return (
-      <div
-        className="glass-card human-glow overflow-hidden relative border-l-8 shadow-2xl rounded-card"
-        style={{ 
-          borderLeftColor: `${panelColor}B3`,
-          boxShadow: `inset 8px 0 30px -15px ${panelColor}40, 0 25px 50px -12px rgba(0, 0, 0, 0.25)`
-        }}
-      >
-        {/* Gradient overlay for team feel */}
-        <div className={cn('absolute inset-0 pointer-events-none', bgGradient)} />
-        
+      <div className="bg-arena-card border border-arena-border rounded-card overflow-hidden">
         {/* Section Header */}
-        <div
-          className={cn(
-            'relative p-6 border-b',
-            isAI ? 'border-ai/30' : 'border-human/30'
-          )}
-          style={{ backgroundColor: rules.bgColor }}
-        >
-          <div className="flex items-center gap-4">
-            <div
-              className={cn(
-                'w-14 h-14 flex items-center justify-center rounded-lg shadow-lg',
-                isAI ? 'bg-gradient-to-br from-ai to-ai/70' : 'bg-gradient-to-br from-human to-brand'
-              )}
-            >
-              <Icon className="w-7 h-7 text-white" />
-            </div>
-            <div>
-              <h2 className="text-2xl font-heading font-black text-white"
-                  style={{ textShadow: `0 0 20px ${panelColor}60` }}>
-                {rules.title}
-              </h2>
-              <p className="text-sm text-text-secondary">{rules.subtitle}</p>
-            </div>
+        <div className="relative p-6 border-b border-arena-border bg-arena-elevated">
+          <div>
+            <h2 className="text-2xl font-heading font-black text-white">
+              {rules.title}
+            </h2>
+            <p className="text-sm text-text-secondary">{rules.subtitle}</p>
           </div>
         </div>
 
@@ -268,25 +132,25 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           {/* Allowed Section */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-emerald-500/20 flex items-center justify-center shadow-lg shadow-emerald-500/20">
-                <Check className="w-5 h-5 text-emerald-400" />
+              <div className="w-8 h-8 rounded-full bg-success/20 flex items-center justify-center">
+                <Check className="w-5 h-5 text-success" />
               </div>
-              <h3 className="text-lg font-bold text-emerald-400">What's Allowed</h3>
+              <h3 className="text-lg font-bold text-success">What's Allowed</h3>
             </div>
             <div className="grid gap-3">
               {rules.allowed.map((item, index) => (
                 <div
                   key={index}
-                  className="glass-card !bg-white/5 border border-white/10 p-5 rounded-lg
+                  className="bg-arena-elevated border border-arena-border p-5 rounded-lg
                              hover:-translate-y-0.5 transition-all duration-200"
                 >
                   <div className="flex items-start gap-4">
-                    <Check className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-0.5" />
+                    <Check className="w-6 h-6 text-success flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="font-semibold text-white">{item.title}</div>
-                      <div className="text-sm text-gray-300 mt-1">{item.description}</div>
-                      <div className="text-xs text-emerald-400 bg-emerald-500/10 px-3 py-1.5 rounded-full 
-                                      inline-flex items-center gap-1 mt-2 border border-emerald-500/20">
+                      <div className="text-sm text-text-secondary mt-1">{item.description}</div>
+                      <div className="text-xs text-success bg-success/10 px-3 py-1.5 rounded-full 
+                                      inline-flex items-center gap-1 mt-2 border border-success/20">
                         <Lightbulb className="w-3 h-3" />
                         Example: {item.example}
                       </div>
@@ -300,25 +164,25 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           {/* Not Allowed Section */}
           <div className="mb-8">
             <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 rounded-full bg-red-500/20 flex items-center justify-center shadow-lg shadow-red-500/20">
-                <X className="w-5 h-5 text-red-400" />
+              <div className="w-8 h-8 rounded-full bg-error/20 flex items-center justify-center">
+                <X className="w-5 h-5 text-error" />
               </div>
-              <h3 className="text-lg font-bold text-red-400">What's NOT Allowed</h3>
+              <h3 className="text-lg font-bold text-error">What's NOT Allowed</h3>
             </div>
             <div className="grid gap-3">
               {rules.notAllowed.map((item, index) => (
                 <div
                   key={index}
-                  className="glass-card !bg-white/5 border border-white/10 p-5 rounded-lg
+                  className="bg-arena-elevated border border-arena-border p-5 rounded-lg
                              hover:-translate-y-0.5 transition-all duration-200"
                 >
                   <div className="flex items-start gap-4">
-                    <X className="w-6 h-6 text-red-400 flex-shrink-0 mt-0.5" />
+                    <X className="w-6 h-6 text-error flex-shrink-0 mt-0.5" />
                     <div>
                       <div className="font-semibold text-white">{item.title}</div>
-                      <div className="text-sm text-gray-300 mt-1">{item.description}</div>
-                      <div className="text-xs text-red-400 bg-red-500/10 px-3 py-1.5 rounded-full 
-                                      inline-flex items-center gap-1 mt-2 border border-red-500/20">
+                      <div className="text-sm text-text-secondary mt-1">{item.description}</div>
+                      <div className="text-xs text-error bg-error/10 px-3 py-1.5 rounded-full 
+                                      inline-flex items-center gap-1 mt-2 border border-error/20">
                         <AlertTriangle className="w-3 h-3" />
                         Example: {item.example}
                       </div>
@@ -330,23 +194,17 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           </div>
 
           {/* Tips Section */}
-          <div
-            className="glass-card p-5 rounded-lg border-t-4"
-            style={{ 
-              borderTopColor: `${panelColor}99`,
-              boxShadow: `0 -4px 20px -5px ${panelColor}30`
-            }}
-          >
+          <div className="bg-arena-elevated border border-arena-border p-5 rounded-lg">
             <div className="flex items-center gap-2 mb-3">
-              <Zap className={cn('w-5 h-5', textColorClass)} />
-              <h4 className={cn('font-bold', textColorClass)}>
-                Pro Tips for {isAI ? 'AI' : 'Human'} Teams
+              <Zap className="w-5 h-5 text-text-secondary" />
+              <h4 className="font-bold text-text-secondary">
+                Pro Tips
               </h4>
             </div>
             <ul className="space-y-2">
               {rules.tips.map((tip, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-gray-300">
-                  <span className={textColorClass}>•</span>
+                <li key={index} className="flex items-start gap-2 text-sm text-text-secondary">
+                  <span className="text-text-secondary">•</span>
                   {tip}
                 </li>
               ))}
@@ -361,7 +219,6 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="rules"
@@ -369,25 +226,22 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
       <div className="p-4 sm:p-6">
         {/* Page Header */}
         <div className="text-center mb-10">
-          <div className="glass-card inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 backdrop-blur-md border border-white/10">
-            <FileText className="w-5 h-5 text-brand" />
-            <span className="font-bold text-sm text-white">RULES OF ENGAGEMENT</span>
+          <div className="bg-arena-card border border-arena-border inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4">
+            <FileText className="w-5 h-5 text-text-secondary" />
+            <span className="font-bold text-sm text-white">RULES</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-heading font-black text-brand mb-3 font-display"
-              style={{ textShadow: '0 0 30px rgba(255, 107, 53, 0.4)' }}>
+          <h1 className="text-3xl sm:text-4xl font-heading font-black text-white mb-3 font-display">
             HACKDAY RULES
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto">
-            The battle between Human and AI teams requires clear rules of engagement. 
-            Choose your side and understand what's allowed for your allegiance.
+            Guidelines and expectations for all participants.
           </p>
         </div>
 
         {/* General Rules */}
         <div className="mb-10">
-          <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2"
-              style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.3)' }}>
-            <AlertTriangle className="w-5 h-5 text-brand" />
+          <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+            <AlertTriangle className="w-5 h-5 text-text-secondary" />
             General Rules (All Teams)
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -414,17 +268,15 @@ function Rules({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
           </div>
         </div>
 
-        {/* Faction-Specific Rules */}
-        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          {renderRuleSection(HUMAN_RULES, 'human')}
-          {renderRuleSection(AI_RULES, 'ai')}
+        {/* Hackathon Rules */}
+        <div className="max-w-4xl mx-auto">
+          {renderRuleSection(HACKATHON_RULES)}
         </div>
 
         {/* Bottom CTA */}
         <div className="mt-10 text-center">
-          <div className="glass-card inline-block p-6 rounded-card">
-            <h3 className="text-lg font-bold text-white mb-2"
-                style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.3)' }}>
+          <div className="bg-arena-card border border-arena-border inline-block p-6 rounded-card">
+            <h3 className="text-lg font-bold text-white mb-2">
               Questions about the rules?
             </h3>
             <p className="text-sm text-gray-300 mb-4">

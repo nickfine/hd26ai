@@ -6,8 +6,6 @@
 import {
   Sparkles,
   Users,
-  Heart,
-  Cpu,
   CheckCircle,
   ArrowRight,
   BookOpen,
@@ -32,15 +30,6 @@ import { cn } from '../lib/design-system';
 const ONBOARDING_STEPS = [
   {
     id: 1,
-    title: 'Choose Your Allegiance',
-    description: 'Declare your side: Human or AI. This determines which rules apply to your team.',
-    icon: Heart,
-    color: 'human',
-    action: 'Go to Profile',
-    actionRoute: 'profile',
-  },
-  {
-    id: 2,
     title: 'Join or Create a Team',
     description: 'Find teammates in the marketplace or create your own team. Teams can have 2-6 members.',
     icon: Users,
@@ -49,16 +38,16 @@ const ONBOARDING_STEPS = [
     actionRoute: 'marketplace',
   },
   {
-    id: 3,
+    id: 2,
     title: 'Build Your Project',
-    description: 'Work with your team to create something amazing. Follow your side\'s rules and guidelines.',
+    description: 'Work with your team to create something amazing. Follow the rules and guidelines.',
     icon: Code,
-    color: 'ai',
+    color: 'brand',
     action: 'View Rules',
     actionRoute: 'rules',
   },
   {
-    id: 4,
+    id: 3,
     title: 'Submit Your Project',
     description: 'Submit your project with a demo video, repository link, and description before the deadline.',
     icon: Send,
@@ -75,7 +64,7 @@ const ONBOARDING_STEPS = [
 const KEY_RULES = [
   {
     title: 'Team Formation',
-    description: 'Teams must have 2-6 members. All members must choose the same allegiance (Human or AI).',
+    description: 'Teams must have 2-6 members.',
     icon: Users,
   },
   {
@@ -95,51 +84,16 @@ const KEY_RULES = [
   },
 ];
 
-// ============================================================================
-// ALLEGIANCE OVERVIEW
-// ============================================================================
-
-const ALLEGIANCE_INFO = {
-  human: {
-    title: 'Human Side',
-    description: 'Embrace your humanity — minimal AI assistance allowed',
-    icon: Heart,
-    color: 'text-human',
-    bgColor: 'bg-human/10',
-    borderColor: 'border-human',
-    keyPoints: [
-      'Traditional search engines and documentation are allowed',
-      'No AI code generation tools (Copilot, ChatGPT, etc.)',
-      'Standard IDE autocomplete is fine',
-      'Pre-built libraries and frameworks are allowed',
-    ],
-  },
-  ai: {
-    title: 'AI Side',
-    description: 'Maximize AI leverage — push the boundaries of what\'s possible',
-    icon: Cpu,
-    color: 'text-ai',
-    bgColor: 'bg-ai/10',
-    borderColor: 'border-ai',
-    keyPoints: [
-      'Full use of AI code generation tools',
-      'AI-powered IDEs like Cursor are allowed',
-      'AI for design, documentation, and research',
-      'Human must remain in the loop',
-    ],
-  },
-};
 
 // ============================================================================
 // COMPONENT
 // ============================================================================
 
-function NewToHackDay({ user, teams, allegianceStyle, onNavigate, eventPhase }) {
+function NewToHackDay({ user, teams, onNavigate, eventPhase }) {
   return (
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="new-to-hackday"
@@ -147,11 +101,11 @@ function NewToHackDay({ user, teams, allegianceStyle, onNavigate, eventPhase }) 
       <div className="p-4 sm:p-6">
         {/* Page Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full mb-4 animate-orange-pulse">
-            <Sparkles className="w-5 h-5 text-brand icon-orange" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
+            <Sparkles className="w-5 h-5 text-text-secondary" />
             <span className="font-bold text-sm text-white">GETTING STARTED</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display animate-orange-pulse-delay-1">
+          <h1 className="text-3xl sm:text-4xl font-black text-white mb-3 font-display">
             NEW TO HACKDAY?
           </h1>
           <p className="text-text-body max-w-2xl mx-auto">
@@ -169,8 +123,7 @@ function NewToHackDay({ user, teams, allegianceStyle, onNavigate, eventPhase }) 
               <div>
                 <Card.Title className="mb-1">What is HackDay?</Card.Title>
                 <p className="text-sm text-text-body">
-                  HackDay 2026 is a battle between Human and AI teams. Choose your side, form a team, 
-                  and build something amazing within 24 hours. The best projects win awards and recognition!
+                  HackDay 2026 is a collaborative hackathon. Form a team and build something amazing within 24 hours. The best projects win awards and recognition!
                 </p>
               </div>
             </HStack>
@@ -186,9 +139,9 @@ function NewToHackDay({ user, teams, allegianceStyle, onNavigate, eventPhase }) 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {ONBOARDING_STEPS.map((step, index) => {
               const Icon = step.icon;
-              const colorClass = step.color === 'human' ? 'text-human' : step.color === 'ai' ? 'text-ai' : 'text-brand';
-              const bgClass = step.color === 'human' ? 'bg-human/10' : step.color === 'ai' ? 'bg-ai/10' : 'bg-brand/10';
-              const borderClass = step.color === 'human' ? 'border-human' : step.color === 'ai' ? 'border-ai' : 'border-brand';
+              const colorClass = 'text-text-secondary';
+              const bgClass = 'bg-arena-elevated';
+              const borderClass = 'border-arena-border';
               
               return (
                 <Card
@@ -260,52 +213,6 @@ function NewToHackDay({ user, teams, allegianceStyle, onNavigate, eventPhase }) 
           </div>
         </div>
 
-        {/* Allegiance Overview */}
-        <div className="mb-8">
-          <HStack justify="between" align="center" className="mb-4">
-            <Card.Label className="mb-0">Choose Your Side</Card.Label>
-            <UserPlus className="w-4 h-4 icon-orange" />
-          </HStack>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {Object.entries(ALLEGIANCE_INFO).map(([key, info]) => {
-              const Icon = info.icon;
-              return (
-                <Card
-                  key={key}
-                  variant="default"
-                  padding="md"
-                  className={cn(
-                    'border-2',
-                    info.borderColor,
-                    info.bgColor,
-                    key === 'ai' && 'border-dashed'
-                  )}
-                >
-                  <HStack gap="3" align="start" className="mb-3">
-                    <div className={cn(
-                      'w-10 h-10 rounded-lg flex items-center justify-center',
-                      info.bgColor
-                    )}>
-                      <Icon className={cn('w-5 h-5', info.color)} />
-                    </div>
-                    <div>
-                      <Card.Title className={cn('mb-1', info.color)}>{info.title}</Card.Title>
-                      <p className="text-sm text-text-body">{info.description}</p>
-                    </div>
-                  </HStack>
-                  <ul className="space-y-2">
-                    {info.keyPoints.map((point, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-text-body">
-                        <CheckCircle className={cn('w-4 h-4 flex-shrink-0 mt-0.5', info.color)} />
-                        <span>{point}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </Card>
-              );
-            })}
-          </div>
-        </div>
 
         {/* Quick Links */}
         <Card variant="default" padding="md" className="animate-fade-in stagger-6">

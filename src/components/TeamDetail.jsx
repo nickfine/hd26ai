@@ -1,9 +1,9 @@
 import { useState } from 'react';
-import { Cpu, Heart, Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3, ArrowRightLeft } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3, ArrowRightLeft } from 'lucide-react';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
-function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTeam, onJoinRequest, onRequestResponse, eventPhase }) {
+function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest, onRequestResponse, eventPhase }) {
   const [moreInfoText, setMoreInfoText] = useState(team.moreInfo || '');
   const [isEditingMoreInfo, setIsEditingMoreInfo] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
@@ -96,8 +96,6 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
     setDescriptionInput(team.description || '');
     setIsEditingDescription(false);
   };
-  const teamConfig = ALLEGIANCE_CONFIG[team.side];
-  const TeamIcon = team.side === 'ai' ? Cpu : Heart;
 
   // Compute common interests from member skills
   const allSkills = team.members.flatMap((member) => member.skills);
@@ -114,7 +112,6 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="teams"
@@ -122,7 +119,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
       <div className="p-4 sm:p-6">
         {/* Pending Request Banner */}
         {hasPendingRequest && (
-          <div className="glass-card bg-warning/10 border-2 border-warning/50 px-4 py-3 mb-6 rounded-card"
+          <div className="bg-warning/10 border-2 border-warning/50 px-4 py-3 mb-6 rounded-card"
                style={{ boxShadow: '0 0 20px rgba(255, 138, 0, 0.15)' }}>
             <div className="flex items-center justify-center gap-2 text-warning">
               <Clock className="w-5 h-5 flex-shrink-0 animate-pulse" />
@@ -131,32 +128,15 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           </div>
         )}
         {/* Team Header Card */}
-        <div
-          className={`glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 transition-all duration-300
-                     border-l-8 rounded-card shadow-2xl
-                     ${team.side === 'ai' ? 'border-dashed' : ''}`}
-          style={{ 
-            borderLeftColor: `${teamConfig.color}CC`,
-            boxShadow: `inset 8px 0 30px -15px ${teamConfig.color}40, 0 25px 50px -12px rgba(0, 0, 0, 0.25)`
-          }}
-        >
+        <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
             <div className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0">
-              <div
-                className={`w-12 sm:w-16 h-12 sm:h-16 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
-                style={{ backgroundColor: teamConfig.bgColor }}
-              >
-                <TeamIcon
-                  className="w-6 sm:w-8 h-6 sm:h-8"
-                  style={{ color: teamConfig.color }}
-                />
+              <div className="w-12 sm:w-16 h-12 sm:h-16 flex-shrink-0 flex items-center justify-center rounded-lg bg-arena-elevated">
+                <Users className="w-6 sm:w-8 h-6 sm:h-8 text-text-secondary" />
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1
-                    className="text-xl sm:text-2xl font-black text-white"
-                    style={{ textShadow: `0 0 25px ${teamConfig.color}60` }}
-                  >
+                  <h1 className="text-xl sm:text-2xl font-black text-white">
                     {team.name}
                   </h1>
                   {isCaptain && !isEditingName && (
@@ -166,25 +146,13 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                         setTeamNameInput(team.name);
                         setIsEditingName(true);
                       }}
-                      className="text-xs font-medium px-3 py-1 rounded transition-colors"
-                      style={{
-                        color: teamConfig.color,
-                        backgroundColor: teamConfig.bgColor,
-                        border: `1px solid ${teamConfig.borderColor}`,
-                      }}
+                      className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
                     >
                       Edit
                     </button>
                   )}
                 </div>
                 <div className="flex items-center gap-3 text-sm mt-1">
-                  <span
-                    className="font-bold uppercase"
-                    style={{ color: teamConfig.color }}
-                  >
-                    {team.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
-                  </span>
-                  <span className="text-gray-500">•</span>
                   <span className="text-text-secondary">
                     {team.members.length} / {team.maxMembers} members
                   </span>
@@ -192,16 +160,9 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
               </div>
             </div>
             {isMember && (
-              <span 
-                className="inline-flex items-center backdrop-blur-md text-white font-bold 
+              <span className="inline-flex items-center text-white font-bold 
                            px-5 py-2 rounded-full text-sm uppercase tracking-wider 
-                           shadow-lg border flex-shrink-0"
-                style={{ 
-                  backgroundColor: `${teamConfig.color}E6`,
-                  borderColor: `${teamConfig.color}66`,
-                  boxShadow: `0 10px 25px -5px ${teamConfig.color}40`
-                }}
-              >
+                           border border-arena-border bg-arena-elevated flex-shrink-0">
                 You're on this team
               </span>
             )}
@@ -210,13 +171,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
 
         {/* Pending Requests - Captain Only */}
         {isCaptain && team.joinRequests?.length > 0 && (
-          <div
-            className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card"
-            style={{ 
-              borderColor: `${teamConfig.color}60`,
-              boxShadow: `0 0 20px ${teamConfig.color}15`
-            }}
-          >
+          <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-4">
               Pending Requests ({team.joinRequests.length})
             </h2>
@@ -224,15 +179,12 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
               {team.joinRequests.map((request) => (
                 <div
                   key={request.id}
-                  className="glass-card p-3 sm:p-4 rounded-lg"
+                  className="bg-arena-card border border-arena-border p-3 sm:p-4 rounded-lg"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div
-                        className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                        style={{ backgroundColor: teamConfig.color }}
-                      >
-                        <User className="w-5 h-5 text-white" />
+                      <div className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 bg-arena-elevated">
+                        <User className="w-5 h-5 text-text-secondary" />
                       </div>
                       <div>
                         <span className="font-bold text-white">{request.userName}</span>
@@ -290,7 +242,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         )}
 
         {/* Project Goal */}
-        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+        <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
               Project Goal
@@ -304,9 +256,9 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 }}
                 className="text-xs font-medium px-3 py-1 rounded transition-colors"
                 style={{
-                  color: teamConfig.color,
-                  backgroundColor: teamConfig.bgColor,
-                  border: `1px solid ${teamConfig.borderColor}`,
+                  color: 'var(--color-text-secondary)',
+                  backgroundColor: 'var(--color-bg-elevated)',
+                  border: `1px solid ${'var(--color-border)'}`,
                 }}
               >
                 Edit
@@ -345,7 +297,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   onClick={handleSaveDescription}
                   disabled={descriptionInput.trim().length < 10}
                   className="px-4 py-2 text-sm font-medium text-white rounded transition-colors disabled:opacity-50"
-                  style={{ backgroundColor: teamConfig.color }}
+                  style={{ backgroundColor: 'var(--color-text-secondary)' }}
                 >
                   Save
                 </button>
@@ -357,7 +309,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         </div>
 
         {/* Problem We're Going To Solve */}
-        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+        <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
               Problem We're Going To Solve
@@ -371,9 +323,9 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 }}
                 className="text-xs font-medium px-3 py-1 rounded transition-colors"
                 style={{
-                  color: teamConfig.color,
-                  backgroundColor: teamConfig.bgColor,
-                  border: `1px solid ${teamConfig.borderColor}`,
+                  color: 'var(--color-text-secondary)',
+                  backgroundColor: 'var(--color-bg-elevated)',
+                  border: `1px solid ${'var(--color-border)'}`,
                 }}
               >
                 Edit
@@ -412,7 +364,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   onClick={handleSaveProblem}
                   disabled={problemInput.trim().length < 10}
                   className="px-4 py-2 text-sm font-medium text-white rounded transition-colors disabled:opacity-50"
-                  style={{ backgroundColor: teamConfig.color }}
+                  style={{ backgroundColor: 'var(--color-text-secondary)' }}
                 >
                   Save
                 </button>
@@ -428,7 +380,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         </div>
 
         {/* More Info */}
-        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+        <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
               More Info
@@ -439,9 +391,9 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 onClick={() => setIsEditingMoreInfo(true)}
                 className="text-xs font-medium px-3 py-1 rounded transition-colors"
                 style={{
-                  color: teamConfig.color,
-                  backgroundColor: teamConfig.bgColor,
-                  border: `1px solid ${teamConfig.borderColor}`,
+                  color: 'var(--color-text-secondary)',
+                  backgroundColor: 'var(--color-bg-elevated)',
+                  border: `1px solid ${'var(--color-border)'}`,
                 }}
               >
                 Edit
@@ -475,7 +427,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                     setIsEditingMoreInfo(false);
                   }}
                   className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors"
-                  style={{ backgroundColor: teamConfig.color }}
+                  style={{ backgroundColor: 'var(--color-text-secondary)' }}
                 >
                   Save
                 </button>
@@ -493,7 +445,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         </div>
 
         {/* Team Members */}
-        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+        <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-4">
             Team Members ({team.members.length})
           </h2>
@@ -501,16 +453,16 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
             {team.members.map((member) => (
               <div
                 key={member.id}
-                className="glass-card human-glow p-3 sm:p-4 rounded-lg transition-all duration-300 hover:-translate-y-0.5"
+                className="bg-arena-card border border-arena-border p-3 sm:p-4 rounded-lg transition-all duration-300 hover:-translate-y-0.5"
                 style={{
-                  borderLeft: `4px solid ${teamConfig.color}`,
-                  boxShadow: `inset 4px 0 15px -10px ${teamConfig.color}40`
+                  borderLeft: `4px solid ${'var(--color-text-secondary)'}`,
+                  boxShadow: `inset 4px 0 15px -10px ${'var(--color-text-secondary)'}40`
                 }}
               >
                 <div className="flex items-center gap-3 mb-3">
                   <div
                     className="w-10 h-10 rounded-full flex items-center justify-center relative flex-shrink-0"
-                    style={{ backgroundColor: teamConfig.color }}
+                    style={{ backgroundColor: 'var(--color-text-secondary)' }}
                   >
                     <User className="w-5 h-5 text-white" />
                     {member.id === team.captainId && (
@@ -554,10 +506,10 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                       key={skill}
                       className="px-2 py-1 text-xs rounded transition-transform hover:scale-105"
                       style={{
-                        backgroundColor: `${teamConfig.color}15`,
-                        color: teamConfig.color,
-                        border: `1px solid ${teamConfig.color}30`,
-                        boxShadow: `0 2px 8px ${teamConfig.color}20`
+                        backgroundColor: `${'var(--color-text-secondary)'}15`,
+                        color: 'var(--color-text-secondary)',
+                        border: `1px solid ${'var(--color-text-secondary)'}30`,
+                        boxShadow: `0 2px 8px ${'var(--color-text-secondary)'}20`
                       }}
                     >
                       {skill}
@@ -576,7 +528,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
 
         {/* Common Interests */}
         {commonInterests.length > 0 && (
-          <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+          <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
             <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-3">
               Common Interests
             </h2>
@@ -586,10 +538,10 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                   key={skill}
                   className="px-3 py-2 text-sm font-medium rounded-lg transition-transform hover:scale-105"
                   style={{
-                    backgroundColor: `${teamConfig.color}20`,
-                    color: teamConfig.color,
-                    border: `1px solid ${teamConfig.color}40`,
-                    boxShadow: `0 2px 10px ${teamConfig.color}25`
+                    backgroundColor: `${'var(--color-text-secondary)'}20`,
+                    color: 'var(--color-text-secondary)',
+                    border: `1px solid ${'var(--color-text-secondary)'}40`,
+                    boxShadow: `0 2px 10px ${'var(--color-text-secondary)'}25`
                   }}
                 >
                   {skill}
@@ -600,7 +552,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         )}
 
         {/* Looking For */}
-        <div className="glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+        <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
           <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-3">
             Looking For
           </h2>
@@ -610,10 +562,10 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 key={skill}
                 className="px-3 py-2 text-sm rounded-lg transition-transform hover:scale-105"
                 style={{
-                  backgroundColor: `${teamConfig.color}15`,
-                  color: teamConfig.color,
-                  border: `1px solid ${teamConfig.color}30`,
-                  boxShadow: `0 2px 8px ${teamConfig.color}20`
+                  backgroundColor: `${'var(--color-text-secondary)'}15`,
+                  color: 'var(--color-text-secondary)',
+                  border: `1px solid ${'var(--color-text-secondary)'}30`,
+                  boxShadow: `0 2px 8px ${'var(--color-text-secondary)'}20`
                 }}
               >
                 {skill}
@@ -625,10 +577,10 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
         {/* Project Submission Status - Visible to team members only after submission phase */}
         {(isCaptain || isMember) && eventPhase && ['submission', 'voting', 'judging', 'results'].includes(eventPhase) && (
           <div
-            className={`glass-card human-glow p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card ${team.side === 'ai' ? 'border-dashed' : ''}`}
+            className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 border-2 rounded-card"
             style={{ 
-              borderColor: `${teamConfig.color}99`,
-              boxShadow: `0 0 25px ${teamConfig.color}20`
+              borderColor: `${'var(--color-text-secondary)'}99`,
+              boxShadow: `0 0 25px ${'var(--color-text-secondary)'}20`
             }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -670,7 +622,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                     type="button"
                     onClick={() => onNavigate('submission')}
                     className={`px-4 py-2 font-bold text-sm text-white transition-colors hover:opacity-90 ${teamConfig.borderRadius}`}
-                    style={{ backgroundColor: teamConfig.color }}
+                    style={{ backgroundColor: 'var(--color-text-secondary)' }}
                   >
                     Start Submission
                   </button>
@@ -726,7 +678,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                     onClick={() => onNavigate('submission')}
                     className={`w-full mt-2 py-2.5 flex items-center justify-center gap-2 font-bold text-sm 
                                transition-colors hover:opacity-90 ${teamConfig.borderRadius}`}
-                    style={{ backgroundColor: teamConfig.color, color: 'white' }}
+                    style={{ backgroundColor: 'var(--color-text-secondary)', color: 'white' }}
                   >
                     {team.submission?.status === 'submitted' ? 'View Submission' : 'Continue Editing'}
                     <ChevronRight className="w-4 h-4" />
@@ -751,9 +703,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
             className={`w-full py-3 sm:py-4 flex items-center justify-center gap-2
                        font-bold text-base sm:text-lg transition-all duration-300
                        hover:-translate-y-1 hover:shadow-2xl rounded-card
-                       ${team.side === 'ai' 
-                         ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
-                         : 'bg-gradient-to-r from-[#FF375F] to-[#FF6B35] text-white'}`}
+                       bg-arena-elevated border border-arena-border text-white hover:bg-arena-border`}
           >
             REQUEST TO JOIN
             <ChevronRight className="w-5 h-5" />
@@ -767,8 +717,8 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           <div
             className="glass-card w-full max-w-md p-4 sm:p-6 rounded-card border-2 shadow-2xl"
             style={{ 
-              borderColor: `${teamConfig.color}60`,
-              boxShadow: `0 0 40px ${teamConfig.color}20`
+              borderColor: `${'var(--color-text-secondary)'}60`,
+              boxShadow: `0 0 40px ${'var(--color-text-secondary)'}20`
             }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -794,12 +744,12 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 onChange={(e) => setRequestMessage(e.target.value)}
                 placeholder="Tell the team why you'd like to join and what you can contribute..."
                 className="w-full p-3 border border-arena-border bg-arena-elevated text-white placeholder:text-text-muted rounded-lg resize-none focus:outline-none focus:ring-2 transition-all text-base"
-                style={{ '--tw-ring-color': teamConfig.color }}
+                style={{ '--tw-ring-color': 'var(--color-text-secondary)' }}
                 rows={4}
               />
             </div>
 
-            <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: teamConfig.bgColor }}>
+            <div className="mb-4 p-3 rounded-lg" style={{ backgroundColor: 'var(--color-bg-elevated)' }}>
               <p className="text-xs font-bold uppercase tracking-wide text-text-secondary mb-2">
                 Your Skills
               </p>
@@ -834,9 +784,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 type="button"
                 onClick={handleSubmitRequest}
                 className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all hover:-translate-y-0.5
-                           ${team.side === 'ai' 
-                             ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
-                             : 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white'}`}
+                           bg-arena-elevated border border-arena-border text-white hover:bg-arena-border disabled:opacity-50`}
               >
                 Send Request
               </button>
@@ -851,8 +799,8 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           <div
             className="glass-card w-full max-w-md p-4 sm:p-6 rounded-card border-2 shadow-2xl"
             style={{ 
-              borderColor: `${teamConfig.color}60`,
-              boxShadow: `0 0 40px ${teamConfig.color}20`
+              borderColor: `${'var(--color-text-secondary)'}60`,
+              boxShadow: `0 0 40px ${'var(--color-text-secondary)'}20`
             }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -907,9 +855,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 onClick={handleSaveTeamName}
                 disabled={teamNameInput.trim().length < 3}
                 className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0
-                           ${team.side === 'ai' 
-                             ? 'bg-gradient-to-r from-[#00E5FF] to-[#00B4D8] text-black' 
-                             : 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white'}`}
+                           bg-arena-elevated border border-arena-border text-white hover:bg-arena-border disabled:opacity-50`}
               >
                 Save
               </button>
@@ -924,8 +870,8 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
           <div
             className="glass-card w-full max-w-md p-4 sm:p-6 rounded-card border-2 shadow-2xl"
             style={{ 
-              borderColor: `${teamConfig.color}60`,
-              boxShadow: `0 0 40px ${teamConfig.color}20`
+              borderColor: `${'var(--color-text-secondary)'}60`,
+              boxShadow: `0 0 40px ${'var(--color-text-secondary)'}20`
             }}
           >
             <div className="flex items-center justify-between mb-4">
@@ -949,7 +895,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 <div className="text-center">
                   <div
                     className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2 relative"
-                    style={{ backgroundColor: teamConfig.color }}
+                    style={{ backgroundColor: 'var(--color-text-secondary)' }}
                   >
                     <User className="w-7 h-7 text-white" />
                     <div className="absolute -top-1 -right-1 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center shadow-sm">
@@ -969,7 +915,7 @@ function TeamDetail({ team, user, teams, allegianceStyle, onNavigate, onUpdateTe
                 <div className="text-center">
                   <div
                     className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-2"
-                    style={{ backgroundColor: teamConfig.color }}
+                    style={{ backgroundColor: 'var(--color-text-secondary)' }}
                   >
                     <User className="w-7 h-7 text-white" />
                   </div>

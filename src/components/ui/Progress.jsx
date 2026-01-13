@@ -1,24 +1,22 @@
 /**
  * Progress Component
  * Display progress indicators as bars or circular displays.
- * Dark Mode Cyber Arena Theme
  * 
  * @example
  * <Progress value={75} />
- * <Progress value={50} variant="human" showLabel />
+ * <Progress value={50} variant="success" showLabel />
  * <CircularProgress value={80} size="lg" />
- * <WarStatusBar humanPercent={45} aiPercent={55} />
  */
 
 import { forwardRef } from 'react';
-import { cn, getAllegianceConfig } from '../../lib/design-system';
+import { cn } from '../../lib/design-system';
 
 /**
  * @typedef {Object} ProgressProps
  * @property {number} value - Progress value (0-100)
  * @property {number} [max=100] - Maximum value
  * @property {'sm' | 'md' | 'lg'} [size='md']
- * @property {'default' | 'human' | 'ai' | 'success' | 'warning' | 'error' | 'accent'} [variant='default']
+ * @property {'default' | 'success' | 'warning' | 'error'} [variant='default']
  * @property {boolean} [showLabel=false]
  * @property {string} [label]
  * @property {boolean} [animated=true]
@@ -31,25 +29,18 @@ const SIZE_MAP = {
   lg: 'h-4',
 };
 
-// Human uses gradient for glossy effect, AI uses solid cyan
 const VARIANT_STYLES = {
-  default: { gradient: false, color: 'bg-brand' },
-  human: { gradient: true, from: '#FF4500', to: '#FF6200' },
-  ai: { gradient: false, color: 'bg-ai' },
+  default: { gradient: false, color: 'bg-arena-elevated' },
   success: { gradient: false, color: 'bg-success' },
   warning: { gradient: false, color: 'bg-warning' },
   error: { gradient: false, color: 'bg-error' },
-  accent: { gradient: true, from: '#FF4500', to: '#FF6200' },
 };
 
 const TRACK_COLORS = {
   default: 'bg-arena-elevated',
-  human: 'bg-human/20',
-  ai: 'bg-ai/20',
   success: 'bg-success/20',
   warning: 'bg-warning/20',
   error: 'bg-error/20',
-  accent: 'bg-brand/20',
 };
 
 const Progress = forwardRef(({
@@ -216,99 +207,6 @@ export const CircularProgress = forwardRef(({
 
 CircularProgress.displayName = 'CircularProgress';
 
-/**
- * WarStatusBar - The "battle line" showing Human vs AI recruitment
- * Features a sharp gradient split with a glowing divider
- */
-export const WarStatusBar = forwardRef(({
-  humanPercent = 50,
-  aiPercent = 50,
-  showLabels = true,
-  showDivider = true,
-  height = 'md',
-  animated = true,
-  className,
-  ...props
-}, ref) => {
-  // Normalize percentages
-  const total = humanPercent + aiPercent;
-  const normalizedHuman = total > 0 ? (humanPercent / total) * 100 : 50;
-  const normalizedAi = total > 0 ? (aiPercent / total) * 100 : 50;
-  
-  // Calculate background position (100% = all AI, 0% = all Human)
-  // We want AI on left, Human on right
-  const backgroundPosition = normalizedAi;
-
-  const heightMap = {
-    sm: 'h-2',
-    md: 'h-3',
-    lg: 'h-4',
-    xl: 'h-6',
-  };
-
-  const heightClass = heightMap[height] || heightMap.md;
-
-  return (
-    <div ref={ref} className={cn('w-full', className)} {...props}>
-      {/* Labels */}
-      {showLabels && (
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2">
-            <span className="w-3 h-3 rounded-full bg-ai" />
-            <span className="text-sm font-mono text-ai">{Math.round(normalizedAi)}%</span>
-            <span className="text-xs text-text-muted">AI</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-text-muted">Human</span>
-            <span className="text-sm font-mono text-human">{Math.round(normalizedHuman)}%</span>
-            <span className="w-3 h-3 rounded-full bg-human" />
-          </div>
-        </div>
-      )}
-
-      {/* War Bar - Orange vs Cyan with glossy shine */}
-      <div
-        className={cn(
-          'relative w-full rounded-full overflow-hidden',
-          heightClass
-        )}
-        style={{
-          background: `linear-gradient(to right, #00E5FF 0%, #00E5FF 50%, #FF4500 50%, #FF6200 100%)`,
-          backgroundSize: '200% 100%',
-          backgroundPosition: `${backgroundPosition}% 0`,
-          transition: animated ? 'background-position 800ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
-        }}
-        role="progressbar"
-        aria-valuenow={normalizedHuman}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-label="Human vs AI recruitment status"
-      >
-        {/* Glossy shine overlay */}
-        <div 
-          className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-black/10 pointer-events-none"
-          aria-hidden="true"
-        />
-        
-        {/* Battle line divider */}
-        {showDivider && (
-          <div
-            className="absolute top-0 bottom-0 w-0.5"
-            style={{
-              left: `${normalizedAi}%`,
-              transform: 'translateX(-50%)',
-              background: 'linear-gradient(to bottom, rgba(0, 229, 255, 0.6), white, rgba(255, 69, 0, 0.6))',
-              boxShadow: '-4px 0 8px rgba(0, 229, 255, 0.4), 4px 0 8px rgba(255, 69, 0, 0.4), 0 0 12px white',
-              transition: animated ? 'left 800ms cubic-bezier(0.16, 1, 0.3, 1)' : 'none',
-            }}
-          />
-        )}
-      </div>
-    </div>
-  );
-});
-
-WarStatusBar.displayName = 'WarStatusBar';
 
 /**
  * ProgressSteps - Step-based progress indicator

@@ -7,8 +7,6 @@ import { useState, memo, useCallback } from 'react';
 import {
   Users,
   User,
-  Heart,
-  Cpu,
   Calendar,
   Trophy,
   HelpCircle,
@@ -32,9 +30,9 @@ import {
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
 import Card from './ui/Card';
-import Badge, { CallsignBadge, HeartbeatDot } from './ui/Badge';
+import Badge, { HeartbeatDot, CallsignBadge } from './ui/Badge';
 import { HStack, VStack } from './layout';
-import { cn, getAllegianceConfig, formatNameWithCallsign } from '../lib/design-system';
+import { cn, formatNameWithCallsign } from '../lib/design-system';
 import { PROMO_IMAGES } from '../data/mockData';
 
 // ============================================================================
@@ -42,12 +40,11 @@ import { PROMO_IMAGES } from '../data/mockData';
 // ============================================================================
 
 const MOCK_ACTIVITY_FEED = [
-  { id: 1, type: 'join', user: 'Maya Rodriguez', callsign: 'HTML Hotshot', team: 'Neural Nexus', side: 'ai', time: '2 min ago' },
-  { id: 2, type: 'create', user: 'Jordan Lee', callsign: 'Prompt Wizard', team: 'Quantum Collective', side: 'ai', time: '5 min ago' },
-  { id: 3, type: 'join', user: 'Casey Brooks', callsign: 'CSS Wizard', team: 'Human Touch', side: 'human', time: '12 min ago' },
-  { id: 4, type: 'allegiance', user: 'River Chen', callsign: 'Stack Overflow', side: 'ai', time: '15 min ago' },
-  { id: 5, type: 'create', user: 'Pat O\'Brien', callsign: 'Circuit Breaker', team: 'Carbon Coalition', side: 'human', time: '23 min ago' },
-  { id: 6, type: 'join', user: 'Skyler Vance', callsign: 'Data Drifter', team: 'Digital Overlords', side: 'ai', time: '31 min ago' },
+  { id: 1, type: 'join', user: 'Maya Rodriguez', callsign: 'HTML Hotshot', team: 'Neural Nexus', time: '2 min ago' },
+  { id: 2, type: 'create', user: 'Jordan Lee', callsign: 'Prompt Wizard', team: 'Quantum Collective', time: '5 min ago' },
+  { id: 3, type: 'join', user: 'Casey Brooks', callsign: 'CSS Wizard', team: 'Human Touch', time: '12 min ago' },
+  { id: 4, type: 'create', user: 'Pat O\'Brien', callsign: 'Circuit Breaker', team: 'Carbon Coalition', time: '23 min ago' },
+  { id: 5, type: 'join', user: 'Skyler Vance', callsign: 'Data Drifter', team: 'Digital Overlords', time: '31 min ago' },
 ];
 
 const MOCK_SCHEDULE = [
@@ -59,49 +56,21 @@ const MOCK_SCHEDULE = [
 
 const MOCK_AWARDS = [
   { id: 1, title: 'Grand HackDay Champion', prize: 'Personalised Callsign HackDay26 T-Shirts', icon: Trophy, description: 'Custom t-shirts with your callsign + digital swag' },
-  { id: 2, title: 'Best Human Team', prize: 'Personalised Team Name Zoom Wallpaper', icon: Heart, description: 'Custom Zoom background featuring your team name' },
-  { id: 3, title: 'Best AI Team', prize: 'Personalised Team Name Zoom Wallpaper', icon: Cpu, description: 'Custom Zoom background featuring your team name' },
+  { id: 2, title: 'People\'s Choice', prize: 'Personalised Team Name Zoom Wallpaper', icon: Trophy, description: 'Custom Zoom background featuring your team name' },
 ];
 
 const MOCK_FAQ = [
-  { id: 1, question: 'How do teams work?', answer: 'Teams can have 2-6 members. You can join an existing team or create your own. All team members must choose the same allegiance (Human or AI).' },
-  { id: 2, question: 'What can I build?', answer: 'Anything! Web apps, mobile apps, APIs, games, tools - as long as it fits the theme. AI-side teams are encouraged to use AI tools heavily, while Human-side teams should minimize AI assistance.' },
+  { id: 1, question: 'How do teams work?', answer: 'Teams can have 2-6 members. You can join an existing team or create your own.' },
+  { id: 2, question: 'What can I build?', answer: 'Anything! Web apps, mobile apps, APIs, games, tools - as long as it fits the theme.' },
   { id: 3, question: 'How is judging done?', answer: 'Projects are judged on innovation, execution, design, and theme adherence. There will be peer voting for People\'s Choice award.' },
-  { id: 4, question: 'Can I switch allegiances?', answer: 'You can switch until team formation deadline. After that, your allegiance is locked for the duration of the hackathon.' },
 ];
 
 // ============================================================================
 // PROMO TILE COMPONENT
 // ============================================================================
 
-const PromoTile = memo(function PromoTile({ src, alt, colorScheme = 'ai', className }) {
+const PromoTile = memo(function PromoTile({ src, alt, className }) {
   const [imageError, setImageError] = useState(false);
-
-  const colorConfig = {
-    ai: {
-      bg: 'bg-ai/5',
-      iconBg: 'bg-ai/20',
-      iconColor: 'text-ai',
-      textPrimary: 'text-ai',
-      textSecondary: 'text-ai/60',
-    },
-    special: {
-      bg: 'bg-brand/5',
-      iconBg: 'bg-brand/20',
-      iconColor: 'text-brand',
-      textPrimary: 'text-brand',
-      textSecondary: 'text-brand/60',
-    },
-    human: {
-      bg: 'bg-human/5',
-      iconBg: 'bg-human/20',
-      iconColor: 'text-human',
-      textPrimary: 'text-human',
-      textSecondary: 'text-human/60',
-    },
-  };
-
-  const colors = colorConfig[colorScheme] || colorConfig.ai;
 
   // Show placeholder if no image or image failed to load
   if (!src || imageError) {
@@ -110,17 +79,16 @@ const PromoTile = memo(function PromoTile({ src, alt, colorScheme = 'ai', classN
         variant="ghost" 
         padding="none"
         className={cn(
-          'border-2 border-dashed border-arena-border flex items-center justify-center min-h-[200px]',
-          colors.bg,
+          'border-2 border-dashed border-arena-border flex items-center justify-center min-h-[200px] bg-arena-elevated',
           className
         )}
       >
         <VStack align="center" gap="4" className="p-6">
-          <div className={cn('w-16 h-16 rounded-full flex items-center justify-center', colors.iconBg)}>
-            <ImageIcon className={cn('w-8 h-8', colors.iconColor)} />
+          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-arena-card">
+            <ImageIcon className="w-8 h-8 text-text-secondary" />
           </div>
-          <p className={cn('text-sm font-medium', colors.textPrimary)}>Promo Graphic</p>
-          <p className={cn('text-xs', colors.textSecondary)}>Coming Soon</p>
+          <p className="text-sm font-medium text-text-secondary">Promo Graphic</p>
+          <p className="text-xs text-text-muted">Coming Soon</p>
         </VStack>
       </Card>
     );
@@ -152,9 +120,6 @@ const PromoTile = memo(function PromoTile({ src, alt, colorScheme = 'ai', classN
 const isFirstTimeUser = (user, teams) => {
   if (!user) return false;
   
-  // Check if user has no allegiance set or is neutral
-  const hasNoAllegiance = !user.allegiance || user.allegiance === 'neutral';
-  
   // Check if user is not on any team
   const userTeam = teams.find((team) => 
     team.captainId === user?.id || 
@@ -162,8 +127,8 @@ const isFirstTimeUser = (user, teams) => {
   );
   const hasNoTeam = !userTeam;
   
-  // First-time user: no allegiance (or neutral) AND no team
-  return hasNoAllegiance && hasNoTeam;
+  // First-time user: no team
+  return hasNoTeam;
 };
 
 // ============================================================================
@@ -180,7 +145,7 @@ const SignupPromoBox = memo(function SignupPromoBox({ user, teams, onNavigate })
       <Card.Label className="text-brand">Get Started</Card.Label>
       <Card.Title className="text-white mb-3">Complete Your Setup</Card.Title>
       <p className="text-sm text-text-body mb-4">
-        Choose your allegiance and join a team to start participating in HackDay 2026!
+        Join a team to start participating in HackDay 2026!
       </p>
       <Button
         variant="primary"
@@ -239,7 +204,6 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
     team.joinRequests?.some((request) => request.userId === user?.id)
   );
   
-  const hasAllegiance = user?.allegiance && user.allegiance !== 'neutral';
   const hasSignedUp = user?.name && user.name.trim().length > 0; // User has completed signup if they have a name
 
   // Get MOTD from event (for hacking phase)
@@ -309,7 +273,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
       
       // If user has signed up but no team and no pending applications, show team joining message
       // Skip this for observers (they are automatically assigned to Observers team)
-      if (hasSignedUp && !hasTeam && user?.allegiance !== 'observer') {
+      if (hasSignedUp && !hasTeam) {
         return (
           <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
             <VStack gap="4" align="start">
@@ -323,9 +287,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 </div>
               </HStack>
               <p className="text-base text-text-body">
-                {hasAllegiance 
-                  ? `You've chosen the ${user.allegiance === 'ai' ? 'AI' : 'Human'} side! Find a team that aligns with your interests and skills, or let us automatically match you with compatible teammates.`
-                  : 'Find a team that matches your interests and skill development needs, or browse teams manually. You can also enable auto-assignment if you\'ve chosen a side.'}
+                Find a team that matches your interests and skill development needs, or browse teams manually. You can also enable auto-assignment to be automatically matched with teammates.
               </p>
               <HStack gap="3">
                 <Button
@@ -336,7 +298,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 >
                   Browse Teams
                 </Button>
-                {hasAllegiance && (
+                {false && (
                   <Button
                     variant="secondary"
                     size="lg"
@@ -365,8 +327,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
             </HStack>
             <p className="text-base text-text-body">
-              Sign up now to participate in the ultimate Human vs AI hackathon! Create your profile, 
-              choose your allegiance, and get ready to build something amazing.
+              Sign up now to participate in HackDay 2026! Create your profile and get ready to build something amazing.
             </p>
             <Button
               variant="primary"
@@ -455,9 +416,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
             </HStack>
             <p className="text-base text-text-body">
-              {hasAllegiance 
-                ? `You've chosen the ${user.allegiance === 'ai' ? 'AI' : 'Human'} side! Now find your teammates and form your squad. Teams can have 2-6 members.`
-                : 'Choose your allegiance and join a team to start participating! Teams can have 2-6 members.'}
+              Join a team to start participating! Teams can have 2-6 members.
             </p>
             <HStack gap="3">
               <Button
@@ -468,16 +427,14 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               >
                 Browse Teams
               </Button>
-              {hasAllegiance && (
-                <Button
-                  variant="secondary"
-                  size="lg"
-                  onClick={() => onNavigate('marketplace', { tab: 'teams' })}
-                  leftIcon={<Plus className="w-5 h-5" />}
-                >
-                  Create Team
-                </Button>
-              )}
+              <Button
+                variant="secondary"
+                size="lg"
+                onClick={() => onNavigate('marketplace', { tab: 'teams' })}
+                leftIcon={<Plus className="w-5 h-5" />}
+              >
+                Create Team
+              </Button>
             </HStack>
           </VStack>
         </Card>
@@ -534,11 +491,11 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
         <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
           <VStack gap="4" align="start">
             <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-human/20 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-human" />
+              <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center">
+                <AlertCircle className="w-6 h-6 text-warning" />
               </div>
               <div>
-                <Card.Label className="text-human mb-0">Submission Deadline</Card.Label>
+                <Card.Label className="text-warning mb-0">Submission Deadline</Card.Label>
                 <Card.Title className="text-white mb-0">Time is Running Out!</Card.Title>
               </div>
             </HStack>
@@ -649,7 +606,6 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
 function Dashboard({
   user,
   teams = [],
-  allegianceStyle,
   onNavigate,
   onNavigateToTeam,
   eventPhase = 'voting',
@@ -668,7 +624,6 @@ function Dashboard({
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="dashboard"
@@ -737,27 +692,25 @@ function Dashboard({
             </HStack>
             <VStack gap="0" className="max-h-48 overflow-y-auto">
               {MOCK_ACTIVITY_FEED.map((activity) => {
-                const config = getAllegianceConfig(activity.side);
                 const formatted = formatNameWithCallsign(activity.user, activity.callsign);
-                const borderColor = activity.side === 'ai' ? 'border-ai' : activity.side === 'human' ? 'border-human' : 'border-arena-border';
                 
                 return (
                   <div 
                     key={activity.id} 
                     className={cn(
                       'flex items-start gap-3 py-2.5 pl-3 border-l-2 text-sm',
-                      borderColor
+                      'border-arena-border'
                     )}
                   >
-                    {/* Team-colored pulsing dot */}
-                    <HeartbeatDot className={activity.side === 'ai' ? 'text-ai' : 'text-human'} />
+                    {/* Activity indicator */}
+                    <HeartbeatDot className="text-text-secondary" />
                     
                     <div className="flex-1 min-w-0">
                       <span className="font-bold text-white">
                         {formatted.hasCallsign ? (
                           <>
                             {formatted.firstName}{' '}
-                            <CallsignBadge allegiance={activity.side}>
+                            <CallsignBadge>
                               {formatted.callsign}
                             </CallsignBadge>
                             {formatted.lastName && ` ${formatted.lastName}`}
@@ -766,11 +719,8 @@ function Dashboard({
                       </span>
                       {activity.type === 'join' && <span className="text-text-body"> joined </span>}
                       {activity.type === 'create' && <span className="text-text-body"> created </span>}
-                      {activity.type === 'allegiance' && (
-                        <span className="text-text-body"> chose {activity.side.toUpperCase()} side</span>
-                      )}
                       {activity.team && (
-                        <span className="font-bold" style={{ color: config.color }}>
+                        <span className="font-bold text-text-secondary">
                           {activity.team}
                         </span>
                       )}

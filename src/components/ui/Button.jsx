@@ -1,12 +1,10 @@
 /**
  * Button Component
- * A versatile button with multiple variants, sizes, and allegiance-aware styling.
- * Dark Mode Cyber Arena Theme
+ * A versatile button with multiple variants and sizes.
  * 
  * @example
  * <Button variant="primary" size="md">Click Me</Button>
- * <Button variant="human" leftIcon={<Heart />}>Human Side</Button>
- * <Button variant="ai" rightIcon={<Cpu />} loading>Processing</Button>
+ * <Button variant="secondary" loading>Processing</Button>
  */
 
 import { forwardRef } from 'react';
@@ -15,7 +13,7 @@ import { cn, SIZE_CLASSES, BUTTON_VARIANTS } from '../../lib/design-system';
 
 /**
  * @typedef {Object} ButtonProps
- * @property {'primary' | 'secondary' | 'ghost' | 'danger' | 'human' | 'human-ghost' | 'ai' | 'ai-ghost' | 'accent'} [variant='primary']
+ * @property {'primary' | 'secondary' | 'ghost' | 'danger'} [variant='primary']
  * @property {'xs' | 'sm' | 'md' | 'lg' | 'xl'} [size='md']
  * @property {React.ReactNode} [leftIcon]
  * @property {React.ReactNode} [rightIcon]
@@ -68,8 +66,6 @@ const Button = forwardRef(({
         // States
         isDisabled && 'opacity-50 cursor-not-allowed',
         fullWidth && 'w-full',
-        // Extra glow on hover
-        glow && !isDisabled && 'hover:shadow-glow-brand',
         // Custom
         className
       )}
@@ -180,7 +176,6 @@ ButtonGroup.displayName = 'ButtonGroup';
  * FillButton - Button with fill animation (for "Request to Join" etc.)
  */
 export const FillButton = forwardRef(({
-  variant = 'human',
   size = 'md',
   children,
   className,
@@ -188,11 +183,11 @@ export const FillButton = forwardRef(({
 }, ref) => {
   const sizeStyles = SIZE_CLASSES.button[size] || SIZE_CLASSES.button.md;
   
-  // Determine fill color based on variant
-  const fillColor = variant === 'ai' ? 'bg-ai' : 'bg-human';
-  const textColor = variant === 'ai' ? 'text-ai' : 'text-human';
-  const borderColor = variant === 'ai' ? 'border-ai' : 'border-human';
-  const glowClass = variant === 'ai' ? 'hover:shadow-glow-ai' : 'hover:shadow-glow-human';
+  // Neutral styling for fill button
+  const fillColor = 'bg-arena-elevated';
+  const textColor = 'text-text-secondary';
+  const borderColor = 'border-arena-border';
+  const glowClass = '';
 
   return (
     <button

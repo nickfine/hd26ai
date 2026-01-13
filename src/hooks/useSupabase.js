@@ -34,7 +34,7 @@ export function useTeams(eventId = null) {
             userId,
             role,
             status,
-            user:User(id, name, email, image, skills, trackSide)
+            user:User(id, name, email, image, skills)
           ),
           project:Project(*)
         `)
@@ -53,7 +53,6 @@ export function useTeams(eventId = null) {
       const transformedTeams = (data || []).map(team => ({
         id: team.id,
         name: team.name,
-        side: team.trackSide?.toLowerCase() || 'neutral',
         description: team.description || '',
         lookingFor: team.lookingFor ? team.lookingFor.split(',').map(s => s.trim()) : [],
         maxMembers: team.maxSize || 6,
@@ -167,7 +166,6 @@ export function useTeam(teamId) {
       const transformedTeam = {
         id: data.id,
         name: data.name,
-        side: data.trackSide?.toLowerCase() || 'neutral',
         description: data.description || '',
         lookingFor: data.lookingFor ? data.lookingFor.split(',').map(s => s.trim()) : [],
         maxMembers: data.maxSize || 6,
@@ -262,7 +260,6 @@ export function useFreeAgents() {
         id: user.id,
         name: user.name || 'Unknown',
         skills: user.skills ? user.skills.split(',').map(s => s.trim()) : [],
-        allegiance: user.trackSide?.toLowerCase() || 'neutral',
         bio: user.bio || '',
         image: user.image,
         teamInvites: [], // Would need separate query
@@ -609,7 +606,6 @@ export function useTeamMutations() {
           eventId,
           name: teamData.name,
           description: teamData.description,
-          trackSide: teamData.side?.toUpperCase() || 'HUMAN',
           lookingFor: teamData.lookingFor?.join(', ') || '',
           maxSize: teamData.maxMembers || 6,
           isPublic: true,
@@ -893,7 +889,7 @@ export function useUsers() {
 
       const { data, error: fetchError } = await supabase
         .from('User')
-        .select('id, name, email, image, role, trackSide, createdAt')
+        .select('id, name, email, image, role, createdAt')
         .order('name', { ascending: true });
 
       if (fetchError) throw fetchError;
@@ -904,7 +900,6 @@ export function useUsers() {
         email: user.email || '',
         image: user.image,
         role: dbRoleToAppRole(user.role),
-        allegiance: user.trackSide?.toLowerCase() || 'neutral',
         createdAt: user.createdAt,
       }));
 

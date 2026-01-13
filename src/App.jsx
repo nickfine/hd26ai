@@ -3,7 +3,6 @@ import {
   MOCK_TEAMS,
   MOCK_FREE_AGENTS,
   MOCK_USERS,
-  ALLEGIANCE_CONFIG,
   USER_ROLES,
   EVENT_PHASES,
   JUDGE_CRITERIA,
@@ -70,7 +69,6 @@ function App() {
         name: auth.profile.name || 'Unknown',
         email: auth.profile.email,
         skills: auth.profile.skills ? auth.profile.skills.split(',').map(s => s.trim()) : [],
-        allegiance: auth.profile.trackSide?.toLowerCase() || 'neutral',
         role: auth.profile.role?.toLowerCase() || 'participant',
         image: auth.profile.image,
         bio: auth.profile.bio,
@@ -253,9 +251,6 @@ function App() {
         })
       );
       
-      // Reset user's allegiance to neutral (free agent grey)
-      setDemoUser(prev => prev ? { ...prev, allegiance: 'neutral' } : prev);
-      
       // Add user to free agents list
       setMockFreeAgents(prev => {
         // Check if already in the list
@@ -266,7 +261,6 @@ function App() {
             id: effectiveUser.id,
             name: effectiveUser.name,
             skills: effectiveUser.skills || [],
-            allegiance: 'neutral',
             bio: effectiveUser.bio || '',
             teamInvites: [],
             autoAssignOptIn: false,
@@ -275,8 +269,6 @@ function App() {
       });
     } else {
       await teamMutations.leaveTeam(teamId, effectiveUser.id);
-      // Also reset allegiance in database
-      await auth.updateProfile({ allegiance: 'neutral' });
       refetchTeams();
     }
   }, [useDemoMode, effectiveUser, teamMutations, refetchTeams, auth]);
@@ -340,7 +332,6 @@ function App() {
         id: Date.now(),
         teamId,
         teamName: team.name,
-        teamSide: team.side,
         message,
         timestamp: new Date().toISOString(),
       };
@@ -404,7 +395,6 @@ function App() {
       const newTeam = {
         id: newTeamId,
         name: teamData.name,
-        side: teamData.side,
         description: teamData.description,
         lookingFor: teamData.lookingFor || [],
         maxMembers: teamData.maxMembers || 6,
@@ -453,70 +443,6 @@ function App() {
   const handleAutoAssign = useCallback(async (optIn) => {
     if (!effectiveUser) return { success: false, error: 'No user logged in' };
     
-    // Handle observer assignment to Observers team
-    if (effectiveUser.allegiance === 'observer') {
-      // Find or create Observers team
-      let observersTeam = teams.find(t => t.name === 'Observers' && (t.side === 'observer' || t.side === 'neutral'));
-      
-      if (!observersTeam) {
-        // Create Observers team
-        const teamData = {
-          name: 'Observers',
-          side: 'observer',
-          description: 'System team for observers who want to watch and learn from the event.',
-          lookingFor: [],
-          maxMembers: 999, // Unlimited observers
-          isAutoCreated: true,
-        };
-        const result = await handleCreateTeam(teamData);
-        if (result?.id) {
-          // In demo mode, the team is already added to mockTeams
-          if (useDemoMode) {
-            observersTeam = { id: result.id, name: 'Observers', side: 'observer', members: [] };
-          } else {
-            // Refetch teams to get the new team
-            await refetchTeams();
-            // Wait a bit for state to update, then find the team
-            await new Promise(resolve => setTimeout(resolve, 200));
-            observersTeam = teams.find(t => t.id === result.id || (t.name === 'Observers' && t.side === 'observer'));
-          }
-        }
-      }
-      
-      if (observersTeam) {
-        // Add user to Observers team
-        if (useDemoMode) {
-          const newMember = {
-            id: effectiveUser.id,
-            name: effectiveUser.name,
-            callsign: effectiveUser.callsign || '',
-            skills: effectiveUser.skills || [],
-          };
-          
-          setMockTeams(prev =>
-            prev.map(team =>
-              team.id === observersTeam.id
-                ? { ...team, members: [...team.members, newMember] }
-                : team
-            )
-          );
-          
-          return { success: true, teamId: observersTeam.id, teamName: observersTeam.name };
-        } else {
-          // In Supabase mode, add member to team
-          await teamMutations.addMember(observersTeam.id, effectiveUser.id);
-          refetchTeams();
-          return { success: true, teamId: observersTeam.id, teamName: observersTeam.name };
-        }
-      }
-      return { success: false, error: 'Failed to create or find Observers team' };
-    }
-    
-    // Validate allegiance - must be human or ai, not neutral
-    if (effectiveUser.allegiance === 'neutral') {
-      return { success: false, error: 'Choose Human or AI side before auto-assignment' };
-    }
-
     // Check if user is already on a team
     const userTeam = teams.find(
       team => team.captainId === effectiveUser.id || 
@@ -538,11 +464,9 @@ function App() {
       return { success: true };
     }
 
-    // Find existing auto-created team for user's side with room
-    const side = effectiveUser.allegiance;
+    // Find existing auto-created team with room
     const existingAutoTeam = teams.find(
       team => team.isAutoCreated && 
-              team.side === side && 
               team.members.length < 6
     );
 
@@ -573,17 +497,15 @@ function App() {
       }
     } else {
       // Create new auto-team
-      const sideLabel = side === 'ai' ? 'AI' : 'Human';
       const existingAutoTeamsCount = teams.filter(
-        t => t.isAutoCreated && t.side === side
+        t => t.isAutoCreated
       ).length;
       const teamNumber = existingAutoTeamsCount + 1;
-      const teamName = `Auto Squad ${sideLabel} #${teamNumber}`;
+      const teamName = `Auto Squad #${teamNumber}`;
 
       const teamData = {
         name: teamName,
-        side: side,
-        description: `Auto-created team for ${sideLabel} side participants. Join us and let's build something amazing together!`,
+        description: `Auto-created team. Join us and let's build something amazing together!`,
         lookingFor: [],
         maxMembers: 6,
         isAutoCreated: true,
@@ -764,7 +686,6 @@ function App() {
       const dbUpdates = {};
       if (updates.name) dbUpdates.name = updates.name;
       if (updates.skills) dbUpdates.skills = updates.skills.join(', ');
-      if (updates.allegiance) dbUpdates.trackSide = updates.allegiance.toUpperCase();
       if (updates.bio) dbUpdates.bio = updates.bio;
       if (updates.callsign !== undefined) dbUpdates.callsign = updates.callsign;
       if (updates.autoAssignOptIn !== undefined) dbUpdates.autoAssignOptIn = updates.autoAssignOptIn;
@@ -778,7 +699,6 @@ function App() {
       id: userData.id || null,
       name: userData.name || '',
       skills: userData.skills || [],
-      allegiance: userData.allegiance || 'neutral',
       email: userData.email || '',
       role: userData.role || 'participant',
       callsign: userData.callsign || '',
@@ -815,7 +735,6 @@ function App() {
       name: '',
       email: 'new.user@company.com',
       skills: [],
-      allegiance: 'neutral',
       role: 'participant',
       autoAssignOptIn: false,
     });
@@ -839,13 +758,6 @@ function App() {
     }
   }, [auth.isAuthenticated, auth.profile, useDemoMode, currentView]);
 
-  // ============================================================================
-  // ALLEGIANCE STYLING
-  // ============================================================================
-  const getAllegianceStyle = useCallback(() => {
-    if (!effectiveUser) return ALLEGIANCE_CONFIG.neutral;
-    return ALLEGIANCE_CONFIG[effectiveUser.allegiance] || ALLEGIANCE_CONFIG.neutral;
-  }, [effectiveUser]);
 
   // ============================================================================
   // VIEW RENDERING
@@ -876,7 +788,6 @@ function App() {
             onNavigate={handleNavigate}
             onAutoAssign={handleAutoAssign}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             eventPhase={eventPhase}
             onCreateTeam={handleCreateTeam}
           />
@@ -887,7 +798,6 @@ function App() {
           <Dashboard
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             onNavigateToTeam={navigateToTeam}
             eventPhase={eventPhase}
@@ -901,7 +811,6 @@ function App() {
             user={effectiveUser}
             teams={teams}
             freeAgents={freeAgents}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             onNavigateToTeam={navigateToTeam}
             onSendInvite={handleSendInvite}
@@ -918,7 +827,6 @@ function App() {
             user={effectiveUser}
             updateUser={updateUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             onNavigateToTeam={navigateToTeam}
             onLeaveTeam={leaveTeam}
@@ -932,7 +840,6 @@ function App() {
           <Rules
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
           />
@@ -943,7 +850,6 @@ function App() {
           <NewToHackDay
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
           />
@@ -954,7 +860,6 @@ function App() {
           <Submission
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             onUpdateSubmission={handleUpdateSubmission}
             eventPhase={eventPhase}
@@ -966,7 +871,6 @@ function App() {
           <Voting
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             userVotes={userVotes}
             onVote={handleVote}
@@ -980,7 +884,6 @@ function App() {
           <VotingAnalytics
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
             judgeCriteria={JUDGE_CRITERIA}
@@ -993,7 +896,6 @@ function App() {
           <JudgeScoring
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             onScore={handleJudgeScore}
             judgeCriteria={JUDGE_CRITERIA}
@@ -1006,7 +908,6 @@ function App() {
           <AdminPanel
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
             onPhaseChange={handlePhaseChange}
@@ -1025,7 +926,6 @@ function App() {
           <Results
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
             awards={AWARDS}
@@ -1037,7 +937,6 @@ function App() {
           <Schedule
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
           />
@@ -1054,7 +953,6 @@ function App() {
             team={selectedTeam}
             user={effectiveUser}
             teams={teams}
-            allegianceStyle={getAllegianceStyle()}
             onNavigate={handleNavigate}
             onUpdateTeam={updateTeam}
             onJoinRequest={handleJoinRequest}
@@ -1070,7 +968,7 @@ function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-arena-black ${getAllegianceStyle().font}`}>
+    <div className="min-h-screen bg-arena-black">
       {renderView()}
     </div>
   );

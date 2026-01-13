@@ -1,23 +1,22 @@
 /**
  * Avatar Component
- * Display user avatars with optional status indicators and allegiance styling.
+ * Display user avatars with optional status indicators.
  * 
  * @example
  * <Avatar src="/user.jpg" name="John Doe" />
- * <Avatar name="Jane" allegiance="human" indicator="online" />
+ * <Avatar name="Jane" indicator="online" />
  * <AvatarGroup users={[...]} max={3} />
  */
 
 import { forwardRef } from 'react';
 import { User } from 'lucide-react';
-import { cn, SIZE_CLASSES, getAllegianceConfig } from '../../lib/design-system';
+import { cn, SIZE_CLASSES } from '../../lib/design-system';
 
 /**
  * @typedef {Object} AvatarProps
  * @property {string} [src] - Image URL
  * @property {string} [name] - User name (used for fallback initials)
  * @property {'xs' | 'sm' | 'md' | 'lg' | 'xl'} [size='md']
- * @property {'human' | 'ai' | 'neutral'} [allegiance]
  * @property {'online' | 'offline' | 'busy' | 'away'} [indicator]
  * @property {boolean} [showBorder=false]
  * @property {string} [className]
@@ -55,32 +54,19 @@ const Avatar = forwardRef(({
   src,
   name,
   size = 'md',
-  allegiance,
   indicator,
   showBorder = false,
   className,
   ...props
 }, ref) => {
   const sizeStyles = SIZE_CLASSES.avatar[size] || SIZE_CLASSES.avatar.md;
-  const config = allegiance ? getAllegianceConfig(allegiance) : null;
   const initials = getInitials(name);
 
-  // Determine border radius based on allegiance
-  const borderRadiusClass = allegiance 
-    ? config.borderRadius 
-    : 'rounded-lg';
+  // Border style
+  const borderStyle = showBorder ? 'border-2 border-solid' : '';
 
-  // Determine border style based on allegiance
-  const borderStyle = showBorder || allegiance
-    ? allegiance 
-      ? `border-2 ${allegiance === 'ai' ? 'border-dashed' : 'border-solid'}`
-      : 'border-2 border-solid'
-    : '';
-
-  // Border color (dark theme compatible)
-  const borderColorStyle = allegiance 
-    ? { borderColor: config.borderColor }
-    : { borderColor: '#1F1F1F' }; // arena-border color
+  // Border color
+  const borderColorStyle = { borderColor: '#1F1F1F' }; // arena-border color
 
   return (
     <div className="relative inline-block">
@@ -90,13 +76,13 @@ const Avatar = forwardRef(({
           // Base styles
           'flex items-center justify-center overflow-hidden',
           sizeStyles,
-          borderRadiusClass,
+          'rounded-lg',
           borderStyle,
           // Background for fallback (dark theme)
           !src && 'bg-arena-elevated',
           className
         )}
-        style={showBorder || allegiance ? borderColorStyle : undefined}
+        style={showBorder ? borderColorStyle : undefined}
         {...props}
       >
         {src ? (
@@ -116,9 +102,8 @@ const Avatar = forwardRef(({
           className={cn(
             'flex items-center justify-center w-full h-full font-bold',
             src && 'hidden',
-            allegiance ? config.classes.text : 'text-text-secondary'
+            'text-text-secondary'
           )}
-          style={allegiance ? { backgroundColor: config.bgColor } : undefined}
         >
           {initials || <User className="w-1/2 h-1/2" />}
         </div>
@@ -170,7 +155,6 @@ export const AvatarGroup = ({
           src={user.image || user.src}
           name={user.name}
           size={size}
-          allegiance={user.allegiance}
           className={cn(
             index > 0 && overlapClass[size],
             'ring-2 ring-arena-black'
@@ -195,53 +179,6 @@ export const AvatarGroup = ({
 };
 
 AvatarGroup.displayName = 'AvatarGroup';
-
-/**
- * AllegianceAvatar - Avatar with allegiance icon instead of image
- */
-export const AllegianceAvatar = forwardRef(({
-  allegiance = 'neutral',
-  size = 'md',
-  className,
-  ...props
-}, ref) => {
-  const config = getAllegianceConfig(allegiance);
-  const sizeStyles = SIZE_CLASSES.avatar[size] || SIZE_CLASSES.avatar.md;
-  const Icon = config.icon;
-
-  const iconSizeClass = {
-    xs: 'w-3 h-3',
-    sm: 'w-4 h-4',
-    md: 'w-5 h-5',
-    lg: 'w-6 h-6',
-    xl: 'w-8 h-8',
-  };
-
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        'flex items-center justify-center',
-        sizeStyles,
-        config.borderRadius,
-        allegiance === 'ai' ? 'border-2 border-dashed' : 'border-2',
-        className
-      )}
-      style={{
-        backgroundColor: config.bgColor,
-        borderColor: config.borderColor,
-      }}
-      {...props}
-    >
-      <Icon 
-        className={iconSizeClass[size]} 
-        style={{ color: config.color }} 
-      />
-    </div>
-  );
-});
-
-AllegianceAvatar.displayName = 'AllegianceAvatar';
 
 export default Avatar;
 

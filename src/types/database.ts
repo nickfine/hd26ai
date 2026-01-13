@@ -324,6 +324,7 @@ export type Database = {
           maxSize: number
           name: string
           slug: string | null
+          /** @deprecated No longer used in application logic. Kept for database schema compatibility. */
           trackSide: Database["public"]["Enums"]["TrackSide"]
           updatedAt: string
         }
@@ -339,6 +340,7 @@ export type Database = {
           maxSize?: number
           name: string
           slug?: string | null
+          /** @deprecated No longer used in application logic. Kept for database schema compatibility. */
           trackSide: Database["public"]["Enums"]["TrackSide"]
           updatedAt: string
         }
@@ -424,6 +426,7 @@ export type Database = {
           name: string | null
           role: Database["public"]["Enums"]["UserRole"]
           skills: string | null
+          /** @deprecated No longer used in application logic. Kept for database schema compatibility. */
           trackSide: Database["public"]["Enums"]["TrackSide"] | null
           updatedAt: string
         }
@@ -441,6 +444,7 @@ export type Database = {
           name?: string | null
           role?: Database["public"]["Enums"]["UserRole"]
           skills?: string | null
+          /** @deprecated No longer used in application logic. Kept for database schema compatibility. */
           trackSide?: Database["public"]["Enums"]["TrackSide"] | null
           updatedAt: string
         }
@@ -458,6 +462,7 @@ export type Database = {
           name?: string | null
           role?: Database["public"]["Enums"]["UserRole"]
           skills?: string | null
+          /** @deprecated No longer used in application logic. Kept for database schema compatibility. */
           trackSide?: Database["public"]["Enums"]["TrackSide"] | null
           updatedAt?: string
         }

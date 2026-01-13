@@ -1,6 +1,6 @@
 /* =============================================================================
-   DESIGN SYSTEM TOKENS - DARK MODE CYBER ARENA
-   CSS Custom Properties for the HD26 Human vs AI HackDay
+   DESIGN SYSTEM TOKENS - NEUTRAL THEME
+   CSS Custom Properties
    ============================================================================= */
 
 :root {
@@ -8,54 +8,20 @@
      CORE COLORS
      ========================================================================= */
   
-  /* Brand - Adaptavist Orange (Orange is King) */
-  --color-brand: #FF4500;
-  --color-brand-rgb: 255, 69, 0;
-  --color-brand-hover: #FF7033;      /* 15% white mix - backlit effect */
-  --color-brand-pressed: #CC3700;    /* Darker for active state */
-  
-  /* Secondary Orange Palette */
-  --color-amber: #FF8A00;            /* Deep amber accent */
-  --color-orange-dark: #CC3700;      /* Dark orange for depth */
-  
   /* Background Surfaces */
-  --color-bg-primary: #0B0A08;       /* Warm black - makes orange glow like molten metal */
-  --color-bg-card: #111111;          /* Card/panel background */
-  --color-bg-elevated: #1A1A1A;      /* Elevated surfaces */
-  
-  /* Glass Card Effect - Premium 2025-2026 Recipe */
-  --color-bg-glass: rgba(20, 22, 28, 0.45);
-  --color-border-glass: rgba(255, 255, 255, 0.08);
-  --glass-blur: blur(16px) saturate(180%);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --glass-inset: inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+  --color-bg-primary: #0B0A08;
+  --color-bg-card: #111111;
+  --color-bg-elevated: #1A1A1A;
   
   /* Borders */
-  --color-border: #1F1F1F;           /* Subtle borders/dividers */
-  --color-border-strong: #2A2A2A;    /* Stronger borders */
+  --color-border: #1F1F1F;
+  --color-border-strong: #2A2A2A;
   
   /* Text Hierarchy */
-  --color-text-primary: #FFFFFF;     /* Headlines - 700-900 weight */
-  --color-text-body: #E0E0E0;        /* Body text */
-  --color-text-secondary: #AAAAAA;   /* Secondary/labels */
-  --color-text-muted: #888888;       /* Muted text */
-  
-  /* =========================================================================
-     ALLEGIANCE COLORS
-     ========================================================================= */
-  
-  /* Team Human - Brand Orange (Orange is King) */
-  --color-human: #FF4500;
-  --color-human-rgb: 255, 69, 0;
-  --color-human-light: rgba(255, 69, 0, 0.1);
-  --color-human-glow: rgba(255, 69, 0, 0.4);
-  --color-human-gradient-end: #FF6200;  /* Gradient terminus */
-  
-  /* Team AI - Electric Cyan */
-  --color-ai: #00E5FF;
-  --color-ai-rgb: 0, 229, 255;
-  --color-ai-light: rgba(0, 229, 255, 0.1);
-  --color-ai-glow: rgba(0, 229, 255, 0.4);
+  --color-text-primary: #FFFFFF;
+  --color-text-body: #E0E0E0;
+  --color-text-secondary: #AAAAAA;
+  --color-text-muted: #888888;
   
   /* Neutral */
   --color-neutral: #666666;
@@ -65,11 +31,11 @@
      SEMANTIC COLORS
      ========================================================================= */
   
-  --color-success: #00FF9D;          /* Neon mint */
+  --color-success: #00FF9D;
   --color-success-light: rgba(0, 255, 157, 0.1);
-  --color-warning: #FF8A00;          /* Amber warning */
+  --color-warning: #FF8A00;
   --color-warning-light: rgba(255, 138, 0, 0.1);
-  --color-error: #FF4500;             /* Brand orange */
+  --color-error: #FF4500;
   --color-error-light: rgba(255, 69, 0, 0.1);
   --color-info: #00D4FF;
   --color-info-light: rgba(0, 212, 255, 0.1);
@@ -83,24 +49,8 @@
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   
   /* =========================================================================
-     SHADOWS & GLOWS
+     SHADOWS
      ========================================================================= */
-  
-  /* Team Glows */
-  --glow-human: 0 0 12px rgba(255, 69, 0, 0.22);
-  --glow-human-strong: 0 0 20px rgba(255, 69, 0, 0.4);
-  --glow-ai: 0 0 12px rgba(0, 229, 255, 0.22);
-  --glow-ai-strong: 0 0 20px rgba(0, 229, 255, 0.4);
-  --glow-brand: 0 0 12px rgba(255, 69, 0, 0.3);
-  --glow-brand-strong: 0 0 20px rgba(255, 69, 0, 0.5);
-  
-  /* Button Inner Glow - backlit effect */
-  --shadow-inner-glow: inset 0 0 20px rgba(255, 255, 255, 0.15);
-  --shadow-btn-lift: 0 4px 12px rgba(0, 0, 0, 0.4);
-  
-  /* Drop shadows for filter */
-  --drop-glow-human: drop-shadow(0 0 12px rgba(255, 69, 0, 0.22));
-  --drop-glow-ai: drop-shadow(0 0 12px rgba(0, 229, 255, 0.22));
   
   /* Elevation shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
@@ -118,13 +68,11 @@
   --duration-fast: 150ms;
   --duration-normal: 200ms;
   --duration-slow: 300ms;
-  --duration-war-bar: 800ms;
   
   --easing-default: cubic-bezier(0.4, 0, 0.2, 1);
   --easing-in: cubic-bezier(0.4, 0, 1, 1);
   --easing-out: cubic-bezier(0, 0, 0.2, 1);
   --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
-  --easing-war-bar: cubic-bezier(0.16, 1, 0.3, 1);
   
   /* =========================================================================
      BORDER RADIUS
@@ -175,38 +123,17 @@
   
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
-  --focus-ring-color: var(--color-brand);
+  --focus-ring-color: var(--color-text-secondary);
 }
 
 /* =============================================================================
-   ALLEGIANCE THEME CLASSES
+   ROLE THEME CLASSES
    Apply these to parent elements to theme children
    ============================================================================= */
-
-.theme-human {
-  --theme-color: var(--color-human);
-  --theme-color-rgb: var(--color-human-rgb);
-  --theme-color-light: var(--color-human-light);
-  --theme-glow: var(--glow-human);
-  --theme-glow-strong: var(--glow-human-strong);
-  --theme-drop-glow: var(--drop-glow-human);
-}
-
-.theme-ai {
-  --theme-color: var(--color-ai);
-  --theme-color-rgb: var(--color-ai-rgb);
-  --theme-color-light: var(--color-ai-light);
-  --theme-glow: var(--glow-ai);
-  --theme-glow-strong: var(--glow-ai-strong);
-  --theme-drop-glow: var(--drop-glow-ai);
-}
 
 .theme-neutral {
   --theme-color: var(--color-neutral);
   --theme-color-light: var(--color-neutral-light);
-  --theme-glow: none;
-  --theme-glow-strong: none;
-  --theme-drop-glow: none;
 }
 
 /* =============================================================================
@@ -231,63 +158,16 @@
 }
 
 /* =============================================================================
-   GLOW UTILITIES
-   ============================================================================= */
-
-.glow-human {
-  box-shadow: var(--glow-human);
-}
-
-.glow-human-strong {
-  box-shadow: var(--glow-human-strong);
-}
-
-.glow-ai {
-  box-shadow: var(--glow-ai);
-}
-
-.glow-ai-strong {
-  box-shadow: var(--glow-ai-strong);
-}
-
-.glow-brand {
-  box-shadow: var(--glow-brand);
-}
-
-.glow-brand-strong {
-  box-shadow: var(--glow-brand-strong);
-}
-
-/* Filter-based glows (for icons) */
-.filter-glow-human {
-  filter: var(--drop-glow-human);
-}
-
-.filter-glow-ai {
-  filter: var(--drop-glow-ai);
-}
-
-/* =============================================================================
    CARD HOVER EFFECTS
    ============================================================================= */
 
-.card-hover-human {
+.card-hover {
   transition: all var(--duration-normal) var(--easing-default);
 }
 
-.card-hover-human:hover {
-  border-color: var(--color-human);
-  box-shadow: var(--glow-human), var(--shadow-card-hover);
-  transform: translateY(-2px);
-}
-
-.card-hover-ai {
-  transition: all var(--duration-normal) var(--easing-default);
-}
-
-.card-hover-ai:hover {
-  border-color: var(--color-ai);
-  box-shadow: var(--glow-ai), var(--shadow-card-hover);
+.card-hover:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-card-hover);
   transform: translateY(-2px);
 }
 
@@ -307,107 +187,3 @@
   transform: scale(0.98);
 }
 
-/* =============================================================================
-   WAR STATUS BAR
-   ============================================================================= */
-
-.war-status-bar {
-  --recruitment-split: 50%;
-  position: relative;
-  background: linear-gradient(
-    to right,
-    var(--color-ai) 0%,
-    var(--color-ai) 50%,
-    var(--color-human) 50%,
-    var(--color-human) 100%
-  );
-  background-size: 200% 100%;
-  background-position: var(--recruitment-split) 0;
-  transition: background-position var(--duration-war-bar) var(--easing-war-bar);
-}
-
-.war-status-divider {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 2px;
-  transform: translateX(-50%);
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 229, 255, 0.6),
-    white,
-    rgba(255, 69, 0, 0.6)
-  );
-  box-shadow: 
-    -4px 0 8px rgba(0, 229, 255, 0.4),
-    4px 0 8px rgba(255, 69, 0, 0.4),
-    0 0 12px white;
-}
-
-/* =============================================================================
-   COUNTDOWN PULSE ANIMATION
-   ============================================================================= */
-
-@keyframes countdown-pulse {
-  0% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-  100% { transform: scale(1); }
-}
-
-.countdown-pulse {
-  animation: countdown-pulse 120ms ease-out;
-}
-
-/* =============================================================================
-   CURSOR GLOW (for Landing/Teams pages)
-   ============================================================================= */
-
-.cursor-glow-container {
-  cursor: none;
-}
-
-.cursor-glow {
-  position: fixed;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: var(--theme-color, var(--color-brand));
-  filter: blur(8px);
-  pointer-events: none;
-  z-index: var(--z-cursor-glow);
-  transform: translate(-50%, -50%);
-  mix-blend-mode: screen;
-  opacity: 0.8;
-}
-
-/* =============================================================================
-   ANIMATED BLOB FOR LANDING
-   ============================================================================= */
-
-@keyframes blob-pulse {
-  0%, 100% {
-    transform: scale(1) translate(0, 0);
-    opacity: 0.6;
-  }
-  33% {
-    transform: scale(1.05) translate(10px, -10px);
-    opacity: 0.7;
-  }
-  66% {
-    transform: scale(0.95) translate(-5px, 5px);
-    opacity: 0.5;
-  }
-}
-
-.animate-blob {
-  animation: blob-pulse 8s ease-in-out infinite;
-}
-
-.animate-blob-delay-2 {
-  animation: blob-pulse 8s ease-in-out 2s infinite;
-}
-
-.animate-blob-delay-4 {
-  animation: blob-pulse 8s ease-in-out 4s infinite;
-}

@@ -5,88 +5,13 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   // Safelist dynamic classes that Tailwind JIT can't detect
-  safelist: [
-    'bg-human', 'bg-ai', 'bg-brand',
-    'bg-human-10', 'bg-human-20', 'bg-ai-10', 'bg-ai-20', 'bg-brand-20',
-    'text-human', 'text-ai', 'text-brand',
-    'border-human', 'border-ai', 'border-brand',
-    'glow-human', 'glow-ai', 'glow-brand',
-    'hover:glow-human', 'hover:glow-ai', 'hover:glow-brand',
-    'shadow-human-glow', 'shadow-ai-glow', 'shadow-brand-glow',
-  ],
+  safelist: [],
   theme: {
     extend: {
       // =======================================================================
       // COLORS - Dark Mode Cyber Arena Palette
       // =======================================================================
       colors: {
-        // Brand - Adaptavist Orange (Orange is King)
-        brand: {
-          DEFAULT: '#FF4500',
-          hover: '#FF7033',        // 15% white mix - backlit
-          pressed: '#CC3700',      // Darker for active
-          amber: '#FF8A00',        // Deep amber accent
-          dark: '#CC3700',         // Dark orange for depth
-          // Opacity tokens for capsule badges
-          10: '#FF45001A',   // 10% opacity
-          20: '#FF450033',   // 20% opacity
-          30: '#FF45004D',   // 30% opacity
-          60: '#FF450099',   // 60% opacity
-          // Standard scale
-          50: '#FFF3E0',
-          100: '#FFE0B2',
-          200: '#FFCC80',
-          300: '#FFB74D',
-          400: '#FFA726',
-          500: '#FF4500',
-          600: '#E63E00',
-          700: '#CC3700',
-          800: '#B33000',
-          900: '#992900',
-        },
-        
-        // Team Human - Brand Orange (Orange is King)
-        human: {
-          DEFAULT: '#FF4500',
-          // Opacity tokens for capsule badges
-          10: '#FF45001A',   // 10% opacity
-          20: '#FF450033',   // 20% opacity
-          30: '#FF45004D',   // 30% opacity
-          // Standard scale
-          50: '#FFF3E0',
-          100: '#FFE4CC',
-          200: '#FFCA99',
-          300: '#FFB066',
-          400: '#FF8533',
-          500: '#FF4500',
-          600: '#E63E00',
-          700: '#CC3700',
-          800: '#B33000',
-          900: '#992900',
-          'gradient-end': '#FF6200',  // Gradient terminus
-          glow: 'rgba(255, 69, 0, 0.4)',
-        },
-        
-        // Team AI - Electric Cyan
-        ai: {
-          DEFAULT: '#00E5FF',
-          // Opacity tokens for capsule badges
-          10: '#00E5FF1A',   // 10% opacity
-          20: '#00E5FF33',   // 20% opacity
-          30: '#00E5FF4D',   // 30% opacity
-          // Standard scale
-          50: '#E0FBFF',
-          100: '#B3F5FF',
-          200: '#80EEFF',
-          300: '#4DE8FF',
-          400: '#26E3FF',
-          500: '#00E5FF',
-          600: '#00CCE6',
-          700: '#00B3CC',
-          800: '#0099B3',
-          900: '#008099',
-          glow: 'rgba(0, 229, 255, 0.4)',
-        },
         
         // Arena surfaces (dark mode)
         arena: {
@@ -203,28 +128,8 @@ export default {
         'xl': '0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.4)',
         'inner': 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.3)',
         'none': 'none',
-        // Team glows (updated to brand orange)
-        'glow-human': '0 0 12px rgba(255, 69, 0, 0.22)',
-        'glow-human-strong': '0 0 20px rgba(255, 69, 0, 0.4)',
-        'glow-ai': '0 0 12px rgba(0, 229, 255, 0.22)',
-        'glow-ai-strong': '0 0 20px rgba(0, 229, 255, 0.4)',
-        'glow-brand': '0 0 12px rgba(255, 69, 0, 0.3)',
-        'glow-brand-strong': '0 0 20px rgba(255, 69, 0, 0.5)',
-        // Inner glow for backlit button effect
-        'inner-glow': 'inset 0 0 20px rgba(255, 255, 255, 0.15)',
-        'btn-lift': '0 4px 12px rgba(0, 0, 0, 0.4)',
-        // Alternate naming (for badge capsules)
-        'human-glow': '0 0 20px rgba(255, 69, 0, 0.3)',
-        'ai-glow': '0 0 20px rgba(0, 229, 255, 0.3)',
-        'brand-glow': '0 0 20px rgba(255, 69, 0, 0.4)',
-        // Skill chip hover glow
-        'skill-glow': '0 4px 12px rgba(255, 69, 0, 0.1)',
         // Card hover
         'card-hover': '0 8px 25px -5px rgba(0, 0, 0, 0.6)',
-        'card-human': '0 0 12px rgba(255, 69, 0, 0.22), 0 8px 25px -5px rgba(0, 0, 0, 0.6)',
-        'card-ai': '0 0 12px rgba(0, 229, 255, 0.22), 0 8px 25px -5px rgba(0, 0, 0, 0.6)',
-        // Icon glow on hover
-        'icon-glow': '0 0 8px rgba(255, 69, 0, 0.5)',
       },
       
       // =======================================================================
@@ -235,18 +140,7 @@ export default {
         'fade-in': 'fadeIn 0.2s ease-out',
         'slide-up': 'slideUp 0.3s ease-out',
         'slide-down': 'slideDown 0.3s ease-out',
-        'blob': 'blob 8s ease-in-out infinite',
-        'blob-delay-2': 'blob 8s ease-in-out 2s infinite',
-        'blob-delay-4': 'blob 8s ease-in-out 4s infinite',
         'countdown-pulse': 'countdownPulse 120ms ease-out',
-        'glow-pulse': 'glowPulse 2s ease-in-out infinite',
-        // Hero figure cinematic pulse
-        'hero-pulse': 'heroPulse 8s infinite ease-in-out',
-        // Orange load pulse - brightness flash on mount
-        'orange-pulse': 'orangePulse 0.6s ease-out',
-        'orange-pulse-delay-1': 'orangePulse 0.6s ease-out 0.1s',
-        'orange-pulse-delay-2': 'orangePulse 0.6s ease-out 0.2s',
-        'orange-pulse-delay-3': 'orangePulse 0.6s ease-out 0.3s',
       },
       keyframes: {
         fadeIn: {
@@ -261,39 +155,10 @@ export default {
           '0%': { opacity: '0', transform: 'translateY(-10px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
-        blob: {
-          '0%, 100%': { 
-            transform: 'scale(1) translate(0, 0)',
-            opacity: '0.6',
-          },
-          '33%': { 
-            transform: 'scale(1.05) translate(10px, -10px)',
-            opacity: '0.7',
-          },
-          '66%': { 
-            transform: 'scale(0.95) translate(-5px, 5px)',
-            opacity: '0.5',
-          },
-        },
         countdownPulse: {
           '0%': { transform: 'scale(1)' },
           '50%': { transform: 'scale(1.05)' },
           '100%': { transform: 'scale(1)' },
-        },
-        glowPulse: {
-          '0%, 100%': { opacity: '0.6' },
-          '50%': { opacity: '1' },
-        },
-        // Hero figure cinematic pulse
-        heroPulse: {
-          '0%, 100%': { opacity: '0.96' },
-          '50%': { opacity: '1' },
-        },
-        // Orange brightness pulse for load animations
-        orangePulse: {
-          '0%': { filter: 'brightness(1)', opacity: '0.8' },
-          '50%': { filter: 'brightness(1.3)', opacity: '1' },
-          '100%': { filter: 'brightness(1)', opacity: '1' },
         },
       },
       
@@ -304,11 +169,9 @@ export default {
         'fast': '150ms',
         'normal': '200ms',
         'slow': '300ms',
-        'war-bar': '800ms',
       },
       
       transitionTimingFunction: {
-        'war-bar': 'cubic-bezier(0.16, 1, 0.3, 1)',
         'bounce-custom': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
       

@@ -1,15 +1,15 @@
 /**
  * Countdown Component
- * A themed countdown timer with allegiance-aware styling.
+ * A countdown timer component.
  * Dark Mode Cyber Arena Theme
  * 
  * Features:
  * - Huge JetBrains Mono numerals
- * - Seconds digit changes color based on user allegiance
+ * - Seconds digit with neutral styling
  * - Radial pulse animation on every tick
  * 
  * @example
- * <Countdown targetDate="2024-12-31T23:59:59" allegiance="human" />
+ * <Countdown targetDate="2024-12-31T23:59:59" />
  * <Countdown hours={2} minutes={30} seconds={0} />
  */
 
@@ -22,7 +22,6 @@ import { cn } from '../../lib/design-system';
  * @property {number} [hours] - Static hours (if no targetDate)
  * @property {number} [minutes] - Static minutes (if no targetDate)
  * @property {number} [seconds] - Static seconds (if no targetDate)
- * @property {'ai' | 'human' | 'neutral'} [allegiance='neutral'] - User's allegiance for color
  * @property {'sm' | 'md' | 'lg' | 'xl'} [size='lg']
  * @property {boolean} [showLabels=true]
  * @property {boolean} [showDays=true]
@@ -101,15 +100,13 @@ const pad = (num) => String(num).padStart(2, '0');
  * DigitDisplay - Individual digit display with premium styling
  * White numbers with soft orange glow (scales better on retina than hard stroke)
  */
-const DigitDisplay = ({ value, label, isSeconds, allegiance, size, isPulsing, heroMode }) => {
+const DigitDisplay = ({ value, label, isSeconds, size, isPulsing, heroMode }) => {
   const sizeConfig = SIZE_CONFIG[size];
   const paddedValue = pad(value);
   const isHeroSize = size === 'hero';
 
-  // Get soft glow for seconds based on allegiance
+  // Get soft glow for seconds (neutral)
   const getSecondsGlow = () => {
-    if (allegiance === 'ai') return '0 0 20px rgba(0, 229, 255, 0.6), 0 0 40px rgba(0, 229, 255, 0.3)';
-    if (allegiance === 'human') return '0 0 20px rgba(255, 69, 0, 0.6), 0 0 40px rgba(255, 69, 0, 0.3)';
     return '0 0 20px rgba(255, 69, 0, 0.5), 0 0 40px rgba(255, 69, 0, 0.25)';
   };
 
@@ -200,7 +197,6 @@ const Countdown = forwardRef(({
   hours: staticHours,
   minutes: staticMinutes,
   seconds: staticSeconds,
-  allegiance = 'neutral',
   size = 'lg',
   showLabels = true,
   showDays = true,
@@ -274,7 +270,6 @@ const Countdown = forwardRef(({
           <DigitDisplay
             value={timeLeft.days}
             label={showLabels ? 'Days' : undefined}
-            allegiance={allegiance}
             size={size}
             heroMode={heroMode}
           />
@@ -286,7 +281,6 @@ const Countdown = forwardRef(({
       <DigitDisplay
         value={timeLeft.hours}
         label={showLabels ? 'Hours' : undefined}
-        allegiance={allegiance}
         size={size}
         heroMode={heroMode}
       />
@@ -296,7 +290,6 @@ const Countdown = forwardRef(({
       <DigitDisplay
         value={timeLeft.minutes}
         label={showLabels ? 'Min' : undefined}
-        allegiance={allegiance}
         size={size}
         heroMode={heroMode}
       />
@@ -307,7 +300,6 @@ const Countdown = forwardRef(({
         value={timeLeft.seconds}
         label={showLabels ? 'Sec' : undefined}
         isSeconds={true}
-        allegiance={allegiance}
         size={size}
         isPulsing={isPulsing}
         heroMode={heroMode}
@@ -323,7 +315,6 @@ Countdown.displayName = 'Countdown';
  */
 export const CompactCountdown = forwardRef(({
   targetDate,
-  allegiance = 'neutral',
   showDays = true,
   className,
   ...props
@@ -340,12 +331,8 @@ export const CompactCountdown = forwardRef(({
     return () => clearInterval(timer);
   }, [targetDate]);
 
-  // Get seconds color based on allegiance
-  const secondsColor = allegiance === 'ai' 
-    ? 'text-ai' 
-    : allegiance === 'human' 
-      ? 'text-human' 
-      : 'text-brand';
+  // Neutral seconds color
+  const secondsColor = 'text-text-secondary';
 
   return (
     <span
@@ -378,7 +365,6 @@ CompactCountdown.displayName = 'CompactCountdown';
  */
 export const MiniCountdown = forwardRef(({
   targetDate,
-  allegiance = 'neutral',
   className,
   ...props
 }, ref) => {
@@ -394,7 +380,7 @@ export const MiniCountdown = forwardRef(({
     return () => clearInterval(timer);
   }, [targetDate]);
 
-  const secondsColor = allegiance === 'ai' ? 'text-ai' : allegiance === 'human' ? 'text-human' : 'text-brand';
+  const secondsColor = 'text-text-secondary';
 
   return (
     <span

@@ -1,7 +1,5 @@
 import { useState, useMemo, memo, useCallback } from 'react';
 import {
-  Heart,
-  Cpu,
   Star,
   Search,
   Grid3X3,
@@ -14,7 +12,7 @@ import {
   Users,
   Filter,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 // ============================================================================
@@ -23,42 +21,21 @@ import AppLayout from './AppLayout';
 
 const MAX_VOTES = 5;
 
-const FILTER_OPTIONS = [
-  { id: 'all', label: 'All Projects' },
-  { id: 'human', label: 'Human Side', icon: Heart },
-  { id: 'ai', label: 'AI Side', icon: Cpu },
-];
-
 // ============================================================================
 // MEMOIZED PROJECT CARD COMPONENT
 // ============================================================================
 
 const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }) {
-  const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
   const submission = team.submission;
 
   return (
-    <div
-      className={`group relative bg-white border-2 transition-all duration-300 hover:shadow-lg overflow-hidden
-        ${team.side === 'ai' ? 'border-dashed' : ''} ${config.borderRadius}`}
-      style={{ borderColor: config.borderColor }}
-    >
+    <div className="group relative bg-white border-2 border-gray-200 transition-all duration-300 hover:shadow-lg overflow-hidden rounded-lg">
       {/* Header with team info */}
-      <div
-        className="px-4 py-3 border-b"
-        style={{ borderColor: config.borderColor, backgroundColor: config.bgColor }}
-      >
+      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            {team.side === 'ai' ? (
-              <Cpu className="w-4 h-4" style={{ color: config.color }} />
-            ) : (
-              <Heart className="w-4 h-4" style={{ color: config.color }} />
-            )}
-            <span
-              className="text-xs font-bold uppercase tracking-wide"
-              style={{ color: config.color }}
-            >
+            <Users className="w-4 h-4 text-gray-600" />
+            <span className="text-xs font-bold uppercase tracking-wide text-gray-700">
               {team.name}
             </span>
           </div>
@@ -157,26 +134,17 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
 // ============================================================================
 
 const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) {
-  const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
   const submission = team.submission;
 
   return (
     <div
-      className={`group bg-white border-2 transition-all duration-200 hover:shadow-md
-        ${team.side === 'ai' ? 'border-dashed' : ''}`}
-      style={{ borderColor: isVoted ? 'rgb(251, 191, 36)' : config.borderColor }}
+      className={`group bg-white border-2 border-gray-200 transition-all duration-200 hover:shadow-md`}
+      style={{ borderColor: isVoted ? 'rgb(251, 191, 36)' : undefined }}
     >
       <div className="flex items-center gap-4 p-4">
-        {/* Side indicator */}
-        <div
-          className={`w-12 h-12 flex-shrink-0 flex items-center justify-center ${config.borderRadius}`}
-          style={{ backgroundColor: config.bgColor }}
-        >
-          {team.side === 'ai' ? (
-            <Cpu className="w-6 h-6" style={{ color: config.color }} />
-          ) : (
-            <Heart className="w-6 h-6" style={{ color: config.color }} />
-          )}
+        {/* Team indicator */}
+        <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100">
+          <Users className="w-6 h-6 text-gray-600" />
         </div>
 
         {/* Project info */}
@@ -185,10 +153,7 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
             <h3 className="text-base font-black text-gray-900 truncate">
               {submission?.projectName || 'Untitled Project'}
             </h3>
-            <span
-              className="text-xs font-bold px-2 py-0.5"
-              style={{ backgroundColor: config.bgColor, color: config.color }}
-            >
+            <span className="text-xs font-bold px-2 py-0.5 bg-gray-100 text-gray-700 rounded">
               {team.name}
             </span>
           </div>
@@ -267,7 +232,6 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
 function Voting({
   user,
   teams = [],
-  allegianceStyle,
   onNavigate,
   userVotes = [],
   onVote,
@@ -275,7 +239,7 @@ function Voting({
   eventPhase,
 }) {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
-  const [filterSide, setFilterSide] = useState('all');
+  const [filterSide, setFilterSide] = useState('all'); // Keep for compatibility but don't use
   const [searchQuery, setSearchQuery] = useState('');
 
   // Get only submitted projects
@@ -287,10 +251,7 @@ function Voting({
   const filteredProjects = useMemo(() => {
     let result = submittedProjects;
 
-    // Filter by side
-    if (filterSide !== 'all') {
-      result = result.filter((team) => team.side === filterSide);
-    }
+    // No side filtering
 
     // Filter by search
     if (searchQuery.trim()) {
@@ -304,7 +265,7 @@ function Voting({
     }
 
     return result;
-  }, [submittedProjects, filterSide, searchQuery]);
+  }, [submittedProjects, searchQuery]);
 
   // Vote tracking
   const votesUsed = userVotes.length;
@@ -327,7 +288,7 @@ function Voting({
       <Sparkles className="w-16 h-16 mx-auto mb-4 text-gray-300" />
       <h3 className="text-xl font-bold text-gray-900 mb-2">No Projects Found</h3>
       <p className="text-gray-600 max-w-md mx-auto">
-        {searchQuery || filterSide !== 'all'
+        {searchQuery
           ? 'Try adjusting your filters or search query.'
           : 'No projects have been submitted yet. Check back soon!'}
       </p>
@@ -341,7 +302,6 @@ function Voting({
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="voting"
@@ -403,30 +363,6 @@ function Voting({
             />
           </div>
 
-          {/* Side Filter */}
-          <div className="flex items-center gap-2">
-            <Filter className="w-4 h-4 text-gray-400" />
-            {FILTER_OPTIONS.map((option) => {
-              const Icon = option.icon;
-              const isActive = filterSide === option.id;
-              return (
-                <button
-                  key={option.id}
-                  type="button"
-                  onClick={() => setFilterSide(option.id)}
-                  className={`px-3 py-2 text-xs font-bold transition-all flex items-center gap-1
-                    ${
-                      isActive
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'
-                    }`}
-                >
-                  {Icon && <Icon className="w-3 h-3" />}
-                  {option.label}
-                </button>
-              );
-            })}
-          </div>
 
           {/* View Toggle */}
           <div className="flex items-center border-2 border-gray-200 bg-white">
@@ -456,7 +392,7 @@ function Voting({
         {/* Results count */}
         <div className="mb-4 text-sm text-gray-500">
           {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}{' '}
-          {searchQuery || filterSide !== 'all' ? 'found' : 'submitted'}
+          {searchQuery ? 'found' : 'submitted'}
         </div>
 
         {/* Projects Display */}

@@ -16,14 +16,13 @@ export { default as Card, useCardContext } from './Card';
 export { 
   default as Badge, 
   SkillBadge, 
-  AllegianceBadge, 
   StatusBadge, 
   RoleBadge, 
   CountBadge,
   LiveBadge,
   // New capsule badge system
   HeartbeatDot,
-  AllegianceCapsule,
+  UserCapsule,
   SkillChip,
   StatusCapsule,
   CallsignBadge,
@@ -40,16 +39,14 @@ export {
 // Avatar
 export { 
   default as Avatar, 
-  AvatarGroup, 
-  AllegianceAvatar 
+  AvatarGroup
 } from './Avatar';
 
 // Progress
 export { 
   default as Progress, 
   CircularProgress, 
-  ProgressSteps,
-  WarStatusBar 
+  ProgressSteps
 } from './Progress';
 
 // Modal
@@ -76,5 +73,3 @@ export {
   MiniCountdown 
 } from './Countdown';
 
-// Allegiance Toggle
-export { default as AllegianceToggle } from './AllegianceToggle';

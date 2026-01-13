@@ -1,33 +1,23 @@
 /**
  * Design System Utilities
- * Theme helpers, allegiance configuration, and utility functions
- * Dark Mode Cyber Arena Theme
+ * Neutral theme helpers and utility functions
  */
 
-import { Heart, Cpu, Scale, Eye } from 'lucide-react';
+import { Scale, Eye } from 'lucide-react';
 
 // =============================================================================
 // COLOR CONSTANTS
 // =============================================================================
 
 export const COLORS = {
-  // Brand - Orange is King
-  brand: '#FF4500',
-  brandHover: '#FF7033',
-  brandPressed: '#CC3700',
-  amber: '#FF8A00',
-  orangeDark: '#CC3700',
-  
   // Backgrounds
-  bgPrimary: '#0B0A08',        // Warm black
+  bgPrimary: '#0B0A08',
   bgCard: '#111111',
   bgElevated: '#1A1A1A',
-  bgGlass: 'rgba(15, 15, 15, 0.72)',
   
   // Borders
   border: '#1F1F1F',
   borderStrong: '#2A2A2A',
-  borderGlass: 'rgba(255, 100, 0, 0.18)',  // Warm orange-tinted
   
   // Text Hierarchy
   textPrimary: '#FFFFFF',
@@ -35,10 +25,7 @@ export const COLORS = {
   textSecondary: '#AAAAAA',
   textMuted: '#888888',
   
-  // Team colors - Orange vs Cyan
-  human: '#FF4500',            // Brand orange
-  humanGradientEnd: '#FF6200',
-  ai: '#00E5FF',               // Electric cyan
+  // Neutral
   neutral: '#888888',
   
   // Status
@@ -48,62 +35,11 @@ export const COLORS = {
 };
 
 // =============================================================================
-// ALLEGIANCE CONFIGURATION
-// Centralized styling for Human/AI/Neutral themes
+// ROLE CONFIGURATION
+// Centralized styling for Neutral and Observer roles
 // =============================================================================
 
-export const ALLEGIANCE_CONFIG = {
-  human: {
-    id: 'human',
-    label: 'Human',
-    color: '#FF4500',              // Brand orange
-    bgColor: 'rgba(255, 69, 0, 0.1)',
-    borderColor: '#FF4500',
-    textColor: '#FF4500',
-    glowColor: 'rgba(255, 69, 0, 0.4)',
-    gradientEnd: '#FF6200',
-    font: 'font-sans',
-    borderRadius: 'rounded-card',
-    borderStyle: 'border-l-4',
-    icon: Heart,
-    // Tailwind classes for dark theme
-    classes: {
-      bg: 'bg-human',
-      bgLight: 'bg-human/10',
-      text: 'text-human',
-      textLight: 'text-human/80',
-      border: 'border-human',
-      borderLight: 'border-human/30',
-      ring: 'ring-human',
-      glow: 'shadow-glow-human',
-      glowStrong: 'shadow-glow-human-strong',
-    },
-  },
-  ai: {
-    id: 'ai',
-    label: 'AI',
-    color: '#00E5FF',              // Electric cyan
-    bgColor: 'rgba(0, 229, 255, 0.1)',
-    borderColor: '#00E5FF',
-    textColor: '#00E5FF',
-    glowColor: 'rgba(0, 229, 255, 0.4)',
-    font: 'font-sans',             // Unified with Human mode
-    borderRadius: 'rounded-card',
-    borderStyle: 'border-l-4',
-    icon: Cpu,
-    // Tailwind classes for dark theme
-    classes: {
-      bg: 'bg-ai',
-      bgLight: 'bg-ai/10',
-      text: 'text-ai',
-      textLight: 'text-ai/80',
-      border: 'border-ai',
-      borderLight: 'border-ai/30',
-      ring: 'ring-ai',
-      glow: 'shadow-glow-ai',
-      glowStrong: 'shadow-glow-ai-strong',
-    },
-  },
+export const ROLE_CONFIG = {
   neutral: {
     id: 'neutral',
     label: 'Neutral',
@@ -111,12 +47,10 @@ export const ALLEGIANCE_CONFIG = {
     bgColor: 'rgba(136, 136, 136, 0.1)',
     borderColor: '#888888',
     textColor: '#AAAAAA',
-    glowColor: 'transparent',
     font: 'font-sans',
     borderRadius: 'rounded-card',
     borderStyle: 'border-l-4',
     icon: Scale,
-    // Tailwind classes for dark theme
     classes: {
       bg: 'bg-neutral-600',
       bgLight: 'bg-neutral-800',
@@ -125,8 +59,6 @@ export const ALLEGIANCE_CONFIG = {
       border: 'border-arena-border',
       borderLight: 'border-arena-border',
       ring: 'ring-neutral-600',
-      glow: '',
-      glowStrong: '',
     },
   },
   observer: {
@@ -136,12 +68,10 @@ export const ALLEGIANCE_CONFIG = {
     bgColor: 'rgba(255, 255, 255, 0.1)',
     borderColor: '#FFFFFF',
     textColor: '#FFFFFF',
-    glowColor: 'rgba(255, 255, 255, 0.3)',
     font: 'font-sans',
     borderRadius: 'rounded-card',
     borderStyle: 'border-l-4',
     icon: Eye,
-    // Tailwind classes for dark theme
     classes: {
       bg: 'bg-white',
       bgLight: 'bg-white/10',
@@ -150,8 +80,6 @@ export const ALLEGIANCE_CONFIG = {
       border: 'border-white',
       borderLight: 'border-white/30',
       ring: 'ring-white',
-      glow: 'shadow-glow-white',
-      glowStrong: 'shadow-glow-white-strong',
     },
   },
 };
@@ -161,21 +89,21 @@ export const ALLEGIANCE_CONFIG = {
 // =============================================================================
 
 /**
- * Get allegiance configuration by key
- * @param {string} allegiance - 'human' | 'ai' | 'neutral'
- * @returns {object} Allegiance configuration object
+ * Get role configuration by key
+ * @param {string} role - 'neutral' | 'observer'
+ * @returns {object} Role configuration object
  */
-export const getAllegianceConfig = (allegiance) => {
-  return ALLEGIANCE_CONFIG[allegiance] || ALLEGIANCE_CONFIG.neutral;
+export const getRoleConfig = (role) => {
+  return ROLE_CONFIG[role] || ROLE_CONFIG.neutral;
 };
 
 /**
- * Get the icon component for an allegiance
- * @param {string} allegiance - 'human' | 'ai' | 'neutral'
+ * Get the icon component for a role
+ * @param {string} role - 'neutral' | 'observer'
  * @returns {React.Component} Lucide icon component
  */
-export const getAllegianceIcon = (allegiance) => {
-  const config = getAllegianceConfig(allegiance);
+export const getRoleIcon = (role) => {
+  const config = getRoleConfig(role);
   return config.icon;
 };
 
@@ -189,22 +117,22 @@ export const cn = (...classes) => {
 };
 
 /**
- * Get border radius class based on allegiance
- * @param {string} allegiance - 'human' | 'ai' | 'neutral'
+ * Get border radius class based on role
+ * @param {string} role - 'neutral' | 'observer'
  * @returns {string} Tailwind border-radius class
  */
-export const getAllegianceBorderRadius = (allegiance) => {
-  const config = getAllegianceConfig(allegiance);
+export const getRoleBorderRadius = (role) => {
+  const config = getRoleConfig(role);
   return config.borderRadius;
 };
 
 /**
- * Get font class based on allegiance
- * @param {string} allegiance - 'human' | 'ai' | 'neutral'
+ * Get font class based on role
+ * @param {string} role - 'neutral' | 'observer'
  * @returns {string} Tailwind font-family class
  */
-export const getAllegianceFont = (allegiance) => {
-  const config = getAllegianceConfig(allegiance);
+export const getRoleFont = (role) => {
+  const config = getRoleConfig(role);
   return config.font;
 };
 
@@ -271,10 +199,10 @@ export const SIZE_CLASSES = {
 
 export const BUTTON_VARIANTS = {
   primary: {
-    base: 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white border border-brand-dark shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]',
-    hover: 'hover:from-[#FF9966] hover:to-[#FF5722] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_4px_12px_rgba(0,0,0,0.4)] hover:-translate-y-1',
-    active: 'active:from-[#FF7733] active:to-[#E64A19] active:translate-y-0',
-    focus: 'focus-visible:ring-brand',
+    base: 'bg-arena-elevated text-white border border-arena-border',
+    hover: 'hover:bg-arena-card hover:-translate-y-0.5',
+    active: 'active:bg-arena-elevated active:translate-y-0',
+    focus: 'focus-visible:ring-text-secondary',
   },
   secondary: {
     base: 'bg-transparent text-white border-2 border-arena-border',
@@ -289,65 +217,27 @@ export const BUTTON_VARIANTS = {
     focus: 'focus-visible:ring-text-secondary',
   },
   danger: {
-    base: 'bg-error text-white border border-brand-dark',
-    hover: 'hover:bg-brand-hover hover:shadow-inner-glow hover:-translate-y-1',
-    active: 'active:bg-brand-pressed active:translate-y-0',
+    base: 'bg-error text-white border border-arena-border',
+    hover: 'hover:bg-error/90 hover:-translate-y-0.5',
+    active: 'active:bg-error/80 active:translate-y-0',
     focus: 'focus-visible:ring-error',
-  },
-  human: {
-    base: 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white border border-brand-dark rounded-card shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]',
-    hover: 'hover:from-[#FF9966] hover:to-[#FF5722] hover:shadow-[inset_0_1px_0_rgba(255,255,255,0.2),0_0_20px_rgba(255,69,0,0.4)] hover:-translate-y-1',
-    active: 'active:from-[#FF7733] active:to-[#E64A19] active:translate-y-0',
-    focus: 'focus-visible:ring-human',
-  },
-  'human-ghost': {
-    base: 'bg-transparent text-human border border-human rounded-card',
-    hover: 'hover:bg-human/10 hover:shadow-glow-human hover:-translate-y-0.5',
-    active: 'active:bg-human/20 active:translate-y-0',
-    focus: 'focus-visible:ring-human',
-  },
-  ai: {
-    base: 'bg-ai text-arena-black border-2 border-ai rounded-card',
-    hover: 'hover:bg-ai/90 hover:shadow-glow-ai-strong hover:-translate-y-1',
-    active: 'active:bg-ai/80 active:translate-y-0',
-    focus: 'focus-visible:ring-ai',
-  },
-  'ai-ghost': {
-    base: 'bg-transparent text-ai border border-ai rounded-card',
-    hover: 'hover:bg-ai/10 hover:shadow-glow-ai hover:-translate-y-0.5',
-    active: 'active:bg-ai/20 active:translate-y-0',
-    focus: 'focus-visible:ring-ai',
-  },
-  accent: {
-    base: 'bg-success text-arena-black border-2 border-success',
-    hover: 'hover:bg-success/90 hover:-translate-y-0.5',
-    active: 'active:bg-success/80 active:translate-y-0',
-    focus: 'focus-visible:ring-success',
   },
 };
 
 export const CARD_VARIANTS = {
-  default: 'glass-card rounded-card',
-  outlined: 'glass-card border-2 border-arena-border-strong rounded-card',
+  default: 'bg-arena-card border border-arena-border rounded-card',
+  outlined: 'bg-arena-card border-2 border-arena-border-strong rounded-card',
   elevated: 'bg-arena-elevated border border-arena-border rounded-card shadow-lg',
   ghost: 'bg-transparent border border-transparent rounded-card',
-  human: 'glass-card-human border-l-4 border-l-human rounded-card',
-  ai: 'glass-card border-l-4 border-l-ai rounded-card',
-  accent: 'glass-card-human border-l-4 border-l-brand rounded-card',
-  special: 'glass-card-human border-2 border-brand rounded-card',
 };
 
 export const BADGE_VARIANTS = {
   default: 'bg-arena-elevated text-text-secondary border border-arena-border',
   outline: 'bg-transparent text-text-secondary border border-arena-border-strong',
-  human: 'bg-human/10 text-human border border-human/30',
-  ai: 'bg-ai/10 text-ai border border-ai/30',
   neutral: 'bg-arena-elevated text-text-muted border border-arena-border',
   success: 'bg-success/10 text-success border border-success/30',
   warning: 'bg-warning/10 text-warning border border-warning/30',
   error: 'bg-error/10 text-error border border-error/30',
-  accent: 'bg-brand/10 text-brand border border-brand/30',
-  special: 'bg-brand/20 text-brand border border-brand/50',
 };
 
 // =============================================================================
@@ -356,11 +246,11 @@ export const BADGE_VARIANTS = {
 
 export default {
   COLORS,
-  ALLEGIANCE_CONFIG,
-  getAllegianceConfig,
-  getAllegianceIcon,
-  getAllegianceBorderRadius,
-  getAllegianceFont,
+  ROLE_CONFIG,
+  getRoleConfig,
+  getRoleIcon,
+  getRoleBorderRadius,
+  getRoleFont,
   formatNameWithCallsign,
   cn,
   SIZES,

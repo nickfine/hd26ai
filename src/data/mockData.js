@@ -1,5 +1,4 @@
 // Mock Data for HackDay Companion App
-// Theme: AI vs Human
 
 // ============================================================================
 // SKILLS
@@ -26,21 +25,13 @@ export const SKILLS = [
 // Recommended image size: 256x256 or 512x512 PNG
 
 export const AVATARS = {
-  human: [
-    { id: 'human-1', src: '/avatars/human/human-1.png', name: 'Human Avatar 1' },
-    { id: 'human-2', src: '/avatars/human/human-2.png', name: 'Human Avatar 2' },
-    { id: 'human-3', src: '/avatars/human/human-3.png', name: 'Human Avatar 3' },
-    { id: 'human-4', src: '/avatars/human/human-4.png', name: 'Human Avatar 4' },
-    { id: 'human-5', src: '/avatars/human/human-5.png', name: 'Human Avatar 5' },
-    { id: 'human-6', src: '/avatars/human/human-6.png', name: 'Human Avatar 6' },
-  ],
-  ai: [
-    { id: 'ai-1', src: '/avatars/ai/ai-1.png', name: 'AI Avatar 1' },
-    { id: 'ai-2', src: '/avatars/ai/ai-2.png', name: 'AI Avatar 2' },
-    { id: 'ai-3', src: '/avatars/ai/ai-3.png', name: 'AI Avatar 3' },
-    { id: 'ai-4', src: '/avatars/ai/ai-4.png', name: 'AI Avatar 4' },
-    { id: 'ai-5', src: '/avatars/ai/ai-5.png', name: 'AI Avatar 5' },
-    { id: 'ai-6', src: '/avatars/ai/ai-6.png', name: 'AI Avatar 6' },
+  default: [
+    { id: 'avatar-1', src: '/avatars/default/avatar-1.png', name: 'Avatar 1' },
+    { id: 'avatar-2', src: '/avatars/default/avatar-2.png', name: 'Avatar 2' },
+    { id: 'avatar-3', src: '/avatars/default/avatar-3.png', name: 'Avatar 3' },
+    { id: 'avatar-4', src: '/avatars/default/avatar-4.png', name: 'Avatar 4' },
+    { id: 'avatar-5', src: '/avatars/default/avatar-5.png', name: 'Avatar 5' },
+    { id: 'avatar-6', src: '/avatars/default/avatar-6.png', name: 'Avatar 6' },
   ],
 };
 
@@ -193,7 +184,7 @@ export const JUDGE_CRITERIA = [
   {
     id: 'theme',
     label: 'Theme Alignment',
-    description: 'How well it fits Human vs AI theme',
+    description: 'How well it fits the hackathon theme',
     maxScore: 10,
     weight: 1,
   },
@@ -211,22 +202,6 @@ export const AWARDS = {
     description: 'Highest combined judge scores',
     determinedBy: 'judges',
     filter: 'all',
-  },
-  best_human: {
-    id: 'best_human',
-    label: 'Best Human Team',
-    emoji: '💚',
-    description: 'Top human-side project by judge scores',
-    determinedBy: 'judges',
-    filter: 'human',
-  },
-  best_ai: {
-    id: 'best_ai',
-    label: 'Best AI Team',
-    emoji: '🤖',
-    description: 'Top AI-side project by judge scores',
-    determinedBy: 'judges',
-    filter: 'ai',
   },
   peoples_champion: {
     id: 'peoples_champion',
@@ -249,7 +224,6 @@ export const MOCK_USERS = {
       name: 'Alex Chen',
       email: 'alex.chen@company.com',
       skills: ['Backend Development', 'DevOps'],
-      allegiance: 'ai',
       role: 'participant',
     },
     {
@@ -257,7 +231,6 @@ export const MOCK_USERS = {
       name: 'Morgan Riley',
       email: 'morgan.riley@company.com',
       skills: ['UI/UX Design', 'Product Management'],
-      allegiance: 'human',
       role: 'participant',
     },
     {
@@ -265,7 +238,6 @@ export const MOCK_USERS = {
       name: 'Jamie Foster',
       email: 'jamie.foster@company.com',
       skills: ['Product Management', 'UI/UX Design'],
-      allegiance: 'human',
       role: 'participant',
     },
   ],
@@ -275,7 +247,6 @@ export const MOCK_USERS = {
       name: 'Sarah Mitchell',
       email: 'sarah.mitchell@company.com',
       skills: ['Product Management'],
-      allegiance: 'human',
       role: 'ambassador',
       bio: 'Recruiting for Team Human! Join the resistance against AI dominance.',
     },
@@ -284,7 +255,6 @@ export const MOCK_USERS = {
       name: 'Marcus Wong',
       email: 'marcus.wong@company.com',
       skills: ['Machine Learning'],
-      allegiance: 'ai',
       role: 'ambassador',
       bio: 'The future is AI. Join the winning side.',
     },
@@ -295,7 +265,6 @@ export const MOCK_USERS = {
       name: 'Dr. Elena Vasquez',
       email: 'elena.vasquez@company.com',
       skills: [],
-      allegiance: 'neutral',
       role: 'judge',
       title: 'VP of Engineering',
     },
@@ -304,7 +273,6 @@ export const MOCK_USERS = {
       name: 'James Okonkwo',
       email: 'james.okonkwo@company.com',
       skills: [],
-      allegiance: 'neutral',
       role: 'judge',
       title: 'Chief Innovation Officer',
     },
@@ -313,7 +281,6 @@ export const MOCK_USERS = {
       name: 'Priya Sharma',
       email: 'priya.sharma@company.com',
       skills: [],
-      allegiance: 'neutral',
       role: 'judge',
       title: 'Head of Product',
     },
@@ -324,7 +291,6 @@ export const MOCK_USERS = {
       name: 'HackDay Admin',
       email: 'admin@company.com',
       skills: [],
-      allegiance: 'neutral',
       role: 'admin',
     },
   ],
@@ -334,7 +300,6 @@ export const MOCK_TEAMS = [
   {
     id: 1,
     name: 'Neural Nexus',
-    side: 'ai',
     description: 'Building autonomous code review agents',
     lookingFor: ['Backend Development', 'Machine Learning', 'DevOps'],
     maxMembers: 5,
@@ -395,7 +360,6 @@ export const MOCK_TEAMS = [
   {
     id: 2,
     name: 'Human Touch',
-    side: 'human',
     description: 'Crafting intuitive interfaces that AI cannot replicate',
     lookingFor: ['UI/UX Design', 'Frontend Development'],
     maxMembers: 4,
@@ -445,7 +409,6 @@ export const MOCK_TEAMS = [
   {
     id: 3,
     name: 'The Resistance',
-    side: 'human',
     description: 'Proving human creativity trumps machine efficiency',
     lookingFor: ['Product Management', 'Frontend Development', 'Mobile Development'],
     maxMembers: 6,
@@ -483,7 +446,6 @@ export const MOCK_TEAMS = [
   {
     id: 4,
     name: 'Synthetic Minds',
-    side: 'ai',
     description: 'Leveraging LLMs to solve impossible problems',
     lookingFor: ['Data Science', 'Backend Development'],
     maxMembers: 4,
@@ -519,7 +481,6 @@ export const MOCK_TEAMS = [
   {
     id: 5,
     name: 'Carbon Coalition',
-    side: 'human',
     description: 'Old-school engineering with a human heart',
     lookingFor: ['Hardware/IoT', 'Security', 'Backend Development'],
     maxMembers: 5,
@@ -548,7 +509,6 @@ export const MOCK_TEAMS = [
   {
     id: 6,
     name: 'Digital Overlords',
-    side: 'ai',
     description: 'Why write code when AI can write it for you?',
     lookingFor: ['Machine Learning', 'Data Science', 'DevOps'],
     maxMembers: 4,
@@ -575,7 +535,6 @@ export const MOCK_TEAMS = [
   {
     id: 7,
     name: 'Analog Army',
-    side: 'human',
     description: 'Keeping it real in a synthetic world',
     lookingFor: ['UI/UX Design', 'Product Management'],
     maxMembers: 3,
@@ -603,7 +562,6 @@ export const MOCK_TEAMS = [
   {
     id: 8,
     name: 'Quantum Collective',
-    side: 'ai',
     description: 'AI-first development for the next generation',
     lookingFor: ['Frontend Development', 'Backend Development', 'Machine Learning'],
     maxMembers: 5,
@@ -657,7 +615,6 @@ export const MOCK_FREE_AGENTS = [
     id: 5001,
     name: 'Quinn Harper',
     skills: ['Frontend Development', 'UI/UX Design'],
-    allegiance: 'human',
     bio: 'Designer who codes. Looking for a team that values aesthetics and user experience.',
     teamInvites: [],
     autoAssignOptIn: false,
@@ -666,7 +623,6 @@ export const MOCK_FREE_AGENTS = [
     id: 5002,
     name: 'Skyler Vance',
     skills: ['Machine Learning', 'Data Science'],
-    allegiance: 'ai',
     bio: 'Data scientist with a passion for neural networks. Ready to help your AI project dominate.',
     teamInvites: [],
     autoAssignOptIn: false,
@@ -675,7 +631,6 @@ export const MOCK_FREE_AGENTS = [
     id: 5003,
     name: 'River Chen',
     skills: ['Backend Development', 'DevOps', 'Security'],
-    allegiance: 'neutral',
     bio: 'Full-stack engineer. I go where the interesting problems are, regardless of side.',
     teamInvites: [],
     autoAssignOptIn: false,
@@ -684,7 +639,6 @@ export const MOCK_FREE_AGENTS = [
     id: 5004,
     name: 'Dakota Wells',
     skills: ['Mobile Development', 'Frontend Development'],
-    allegiance: 'human',
     bio: 'Cross-platform mobile dev. I believe in crafting apps with a human touch.',
     teamInvites: [],
     autoAssignOptIn: false,
@@ -693,7 +647,6 @@ export const MOCK_FREE_AGENTS = [
     id: 5005,
     name: 'Ash Nakamura',
     skills: ['Product Management', 'UI/UX Design'],
-    allegiance: 'ai',
     bio: 'Product strategist embracing AI-first design. Let machines do the heavy lifting.',
     teamInvites: [],
     autoAssignOptIn: false,
@@ -702,7 +655,6 @@ export const MOCK_FREE_AGENTS = [
     id: 5006,
     name: 'Emery Blake',
     skills: ['Hardware/IoT', 'Backend Development'],
-    allegiance: 'human',
     bio: 'Hardware hacker at heart. Building tangible things in an increasingly digital world.',
     teamInvites: [],
     autoAssignOptIn: false,
@@ -711,7 +663,6 @@ export const MOCK_FREE_AGENTS = [
     id: 5007,
     name: 'Jules Thornton',
     skills: ['Machine Learning', 'Backend Development', 'Data Science'],
-    allegiance: 'ai',
     bio: 'LLM enthusiast. If it involves prompts and parameters, count me in.',
     teamInvites: [],
     autoAssignOptIn: false,
@@ -720,14 +671,13 @@ export const MOCK_FREE_AGENTS = [
     id: 5008,
     name: 'Rowan Kim',
     skills: ['Frontend Development', 'Backend Development'],
-    allegiance: 'neutral',
     bio: 'Versatile full-stack dev. Show me your vision and I\'ll help you build it.',
     teamInvites: [],
     autoAssignOptIn: false,
   },
 ];
 
-// Re-export ALLEGIANCE_CONFIG from design-system for backwards compatibility
+// Re-export ROLE_CONFIG from design-system for backwards compatibility
 // The canonical source is now in src/lib/design-system.js
-export { ALLEGIANCE_CONFIG } from '../lib/design-system';
+export { ROLE_CONFIG } from '../lib/design-system';
 

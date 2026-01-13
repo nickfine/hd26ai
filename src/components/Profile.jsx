@@ -1,8 +1,5 @@
 import { useState } from 'react';
 import {
-  Cpu,
-  Heart,
-  Scale,
   Crown,
   Bell,
   ChevronRight,
@@ -14,7 +11,7 @@ import {
   Zap,
 } from 'lucide-react';
 import { SKILLS, AVATARS } from '../data/mockData';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
@@ -46,20 +43,12 @@ function AvatarPickerModal({
   isOpen, 
   onClose, 
   onSelect, 
-  currentAvatar, 
-  allegiance,
-  allegianceStyle 
+  currentAvatar
 }) {
   const [selectedAvatar, setSelectedAvatar] = useState(currentAvatar || null);
-  const [activeTab, setActiveTab] = useState(allegiance === 'ai' ? 'ai' : 'human');
 
-  // Get avatars for the current tab
-  const avatarsToShow = AVATARS[activeTab] || [];
-
-  // Determine which tabs to show based on allegiance
-  const showBothTabs = allegiance === 'neutral';
-  const showHumanTab = allegiance === 'human' || allegiance === 'neutral';
-  const showAiTab = allegiance === 'ai' || allegiance === 'neutral';
+  // Get avatars
+  const avatarsToShow = AVATARS.default || [];
 
   const handleSave = () => {
     if (selectedAvatar) {
@@ -79,42 +68,9 @@ function AvatarPickerModal({
       isOpen={isOpen}
       onClose={onClose}
       title="Choose Your Avatar"
-      description={showBothTabs 
-        ? "Pick an avatar that represents you" 
-        : `Choose from ${allegiance === 'ai' ? 'AI' : 'Human'}-themed avatars`}
+      description="Pick an avatar that represents you"
       size="lg"
     >
-      {/* Tabs for neutral users */}
-      {showBothTabs && (
-        <div className="flex gap-2 mb-4">
-          <button
-            type="button"
-            onClick={() => setActiveTab('human')}
-            className={cn(
-              'flex-1 py-2 px-4 text-sm font-bold rounded-xl border-2 transition-all',
-              activeTab === 'human'
-                ? 'border-human bg-human-10 text-human'
-                : 'border-arena-border text-arena-muted hover:border-human/50'
-            )}
-          >
-            <Heart className="w-4 h-4 inline mr-2" />
-            Human
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab('ai')}
-            className={cn(
-              'flex-1 py-2 px-4 text-sm font-bold border-2 transition-all',
-              activeTab === 'ai'
-                ? 'border-ai bg-ai-10 text-ai border-dashed'
-                : 'border-arena-border text-arena-muted hover:border-ai/50'
-            )}
-          >
-            <Cpu className="w-4 h-4 inline mr-2" />
-            AI
-          </button>
-        </div>
-      )}
 
       {/* Avatar Grid */}
       <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto p-1">
@@ -124,21 +80,14 @@ function AvatarPickerModal({
             type="button"
             onClick={() => setSelectedAvatar(avatar.src)}
             className={cn(
-              'relative aspect-square rounded-lg overflow-hidden border-3 transition-all hover:scale-105',
+              'relative aspect-square rounded-lg overflow-hidden border-2 transition-all hover:scale-105',
               selectedAvatar === avatar.src
-                ? activeTab === 'ai'
-                  ? 'border-ai ring-2 ring-ai/30 border-dashed'
-                  : 'border-human ring-2 ring-human/30'
+                ? 'border-text-secondary ring-2 ring-text-secondary/30'
                 : 'border-arena-border hover:border-arena-secondary'
             )}
           >
             {/* Avatar Image */}
-            <div 
-              className={cn(
-                'w-full h-full flex items-center justify-center',
-                activeTab === 'ai' ? 'bg-ai-10' : 'bg-human-10'
-              )}
-            >
+            <div className="w-full h-full flex items-center justify-center bg-arena-elevated">
               <img
                 src={avatar.src}
                 alt={avatar.name}
@@ -157,7 +106,7 @@ function AvatarPickerModal({
                 <User 
                   className={cn(
                     'w-8 h-8',
-                    activeTab === 'ai' ? 'text-ai/50' : 'text-human/50'
+                    'text-text-muted'
                   )} 
                 />
               </div>
@@ -193,7 +142,7 @@ function AvatarPickerModal({
           <Button
             variant="ghost"
             onClick={handleClear}
-            className="mr-auto text-arena-muted hover:text-human"
+            className="mr-auto text-arena-muted hover:text-white"
           >
             Remove Avatar
           </Button>
@@ -208,7 +157,7 @@ function AvatarPickerModal({
           onClick={handleSave}
           disabled={!selectedAvatar}
           style={{ 
-            backgroundColor: selectedAvatar ? allegianceStyle.color : undefined,
+            backgroundColor: undefined,
           }}
         >
           Save
@@ -222,7 +171,6 @@ function Profile({
   user,
   updateUser,
   teams,
-  allegianceStyle,
   onNavigate,
   onNavigateToTeam,
   onLeaveTeam,
@@ -267,13 +215,6 @@ function Profile({
   // Get pending request count for captains
   const pendingRequestCount = isCaptain ? userTeam?.joinRequests?.length || 0 : 0;
 
-  const AllegianceIcon = {
-    human: Heart,
-    neutral: Scale,
-    ai: Cpu,
-  }[user?.allegiance || 'neutral'];
-
-  const teamConfig = userTeam ? ALLEGIANCE_CONFIG[userTeam.side] : null;
 
   // Get the display callsign - use editing value if editing, otherwise saved value
   const displayCallsign = isEditingCallsign ? callsign : (user?.callsign || '');
@@ -401,7 +342,6 @@ function Profile({
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="profile"
@@ -409,9 +349,9 @@ function Profile({
       <div className="p-4 sm:p-6">
         {/* Captain Alert Banner */}
         {isCaptain && pendingRequestCount > 0 && (
-          <div className="bg-human-10 border-2 border-human/50 px-4 py-3 mb-6 rounded-lg">
+          <div className="bg-warning/10 border-2 border-warning/50 px-4 py-3 mb-6 rounded-lg">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-3 text-human">
+              <div className="flex items-center gap-3 text-warning">
                 <Bell className="w-5 h-5 flex-shrink-0" />
                 <span className="font-bold text-sm sm:text-base">
                   You have {pendingRequestCount} pending application{pendingRequestCount > 1 ? 's' : ''} to review
@@ -420,7 +360,7 @@ function Profile({
               <button
                 type="button"
                 onClick={() => onNavigateToTeam(userTeam.id)}
-                className="w-full sm:w-auto px-4 py-2 bg-human text-white font-bold text-sm rounded hover:bg-human/80 transition-colors flex items-center justify-center gap-2"
+                className="w-full sm:w-auto px-4 py-2 bg-warning text-white font-bold text-sm rounded hover:bg-warning/80 transition-colors flex items-center justify-center gap-2"
               >
                 Review Applications
                 <ChevronRight className="w-4 h-4" />
@@ -435,8 +375,7 @@ function Profile({
           {/* Left Column - Unified Identity Card */}
           <div className="lg:col-span-1">
             <div
-              className={`bg-arena-card p-6 border-2 ${allegianceStyle.borderRadius}`}
-              style={{ borderColor: allegianceStyle.borderColor }}
+              className="bg-arena-card p-6 border-2 border-arena-border rounded-card"
             >
               {/* Name, Callsign, and Role - Stacked */}
               <div className="text-center mb-5">
@@ -451,11 +390,7 @@ function Profile({
                   <div className="mt-1">
                     <span
                       className={`inline-block px-3 py-1 text-sm font-bold rounded-full border
-                        ${user?.allegiance === 'ai' 
-                          ? 'border-ai/50 text-ai bg-ai-10' 
-                          : user?.allegiance === 'human' 
-                            ? 'border-human/50 text-human bg-human-10' 
-                            : 'border-arena-border text-text-secondary bg-arena-elevated'}`}
+                        border-arena-border text-text-secondary bg-arena-elevated`}
                     >
                       "{displayCallsign}"
                     </span>
@@ -473,11 +408,7 @@ function Profile({
               {/* Avatar Section - Below Name */}
               <div className="flex flex-col items-center mb-5">
                 <div
-                  className={`w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center overflow-hidden ${allegianceStyle.borderRadius}`}
-                  style={{
-                    backgroundColor: allegianceStyle.bgColor,
-                    border: `3px solid ${allegianceStyle.borderColor}`,
-                  }}
+                  className="w-28 h-28 sm:w-32 sm:h-32 flex items-center justify-center overflow-hidden rounded-lg bg-arena-elevated border-2 border-arena-border"
                 >
                   {user?.avatar ? (
                     <img
@@ -499,7 +430,7 @@ function Profile({
                   >
                     <User
                       className="w-14 sm:w-16 h-14 sm:h-16"
-                      style={{ color: allegianceStyle.color }}
+                      className="text-text-secondary"
                     />
                   </div>
                 </div>
@@ -517,11 +448,11 @@ function Profile({
                     className={`w-full px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted 
                       focus:outline-none text-sm transition-colors rounded
                       ${callsignError 
-                        ? 'border-human focus:border-human' 
-                        : 'border-arena-border focus:border-brand'}`}
+                        ? 'border-error focus:border-error' 
+                        : 'border-arena-border focus:border-text-secondary'}`}
                   />
                   <div className="flex items-center justify-between">
-                    <span className={`text-xs ${callsignError ? 'text-human' : 'text-arena-muted'}`}>
+                    <span className={`text-xs ${callsignError ? 'text-error' : 'text-arena-muted'}`}>
                       {callsignError || 'Letters, numbers, spaces'}
                     </span>
                     <span className="text-xs text-arena-muted">
@@ -541,7 +472,7 @@ function Profile({
                       onClick={handleSaveCallsign}
                       disabled={!!callsignError}
                       className="px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded"
-                      style={{ backgroundColor: allegianceStyle.color }}
+                      className="bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
@@ -554,7 +485,7 @@ function Profile({
                     type="button"
                     onClick={() => setShowAvatarPicker(true)}
                     className="font-medium transition-colors hover:underline"
-                    style={{ color: allegianceStyle.color }}
+                    className="text-text-secondary"
                   >
                     {user?.avatar ? 'Change avatar' : 'Choose avatar'}
                   </button>
@@ -563,92 +494,10 @@ function Profile({
                     type="button"
                     onClick={() => setIsEditingCallsign(true)}
                     className="font-medium transition-colors hover:underline"
-                    style={{ color: allegianceStyle.color }}
+                    className="text-text-secondary"
                   >
                     Edit callsign
                   </button>
-                </div>
-              )}
-            </div>
-
-            {/* Allegiance Card */}
-            <div
-              className={`bg-arena-card p-6 border-2 mt-4 ${allegianceStyle.borderRadius}`}
-              style={{ borderColor: allegianceStyle.borderColor }}
-            >
-              <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-4">
-                Your Allegiance
-              </div>
-
-              {userTeam ? (
-                /* Team members inherit allegiance from team */
-                <div className="text-center">
-                  <div className="flex justify-center gap-3 mb-3">
-                    <div
-                      className={`flex-1 max-w-[120px] p-3 border-2 text-center
-                        ${user?.allegiance === 'human'
-                          ? 'border-human bg-human-10 rounded-xl'
-                          : user?.allegiance === 'ai'
-                            ? 'border-ai bg-ai-10 border-dashed'
-                            : 'border-arena-border bg-arena-elevated rounded-lg'}`}
-                    >
-                      {user?.allegiance === 'human' ? (
-                        <Heart className="w-6 h-6 mx-auto mb-1 text-human" />
-                      ) : user?.allegiance === 'ai' ? (
-                        <Cpu className="w-6 h-6 mx-auto mb-1 text-ai" />
-                      ) : (
-                        <Scale className="w-6 h-6 mx-auto mb-1 text-arena-muted" />
-                      )}
-                      <div
-                        className={`text-xs font-bold
-                          ${user?.allegiance === 'human'
-                            ? 'text-human'
-                            : user?.allegiance === 'ai'
-                              ? 'text-ai'
-                              : 'text-arena-muted'}`}
-                      >
-                        {user?.allegiance === 'human' ? 'Human' : user?.allegiance === 'ai' ? 'AI' : 'Neutral'}
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-xs text-arena-muted italic">
-                    Inherited from your team
-                  </p>
-                </div>
-              ) : (
-                /* Free agents can change allegiance */
-                <div>
-                  <div className="flex gap-3 mb-3">
-                    <button
-                      type="button"
-                      onClick={() => updateUser({ allegiance: 'human' })}
-                      className={`flex-1 p-3 border-2 rounded-xl text-center transition-all hover:scale-105
-                        ${user?.allegiance === 'human'
-                          ? 'border-human bg-human-10'
-                          : 'border-arena-border hover:border-human/50'}`}
-                    >
-                      <Heart className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'human' ? 'text-human' : 'text-arena-muted'}`} />
-                      <div className={`text-xs font-bold ${user?.allegiance === 'human' ? 'text-human' : 'text-arena-muted'}`}>
-                        Human
-                      </div>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => updateUser({ allegiance: 'ai' })}
-                      className={`flex-1 p-3 border-2 text-center transition-all hover:scale-105
-                        ${user?.allegiance === 'ai'
-                          ? 'border-ai bg-ai-10 border-dashed'
-                          : 'border-arena-border hover:border-ai/50'}`}
-                    >
-                      <Cpu className={`w-6 h-6 mx-auto mb-1 ${user?.allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'}`} />
-                      <div className={`text-xs font-bold ${user?.allegiance === 'ai' ? 'text-ai' : 'text-arena-muted'}`}>
-                        AI
-                      </div>
-                    </button>
-                  </div>
-                  <p className="text-xs text-arena-muted text-center">
-                    Choose your side before joining a team
-                  </p>
                 </div>
               )}
             </div>
@@ -658,8 +507,7 @@ function Profile({
           <div className="lg:col-span-2 space-y-4 sm:space-y-6">
             {/* Bio Section */}
             <div
-              className={`bg-arena-card p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
-              style={{ borderColor: allegianceStyle.borderColor }}
+              className="bg-arena-card p-4 sm:p-6 border-2 border-arena-border rounded-card"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
@@ -670,11 +518,7 @@ function Profile({
                     type="button"
                     onClick={() => setIsEditingBio(true)}
                     className="text-xs font-medium px-3 py-1 rounded transition-colors"
-                    style={{
-                      color: allegianceStyle.color,
-                      backgroundColor: allegianceStyle.bgColor,
-                      border: `1px solid ${allegianceStyle.borderColor}`,
-                    }}
+                    className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
                   >
                     Edit
                   </button>
@@ -706,7 +550,7 @@ function Profile({
                       type="button"
                       onClick={handleSaveBio}
                       className="px-4 py-2 text-sm font-medium text-white transition-colors rounded"
-                      style={{ backgroundColor: allegianceStyle.color }}
+                      className="bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
@@ -725,8 +569,7 @@ function Profile({
 
             {/* Skills Section */}
             <div
-              className={`bg-arena-card p-4 sm:p-6 border-2 ${allegianceStyle.borderRadius}`}
-              style={{ borderColor: allegianceStyle.borderColor }}
+              className="bg-arena-card p-4 sm:p-6 border-2 border-arena-border rounded-card"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
@@ -742,11 +585,7 @@ function Profile({
                     type="button"
                     onClick={() => setIsEditingSkills(true)}
                     className="text-xs font-medium px-3 py-1 rounded transition-colors"
-                    style={{
-                      color: allegianceStyle.color,
-                      backgroundColor: allegianceStyle.bgColor,
-                      border: `1px solid ${allegianceStyle.borderColor}`,
-                    }}
+                    className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
                   >
                     Edit
                   </button>
@@ -832,7 +671,7 @@ function Profile({
                         onClick={handleAddCustomSkill}
                         disabled={selectedSkills.length >= MAX_SKILLS || !customSkillInput.trim()}
                         className="px-4 py-2 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded"
-                        style={{ backgroundColor: allegianceStyle.color }}
+                        className="bg-arena-elevated border border-arena-border"
                       >
                         Add
                       </button>
@@ -854,7 +693,7 @@ function Profile({
                       type="button"
                       onClick={handleSaveSkills}
                       className="px-4 py-2 text-sm font-medium text-white transition-colors rounded"
-                      style={{ backgroundColor: allegianceStyle.color }}
+                      className="bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
@@ -867,12 +706,7 @@ function Profile({
                       {user.skills.map((skill) => (
                         <span
                           key={skill}
-                          className={`px-3 py-2 text-xs sm:text-sm font-medium border ${allegianceStyle.borderRadius}`}
-                          style={{
-                            borderColor: allegianceStyle.borderColor,
-                            color: allegianceStyle.color,
-                            backgroundColor: allegianceStyle.bgColor,
-                          }}
+                          className="px-3 py-2 text-xs sm:text-sm font-medium border border-arena-border text-text-secondary bg-arena-elevated rounded-lg"
                         >
                           {skill}
                         </span>
@@ -890,9 +724,7 @@ function Profile({
             {/* My Team Section */}
             {userTeam && (
               <div
-                className={`bg-arena-card p-4 sm:p-6 border-2 ${teamConfig.borderRadius}
-                           ${userTeam.side === 'ai' ? 'border-dashed' : ''}`}
-                style={{ borderColor: teamConfig.borderColor }}
+                className="bg-arena-card p-4 sm:p-6 border-2 border-arena-border rounded-card"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
@@ -908,27 +740,17 @@ function Profile({
 
                 <div className="flex flex-col sm:flex-row items-start gap-4">
                   <div
-                    className={`w-12 sm:w-14 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center ${teamConfig.borderRadius}`}
-                    style={{ backgroundColor: teamConfig.bgColor }}
+                    className="w-12 sm:w-14 h-12 sm:h-14 flex-shrink-0 flex items-center justify-center rounded-lg bg-arena-elevated"
                   >
-                    {userTeam.side === 'ai' ? (
-                      <Cpu className="w-6 sm:w-7 h-6 sm:h-7" style={{ color: teamConfig.color }} />
-                    ) : (
-                      <Heart className="w-6 sm:w-7 h-6 sm:h-7" style={{ color: teamConfig.color }} />
-                    )}
+                    <Users className="w-6 sm:w-7 h-6 sm:h-7 text-text-secondary" />
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <h3
-                      className="text-base sm:text-lg font-bold text-white"
-                    >
+                    <h3 className="text-base sm:text-lg font-bold text-white">
                       {userTeam.name}
                     </h3>
-                    <span
-                      className="text-sm font-bold uppercase"
-                      style={{ color: teamConfig.color }}
-                    >
-                      {userTeam.side === 'ai' ? 'AI SIDE' : 'HUMAN SIDE'}
+                    <span className="text-sm font-bold uppercase text-text-secondary">
+                      TEAM
                     </span>
                     
                     <div className="flex items-center gap-2 mt-2 text-sm text-arena-secondary">
@@ -947,8 +769,7 @@ function Profile({
                   onClick={() => onNavigateToTeam(userTeam.id)}
                   className={`w-full mt-4 py-3 flex items-center justify-center gap-2
                              font-bold text-sm transition-all text-white
-                             ${teamConfig.borderRadius}`}
-                  style={{ backgroundColor: teamConfig.color }}
+                             bg-arena-elevated border border-arena-border hover:bg-arena-border rounded-lg`}
                 >
                   {isCaptain ? 'Manage Team' : 'View Team Details'}
                   <ChevronRight className="w-4 h-4" />
@@ -1028,7 +849,7 @@ function Profile({
                   <p className="text-arena-secondary mb-6">You're not on a team yet</p>
                   
                   {/* Auto-Assign Section */}
-                  {user?.allegiance !== 'neutral' && onAutoAssign && (
+                  {onAutoAssign && (
                     <div className="mb-4">
                       <button
                         type="button"
@@ -1037,9 +858,7 @@ function Profile({
                         className={`w-full py-3 font-bold text-sm transition-all flex items-center justify-center gap-2 rounded-lg
                           ${isAutoAssigning
                             ? 'bg-arena-elevated text-arena-muted cursor-wait'
-                            : user?.allegiance === 'ai'
-                              ? 'bg-ai text-arena-black hover:bg-ai/80'
-                              : 'bg-human text-white hover:bg-human/80'
+                            : 'bg-arena-elevated border border-arena-border text-white hover:bg-arena-border'
                           }`}
                       >
                         {isAutoAssigning ? (
@@ -1050,7 +869,7 @@ function Profile({
                         ) : (
                           <>
                             <Zap className="w-4 h-4" />
-                            Auto-Join a {user?.allegiance === 'ai' ? 'AI' : 'Human'} Team
+                            Auto-Join a Team
                           </>
                         )}
                       </button>
@@ -1060,21 +879,8 @@ function Profile({
                     </div>
                   )}
                   
-                  {/* Neutral user needs to pick a side first */}
-                  {user?.allegiance === 'neutral' && onAutoAssign && (
-                    <div className="mb-4 p-3 bg-arena-elevated border border-arena-border rounded-lg">
-                      <div className="flex items-center gap-2 text-arena-secondary mb-2">
-                        <Zap className="w-4 h-4 text-brand" />
-                        <span className="font-medium text-sm">Auto-Join Available</span>
-                      </div>
-                      <p className="text-xs text-arena-muted">
-                        Choose Human or AI side above to enable quick team assignment
-                      </p>
-                    </div>
-                  )}
-                  
                   <div className="relative">
-                    {user?.allegiance !== 'neutral' && onAutoAssign && (
+                    {onAutoAssign && (
                       <div className="flex items-center gap-3 mb-4">
                         <div className="flex-1 h-px bg-arena-border" />
                         <span className="text-xs text-arena-muted uppercase">or</span>
@@ -1104,8 +910,6 @@ function Profile({
         onClose={() => setShowAvatarPicker(false)}
         onSelect={(avatarSrc) => updateUser({ avatar: avatarSrc })}
         currentAvatar={user?.avatar}
-        allegiance={user?.allegiance || 'neutral'}
-        allegianceStyle={allegianceStyle}
       />
     </AppLayout>
   );

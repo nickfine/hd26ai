@@ -9,9 +9,6 @@ import {
   Clock,
   Users,
   User,
-  Heart,
-  Cpu,
-  Scale,
   Calendar,
   Trophy,
   LogOut,
@@ -29,12 +26,11 @@ import {
   Sparkles,
   UserPlus,
 } from 'lucide-react';
-import Progress from './ui/Progress';
-import Badge, { RoleBadge, AllegianceCapsule, StatusCapsule, HeartbeatDot } from './ui/Badge';
+import Badge, { RoleBadge } from './ui/Badge';
 import NavItem, { NavGroup } from './shared/NavItem';
 import { Container, HStack, VStack } from './layout';
-import { AllegianceAvatar } from './ui/Avatar';
-import { cn, getAllegianceConfig, formatNameWithCallsign, ALLEGIANCE_CONFIG } from '../lib/design-system';
+import Avatar from './ui/Avatar';
+import { cn, formatNameWithCallsign } from '../lib/design-system';
 import { USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
 import { 
   createUKDate, 
@@ -131,7 +127,7 @@ const WarTimer = memo(function WarTimer() {
       className={cn(
         'hidden md:flex items-center gap-3 px-4 py-2 text-white rounded-card',
         timeRemaining.status === 'live' 
-          ? 'bg-gradient-to-r from-ai to-human animate-pulse' 
+          ? 'bg-arena-elevated animate-pulse' 
           : timeRemaining.status === 'ended'
             ? 'bg-arena-card'
             : 'bg-arena-card'
@@ -166,8 +162,8 @@ const getNavItems = (userRole, eventPhase = 'voting', user = null) => {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   ];
 
-  // Add Sign Up navigation item during registration phase or for users without allegiance
-  const showSignup = eventPhase === 'registration' || (user && (!user.allegiance || user.allegiance === 'neutral'));
+  // Add Sign Up navigation item during registration phase or for users without a team
+  const showSignup = eventPhase === 'registration' || (user && !user.teamId);
   if (showSignup) {
     baseItems.push({ id: 'signup', label: 'Sign Up', icon: UserPlus });
   }
@@ -210,7 +206,6 @@ const getNavItems = (userRole, eventPhase = 'voting', user = null) => {
 function AppLayout({
   user,
   teams = [],
-  allegianceStyle,
   onNavigate,
   eventPhase = 'voting',
   activeNav = 'dashboard',
@@ -265,19 +260,12 @@ function AppLayout({
   const userCallsign = user?.callsign || userTeam?.members?.find(m => m.id === user?.id)?.callsign;
 
   const navItems = useMemo(() => getNavItems(user?.role, eventPhase, user), [user?.role, eventPhase, user]);
-  const config = useMemo(() => getAllegianceConfig(user?.allegiance || 'neutral'), [user?.allegiance]);
-
-  // War stats - memoized
-  const warStats = useMemo(() => {
-    const humanTeams = teams.filter(t => t.side === 'human').length;
-    const aiTeams = teams.filter(t => t.side === 'ai').length;
-    const totalTeams = humanTeams + aiTeams;
+  
+  // Team stats
+  const teamStats = useMemo(() => {
+    const totalTeams = teams.length;
     return {
-      humanTeams,
-      aiTeams,
       totalTeams,
-      humanPercent: totalTeams > 0 ? Math.round((humanTeams / totalTeams) * 100) : 50,
-      aiPercent: totalTeams > 0 ? Math.round((aiTeams / totalTeams) * 100) : 50,
     };
   }, [teams]);
 
@@ -291,7 +279,7 @@ function AppLayout({
   }, [onNavigate]);
 
   return (
-    <div className={cn('min-h-screen bg-hackday text-white', config.font)}>
+    <div className="min-h-screen bg-hackday text-white">
       {/* ================================================================== */}
       {/* HEADER */}
       {/* ================================================================== */}
@@ -318,51 +306,33 @@ function AppLayout({
               <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
               <div className="hidden sm:block">
                 <div className="font-black text-lg tracking-tight text-white">HACKDAY 2026</div>
-                <div className="text-xs text-arena-muted font-mono">HUMAN VS AI</div>
               </div>
             </button>
 
             {/* War Timer - Isolated component to prevent parent re-renders */}
             <WarTimer />
 
-            {/* User Quick Access - Premium Glass Card */}
+            {/* User Quick Access */}
             <button
               type="button"
               onClick={() => onNavigate('profile')}
               className={cn(
-                'glass-card flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-2 sm:py-3 rounded-2xl cursor-pointer',
+                'bg-arena-card border border-arena-border flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-2 sm:py-3 rounded-2xl cursor-pointer',
                 'transition-all duration-300 group',
-                'hover:-translate-y-0.5 hover:shadow-2xl',
-                user?.allegiance === 'ai' 
-                  ? 'border-cyan-500/30 hover:border-cyan-400/60 hover:shadow-cyan-900/40' 
-                  : 'border-orange-500/30 hover:border-orange-400/60 hover:shadow-orange-900/40'
+                'hover:-translate-y-0.5'
               )}
             >
               {/* Team info - hidden on mobile */}
               {userTeam && (
                 <div className="hidden sm:flex items-center gap-3">
-                  <div className={cn(
-                    'w-10 h-10 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center shadow-lg',
-                    userTeam.side === 'ai' 
-                      ? 'bg-gradient-to-br from-cyan-600 to-blue-600' 
-                      : 'bg-gradient-to-br from-orange-600 to-red-600'
-                  )}>
-                    {userTeam.side === 'ai' 
-                      ? <Cpu className="w-5 h-5 text-white" />
-                      : <Heart className="w-5 h-5 text-white" />
-                    }
+                  <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center shadow-lg bg-arena-elevated">
+                    <Users className="w-5 h-5 text-text-secondary" />
                   </div>
                   <div className="text-left">
-                    <p className={cn(
-                      'font-bold text-white text-sm group-hover:transition-colors',
-                      userTeam.side === 'ai' ? 'group-hover:text-cyan-200' : 'group-hover:text-orange-200'
-                    )}>
+                    <p className="font-bold text-white text-sm">
                       {userTeam.name}
                     </p>
-                    <p className={cn(
-                      'text-xs',
-                      userTeam.side === 'ai' ? 'text-cyan-400' : 'text-orange-400'
-                    )}>
+                    <p className="text-xs text-text-secondary">
                       {captainedTeam ? 'Team Captain' : 'Team Member'}
                     </p>
                   </div>
@@ -374,31 +344,25 @@ function AppLayout({
               {/* User avatar + name */}
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="relative">
-                  <AllegianceAvatar allegiance={user?.allegiance || 'neutral'} size="md" />
+                  <Avatar user={user} size="md" />
                   {captainedTeam?.joinRequests?.length > 0 && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-human text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
                       {captainedTeam.joinRequests.length}
                     </div>
                   )}
                 </div>
                 <div className="text-left sm:text-right">
                   <p className="font-semibold text-white text-sm">
-                    {user?.name || 'Operator'}
+                    {user?.name || 'User'}
                   </p>
-                  <p className={cn(
-                    'text-xs',
-                    user?.allegiance === 'ai' ? 'text-cyan-300' : 'text-orange-300'
-                  )}>
-                    {userCallsign || (userTeam ? (user?.allegiance === 'ai' ? 'AI Operative' : 'Human Fighter') : 'Free Agent')}
+                  <p className="text-xs text-text-secondary">
+                    {userCallsign || (userTeam ? 'Team Member' : 'Free Agent')}
                   </p>
                 </div>
               </div>
 
               {/* Chevron arrow */}
-              <ChevronRight className={cn(
-                'w-5 h-5 transition-transform group-hover:translate-x-1',
-                user?.allegiance === 'ai' ? 'text-cyan-400' : 'text-orange-400'
-              )} />
+              <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1 text-text-secondary" />
             </button>
           </HStack>
         </Container>
@@ -418,7 +382,7 @@ function AppLayout({
                 <div className="flex items-center justify-center gap-3">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs text-arena-muted">Phase</span>
-                    <span className="text-xs font-bold text-ai">{currentPhaseIndex + 1}/{EVENT_PHASE_ORDER.length}</span>
+                    <span className="text-xs font-bold text-text-secondary">{currentPhaseIndex + 1}/{EVENT_PHASE_ORDER.length}</span>
                   </div>
                   <div className="h-4 w-px bg-arena-border" />
                   <span className="text-sm font-bold text-white">{currentPhase?.label}</span>
@@ -429,7 +393,7 @@ function AppLayout({
                         key={idx}
                         className={cn(
                           'w-2 h-2 rounded-full',
-                          idx < currentPhaseIndex ? 'bg-white' : idx === currentPhaseIndex ? 'bg-ai' : 'bg-arena-border'
+                          idx < currentPhaseIndex ? 'bg-white' : idx === currentPhaseIndex ? 'bg-text-secondary' : 'bg-arena-border'
                         )}
                       />
                     ))}
@@ -454,14 +418,14 @@ function AppLayout({
                       isComplete 
                         ? 'bg-white text-arena-bg' 
                         : isActive 
-                          ? 'bg-ai text-white animate-pulse' 
+                          ? 'bg-text-secondary text-white animate-pulse' 
                           : 'bg-arena-border text-arena-muted'
                     )}>
                       {isComplete ? '✓' : index + 1}
                     </div>
                     <span className={cn(
                       'text-xs font-bold whitespace-nowrap',
-                      isActive ? 'text-ai' : isComplete ? 'text-white' : 'text-arena-muted'
+                      isActive ? 'text-text-secondary' : isComplete ? 'text-white' : 'text-arena-muted'
                     )}>
                       {phase?.label}
                     </span>
@@ -515,27 +479,17 @@ function AppLayout({
 
                 {/* Role Badge */}
                 {user?.role && user.role !== 'participant' && (
-                  <div className={cn(
-                    'p-3 border-2 rounded-card flex items-center gap-2',
-                    user.role === 'judge' && 'border-brand/50 bg-brand/10',
-                    user.role === 'admin' && 'border-ai/50 bg-ai/10',
-                    user.role === 'ambassador' && 'border-human/50 bg-human/10'
-                  )}>
-                    {user.role === 'judge' && <Gavel className="w-5 h-5 text-brand" />}
-                    {user.role === 'admin' && <Shield className="w-5 h-5 text-ai" />}
+                  <div className="p-3 border-2 border-arena-border rounded-card flex items-center gap-2 bg-arena-elevated">
+                    {user.role === 'judge' && <Gavel className="w-5 h-5 text-text-secondary" />}
+                    {user.role === 'admin' && <Shield className="w-5 h-5 text-text-secondary" />}
                     <div>
-                      <div className={cn(
-                        'text-xs font-bold uppercase tracking-wide',
-                        user.role === 'judge' && 'text-brand',
-                        user.role === 'admin' && 'text-ai',
-                        user.role === 'ambassador' && 'text-human'
-                      )}>
+                      <div className="text-xs font-bold uppercase tracking-wide text-text-secondary">
                         {user.role === 'judge' ? 'Judge' : user.role === 'admin' ? 'Admin' : 'Ambassador'}
                       </div>
                       <div className="text-xs text-arena-secondary">
                         {user.role === 'judge' && 'Score submitted projects'}
                         {user.role === 'admin' && 'Full event access'}
-                        {user.role === 'ambassador' && 'Recruit for your side'}
+                        {user.role === 'ambassador' && 'Event ambassador'}
                       </div>
                     </div>
                   </div>
@@ -563,37 +517,14 @@ function AppLayout({
                   </NavItem>
                 </NavGroup>
 
-                {/* War Recruitment Status */}
+                {/* Team Stats */}
                 <div className="p-4 border-2 border-arena-border rounded-card">
                   <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-3">
-                    War Recruitment Status
+                    Team Status
                   </div>
-                  <VStack gap="3">
-                    {/* Human Bar */}
-                    <div>
-                      <HStack justify="between" className="text-sm mb-1">
-                        <HStack gap="1" align="center" className="font-bold text-human">
-                          <Heart className="w-3 h-3" /> Human
-                        </HStack>
-                        <span className="font-mono font-bold text-white">{warStats.humanPercent}%</span>
-                      </HStack>
-                      <Progress value={warStats.humanPercent} variant="human" size="sm" />
-                    </div>
-                    {/* AI Bar */}
-                    <div>
-                      <HStack justify="between" className="text-sm mb-1">
-                        <HStack gap="1" align="center" className="font-bold text-ai">
-                          <Cpu className="w-3 h-3" /> AI
-                        </HStack>
-                        <span className="font-mono font-bold text-white">{warStats.aiPercent}%</span>
-                      </HStack>
-                      <Progress value={warStats.aiPercent} variant="ai" size="sm" />
-                    </div>
-                    {/* Total */}
-                    <div className="pt-2 border-t border-arena-border text-center">
-                      <span className="text-xs text-arena-secondary">{warStats.totalTeams} teams registered</span>
-                    </div>
-                  </VStack>
+                  <div className="pt-2 text-center">
+                    <span className="text-xs text-arena-secondary">{teamStats.totalTeams} teams registered</span>
+                  </div>
                 </div>
               </div>
             </aside>
@@ -613,12 +544,6 @@ function AppLayout({
         <Container size="xl" padding="none">
           <HStack justify="between" className="text-xs text-arena-muted">
             <span>MISSION CONTROL v1.0</span>
-            <span>
-              ALLEGIANCE:{' '}
-              <span style={{ color: config.color }} className="font-bold">
-                {config.label.toUpperCase()}
-              </span>
-            </span>
           </HStack>
         </Container>
       </footer>

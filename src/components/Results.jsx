@@ -1,7 +1,5 @@
 import { useMemo } from 'react';
 import {
-  Heart,
-  Cpu,
   Trophy,
   Crown,
   Star,
@@ -11,7 +9,7 @@ import {
   Lock,
   Medal,
 } from 'lucide-react';
-import { ALLEGIANCE_CONFIG, cn, getAllegianceConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 
 // ============================================================================
@@ -21,7 +19,6 @@ import AppLayout from './AppLayout';
 function Results({
   user,
   teams = [],
-  allegianceStyle,
   onNavigate,
   eventPhase,
   awards = {},
@@ -79,21 +76,9 @@ function Results({
   // Calculate award winners
   const awardWinners = useMemo(() => {
     const allSubmitted = teams.filter((t) => t.submission?.status === 'submitted');
-    const humanTeams = allSubmitted.filter((t) => t.side === 'human');
-    const aiTeams = allSubmitted.filter((t) => t.side === 'ai');
 
     // Grand Champion: highest judge score overall
     const grandChampion = [...allSubmitted].sort(
-      (a, b) => calculateJudgeTotal(b) - calculateJudgeTotal(a)
-    )[0];
-
-    // Best Human: highest judge score among human teams
-    const bestHuman = [...humanTeams].sort(
-      (a, b) => calculateJudgeTotal(b) - calculateJudgeTotal(a)
-    )[0];
-
-    // Best AI: highest judge score among AI teams
-    const bestAI = [...aiTeams].sort(
       (a, b) => calculateJudgeTotal(b) - calculateJudgeTotal(a)
     )[0];
 
@@ -105,8 +90,6 @@ function Results({
 
     return {
       grand_champion: grandChampion,
-      best_human: bestHuman,
-      best_ai: bestAI,
       peoples_champion: peoplesChampion,
     };
   }, [teams]);
@@ -137,29 +120,14 @@ function Results({
   // ============================================================================
   const renderAwardCard = (awardKey, award, winner, index) => {
     if (!winner) return null;
-    const config = ALLEGIANCE_CONFIG[winner.side] || ALLEGIANCE_CONFIG.neutral;
 
     const awardStyles = {
       grand_champion: {
-        gradient: 'from-brand via-orange-400 to-brand',
-        border: 'border-brand',
+        gradient: 'from-gray-600 via-gray-400 to-gray-600',
+        border: 'border-gray-400',
         bg: 'bg-arena-card',
-        text: 'text-brand',
-        glow: 'shadow-glow-brand',
-      },
-      best_human: {
-        gradient: 'from-human via-red-400 to-human',
-        border: 'border-human',
-        bg: 'bg-arena-card',
-        text: 'text-human',
-        glow: 'shadow-glow-human',
-      },
-      best_ai: {
-        gradient: 'from-ai via-cyan-400 to-ai',
-        border: 'border-ai',
-        bg: 'bg-arena-card',
-        text: 'text-ai',
-        glow: 'shadow-glow-ai',
+        text: 'text-white',
+        glow: '',
       },
       peoples_champion: {
         gradient: 'from-violet via-purple-400 to-violet',
@@ -206,15 +174,8 @@ function Results({
           className="p-4 border border-arena-border rounded-lg bg-arena-black/50"
         >
           <div className="flex items-center gap-2 mb-2">
-            {winner.side === 'ai' ? (
-              <Cpu className="w-5 h-5" style={{ color: config.color }} />
-            ) : (
-              <Heart className="w-5 h-5" style={{ color: config.color }} />
-            )}
-            <span
-              className="font-black text-lg"
-              style={{ color: config.color }}
-            >
+            <Users className="w-5 h-5 text-text-secondary" />
+            <span className="font-black text-lg text-white">
               {winner.submission?.projectName}
             </span>
           </div>
@@ -245,7 +206,6 @@ function Results({
   // RENDER: LEADERBOARD ROW
   // ============================================================================
   const renderLeaderboardRow = (team, rank, showVotes = false) => {
-    const config = ALLEGIANCE_CONFIG[team.side] || ALLEGIANCE_CONFIG.neutral;
 
     const medalColors = {
       1: 'bg-brand text-white',
@@ -267,15 +227,9 @@ function Results({
           {rank <= 3 ? <Medal className="w-4 h-4" /> : rank}
         </div>
 
-        {/* Side icon */}
-        <div
-          className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded bg-arena-border"
-        >
-          {team.side === 'ai' ? (
-            <Cpu className="w-4 h-4" style={{ color: config.color }} />
-          ) : (
-            <Heart className="w-4 h-4" style={{ color: config.color }} />
-          )}
+        {/* Team icon */}
+        <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded bg-arena-border">
+          <Users className="w-4 h-4 text-text-secondary" />
         </div>
 
         {/* Info */}
@@ -338,7 +292,6 @@ function Results({
     <AppLayout
       user={user}
       teams={teams}
-      allegianceStyle={allegianceStyle}
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="results"
@@ -350,7 +303,7 @@ function Results({
             <div className="absolute inset-0 bg-arena-black" />
             <div className="absolute top-0 left-0 w-96 h-96 bg-brand/10 rounded-full blur-3xl animate-blob" />
             <div className="absolute top-1/2 right-0 w-96 h-96 bg-violet/10 rounded-full blur-3xl animate-blob animation-delay-2000" />
-            <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-ai/10 rounded-full blur-3xl animate-blob animation-delay-4000" />
+            <div className="absolute bottom-0 left-1/3 w-96 h-96 bg-violet/10 rounded-full blur-3xl animate-blob animation-delay-4000" />
           </div>
         )}
         {!canViewResults ? (
@@ -369,8 +322,7 @@ function Results({
                 HACKDAY 2026 RESULTS
               </h1>
               <p className="text-arena-secondary max-w-2xl mx-auto">
-                Congratulations to all participants! Here are the winners of this year's
-                Human vs AI HackDay.
+                Congratulations to all participants! Here are the winners of HackDay 2026.
               </p>
             </div>
 

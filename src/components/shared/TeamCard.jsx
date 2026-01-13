@@ -1,7 +1,6 @@
 /**
  * TeamCard Component
- * Display a team with members, allegiance styling, and status.
- * Dark Mode Cyber Arena Theme
+ * Display a team with members and status.
  * 
  * @example
  * <TeamCard team={team} onClick={() => navigateToTeam(team.id)} />
@@ -9,12 +8,12 @@
  */
 
 import { forwardRef } from 'react';
-import { Users, Heart, Cpu, ChevronRight, Crown } from 'lucide-react';
+import { Users, ChevronRight, Crown } from 'lucide-react';
 import Card from '../ui/Card';
 import Badge, { StatusBadge } from '../ui/Badge';
 import Avatar, { AvatarGroup } from '../ui/Avatar';
 import Button from '../ui/Button';
-import { cn, getAllegianceConfig } from '../../lib/design-system';
+import { cn } from '../../lib/design-system';
 
 /**
  * @typedef {Object} TeamCardProps
@@ -41,16 +40,6 @@ const TeamCard = forwardRef(({
 }, ref) => {
   if (!team) return null;
 
-  const config = getAllegianceConfig(team.side);
-  const AllegianceIcon = team.side === 'ai' ? Cpu : Heart;
-  const isAI = team.side === 'ai';
-  
-  // Team colors
-  const borderColor = isAI ? 'border-l-ai' : 'border-l-human';
-  const glowClass = isAI ? 'hover:shadow-card-ai' : 'hover:shadow-card-human';
-  const textColor = isAI ? 'text-ai' : 'text-human';
-  const bgLight = isAI ? 'bg-ai/10' : 'bg-human/10';
-
   // Calculate member stats
   const memberCount = team.members?.length || 0;
   const maxMembers = team.maxMembers || 6;
@@ -63,23 +52,17 @@ const TeamCard = forwardRef(({
         ref={ref}
         onClick={clickable ? onClick : undefined}
         className={cn(
-          'bg-arena-card border border-arena-border border-l-4 rounded-card p-3',
+          'bg-arena-card border border-arena-border rounded-card p-3',
           'transition-all duration-200',
-          borderColor,
-          clickable && cn('cursor-pointer', glowClass, 'hover:-translate-y-0.5'),
+          clickable && cn('cursor-pointer hover:-translate-y-0.5'),
           className
         )}
         {...props}
       >
         <div className="flex items-center gap-3">
-          {/* Allegiance Icon */}
-          <div
-            className={cn(
-              'w-10 h-10 flex items-center justify-center flex-shrink-0 rounded-lg',
-              bgLight
-            )}
-          >
-            <AllegianceIcon className={cn('w-5 h-5', textColor)} />
+          {/* Team Icon */}
+          <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 rounded-lg bg-arena-elevated">
+            <Users className="w-5 h-5 text-text-secondary" />
           </div>
           
           {/* Team Info */}
@@ -108,10 +91,9 @@ const TeamCard = forwardRef(({
         ref={ref}
         onClick={clickable ? onClick : undefined}
         className={cn(
-          'bg-arena-card border border-arena-border border-l-4 rounded-card p-5',
+          'bg-arena-card border border-arena-border rounded-card p-5',
           'transition-all duration-200',
-          borderColor,
-          clickable && cn('cursor-pointer', glowClass, 'hover:-translate-y-0.5'),
+          clickable && cn('cursor-pointer hover:-translate-y-0.5'),
           className
         )}
         {...props}
@@ -119,21 +101,13 @@ const TeamCard = forwardRef(({
         {/* Header */}
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div
-              className={cn(
-                'w-12 h-12 flex items-center justify-center rounded-lg',
-                bgLight
-              )}
-            >
-              <AllegianceIcon className={cn('w-6 h-6', textColor)} />
+            <div className="w-12 h-12 flex items-center justify-center rounded-lg bg-arena-elevated">
+              <Users className="w-6 h-6 text-text-secondary" />
             </div>
             <div>
               <h3 className="text-lg font-bold text-white">
                 {team.name}
               </h3>
-              <Badge variant={isAI ? 'ai' : 'human'} size="xs">
-                {isAI ? 'AI Side' : 'Human Side'}
-              </Badge>
             </div>
           </div>
           
@@ -157,15 +131,12 @@ const TeamCard = forwardRef(({
             </div>
             <div className="flex items-center gap-2">
               <AvatarGroup
-                users={team.members.map(m => ({
-                  ...m,
-                  allegiance: team.side,
-                }))}
+                users={team.members}
                 max={5}
                 size="sm"
               />
               {hasOpenSlots && (
-                <span className={cn('text-xs', textColor)}>
+                <span className="text-xs text-text-secondary">
                   {maxMembers - memberCount} slots open
                 </span>
               )}
@@ -198,10 +169,9 @@ const TeamCard = forwardRef(({
       ref={ref}
       onClick={clickable ? onClick : undefined}
       className={cn(
-        'bg-arena-card border border-arena-border border-l-4 rounded-card p-4',
+        'bg-arena-card border border-arena-border rounded-card p-4',
         'transition-all duration-200',
-        borderColor,
-        clickable && cn('cursor-pointer', glowClass, 'hover:-translate-y-0.5'),
+        clickable && cn('cursor-pointer hover:-translate-y-0.5'),
         className
       )}
       {...props}
@@ -209,13 +179,8 @@ const TeamCard = forwardRef(({
       {/* Header Row */}
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div
-            className={cn(
-              'w-10 h-10 flex items-center justify-center flex-shrink-0 rounded-lg',
-              bgLight
-            )}
-          >
-            <AllegianceIcon className={cn('w-5 h-5', textColor)} />
+          <div className="w-10 h-10 flex items-center justify-center flex-shrink-0 rounded-lg bg-arena-elevated">
+            <Users className="w-5 h-5 text-text-secondary" />
           </div>
           <div>
             <h4 className="font-bold text-white">
@@ -225,7 +190,7 @@ const TeamCard = forwardRef(({
               <Users className="w-3 h-3" />
               <span>{memberCount}/{maxMembers}</span>
               {hasOpenSlots && (
-                <span className={textColor}>• Open</span>
+                <span className="text-text-secondary">• Open</span>
               )}
             </div>
           </div>
@@ -312,15 +277,10 @@ TeamList.displayName = 'TeamList';
 export const TeamMemberItem = ({
   member,
   isCaptain = false,
-  allegiance,
   onRemove,
   removable = false,
   className,
 }) => {
-  const config = getAllegianceConfig(allegiance);
-  const isAI = allegiance === 'ai';
-  const textColor = isAI ? 'text-ai' : 'text-human';
-
   return (
     <div className={cn(
       'flex items-center justify-between py-2',
@@ -330,7 +290,6 @@ export const TeamMemberItem = ({
         <Avatar
           name={member.name}
           size="sm"
-          allegiance={allegiance}
         />
         <div>
           <div className="flex items-center gap-2">
@@ -338,11 +297,11 @@ export const TeamMemberItem = ({
               {member.name}
             </span>
             {isCaptain && (
-              <Crown className="w-4 h-4 text-brand" />
+              <Crown className="w-4 h-4 text-text-secondary" />
             )}
           </div>
           {member.callsign && (
-            <span className={cn('text-xs', textColor)}>
+            <span className="text-xs text-text-secondary">
               "{member.callsign}"
             </span>
           )}

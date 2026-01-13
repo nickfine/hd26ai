@@ -202,7 +202,6 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                           name: '',
                           email: 'new.user@company.com',
                           skills: [],
-                          allegiance: 'neutral',
                           role: 'participant',
                           phase: 'registration',
                         });
@@ -224,7 +223,6 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         callsign: 'CSS Wizard',
                         email: 'casey.brooks@company.com',
                         skills: ['Frontend Development', 'UI/UX Design'],
-                        allegiance: 'human',
                         role: 'participant',
                         phase: selectedPhase,
                       });
@@ -243,7 +241,6 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         callsign: 'Keyboard Bandit',
                         email: 'alex.chen@company.com',
                         skills: ['Backend Development', 'DevOps'],
-                        allegiance: 'ai',
                         role: 'participant',
                         phase: selectedPhase,
                       });
@@ -261,7 +258,6 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         name: 'Sarah Mitchell',
                         email: 'sarah.mitchell@company.com',
                         skills: ['Product Management'],
-                        allegiance: 'human',
                         role: 'ambassador',
                         phase: selectedPhase,
                       });
@@ -279,7 +275,6 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         name: 'Dr. Elena Vasquez',
                         email: 'elena.vasquez@company.com',
                         skills: [],
-                        allegiance: 'neutral',
                         role: 'judge',
                         phase: selectedPhase,
                       });
@@ -297,7 +292,6 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                         name: 'HackDay Admin',
                         email: 'admin@company.com',
                         skills: [],
-                        allegiance: 'neutral',
                         role: 'admin',
                         phase: selectedPhase,
                       });

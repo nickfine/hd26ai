@@ -52,9 +52,9 @@ const VARIANT_STYLES = {
     Icon: AlertTriangle,
   },
   error: {
-    container: 'bg-human/10 border-human/30 text-human',
-    icon: 'text-human',
-    title: 'text-human',
+    container: 'bg-error/10 border-error/30 text-error',
+    icon: 'text-error',
+    title: 'text-error',
     Icon: AlertCircle,
   },
 };
@@ -153,10 +153,10 @@ export const InlineAlert = forwardRef(({
       role="alert"
       className={cn(
         'flex items-center gap-2 text-sm',
-        variant === 'error' && 'text-human',
+        variant === 'error' && 'text-error',
         variant === 'warning' && 'text-warning',
         variant === 'success' && 'text-success',
-        variant === 'info' && 'text-ai',
+        variant === 'info' && 'text-text-secondary',
         className
       )}
       {...props}

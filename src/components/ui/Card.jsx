@@ -1,11 +1,10 @@
 /**
  * Card Component
  * A flexible container component with multiple variants and optional header/footer slots.
- * Dark Mode Cyber Arena Theme
  * 
  * @example
  * <Card variant="outlined">Content here</Card>
- * <Card variant="human" padding="lg">Human team card</Card>
+ * <Card variant="elevated" padding="lg">Card content</Card>
  * <Card>
  *   <Card.Header>Title</Card.Header>
  *   <Card.Body>Content</Card.Body>
@@ -21,7 +20,7 @@ const CardContext = createContext({ variant: 'default' });
 
 /**
  * @typedef {Object} CardProps
- * @property {'default' | 'outlined' | 'elevated' | 'ghost' | 'human' | 'ai' | 'accent' | 'special'} [variant='default']
+ * @property {'default' | 'outlined' | 'elevated' | 'ghost'} [variant='default']
  * @property {'none' | 'sm' | 'md' | 'lg'} [padding='md']
  * @property {boolean} [hoverable=false]
  * @property {boolean} [clickable=false]
@@ -51,11 +50,9 @@ const Card = forwardRef(({
   const variantStyles = CARD_VARIANTS[variant] || CARD_VARIANTS.default;
   const paddingStyles = PADDING_MAP[padding];
 
-  // Determine hover glow class based on variant
-  const getHoverGlowClass = () => {
+  // Determine hover class
+  const getHoverClass = () => {
     if (!glowOnHover && !hoverable && !clickable) return '';
-    if (variant === 'human') return 'hover:shadow-card-human hover:-translate-y-0.5';
-    if (variant === 'ai') return 'hover:shadow-card-ai hover:-translate-y-0.5';
     return 'hover:shadow-card-hover hover:-translate-y-0.5';
   };
 
@@ -71,7 +68,7 @@ const Card = forwardRef(({
           // Padding
           paddingStyles,
           // Interactive states
-          (hoverable || clickable || glowOnHover) && getHoverGlowClass(),
+          (hoverable || clickable || glowOnHover) && getHoverClass(),
           clickable && 'cursor-pointer active:scale-[0.99]',
           // Custom
           className
