@@ -284,7 +284,7 @@ function Marketplace({
             TEAMS
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto mb-6">
-            Browse open teams looking for members or discover free agents with matching skills.
+            Browse open ideas looking for members or discover free agents with matching skills.
           </p>
 
           {/* Search */}
@@ -379,7 +379,7 @@ function Marketplace({
                              transition-all flex items-center gap-2 whitespace-nowrap rounded-lg shadow-lg"
                 >
                   <Plus className="w-4 h-4" />
-                  CREATE TEAM
+                  CREATE IDEA
                 </button>
               )}
             </div>
@@ -648,7 +648,7 @@ function Marketplace({
                                      text-sm text-arena-muted bg-arena-card border border-arena-border rounded-xl
                                      bg-gradient-to-r from-brand/20 to-transparent border-t border-brand/30"
                         >
-                          Create a team to send invites
+                          Create an idea to send invites
                         </div>
                       )}
                     </div>
@@ -873,7 +873,7 @@ function Marketplace({
                 ) : (
                   <>
                     <Plus className="w-4 h-4" />
-                    Create Team
+                    Create Idea
                   </>
                 )}
               </button>

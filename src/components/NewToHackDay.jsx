@@ -30,11 +30,11 @@ import { cn } from '../lib/design-system';
 const ONBOARDING_STEPS = [
   {
     id: 1,
-    title: 'Join or Create a Team',
-    description: 'Find teammates in the marketplace or create your own team. Teams can have 2-6 members.',
+    title: 'Join or Create an Idea',
+    description: 'Find teammates in the marketplace or create your own idea. Teams can have 2-6 members.',
     icon: Users,
     color: 'brand',
-    action: 'Browse Teams',
+    action: 'Browse Ideas',
     actionRoute: 'marketplace',
   },
   {
@@ -234,7 +234,7 @@ function NewToHackDay({ user, teams, onNavigate, eventPhase }) {
               onClick={() => onNavigate('marketplace')}
               leftIcon={<Users className="w-4 h-4" />}
             >
-              Browse Teams
+              Browse Ideas
             </Button>
             <Button
               variant="secondary"

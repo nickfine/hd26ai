@@ -54,7 +54,7 @@ const SCHEDULE_DATA = {
         time: '09:00',
         endTime: '23:59',
         title: 'Registration & Team Formation Opens',
-        description: 'Sign up and start forming teams. Browse the marketplace to find teammates.',
+        description: 'Sign up and start forming ideas. Browse the marketplace to find teammates.',
         location: 'HackDay Portal',
         category: 'logistics',
         icon: Users,

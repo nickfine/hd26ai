@@ -176,7 +176,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
             <Users className="w-16 h-16 mx-auto mb-4 text-arena-muted" />
             <h2 className="text-2xl font-bold text-white mb-2">No Team Yet</h2>
             <p className="text-arena-secondary mb-6">
-              You need to join or create a team before you can submit a project.
+              You need to join or create an idea before you can submit a project.
             </p>
             <button
               type="button"

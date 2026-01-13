@@ -894,7 +894,7 @@ function Profile({
                       className="px-6 py-2 bg-brand text-white font-bold text-sm rounded
                                  hover:bg-brand/80 transition-colors"
                     >
-                      Browse Teams
+                      Browse Ideas
                     </button>
                   </div>
                 </div>
