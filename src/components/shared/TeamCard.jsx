@@ -236,7 +236,7 @@ export const TeamList = ({
   teams = [],
   variant = 'default',
   columns = 2,
-  emptyMessage = 'No teams found',
+  emptyMessage = 'No ideas found',
   onTeamClick,
   className,
   ...props

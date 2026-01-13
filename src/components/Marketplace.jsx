@@ -741,7 +741,7 @@ function Marketplace({
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-arena-card border border-arena-border p-4 sm:p-6 max-w-lg w-full mx-4 shadow-2xl my-8 rounded-card">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black text-white">CREATE YOUR TEAM</h2>
+              <h2 className="text-xl font-black text-white">CREATE YOUR IDEA</h2>
               <button
                 type="button"
                 onClick={() => setShowCreateTeamModal(false)}
@@ -751,22 +751,22 @@ function Marketplace({
               </button>
             </div>
 
-            {/* Team Name */}
+            {/* Project Idea */}
             <div className="mb-4">
               <label className="block text-xs font-bold uppercase tracking-wide text-arena-secondary mb-2">
-                Team Name <span className="text-error">*</span>
+                Project Idea <span className="text-error">*</span>
               </label>
               <input
                 type="text"
                 value={newTeam.name}
                 onChange={(e) => setNewTeam((prev) => ({ ...prev, name: e.target.value }))}
-                placeholder="Enter your team name"
+                placeholder="Enter your project idea"
                 className="w-full p-3 border-2 border-arena-border bg-arena-card text-white placeholder-arena-muted
                            focus:border-brand focus:outline-none text-sm rounded-lg"
                 maxLength={50}
               />
               {newTeam.name.length > 0 && newTeam.name.length < 3 && (
-                <p className="text-xs text-error mt-1">Team name must be at least 3 characters</p>
+                <p className="text-xs text-error mt-1">Idea must be at least 3 characters</p>
               )}
             </div>
 

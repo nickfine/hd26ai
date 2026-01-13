@@ -501,11 +501,11 @@ function App() {
         t => t.isAutoCreated
       ).length;
       const teamNumber = existingAutoTeamsCount + 1;
-      const teamName = `Auto Squad #${teamNumber}`;
+      const teamName = `Auto Idea #${teamNumber}`;
 
       const teamData = {
         name: teamName,
-        description: `Auto-created team. Join us and let's build something amazing together!`,
+        description: `Auto-created idea. Join us and let's build something amazing together!`,
         lookingFor: [],
         maxMembers: 6,
         isAutoCreated: true,

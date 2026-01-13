@@ -321,7 +321,7 @@ function Profile({
     try {
       const result = await onAutoAssign(true);
       if (result?.success) {
-        setAutoAssignSuccess(`Joined ${result.teamName || 'a team'}!`);
+        setAutoAssignSuccess(`Joined ${result.teamName || 'an idea'}!`);
         // Navigate to team after a brief delay
         setTimeout(() => {
           if (result.teamId) {

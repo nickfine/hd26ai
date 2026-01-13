@@ -21,7 +21,7 @@ const MAX_NAME_LENGTH = 50;
 const STEPS = [
   { id: 1, label: 'Identity', shortLabel: 'Name' },
   { id: 2, label: 'Skills', shortLabel: 'Skills' },
-  { id: 3, label: 'Team', shortLabel: 'Team' },
+  { id: 3, label: 'Idea', shortLabel: 'Idea' },
 ];
 
 // Role descriptions
@@ -302,7 +302,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
               JOIN HACKDAY 2026
             </h1>
             <p className="text-lg text-text-body max-w-2xl mx-auto">
-              Create your profile and join a team
+              Create your profile and join an idea
             </p>
           </div>
 
@@ -518,7 +518,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
               <div className="space-y-6 animate-fade-in">
                 <div>
                   <h2 className="text-2xl font-black text-white mb-6">
-                    <span className="text-brand">{STEPS[2].id}.</span> Join a Team or Observe
+                    <span className="text-brand">{STEPS[2].id}.</span> Join an Idea or Observe
                   </h2>
                   
                   <div className="space-y-4">
@@ -569,7 +569,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
                     {!isObserver && (
                       <div className="p-4 border border-arena-border rounded-lg bg-arena-elevated">
                         <p className="text-sm text-arena-secondary">
-                          You can join or create a team from the dashboard after signing up.
+                          You can join or create an idea from the dashboard after signing up.
                         </p>
                       </div>
                     )}

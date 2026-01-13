@@ -56,11 +56,11 @@ const MOCK_SCHEDULE = [
 
 const MOCK_AWARDS = [
   { id: 1, title: 'Grand HackDay Champion', prize: 'Personalised Callsign HackDay26 T-Shirts', icon: Trophy, description: 'Custom t-shirts with your callsign + digital swag' },
-  { id: 2, title: 'People\'s Choice', prize: 'Personalised Team Name Zoom Wallpaper', icon: Trophy, description: 'Custom Zoom background featuring your team name' },
+  { id: 2, title: 'People\'s Choice', prize: 'Personalised Idea Zoom Wallpaper', icon: Trophy, description: 'Custom Zoom background featuring your project idea' },
 ];
 
 const MOCK_FAQ = [
-  { id: 1, question: 'How do teams work?', answer: 'Teams can have 2-6 members. You can join an existing team or create your own.' },
+  { id: 1, question: 'How do ideas work?', answer: 'Ideas are projects teams work on. Teams can have 2-6 members. You can join an existing idea or create your own.' },
   { id: 2, question: 'What can I build?', answer: 'Anything! Web apps, mobile apps, APIs, games, tools - as long as it fits the theme.' },
   { id: 3, question: 'How is judging done?', answer: 'Projects are judged on innovation, execution, design, and theme adherence. There will be peer voting for People\'s Choice award.' },
 ];
@@ -145,7 +145,7 @@ const SignupPromoBox = memo(function SignupPromoBox({ user, teams, onNavigate })
       <Card.Label className="text-brand">Get Started</Card.Label>
       <Card.Title className="text-white mb-3">Complete Your Setup</Card.Title>
       <p className="text-sm text-text-body mb-4">
-        Join a team to start participating in HackDay 2026!
+        Join an idea to start participating in HackDay 2026!
       </p>
       <Button
         variant="primary"
@@ -283,11 +283,11 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 </div>
                 <div>
                   <Card.Label className="text-brand mb-0">Welcome to HackDay!</Card.Label>
-                  <Card.Title className="text-white mb-0">Join Your Team</Card.Title>
+                  <Card.Title className="text-white mb-0">Join Your Idea</Card.Title>
                 </div>
               </HStack>
               <p className="text-base text-text-body">
-                Find a team that matches your interests and skill development needs, or browse teams manually. You can also enable auto-assignment to be automatically matched with teammates.
+                Find an idea that matches your interests and skill development needs, or browse ideas manually. You can also enable auto-assignment to be automatically matched with teammates.
               </p>
               <HStack gap="3">
                 <Button
@@ -296,7 +296,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                   onClick={() => onNavigate('marketplace', { tab: 'teams' })}
                   leftIcon={<Users className="w-5 h-5" />}
                 >
-                  Browse Teams
+                  Browse Ideas
                 </Button>
                 {false && (
                   <Button
@@ -416,7 +416,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
             </HStack>
             <p className="text-base text-text-body">
-              Join a team to start participating! Teams can have 2-6 members.
+              Join an idea to start participating! Teams can have 2-6 members.
             </p>
             <HStack gap="3">
               <Button
@@ -425,7 +425,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 onClick={() => onNavigate('marketplace', { tab: 'teams' })}
                 leftIcon={<Users className="w-5 h-5" />}
               >
-                Browse Teams
+                Browse Ideas
               </Button>
               <Button
                 variant="secondary"
@@ -433,7 +433,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 onClick={() => onNavigate('marketplace', { tab: 'teams' })}
                 leftIcon={<Plus className="w-5 h-5" />}
               >
-                Create Team
+                Create Idea
               </Button>
             </HStack>
           </VStack>

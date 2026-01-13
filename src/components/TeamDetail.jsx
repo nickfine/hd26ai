@@ -148,7 +148,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                       }}
                       className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
                     >
-                      Edit
+                      Edit Idea
                     </button>
                   )}
                 </div>
@@ -793,7 +793,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
         </div>
       )}
 
-      {/* Edit Team Name Modal */}
+      {/* Edit Idea Modal */}
       {isEditingName && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div
@@ -804,7 +804,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white">Edit Team Name</h3>
+              <h3 className="text-lg font-bold text-white">Edit Idea</h3>
               <button
                 type="button"
                 onClick={handleCancelTeamName}
@@ -816,13 +816,13 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             
             <div className="mb-4">
               <label className="block text-xs font-bold uppercase tracking-wide text-text-secondary mb-2">
-                Team Name
+                Project Idea
               </label>
               <input
                 type="text"
                 value={teamNameInput}
                 onChange={(e) => setTeamNameInput(e.target.value)}
-                placeholder="Enter team name"
+                placeholder="Enter project idea"
                 maxLength={50}
                 className={`w-full px-3 py-3 border-2 focus:outline-none transition-colors text-base bg-arena-elevated text-white placeholder:text-text-muted rounded-card
                   ${teamNameInput.trim().length < 3 ? 'border-error/50' : 'border-arena-border focus:border-text-secondary'}`}
@@ -834,7 +834,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
               />
               <div className="flex items-center justify-between mt-1">
                 {teamNameInput.trim().length < 3 ? (
-                  <p className="text-xs text-error">Team name must be at least 3 characters</p>
+                  <p className="text-xs text-error">Idea must be at least 3 characters</p>
                 ) : (
                   <span />
                 )}
