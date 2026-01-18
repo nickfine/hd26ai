@@ -217,27 +217,49 @@ export const AWARDS = {
 // MOCK USERS BY ROLE
 // ============================================================================
 
+// Users aligned with HD26Forge for consistent cross-platform demo
 export const MOCK_USERS = {
   participants: [
-    {
-      id: 101,
-      name: 'Alex Chen',
-      email: 'alex.chen@company.com',
-      skills: ['Backend Development', 'DevOps'],
-      role: 'participant',
-    },
+    // Team Human Touch members (aligned with Forge)
     {
       id: 201,
       name: 'Morgan Riley',
+      callsign: 'Pixel Pusher',
       email: 'morgan.riley@company.com',
       skills: ['UI/UX Design', 'Product Management'],
       role: 'participant',
     },
     {
-      id: 301,
-      name: 'Jamie Foster',
-      email: 'jamie.foster@company.com',
-      skills: ['Product Management', 'UI/UX Design'],
+      id: 202,
+      name: 'Casey Brooks',
+      callsign: 'CSS Wizard',
+      email: 'casey.brooks@company.com',
+      skills: ['Frontend Development', 'UI/UX Design'],
+      role: 'participant',
+    },
+    // Team Neural Nexus members (aligned with Forge)
+    {
+      id: 101,
+      name: 'Alex Chen',
+      callsign: 'Keyboard Bandit',
+      email: 'alex.chen@company.com',
+      skills: ['Backend Development', 'DevOps'],
+      role: 'participant',
+    },
+    {
+      id: 102,
+      name: 'Jordan Lee',
+      callsign: 'Neural Ninja',
+      email: 'jordan.lee@company.com',
+      skills: ['Machine Learning', 'Data Science'],
+      role: 'participant',
+    },
+    {
+      id: 103,
+      name: 'Taylor Kim',
+      callsign: 'Firewall',
+      email: 'taylor.kim@company.com',
+      skills: ['Backend Development', 'Security'],
       role: 'participant',
     },
   ],
@@ -289,6 +311,7 @@ export const MOCK_USERS = {
     {
       id: 4001,
       name: 'HackDay Admin',
+      callsign: 'SysOp',
       email: 'admin@company.com',
       skills: [],
       role: 'admin',
@@ -296,71 +319,12 @@ export const MOCK_USERS = {
   ],
 };
 
+// Teams aligned with HD26Forge for consistent cross-platform demo
 export const MOCK_TEAMS = [
-  {
-    id: 1,
-    name: 'Neural Nexus',
-    description: 'Building autonomous code review agents',
-    lookingFor: ['Backend Development', 'Machine Learning', 'DevOps'],
-    maxMembers: 5,
-    captainId: 101,
-    moreInfo: '',
-    isAutoCreated: false,
-    members: [
-      { id: 101, name: 'Alex Chen', callsign: 'Keyboard Bandit', skills: ['Backend Development', 'DevOps'] },
-      { id: 102, name: 'Jordan Lee', callsign: 'Neural Ninja', skills: ['Machine Learning', 'Data Science'] },
-      { id: 103, name: 'Taylor Kim', callsign: 'Firewall', skills: ['Backend Development', 'Security'] },
-    ],
-    joinRequests: [
-      {
-        id: 9001,
-        userId: 9001,
-        userName: 'Maya Rodriguez',
-        userSkills: ['Machine Learning', 'Data Science', 'Backend Development'],
-        message: 'I have 3 years of experience building ML pipelines and would love to contribute to your code review agents. I specialize in NLP models that could help with semantic code understanding.',
-        timestamp: '2025-12-06T14:30:00.000Z',
-      },
-      {
-        id: 9002,
-        userId: 9002,
-        userName: 'Ethan Park',
-        userSkills: ['DevOps', 'Backend Development'],
-        message: 'Your project sounds exciting! I can help with CI/CD pipelines and infrastructure to deploy your agents at scale.',
-        timestamp: '2025-12-07T09:15:00.000Z',
-      },
-    ],
-    submission: {
-      status: 'submitted',
-      projectName: 'CodeReview AI',
-      description: 'An autonomous code review agent powered by LLMs that provides intelligent feedback on pull requests. It analyzes code patterns, suggests improvements, and catches bugs before they reach production.',
-      demoVideoUrl: 'https://youtube.com/watch?v=neural123',
-      repoUrl: 'https://github.com/neural-nexus/codereview-ai',
-      liveDemoUrl: 'https://codereview-ai.vercel.app',
-      submittedAt: '2025-12-07T10:30:00.000Z',
-      lastUpdated: '2025-12-07T10:30:00.000Z',
-      participantVotes: 24,
-      judgeScores: [
-        {
-          judgeId: 3001,
-          judgeName: 'Dr. Elena Vasquez',
-          scores: { innovation: 9, technical: 9, presentation: 8, impact: 9, theme: 8 },
-          comments: 'Excellent technical execution. The AI integration is seamless.',
-          scoredAt: '2025-12-07T14:00:00.000Z',
-        },
-        {
-          judgeId: 3002,
-          judgeName: 'James Okonkwo',
-          scores: { innovation: 8, technical: 9, presentation: 7, impact: 8, theme: 9 },
-          comments: 'Strong alignment with the AI theme. Very practical solution.',
-          scoredAt: '2025-12-07T14:30:00.000Z',
-        },
-      ],
-    },
-  },
   {
     id: 2,
     name: 'Human Touch',
-    description: 'Crafting intuitive interfaces that AI cannot replicate',
+    description: 'Crafting intuitive interfaces that AI cannot replicate. Proving human creativity trumps machine efficiency.',
     lookingFor: ['UI/UX Design', 'Frontend Development'],
     maxMembers: 4,
     captainId: 201,
@@ -370,7 +334,16 @@ export const MOCK_TEAMS = [
       { id: 201, name: 'Morgan Riley', callsign: 'Pixel Pusher', skills: ['UI/UX Design', 'Product Management'] },
       { id: 202, name: 'Casey Brooks', callsign: 'CSS Wizard', skills: ['Frontend Development', 'UI/UX Design'] },
     ],
-    joinRequests: [],
+    joinRequests: [
+      {
+        id: 9001,
+        userId: 5001,
+        userName: 'Quinn Harper',
+        userSkills: ['Frontend Development', 'UI/UX Design'],
+        message: "I'd love to help with the UI design! My background in both design and coding could be a great fit.",
+        timestamp: '2026-01-12T09:00:00.000Z',
+      },
+    ],
     submission: {
       status: 'submitted',
       projectName: 'Empathy Engine',
@@ -378,8 +351,8 @@ export const MOCK_TEAMS = [
       demoVideoUrl: 'https://youtube.com/watch?v=example123',
       repoUrl: 'https://github.com/human-touch/empathy-engine',
       liveDemoUrl: 'https://empathy-engine.vercel.app',
-      submittedAt: '2025-12-07T09:00:00.000Z',
-      lastUpdated: '2025-12-07T09:00:00.000Z',
+      submittedAt: '2026-01-14T09:00:00.000Z',
+      lastUpdated: '2026-01-14T09:00:00.000Z',
       participantVotes: 31,
       judgeScores: [
         {
@@ -387,21 +360,64 @@ export const MOCK_TEAMS = [
           judgeName: 'Dr. Elena Vasquez',
           scores: { innovation: 9, technical: 7, presentation: 10, impact: 8, theme: 9 },
           comments: 'Beautiful presentation. The emotional design approach is unique.',
-          scoredAt: '2025-12-07T13:00:00.000Z',
+          scoredAt: '2026-01-16T13:00:00.000Z',
         },
         {
           judgeId: 3002,
           judgeName: 'James Okonkwo',
           scores: { innovation: 8, technical: 7, presentation: 9, impact: 9, theme: 10 },
           comments: 'Perfect embodiment of the human side. Inspiring work.',
-          scoredAt: '2025-12-07T13:30:00.000Z',
+          scoredAt: '2026-01-16T13:30:00.000Z',
         },
         {
           judgeId: 3003,
           judgeName: 'Priya Sharma',
           scores: { innovation: 9, technical: 8, presentation: 9, impact: 8, theme: 9 },
           comments: 'A compelling argument for human-centered design.',
-          scoredAt: '2025-12-07T15:00:00.000Z',
+          scoredAt: '2026-01-16T15:00:00.000Z',
+        },
+      ],
+    },
+  },
+  {
+    id: 1,
+    name: 'Neural Nexus',
+    description: 'Building autonomous code review agents powered by cutting-edge AI technology.',
+    lookingFor: ['Machine Learning', 'DevOps'],
+    maxMembers: 5,
+    captainId: 101,
+    moreInfo: '',
+    isAutoCreated: false,
+    members: [
+      { id: 101, name: 'Alex Chen', callsign: 'Keyboard Bandit', skills: ['Backend Development', 'DevOps'] },
+      { id: 102, name: 'Jordan Lee', callsign: 'Neural Ninja', skills: ['Machine Learning', 'Data Science'] },
+      { id: 103, name: 'Taylor Kim', callsign: 'Firewall', skills: ['Backend Development', 'Security'] },
+    ],
+    joinRequests: [],
+    submission: {
+      status: 'submitted',
+      projectName: 'CodeReview AI',
+      description: 'An autonomous code review agent powered by LLMs that provides intelligent feedback on pull requests. It analyzes code patterns, suggests improvements, and catches bugs before they reach production.',
+      demoVideoUrl: 'https://youtube.com/watch?v=neural123',
+      repoUrl: 'https://github.com/neural-nexus/codereview-ai',
+      liveDemoUrl: 'https://codereview-ai.vercel.app',
+      submittedAt: '2026-01-14T10:30:00.000Z',
+      lastUpdated: '2026-01-14T10:30:00.000Z',
+      participantVotes: 24,
+      judgeScores: [
+        {
+          judgeId: 3001,
+          judgeName: 'Dr. Elena Vasquez',
+          scores: { innovation: 9, technical: 9, presentation: 8, impact: 9, theme: 8 },
+          comments: 'Excellent technical execution. The AI integration is seamless.',
+          scoredAt: '2026-01-16T14:00:00.000Z',
+        },
+        {
+          judgeId: 3002,
+          judgeName: 'James Okonkwo',
+          scores: { innovation: 8, technical: 9, presentation: 7, impact: 8, theme: 9 },
+          comments: 'Strong alignment with the AI theme. Very practical solution.',
+          scoredAt: '2026-01-16T14:30:00.000Z',
         },
       ],
     },
@@ -610,10 +626,13 @@ export const MOCK_TEAMS = [
   },
 ];
 
+// Free agents - aligned with HD26Forge for consistent cross-platform demo
+// These IDs match the accountId pattern in Forge: "mock-free-500X"
 export const MOCK_FREE_AGENTS = [
   {
     id: 5001,
     name: 'Quinn Harper',
+    callsign: 'Design Coder',
     skills: ['Frontend Development', 'UI/UX Design'],
     bio: 'Designer who codes. Looking for a team that values aesthetics and user experience.',
     teamInvites: [],
@@ -622,6 +641,7 @@ export const MOCK_FREE_AGENTS = [
   {
     id: 5002,
     name: 'Skyler Vance',
+    callsign: 'Data Dreamer',
     skills: ['Machine Learning', 'Data Science'],
     bio: 'Data scientist with a passion for neural networks. Ready to help your AI project dominate.',
     teamInvites: [],
@@ -630,6 +650,7 @@ export const MOCK_FREE_AGENTS = [
   {
     id: 5003,
     name: 'River Chen',
+    callsign: 'Stack Surfer',
     skills: ['Backend Development', 'DevOps', 'Security'],
     bio: 'Full-stack engineer. I go where the interesting problems are, regardless of side.',
     teamInvites: [],
@@ -638,6 +659,7 @@ export const MOCK_FREE_AGENTS = [
   {
     id: 5004,
     name: 'Dakota Wells',
+    callsign: 'App Artisan',
     skills: ['Mobile Development', 'Frontend Development'],
     bio: 'Cross-platform mobile dev. I believe in crafting apps with a human touch.',
     teamInvites: [],
@@ -646,6 +668,7 @@ export const MOCK_FREE_AGENTS = [
   {
     id: 5005,
     name: 'Ash Nakamura',
+    callsign: 'Product Pioneer',
     skills: ['Product Management', 'UI/UX Design'],
     bio: 'Product strategist embracing AI-first design. Let machines do the heavy lifting.',
     teamInvites: [],
@@ -654,6 +677,7 @@ export const MOCK_FREE_AGENTS = [
   {
     id: 5006,
     name: 'Emery Blake',
+    callsign: 'Hardware Hacker',
     skills: ['Hardware/IoT', 'Backend Development'],
     bio: 'Hardware hacker at heart. Building tangible things in an increasingly digital world.',
     teamInvites: [],
@@ -662,6 +686,7 @@ export const MOCK_FREE_AGENTS = [
   {
     id: 5007,
     name: 'Jules Thornton',
+    callsign: 'LLM Lord',
     skills: ['Machine Learning', 'Backend Development', 'Data Science'],
     bio: 'LLM enthusiast. If it involves prompts and parameters, count me in.',
     teamInvites: [],
@@ -670,6 +695,7 @@ export const MOCK_FREE_AGENTS = [
   {
     id: 5008,
     name: 'Rowan Kim',
+    callsign: 'Full Stack Flash',
     skills: ['Frontend Development', 'Backend Development'],
     bio: 'Versatile full-stack dev. Show me your vision and I\'ll help you build it.',
     teamInvites: [],
