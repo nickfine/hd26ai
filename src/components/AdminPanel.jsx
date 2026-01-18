@@ -82,8 +82,11 @@ function AdminPanel({
   onRefreshUsers,
   event,
   onUpdateMotd,
+  isDevMode = false,
+  onDevRoleChange,
+  devRoleOverride,
 }) {
-  const [activeSection, setActiveSection] = useState('overview'); // 'overview' | 'phases' | 'users'
+  const [activeSection, setActiveSection] = useState('overview'); // 'overview' | 'phases' | 'users' | 'dev'
   const [confirmPhaseChange, setConfirmPhaseChange] = useState(null);
   const [motd, setMotd] = useState(event?.motd || '');
   const [isSavingMotd, setIsSavingMotd] = useState(false);
@@ -546,6 +549,54 @@ function AdminPanel({
   };
 
   // ============================================================================
+  // RENDER: DEV TOOLS SECTION
+  // ============================================================================
+  const renderDevTools = () => (
+    <div className="space-y-6">
+      <div className="bg-yellow-50 border-2 border-yellow-200 p-4">
+        <div className="flex items-start gap-3">
+          <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
+          <div>
+            <div className="font-bold text-yellow-900">Development Mode Active</div>
+            <p className="text-sm text-yellow-700">
+              You are testing with real Supabase data. Changes affect all users.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Role Impersonation */}
+      <div className="bg-white border-2 border-gray-200 p-6">
+        <h3 className="font-bold text-gray-900 mb-2">Role Impersonation</h3>
+        <p className="text-sm text-gray-500 mb-4">
+          Temporarily override your role to test different user experiences. This affects both UI visibility and actions.
+        </p>
+        <select
+          value={devRoleOverride || user?.role || 'participant'}
+          onChange={(e) => {
+            const newRole = e.target.value;
+            const realRole = user?.role || 'participant';
+            const finalRole = newRole === realRole ? null : newRole;
+            onDevRoleChange?.(finalRole);
+          }}
+          className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+        >
+          <option value={user?.role || 'participant'}>Your Real Role: {user?.role || 'participant'}</option>
+          <option value="participant">Participant</option>
+          <option value="ambassador">Ambassador</option>
+          <option value="judge">Judge</option>
+          <option value="admin">Admin</option>
+        </select>
+        {devRoleOverride && (
+          <p className="mt-2 text-sm text-amber-600">
+            Impersonating: <strong>{devRoleOverride}</strong>
+          </p>
+        )}
+      </div>
+    </div>
+  );
+
+  // ============================================================================
   // RENDER: USERS SECTION
   // ============================================================================
   const renderUsers = () => (
@@ -915,6 +966,10 @@ function AdminPanel({
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="admin"
+      devRoleOverride={devRoleOverride}
+      onDevRoleChange={onDevRoleChange}
+      onPhaseChange={onPhaseChange}
+      eventPhases={eventPhases}
     >
       <div className="p-4 sm:p-6">
         {/* Page Header */}
@@ -934,6 +989,7 @@ function AdminPanel({
             { id: 'overview', label: 'Overview', icon: Settings },
             { id: 'phases', label: 'Event Phases', icon: Clock },
             { id: 'users', label: 'User Roles', icon: UserCog },
+            ...(isDevMode ? [{ id: 'dev', label: 'Dev Tools', icon: Settings }] : []),
           ].map((section) => {
             const Icon = section.icon;
             return (
@@ -959,6 +1015,7 @@ function AdminPanel({
         {activeSection === 'overview' && renderOverview()}
         {activeSection === 'phases' && renderPhases()}
         {activeSection === 'users' && renderUsers()}
+        {activeSection === 'dev' && isDevMode && renderDevTools()}
       </div>
     </AppLayout>
   );

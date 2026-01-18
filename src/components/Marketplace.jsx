@@ -31,6 +31,10 @@ function Marketplace({
   initialTab = 'teams',
   eventPhase,
   userInvites = [], // Invites for the current user (from Supabase)
+  devRoleOverride = null,
+  onDevRoleChange = null,
+  onPhaseChange = null,
+  eventPhases = {},
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -232,6 +236,10 @@ function Marketplace({
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="teams"
+      devRoleOverride={devRoleOverride}
+      onDevRoleChange={onDevRoleChange}
+      onPhaseChange={onPhaseChange}
+      eventPhases={eventPhases}
     >
       <div className="p-4 sm:p-6">
         {/* Status Banner */}

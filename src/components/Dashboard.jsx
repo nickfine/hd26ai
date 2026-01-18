@@ -613,6 +613,10 @@ function Dashboard({
   event,
   activityFeed = null, // Real-time activity feed from Supabase (null in demo mode)
   userInvites = [], // Pending team invites for the current user
+  devRoleOverride = null,
+  onDevRoleChange = null,
+  onPhaseChange = null,
+  eventPhases = {},
 }) {
   const [expandedFaq, setExpandedFaq] = useState(null);
 
@@ -630,6 +634,10 @@ function Dashboard({
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="dashboard"
+      devRoleOverride={devRoleOverride}
+      onDevRoleChange={onDevRoleChange}
+      onPhaseChange={onPhaseChange}
+      eventPhases={eventPhases}
     >
       <div className="p-4 sm:p-6">
         {/* Page Header with orange pulse animation */}

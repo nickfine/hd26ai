@@ -23,8 +23,11 @@ import {
   X,
   Star,
   ChevronRight,
+  ChevronDown,
   Sparkles,
   UserPlus,
+  Settings,
+  Wrench,
 } from 'lucide-react';
 import Badge, { RoleBadge } from './ui/Badge';
 import NavItem, { NavGroup } from './shared/NavItem';
@@ -211,8 +214,20 @@ function AppLayout({
   activeNav = 'dashboard',
   children,
   showSidebar = true,
+  isDevMode = false,
+  devRoleOverride = null,
+  onDevRoleChange = null,
+  onPhaseChange = null,
+  eventPhases = {},
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [devControlsOpen, setDevControlsOpen] = useState(false);
+  
+  // DEV MODE - Calculate if dev mode is active (requires env var AND admin role)
+  const devModeActive = isDevMode || (
+    import.meta.env.VITE_ENABLE_DEV_MODE === 'true' && 
+    user?.role === 'admin'
+  );
 
   // Mouse-reactive breathing vignette (throttled for performance)
   useEffect(() => {
@@ -280,10 +295,16 @@ function AppLayout({
 
   return (
     <div className="min-h-screen bg-hackday text-white">
+      {/* DEV MODE - Remove before production */}
+      {devModeActive && (
+        <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-bold sticky top-0 z-50">
+          🔧 DEVELOPMENT MODE ACTIVE - Testing with real data
+        </div>
+      )}
       {/* ================================================================== */}
       {/* HEADER */}
       {/* ================================================================== */}
-      <header className="border-b border-arena-border px-4 sm:px-6 py-4 bg-arena-black sticky top-0 z-40">
+      <header className={`border-b border-arena-border px-4 sm:px-6 py-4 bg-arena-black ${devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40`}>
         <Container size="xl" padding="none">
           <HStack justify="between" align="center">
             {/* Mobile menu button */}
@@ -311,6 +332,92 @@ function AppLayout({
 
             {/* War Timer - Isolated component to prevent parent re-renders */}
             <WarTimer />
+
+            {/* DEV MODE CONTROLS - Remove before production */}
+            {devModeActive && (
+              <div className="relative">
+                <button
+                  type="button"
+                  onClick={() => setDevControlsOpen(!devControlsOpen)}
+                  className={cn(
+                    'bg-yellow-500 text-black border-2 border-yellow-600 flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer',
+                    'transition-all duration-200 font-bold text-sm',
+                    'hover:bg-yellow-400'
+                  )}
+                  title="Dev Mode Controls"
+                >
+                  <Wrench className="w-4 h-4" />
+                  <span className="hidden sm:inline">DEV</span>
+                  <ChevronDown className={cn('w-4 h-4 transition-transform', devControlsOpen && 'rotate-180')} />
+                </button>
+                
+                {/* Dev Controls Dropdown */}
+                {devControlsOpen && (
+                  <>
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setDevControlsOpen(false)}
+                    />
+                    <div className="absolute right-0 top-full mt-2 w-64 bg-arena-card border-2 border-yellow-500 rounded-lg shadow-xl z-50 p-4">
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 mb-3 pb-3 border-b border-arena-border">
+                          <Wrench className="w-5 h-5 text-yellow-500" />
+                          <span className="font-bold text-white">Dev Controls</span>
+                        </div>
+                        
+                        {/* Role Impersonation */}
+                        <div>
+                          <label className="text-xs font-bold text-arena-secondary mb-2 block">
+                            Role Impersonation
+                          </label>
+                          <select
+                            value={devRoleOverride || user?.role || 'participant'}
+                            onChange={(e) => {
+                              const newRole = e.target.value;
+                              const realRole = user?.role || 'participant';
+                              onDevRoleChange?.(newRole === realRole ? null : newRole);
+                            }}
+                            className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-white text-sm focus:outline-none focus:border-yellow-500"
+                          >
+                            <option value={user?.role || 'participant'}>Real: {user?.role || 'participant'}</option>
+                            <option value="participant">Participant</option>
+                            <option value="ambassador">Ambassador</option>
+                            <option value="judge">Judge</option>
+                            <option value="admin">Admin</option>
+                          </select>
+                          {devRoleOverride && (
+                            <p className="mt-1 text-xs text-yellow-500">
+                              Impersonating: {devRoleOverride}
+                            </p>
+                          )}
+                        </div>
+                        
+                        {/* Phase Switcher */}
+                        {onPhaseChange && (
+                          <div>
+                            <label className="text-xs font-bold text-arena-secondary mb-2 block">
+                              Event Phase
+                            </label>
+                            <select
+                              value={eventPhase}
+                              onChange={(e) => {
+                                onPhaseChange(e.target.value);
+                                setDevControlsOpen(false);
+                              }}
+                              className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-white text-sm focus:outline-none focus:border-yellow-500"
+                            >
+                              {Object.entries(eventPhases).map(([key, phase]) => (
+                                <option key={key} value={key}>{phase.label}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            )}
 
             {/* User Quick Access */}
             <button

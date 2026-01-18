@@ -59,6 +59,10 @@ function App() {
   // Demo mode state (fallback when Supabase not configured)
   const [demoUser, setDemoUser] = useState(null);
   const [useDemoMode, setUseDemoMode] = useState(isDemoMode);
+  
+  // DEV MODE - Remove before production
+  // Dev mode allows testing controls (role impersonation, phase switching) with real Supabase data
+  const [devRoleOverride, setDevRoleOverride] = useState(null);
 
   // Effective user (from Supabase or demo mode)
   const effectiveUser = useMemo(() => {
@@ -67,7 +71,7 @@ function App() {
     }
     if (auth.profile) {
       // Transform Supabase profile to app format
-      return {
+      const baseUser = {
         id: auth.profile.id,
         name: auth.profile.name || 'Unknown',
         email: auth.profile.email,
@@ -78,9 +82,24 @@ function App() {
         callsign: auth.profile.callsign || '',
         autoAssignOptIn: auth.profile.autoAssignOptIn || false,
       };
+      
+      // DEV MODE: Apply role override if active (admin-only, gated by env var)
+      const isDevMode = import.meta.env.VITE_ENABLE_DEV_MODE === 'true' && 
+                        baseUser.role === 'admin';
+      if (isDevMode && devRoleOverride) {
+        return { ...baseUser, role: devRoleOverride };
+      }
+      
+      return baseUser;
     }
     return null;
-  }, [useDemoMode, demoUser, auth.profile]);
+  }, [useDemoMode, demoUser, auth.profile, devRoleOverride]);
+  
+  // DEV MODE: Check if dev mode is active (requires env var AND admin role)
+  const devModeActive = useMemo(() => {
+    return import.meta.env.VITE_ENABLE_DEV_MODE === 'true' && 
+           effectiveUser?.role === 'admin';
+  }, [effectiveUser?.role]);
 
   // ============================================================================
   // NAVIGATION STATE
@@ -641,12 +660,15 @@ function App() {
   const handlePhaseChange = useCallback(async (newPhase) => {
     if (!effectiveUser || effectiveUser.role !== 'admin') return;
     
-    if (useDemoMode) {
-      setMockEventPhase(newPhase);
-    } else {
-      await updateEventPhase(newPhase);
+    // Allow phase changes in real mode if dev mode is active
+    if (useDemoMode || devModeActive) {
+      if (useDemoMode) {
+        setMockEventPhase(newPhase);
+      } else {
+        await updateEventPhase(newPhase);
+      }
     }
-  }, [useDemoMode, effectiveUser, updateEventPhase]);
+  }, [useDemoMode, devModeActive, effectiveUser, updateEventPhase]);
 
   const handleUpdateMotd = useCallback(async (motd) => {
     if (!effectiveUser || effectiveUser.role !== 'admin') {
@@ -841,6 +863,10 @@ function App() {
             event={effectiveEvent}
             activityFeed={useDemoMode ? null : activityFeed}
             userInvites={useDemoMode ? [] : userInvites}
+            devRoleOverride={devRoleOverride}
+            onDevRoleChange={setDevRoleOverride}
+            onPhaseChange={devModeActive ? handlePhaseChange : null}
+            eventPhases={EVENT_PHASES}
           />
         );
       
@@ -858,6 +884,10 @@ function App() {
             initialTab={marketplaceInitialTab}
             eventPhase={eventPhase}
             userInvites={useDemoMode ? [] : userInvites}
+            devRoleOverride={devRoleOverride}
+            onDevRoleChange={setDevRoleOverride}
+            onPhaseChange={devModeActive ? handlePhaseChange : null}
+            eventPhases={EVENT_PHASES}
           />
         );
       
@@ -872,6 +902,10 @@ function App() {
             onLeaveTeam={leaveTeam}
             onAutoAssign={handleAutoAssign}
             eventPhase={eventPhase}
+            devRoleOverride={devRoleOverride}
+            onDevRoleChange={setDevRoleOverride}
+            onPhaseChange={devModeActive ? handlePhaseChange : null}
+            eventPhases={EVENT_PHASES}
           />
         );
       
@@ -958,6 +992,9 @@ function App() {
             onRefreshUsers={useDemoMode ? () => {} : refetchUsers}
             event={effectiveEvent}
             onUpdateMotd={handleUpdateMotd}
+            isDevMode={devModeActive}
+            onDevRoleChange={setDevRoleOverride}
+            devRoleOverride={devRoleOverride}
           />
         );
       

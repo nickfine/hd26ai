@@ -176,6 +176,10 @@ function Profile({
   onLeaveTeam,
   onAutoAssign,
   eventPhase,
+  devRoleOverride = null,
+  onDevRoleChange = null,
+  onPhaseChange = null,
+  eventPhases = {},
 }) {
   const [bio, setBio] = useState(user?.bio || '');
   const [isEditingBio, setIsEditingBio] = useState(false);
@@ -345,6 +349,10 @@ function Profile({
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="profile"
+      devRoleOverride={devRoleOverride}
+      onDevRoleChange={onDevRoleChange}
+      onPhaseChange={onPhaseChange}
+      eventPhases={eventPhases}
     >
       <div className="p-4 sm:p-6">
         {/* Captain Alert Banner */}
