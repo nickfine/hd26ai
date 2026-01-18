@@ -689,14 +689,24 @@ function App() {
     setCurrentView('team-detail');
   }, []);
 
-  const handleNavigate = useCallback((view, options = {}) => {
+  const handleNavigate = useCallback(async (view, options = {}) => {
+    // Handle sign out specially
+    if (view === 'signout') {
+      if (!useDemoMode) {
+        await auth.signOut();
+      }
+      setDemoUser(null);
+      setCurrentView('landing');
+      return;
+    }
+    
     if (view === 'marketplace' && options.tab) {
       setMarketplaceInitialTab(options.tab);
     } else if (view === 'marketplace') {
       setMarketplaceInitialTab('teams');
     }
     setCurrentView(view);
-  }, []);
+  }, [useDemoMode, auth]);
 
   // ============================================================================
   // USER MANAGEMENT

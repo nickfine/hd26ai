@@ -510,7 +510,7 @@ function AppLayout({
                   ))}
                   <NavItem
                     icon={<LogOut />}
-                    onClick={() => onNavigate('landing')}
+                    onClick={() => onNavigate('signout')}
                     className="mt-4 text-arena-muted hover:text-white"
                   >
                     Sign Out
