@@ -223,9 +223,32 @@ function AppLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
   
-  // DEV MODE - Calculate if dev mode is active (requires env var AND admin role)
+  // DEV MODE - Check localStorage for user preference (admin only)
+  const [devModeEnabled, setDevModeEnabled] = useState(() => {
+    if (user?.role === 'admin') {
+      try {
+        return localStorage.getItem('hd26ai_dev_mode_enabled') === 'true';
+      } catch {
+        return false;
+      }
+    }
+    return false;
+  });
+  
+  // Update localStorage when dev mode is toggled
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      try {
+        localStorage.setItem('hd26ai_dev_mode_enabled', devModeEnabled ? 'true' : 'false');
+      } catch {
+        // Ignore localStorage errors
+      }
+    }
+  }, [devModeEnabled, user?.role]);
+  
+  // DEV MODE - Calculate if dev mode is active (user preference OR env var AND admin role)
   const devModeActive = isDevMode || (
-    import.meta.env.VITE_ENABLE_DEV_MODE === 'true' && 
+    (devModeEnabled || import.meta.env.VITE_ENABLE_DEV_MODE === 'true') && 
     user?.role === 'admin'
   );
 
@@ -299,6 +322,9 @@ function AppLayout({
       {devModeActive && (
         <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-bold sticky top-0 z-50">
           🔧 DEVELOPMENT MODE ACTIVE - Testing with real data
+          {!import.meta.env.VITE_ENABLE_DEV_MODE && (
+            <span className="ml-2 text-xs opacity-75">(UI Toggle Enabled)</span>
+          )}
         </div>
       )}
       {/* ================================================================== */}
@@ -332,6 +358,24 @@ function AppLayout({
 
             {/* War Timer - Isolated component to prevent parent re-renders */}
             <WarTimer />
+
+            {/* DEV MODE TOGGLE - Always visible for admins */}
+            {user?.role === 'admin' && (
+              <button
+                type="button"
+                onClick={() => setDevModeEnabled(!devModeEnabled)}
+                className={cn(
+                  'flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all',
+                  devModeEnabled
+                    ? 'bg-yellow-500 text-black hover:bg-yellow-400'
+                    : 'bg-arena-card border border-arena-border text-arena-secondary hover:text-white'
+                )}
+                title={devModeEnabled ? 'Hide Dev Controls' : 'Show Dev Controls'}
+              >
+                <Wrench className="w-3 h-3" />
+                <span className="hidden sm:inline">DEV</span>
+              </button>
+            )}
 
             {/* DEV MODE CONTROLS - Remove before production */}
             {devModeActive && (
