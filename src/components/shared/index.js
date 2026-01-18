@@ -18,6 +18,9 @@ export { default as NavItem, NavGroup, NavDivider } from './NavItem';
 // BackButton
 export { default as BackButton } from './BackButton';
 
+// StatusBanner
+export { default as StatusBanner } from './StatusBanner';
+
 
 
 

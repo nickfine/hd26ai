@@ -34,6 +34,7 @@ import Badge, { HeartbeatDot, CallsignBadge } from './ui/Badge';
 import { HStack, VStack } from './layout';
 import { cn, formatNameWithCallsign } from '../lib/design-system';
 import { PROMO_IMAGES } from '../data/mockData';
+import { StatusBanner } from './shared';
 
 // ============================================================================
 // MOCK DATA
@@ -611,6 +612,7 @@ function Dashboard({
   eventPhase = 'voting',
   event,
   activityFeed = null, // Real-time activity feed from Supabase (null in demo mode)
+  userInvites = [], // Pending team invites for the current user
 }) {
   const [expandedFaq, setExpandedFaq] = useState(null);
 
@@ -643,6 +645,17 @@ function Dashboard({
             Your command center for HackDay 2026. Track your progress, find teammates, 
             and stay updated on the latest events.
           </p>
+        </div>
+
+        {/* Status Banner */}
+        <div className="mb-6">
+          <StatusBanner
+            user={user}
+            teams={teams}
+            userInvites={userInvites}
+            onNavigate={onNavigate}
+            eventPhase={eventPhase}
+          />
         </div>
 
         {/* Bento Grid - 24px gap for premium breathing room */}

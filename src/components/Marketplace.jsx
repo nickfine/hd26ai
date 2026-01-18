@@ -17,6 +17,7 @@ import {
 import { SKILLS } from '../data/mockData';
 import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
+import { StatusBanner } from './shared';
 
 function Marketplace({ 
   user, 
@@ -233,6 +234,17 @@ function Marketplace({
       activeNav="teams"
     >
       <div className="p-4 sm:p-6">
+        {/* Status Banner */}
+        <div className="mb-6">
+          <StatusBanner
+            user={user}
+            teams={teams}
+            userInvites={userInvites}
+            onNavigate={onNavigate}
+            eventPhase={eventPhase}
+          />
+        </div>
+
         {/* Pending Invites - For Free Agents */}
         {pendingInvites.length > 0 && (
           <div className="bg-arena-card border border-arena-border p-4 mb-6 rounded-card">

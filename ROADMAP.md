@@ -100,6 +100,28 @@ This document tracks planned features and improvements for the HackDay 2026 Comp
   - [ ] Accept/decline invite
   - [ ] Invite expiration
 
+#### Free Agent Auto-Assignment
+- **Status:** Planned
+- **Description:** Automatically assign remaining free agents to Observers team when hack starts
+- **Location:** Backend resolver or scheduled function
+- **Acceptance Criteria:**
+  - [ ] Detect when event phase transitions to 'hacking'
+  - [ ] Find all users with `isFreeAgent = true` and no team
+  - [ ] Automatically add them to Observers team
+  - [ ] Set `isFreeAgent = false` for assigned users
+  - [ ] Log assignment activity
+
+#### Free Agent Reminder System
+- **Status:** Planned
+- **Description:** Send reminders to free agents 24-48 hours before hack starts, offering auto-assign option
+- **Location:** Backend scheduled job or resolver
+- **Acceptance Criteria:**
+  - [ ] Calculate time until hack start (24-48 hours window)
+  - [ ] Query free agents who haven't joined a team
+  - [ ] Send notification/email reminder
+  - [ ] Offer "Auto-assign me to Observers" button
+  - [ ] Allow manual opt-in before automatic assignment
+
 #### Real-time Activity Feed
 - **Status:** Mock data only
 - **Description:** Live updates when users join teams, create teams, submit projects

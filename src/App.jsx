@@ -840,6 +840,7 @@ function App() {
             eventPhase={eventPhase}
             event={effectiveEvent}
             activityFeed={useDemoMode ? null : activityFeed}
+            userInvites={useDemoMode ? [] : userInvites}
           />
         );
       
