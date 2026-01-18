@@ -725,6 +725,7 @@ function App() {
       if (updates.bio) dbUpdates.bio = updates.bio;
       if (updates.callsign !== undefined) dbUpdates.callsign = updates.callsign;
       if (updates.autoAssignOptIn !== undefined) dbUpdates.autoAssignOptIn = updates.autoAssignOptIn;
+      if (updates.isFreeAgent !== undefined) dbUpdates.isFreeAgent = updates.isFreeAgent;
       
       await auth.updateProfile(dbUpdates);
     }

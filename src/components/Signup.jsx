@@ -182,6 +182,8 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
       name: trimmedName,
       callsign: callsign.trim(),
       skills: selectedSkills,
+      // Set as free agent if not an observer (observers get auto-assigned to team)
+      isFreeAgent: !isObserver,
     });
     
     // Small delay to ensure state update completes (especially in demo mode)
