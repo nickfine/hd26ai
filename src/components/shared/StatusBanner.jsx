@@ -59,13 +59,29 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
   // Only show team role during registration/teams phase (before hack starts)
   const showTeamRole = eventPhase === 'registration' || eventPhase === 'teams';
 
+  // Debug logging
+  console.log('[StatusBanner] Debug:', {
+    eventPhase,
+    showTeamRole,
+    hasUser: !!user,
+    userId: user?.id,
+    userTeam: userTeam ? { id: userTeam.id, name: userTeam.name, captainId: userTeam.captainId } : null,
+    isCaptain,
+    isObserver,
+    pendingInviteCount,
+    userIsFreeAgent: user?.isFreeAgent,
+    teamsCount: teams.length
+  });
+
   // Don't render if user has no team and no invites (edge case - not registered)
   if (!userTeam && pendingInviteCount === 0 && !user?.isFreeAgent) {
+    console.log('[StatusBanner] Returning null: no team, no invites, not free agent');
     return null;
   }
 
   // Free Agent Status
   if (!userTeam) {
+    console.log('[StatusBanner] Rendering Free Agent status');
     return (
       <Card variant="accent" padding="md" className="animate-fade-in">
         <HStack gap="4" align="center" justify="between">
@@ -102,6 +118,7 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
 
   // Observer Status
   if (isObserver) {
+    console.log('[StatusBanner] Rendering Observer status');
     return (
       <Card variant="accent" padding="md" className="animate-fade-in">
         <HStack gap="3" align="center">
@@ -129,6 +146,7 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
 
   // On Team Status (only show role during registration/teams phase)
   if (userTeam && showTeamRole) {
+    console.log('[StatusBanner] Rendering On Team status');
     return (
       <Card variant="accent" padding="md" className="animate-fade-in">
         <HStack gap="3" align="center" justify="between">
@@ -158,9 +176,11 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
 
   // On Team but hack has started (no role shown)
   if (userTeam && !showTeamRole) {
+    console.log('[StatusBanner] Returning null: has team but showTeamRole is false');
     return null;
   }
 
+  console.log('[StatusBanner] Returning null: fallthrough');
   return null;
 }
 
