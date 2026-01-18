@@ -56,8 +56,8 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
     return userInvites.filter(invite => invite.status === 'PENDING' || !invite.status).length;
   }, [userInvites]);
 
-  // Only show team role during registration/teams phase (before hack starts)
-  const showTeamRole = eventPhase === 'registration' || eventPhase === 'teams';
+  // Only show team role during registration/teams/team_formation phase (before hack starts)
+  const showTeamRole = eventPhase === 'registration' || eventPhase === 'teams' || eventPhase === 'team_formation';
 
   // Debug logging
   console.log('[StatusBanner] Debug:', {
