@@ -411,6 +411,51 @@ export type Database = {
           },
         ]
       }
+      TeamInvite: {
+        Row: {
+          id: string
+          teamId: string
+          userId: string
+          message: string | null
+          status: "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED"
+          createdAt: string
+          expiresAt: string | null
+        }
+        Insert: {
+          id?: string
+          teamId: string
+          userId: string
+          message?: string | null
+          status?: "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED"
+          createdAt?: string
+          expiresAt?: string | null
+        }
+        Update: {
+          id?: string
+          teamId?: string
+          userId?: string
+          message?: string | null
+          status?: "PENDING" | "ACCEPTED" | "DECLINED" | "EXPIRED"
+          createdAt?: string
+          expiresAt?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "TeamInvite_teamId_fkey"
+            columns: ["teamId"]
+            isOneToOne: false
+            referencedRelation: "Team"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "TeamInvite_userId_fkey"
+            columns: ["userId"]
+            isOneToOne: false
+            referencedRelation: "User"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       User: {
         Row: {
           autoAssignOptIn: boolean

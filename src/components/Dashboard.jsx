@@ -610,6 +610,7 @@ function Dashboard({
   onNavigateToTeam,
   eventPhase = 'voting',
   event,
+  activityFeed = null, // Real-time activity feed from Supabase (null in demo mode)
 }) {
   const [expandedFaq, setExpandedFaq] = useState(null);
 
@@ -691,7 +692,25 @@ function Dashboard({
               </HStack>
             </HStack>
             <VStack gap="0" className="max-h-48 overflow-y-auto">
-              {MOCK_ACTIVITY_FEED.map((activity) => {
+              {(activityFeed && activityFeed.length > 0 ? activityFeed : MOCK_ACTIVITY_FEED).map((activity) => {
+                // Format time for display
+                const timeAgo = activity.time 
+                  ? (() => {
+                      const now = new Date();
+                      const activityTime = new Date(activity.time);
+                      const diffMs = now - activityTime;
+                      const diffMins = Math.floor(diffMs / 60000);
+                      const diffHours = Math.floor(diffMs / 3600000);
+                      const diffDays = Math.floor(diffMs / 86400000);
+                      
+                      if (diffMins < 1) return 'just now';
+                      if (diffMins < 60) return `${diffMins} min ago`;
+                      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                      return activityTime.toLocaleDateString();
+                    })()
+                  : activity.time || 'recently';
+                
                 const formatted = formatNameWithCallsign(activity.user, activity.callsign);
                 
                 return (
@@ -724,7 +743,7 @@ function Dashboard({
                           {activity.team}
                         </span>
                       )}
-                      <div className="text-xs text-text-muted mt-0.5">{activity.time}</div>
+                      <div className="text-xs text-text-muted mt-0.5">{timeAgo}</div>
                     </div>
                   </div>
                 );

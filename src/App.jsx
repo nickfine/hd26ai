@@ -20,6 +20,9 @@ import {
   useTeamMutations,
   useSubmissionMutations,
   useUsers,
+  useTeamInvites,
+  useTeamInviteMutations,
+  useActivityFeed,
 } from './hooks/useSupabase';
 
 // Components
@@ -113,6 +116,13 @@ function App() {
     refetch: refetchUsers, 
     updateUserRole: supabaseUpdateUserRole 
   } = useUsers();
+
+  // Team invites
+  const { invites: userInvites } = useTeamInvites(effectiveUser?.id);
+  const inviteMutations = useTeamInviteMutations();
+
+  // Activity feed
+  const { activities: activityFeed } = useActivityFeed(20);
 
   // Demo mode state (mock data)
   const [mockTeams, setMockTeams] = useState(MOCK_TEAMS);
@@ -343,9 +353,16 @@ function App() {
             : agent
         )
       );
+    } else {
+      // Supabase mode - use invite mutations
+      const result = await inviteMutations.sendInvite(teamId, agentId, message);
+      if (!result.error) {
+        // Refresh free agents to show updated invites
+        refetchFreeAgents();
+      }
+      return result;
     }
-    // In Supabase mode, invites would be handled differently
-  }, [useDemoMode, mockTeams]);
+  }, [useDemoMode, mockTeams, inviteMutations, refetchFreeAgents]);
 
   const handleInviteResponse = useCallback(async (agentId, inviteId, accepted) => {
     if (useDemoMode) {
@@ -381,8 +398,17 @@ function App() {
           )
         );
       }
+    } else {
+      // Supabase mode - use invite mutations
+      const result = await inviteMutations.respondToInvite(inviteId, accepted);
+      if (!result.error) {
+        // Refresh teams and free agents
+        refetchTeams();
+        refetchFreeAgents();
+      }
+      return result;
     }
-  }, [useDemoMode, mockFreeAgents]);
+  }, [useDemoMode, mockFreeAgents, inviteMutations, refetchTeams, refetchFreeAgents]);
 
   // ============================================================================
   // CREATE TEAM HANDLER
@@ -802,6 +828,7 @@ function App() {
             onNavigateToTeam={navigateToTeam}
             eventPhase={eventPhase}
             event={effectiveEvent}
+            activityFeed={useDemoMode ? null : activityFeed}
           />
         );
       
@@ -818,6 +845,7 @@ function App() {
             onCreateTeam={handleCreateTeam}
             initialTab={marketplaceInitialTab}
             eventPhase={eventPhase}
+            userInvites={useDemoMode ? [] : userInvites}
           />
         );
       

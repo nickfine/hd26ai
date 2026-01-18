@@ -29,6 +29,7 @@ function Marketplace({
   onCreateTeam,
   initialTab = 'teams',
   eventPhase,
+  userInvites = [], // Invites for the current user (from Supabase)
 }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState(initialTab);
@@ -153,9 +154,18 @@ function Marketplace({
     );
   }, [allAgents, searchTerm]);
 
-  // Find current user's pending invites (if they are a free agent in the system)
+  // Find current user's pending invites
+  // Priority: use userInvites prop (from Supabase), fallback to freeAgents data (for demo mode)
   const currentUserAgent = freeAgents.find((a) => a.id === user?.id);
-  const pendingInvites = currentUserAgent?.teamInvites || [];
+  const pendingInvites = userInvites.length > 0 
+    ? userInvites.map(invite => ({
+        id: invite.id,
+        teamId: invite.teamId,
+        teamName: invite.teamName,
+        message: invite.message || '',
+        timestamp: invite.createdAt,
+      }))
+    : (currentUserAgent?.teamInvites || []);
 
   // Handle sending invite - memoized
   const handleSendInvite = useCallback(() => {

@@ -248,7 +248,8 @@ export function useFreeAgents() {
     try {
       setLoading(true);
 
-      const { data, error: fetchError } = await supabase
+      // Fetch free agents with their pending invites
+      const { data: users, error: fetchError } = await supabase
         .from('User')
         .select('*')
         .eq('isFreeAgent', true)
@@ -256,13 +257,41 @@ export function useFreeAgents() {
 
       if (fetchError) throw fetchError;
 
-      const transformedAgents = (data || []).map(user => ({
+      // Fetch all pending invites for these users
+      const userIds = (users || []).map(u => u.id);
+      const { data: invites, error: invitesError } = await supabase
+        .from('TeamInvite')
+        .select(`
+          *,
+          team:Team(id, name)
+        `)
+        .in('userId', userIds)
+        .eq('status', 'PENDING');
+
+      if (invitesError) throw invitesError;
+
+      // Group invites by userId
+      const invitesByUser = {};
+      (invites || []).forEach(invite => {
+        if (!invitesByUser[invite.userId]) {
+          invitesByUser[invite.userId] = [];
+        }
+        invitesByUser[invite.userId].push({
+          id: invite.id,
+          teamId: invite.teamId,
+          teamName: invite.team?.name || 'Unknown Team',
+          message: invite.message || '',
+          createdAt: invite.createdAt,
+        });
+      });
+
+      const transformedAgents = (users || []).map(user => ({
         id: user.id,
         name: user.name || 'Unknown',
         skills: user.skills ? user.skills.split(',').map(s => s.trim()) : [],
         bio: user.bio || '',
         image: user.image,
-        teamInvites: [], // Would need separate query
+        teamInvites: invitesByUser[user.id] || [],
       }));
 
       setFreeAgents(transformedAgents);
@@ -945,5 +974,388 @@ export function useUsers() {
   }, []);
 
   return { users, loading, error, refetch: fetchUsers, updateUserRole };
+}
+
+// ============================================================================
+// TEAM INVITES HOOK
+// ============================================================================
+
+/**
+ * Hook for fetching and managing team invites for a user
+ */
+export function useTeamInvites(userId) {
+  const [invites, setInvites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchInvites = useCallback(async () => {
+    if (!userId) {
+      setInvites([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const { data, error: fetchError } = await supabase
+        .from('TeamInvite')
+        .select(`
+          *,
+          team:Team(id, name, description)
+        `)
+        .eq('userId', userId)
+        .eq('status', 'PENDING')
+        .order('createdAt', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      const transformedInvites = (data || []).map(invite => ({
+        id: invite.id,
+        teamId: invite.teamId,
+        teamName: invite.team?.name || 'Unknown Team',
+        message: invite.message || '',
+        createdAt: invite.createdAt,
+        expiresAt: invite.expiresAt,
+      }));
+
+      setInvites(transformedInvites);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching team invites:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [userId]);
+
+  useEffect(() => {
+    fetchInvites();
+  }, [fetchInvites]);
+
+  return { invites, loading, error, refetch: fetchInvites };
+}
+
+// ============================================================================
+// TEAM INVITE MUTATIONS
+// ============================================================================
+
+/**
+ * Hook for team invite mutations (send, accept, decline)
+ */
+export function useTeamInviteMutations() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Send an invite from a team captain to a free agent
+  const sendInvite = useCallback(async (teamId, userId, message = '') => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Check if invite already exists
+      const { data: existing } = await supabase
+        .from('TeamInvite')
+        .select('id')
+        .eq('teamId', teamId)
+        .eq('userId', userId)
+        .eq('status', 'PENDING')
+        .single();
+
+      if (existing) {
+        setLoading(false);
+        return { error: 'Invite already sent to this user' };
+      }
+
+      // Create new invite
+      const { error: insertError } = await supabase
+        .from('TeamInvite')
+        .insert({
+          id: crypto.randomUUID(),
+          teamId,
+          userId,
+          message: message.trim() || null,
+          status: 'PENDING',
+        });
+
+      if (insertError) throw insertError;
+
+      setLoading(false);
+      return { error: null };
+    } catch (err) {
+      console.error('Error sending invite:', err);
+      setError(err.message);
+      setLoading(false);
+      return { error: err.message };
+    }
+  }, []);
+
+  // Respond to an invite (accept or decline)
+  const respondToInvite = useCallback(async (inviteId, accepted) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      if (accepted) {
+        // Fetch invite details
+        const { data: invite, error: fetchError } = await supabase
+          .from('TeamInvite')
+          .select('teamId, userId')
+          .eq('id', inviteId)
+          .single();
+
+        if (fetchError) throw fetchError;
+
+        // Update invite status to ACCEPTED
+        const { error: updateError } = await supabase
+          .from('TeamInvite')
+          .update({ status: 'ACCEPTED' })
+          .eq('id', inviteId);
+
+        if (updateError) throw updateError;
+
+        // Add user to team as a member
+        const { error: memberError } = await supabase
+          .from('TeamMember')
+          .insert({
+            id: crypto.randomUUID(),
+            teamId: invite.teamId,
+            userId: invite.userId,
+            role: 'MEMBER',
+            status: 'ACCEPTED',
+          });
+
+        if (memberError) throw memberError;
+
+        // Update user to not be free agent
+        await supabase
+          .from('User')
+          .update({ isFreeAgent: false })
+          .eq('id', invite.userId);
+
+        // Mark any other pending invites for this user as EXPIRED
+        await supabase
+          .from('TeamInvite')
+          .update({ status: 'EXPIRED' })
+          .eq('userId', invite.userId)
+          .eq('status', 'PENDING')
+          .neq('id', inviteId);
+      } else {
+        // Decline - update status to DECLINED
+        const { error: updateError } = await supabase
+          .from('TeamInvite')
+          .update({ status: 'DECLINED' })
+          .eq('id', inviteId);
+
+        if (updateError) throw updateError;
+      }
+
+      setLoading(false);
+      return { error: null };
+    } catch (err) {
+      console.error('Error responding to invite:', err);
+      setError(err.message);
+      setLoading(false);
+      return { error: err.message };
+    }
+  }, []);
+
+  return {
+    loading,
+    error,
+    sendInvite,
+    respondToInvite,
+  };
+}
+
+// ============================================================================
+// ACTIVITY FEED HOOK (Real-time)
+// ============================================================================
+
+/**
+ * Hook for real-time activity feed using Supabase Realtime
+ * Subscribes to TeamMember and Team table changes
+ */
+export function useActivityFeed(limit = 20) {
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Initial fetch of recent activities
+  const fetchInitialActivities = useCallback(async () => {
+    try {
+      setLoading(true);
+
+      // Fetch recent team creations
+      const { data: recentTeams, error: teamsError } = await supabase
+        .from('Team')
+        .select(`
+          id,
+          name,
+          createdAt,
+          members:TeamMember!inner(userId, user:User(id, name))
+        `)
+        .order('createdAt', { ascending: false })
+        .limit(limit);
+
+      if (teamsError) throw teamsError;
+
+      // Fetch recent team member joins (ACCEPTED status)
+      const { data: recentJoins, error: joinsError } = await supabase
+        .from('TeamMember')
+        .select(`
+          id,
+          userId,
+          teamId,
+          createdAt,
+          user:User(id, name),
+          team:Team(id, name)
+        `)
+        .eq('status', 'ACCEPTED')
+        .order('createdAt', { ascending: false })
+        .limit(limit);
+
+      if (joinsError) throw joinsError;
+
+      // Format activities
+      const teamActivities = (recentTeams || []).map(team => {
+        const creator = team.members?.find(m => m.user)?.user;
+        return {
+          id: `team-${team.id}`,
+          type: 'create',
+          user: creator?.name || 'Unknown',
+          team: team.name,
+          time: team.createdAt,
+        };
+      });
+
+      const joinActivities = (recentJoins || []).map(member => ({
+        id: `join-${member.id}`,
+        type: 'join',
+        user: member.user?.name || 'Unknown',
+        team: member.team?.name || 'Unknown Team',
+        time: member.createdAt,
+      }));
+
+      // Combine and sort by time
+      const allActivities = [...teamActivities, ...joinActivities]
+        .sort((a, b) => new Date(b.time) - new Date(a.time))
+        .slice(0, limit);
+
+      setActivities(allActivities);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching activity feed:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [limit]);
+
+  // Set up Realtime subscriptions
+  useEffect(() => {
+    fetchInitialActivities();
+
+    // Subscribe to TeamMember inserts (when status is ACCEPTED)
+    const memberChannel = supabase
+      .channel('activity-member-joins')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'TeamMember',
+          filter: 'status=eq.ACCEPTED',
+        },
+        async (payload) => {
+          try {
+            // Fetch user and team details
+            const { data: member } = await supabase
+              .from('TeamMember')
+              .select(`
+                userId,
+                teamId,
+                user:User(id, name),
+                team:Team(id, name)
+              `)
+              .eq('id', payload.new.id)
+              .single();
+
+            if (member && member.user && member.team) {
+              const activity = {
+                id: `join-${member.userId}-${member.teamId}-${Date.now()}`,
+                type: 'join',
+                user: member.user.name || 'Unknown',
+                team: member.team.name,
+                time: new Date().toISOString(),
+              };
+
+              setActivities(prev => {
+                // Avoid duplicates
+                if (prev.some(a => a.id === activity.id)) return prev;
+                return [activity, ...prev].slice(0, limit);
+              });
+            }
+          } catch (err) {
+            console.error('Error processing member join activity:', err);
+          }
+        }
+      )
+      .subscribe();
+
+    // Subscribe to Team inserts (team created)
+    const teamChannel = supabase
+      .channel('activity-team-creates')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'Team',
+        },
+        async (payload) => {
+          try {
+            // Fetch team with creator info
+            const { data: team } = await supabase
+              .from('Team')
+              .select(`
+                id,
+                name,
+                members:TeamMember(userId, user:User(id, name))
+              `)
+              .eq('id', payload.new.id)
+              .single();
+
+            if (team && team.members && team.members.length > 0) {
+              const creator = team.members.find(m => m.user)?.user;
+              const activity = {
+                id: `team-${team.id}-${Date.now()}`,
+                type: 'create',
+                user: creator?.name || 'Unknown',
+                team: team.name,
+                time: new Date().toISOString(),
+              };
+
+              setActivities(prev => {
+                // Avoid duplicates
+                if (prev.some(a => a.id === activity.id)) return prev;
+                return [activity, ...prev].slice(0, limit);
+              });
+            }
+          } catch (err) {
+            console.error('Error processing team create activity:', err);
+          }
+        }
+      )
+      .subscribe();
+
+    // Cleanup subscriptions on unmount
+    return () => {
+      supabase.removeChannel(memberChannel);
+      supabase.removeChannel(teamChannel);
+    };
+  }, [fetchInitialActivities, limit]);
+
+  return { activities, loading, error, refetch: fetchInitialActivities };
 }
 
