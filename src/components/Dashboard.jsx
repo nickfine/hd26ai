@@ -640,6 +640,7 @@ function Dashboard({
       onDevRoleChange={onDevRoleChange}
       onPhaseChange={onPhaseChange}
       eventPhases={eventPhases}
+      userInvites={userInvites}
     >
       <div className="p-4 sm:p-6">
         {/* Page Header with orange pulse animation */}
@@ -731,18 +732,27 @@ function Dashboard({
                 // Format time for display
                 const timeAgo = activity.time 
                   ? (() => {
-                      const now = new Date();
-                      const activityTime = new Date(activity.time);
-                      const diffMs = now - activityTime;
-                      const diffMins = Math.floor(diffMs / 60000);
-                      const diffHours = Math.floor(diffMs / 3600000);
-                      const diffDays = Math.floor(diffMs / 86400000);
-                      
-                      if (diffMins < 1) return 'just now';
-                      if (diffMins < 60) return `${diffMins} min ago`;
-                      if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
-                      if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
-                      return activityTime.toLocaleDateString();
+                      try {
+                        const now = new Date();
+                        const activityTime = new Date(activity.time);
+                        // Check if date is valid
+                        if (isNaN(activityTime.getTime())) {
+                          return activity.time || 'recently';
+                        }
+                        const diffMs = now - activityTime;
+                        const diffMins = Math.floor(diffMs / 60000);
+                        const diffHours = Math.floor(diffMs / 3600000);
+                        const diffDays = Math.floor(diffMs / 86400000);
+                        
+                        if (diffMins < 1) return 'just now';
+                        if (diffMins < 60) return `${diffMins} min ago`;
+                        if (diffHours < 24) return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+                        if (diffDays < 7) return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+                        return activityTime.toLocaleDateString();
+                      } catch (err) {
+                        console.error('Error formatting activity time:', err, activity);
+                        return 'recently';
+                      }
                     })()
                   : activity.time || 'recently';
                 
@@ -773,10 +783,19 @@ function Dashboard({
                       </span>
                       {activity.type === 'join' && <span className="text-text-body"> joined </span>}
                       {activity.type === 'create' && <span className="text-text-body"> created </span>}
+                      {activity.type === 'submit' && <span className="text-text-body"> submitted </span>}
                       {activity.team && (
                         <span className="font-bold text-text-secondary">
                           {activity.team}
                         </span>
+                      )}
+                      {activity.project && (
+                        <>
+                          <span className="text-text-body"> project </span>
+                          <span className="font-bold text-text-secondary italic">
+                            "{activity.project}"
+                          </span>
+                        </>
                       )}
                       <div className="text-xs text-text-muted mt-0.5">{timeAgo}</div>
                     </div>
