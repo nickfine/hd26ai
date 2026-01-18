@@ -876,7 +876,7 @@ function App() {
             userInvites={useDemoMode ? [] : userInvites}
             devRoleOverride={devRoleOverride}
             onDevRoleChange={setDevRoleOverride}
-            onPhaseChange={devModeActive ? handlePhaseChange : null}
+            onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
             onAutoAssignOptIn={handleAutoAssignOptIn}
           />
@@ -898,7 +898,7 @@ function App() {
             userInvites={useDemoMode ? [] : userInvites}
             devRoleOverride={devRoleOverride}
             onDevRoleChange={setDevRoleOverride}
-            onPhaseChange={devModeActive ? handlePhaseChange : null}
+            onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
           />
         );
@@ -916,7 +916,7 @@ function App() {
             eventPhase={eventPhase}
             devRoleOverride={devRoleOverride}
             onDevRoleChange={setDevRoleOverride}
-            onPhaseChange={devModeActive ? handlePhaseChange : null}
+            onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
           />
         );

@@ -219,12 +219,17 @@ function AppLayout({
   onDevRoleChange = null,
   onPhaseChange = null,
   eventPhases = {},
+  devModeEnabled: propDevModeEnabled = false,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
   
   // DEV MODE - Check localStorage for user preference (admin only)
+  // Use prop if provided, otherwise check localStorage
   const [devModeEnabled, setDevModeEnabled] = useState(() => {
+    if (propDevModeEnabled !== false) {
+      return propDevModeEnabled;
+    }
     if (user?.role === 'admin') {
       try {
         return localStorage.getItem('hd26ai_dev_mode_enabled') === 'true';
@@ -247,10 +252,16 @@ function AppLayout({
   }, [devModeEnabled, user?.role]);
   
   // DEV MODE - Calculate if dev mode is active (user preference OR env var AND admin role)
+  // devModeEnabled is the UI toggle state (from localStorage)
+  // isDevMode is passed from parent (for demo mode)
+  // VITE_ENABLE_DEV_MODE is the environment variable
   const devModeActive = isDevMode || (
     (devModeEnabled || import.meta.env.VITE_ENABLE_DEV_MODE === 'true') && 
     user?.role === 'admin'
   );
+  
+  // Show phase switcher if dev mode is enabled via UI toggle OR env var
+  const showPhaseSwitcher = devModeEnabled || import.meta.env.VITE_ENABLE_DEV_MODE === 'true';
 
   // Mouse-reactive breathing vignette (throttled for performance)
   useEffect(() => {
@@ -437,7 +448,7 @@ function AppLayout({
                         </div>
                         
                         {/* Phase Switcher */}
-                        {onPhaseChange && (
+                        {showPhaseSwitcher && onPhaseChange && (
                           <div>
                             <label className="text-xs font-bold text-arena-secondary mb-2 block">
                               Event Phase
@@ -454,6 +465,11 @@ function AppLayout({
                                 <option key={key} value={key}>{phase.label}</option>
                               ))}
                             </select>
+                          </div>
+                        )}
+                        {showPhaseSwitcher && !onPhaseChange && (
+                          <div className="text-xs text-arena-secondary">
+                            <p>Phase switching requires backend dev mode to be enabled.</p>
                           </div>
                         )}
                       </div>
