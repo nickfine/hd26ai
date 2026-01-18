@@ -35,6 +35,7 @@ import { HStack, VStack } from './layout';
 import { cn, formatNameWithCallsign } from '../lib/design-system';
 import { PROMO_IMAGES } from '../data/mockData';
 import { StatusBanner } from './shared';
+import FreeAgentReminderBanner from './shared/FreeAgentReminderBanner';
 
 // ============================================================================
 // MOCK DATA
@@ -617,6 +618,7 @@ function Dashboard({
   onDevRoleChange = null,
   onPhaseChange = null,
   eventPhases = {},
+  onAutoAssignOptIn = null, // Handler for auto-assign opt-in
 }) {
   const [expandedFaq, setExpandedFaq] = useState(null);
 
@@ -665,6 +667,18 @@ function Dashboard({
             eventPhase={eventPhase}
           />
         </div>
+
+        {/* Free Agent Reminder Banner */}
+        {onAutoAssignOptIn && (
+          <div className="mb-6">
+            <FreeAgentReminderBanner
+              user={user}
+              event={event}
+              onOptIn={onAutoAssignOptIn}
+              isOptingIn={false}
+            />
+          </div>
+        )}
 
         {/* Bento Grid - 24px gap for premium breathing room */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

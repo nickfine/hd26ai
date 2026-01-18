@@ -8,6 +8,7 @@ import {
   JUDGE_CRITERIA,
   AWARDS,
 } from './data/mockData';
+import { ROLE_MAP } from './lib/constants';
 
 // Supabase hooks
 import { useAuth } from './hooks/useAuth';
@@ -76,7 +77,7 @@ function App() {
         name: auth.profile.name || 'Unknown',
         email: auth.profile.email,
         skills: auth.profile.skills ? auth.profile.skills.split(',').map(s => s.trim()) : [],
-        role: auth.profile.role?.toLowerCase() || 'participant',
+        role: ROLE_MAP[auth.profile.role] || 'participant',
         image: auth.profile.image,
         bio: auth.profile.bio,
         callsign: auth.profile.callsign || '',
@@ -670,6 +671,16 @@ function App() {
     }
   }, [useDemoMode, devModeActive, effectiveUser, updateEventPhase]);
 
+  const handleAutoAssignOptIn = useCallback(async (optIn) => {
+    if (!effectiveUser) return;
+    
+    if (useDemoMode) {
+      setDemoUser(prev => prev ? { ...prev, autoAssignOptIn: optIn } : prev);
+    } else {
+      await auth.updateProfile({ autoAssignOptIn: optIn });
+    }
+  }, [useDemoMode, effectiveUser, auth]);
+
   const handleUpdateMotd = useCallback(async (motd) => {
     if (!effectiveUser || effectiveUser.role !== 'admin') {
       return { error: 'Only admins can update MOTD' };
@@ -867,6 +878,7 @@ function App() {
             onDevRoleChange={setDevRoleOverride}
             onPhaseChange={devModeActive ? handlePhaseChange : null}
             eventPhases={EVENT_PHASES}
+            onAutoAssignOptIn={handleAutoAssignOptIn}
           />
         );
       

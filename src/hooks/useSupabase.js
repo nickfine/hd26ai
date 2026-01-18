@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { supabase } from '../lib/supabase';
+import { REVERSE_PHASE_MAP, PHASE_MAP, ROLE_MAP, REVERSE_ROLE_MAP } from '../lib/constants';
 
 // Helper to check if data has changed (shallow compare for arrays)
 const hasDataChanged = (prev, next) => {
@@ -533,6 +534,193 @@ export function useJudgeScores(projectId = null) {
 }
 
 // ============================================================================
+// OBSERVERS TEAM HELPER
+// ============================================================================
+
+/**
+ * Get or create the Observers team for an event
+ * @param {string} eventId - Event ID
+ * @returns {Promise<{id: string, error: string|null}>}
+ */
+async function getOrCreateObserversTeam(eventId) {
+  try {
+    // Try to find existing Observers team
+    const { data: existingTeam, error: findError } = await supabase
+      .from('Team')
+      .select('id')
+      .eq('eventId', eventId)
+      .eq('name', 'Observers')
+      .maybeSingle();
+
+    if (findError && findError.code !== 'PGRST116') throw findError;
+
+    if (existingTeam) {
+      return { id: existingTeam.id, error: null };
+    }
+
+    // Create Observers team if it doesn't exist
+    const observersTeamId = 'team-observers';
+    const { data: newTeam, error: createError } = await supabase
+      .from('Team')
+      .insert({
+        id: observersTeamId,
+        eventId: eventId,
+        name: 'Observers',
+        description: 'Watch and learn from the sidelines',
+        maxSize: 999, // No limit for observers
+        trackSide: 'HUMAN', // Default, can be changed
+        isPublic: true,
+        isAutoCreated: true,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+      })
+      .select('id')
+      .single();
+
+    if (createError) throw createError;
+    return { id: newTeam.id, error: null };
+  } catch (err) {
+    console.error('Error getting/creating Observers team:', err);
+    return { id: null, error: err.message };
+  }
+}
+
+/**
+ * Automatically assign free agents to Observers team
+ * @param {string} eventId - Event ID
+ * @returns {Promise<{assigned: number, error: string|null}>}
+ */
+async function autoAssignFreeAgentsToObservers(eventId) {
+  try {
+    // Get or create Observers team
+    const { id: observersTeamId, error: teamError } = await getOrCreateObserversTeam(eventId);
+    if (teamError || !observersTeamId) {
+      throw new Error(`Failed to get Observers team: ${teamError}`);
+    }
+
+    // Find all free agents (users with isFreeAgent = true)
+    const { data: freeAgents, error: agentsError } = await supabase
+      .from('User')
+      .select('id, name, email')
+      .eq('isFreeAgent', true);
+
+    if (agentsError) throw agentsError;
+
+    if (!freeAgents || freeAgents.length === 0) {
+      return { assigned: 0, error: null };
+    }
+
+    // Check which users are already on teams
+    const userIds = freeAgents.map(u => u.id);
+    const { data: existingMembers, error: membersError } = await supabase
+      .from('TeamMember')
+      .select('userId')
+      .in('userId', userIds)
+      .eq('status', 'ACCEPTED');
+
+    if (membersError) throw membersError;
+
+    const usersOnTeams = new Set((existingMembers || []).map(m => m.userId));
+    const usersToAssign = freeAgents.filter(u => !usersOnTeams.has(u.id));
+
+    if (usersToAssign.length === 0) {
+      return { assigned: 0, error: null };
+    }
+
+    // Add users to Observers team
+    const teamMembers = usersToAssign.map(user => ({
+      id: `tm-${Date.now()}-${Math.random().toString(36).slice(2, 11)}`,
+      teamId: observersTeamId,
+      userId: user.id,
+      role: 'MEMBER',
+      status: 'ACCEPTED',
+      createdAt: new Date().toISOString(),
+    }));
+
+    const { error: insertError } = await supabase
+      .from('TeamMember')
+      .insert(teamMembers);
+
+    if (insertError) throw insertError;
+
+    // Update isFreeAgent flag for assigned users
+    const assignedUserIds = usersToAssign.map(u => u.id);
+    const { error: updateError } = await supabase
+      .from('User')
+      .update({ isFreeAgent: false, updatedAt: new Date().toISOString() })
+      .in('id', assignedUserIds);
+
+    if (updateError) throw updateError;
+
+    console.log(`Auto-assigned ${usersToAssign.length} free agents to Observers team`);
+    return { assigned: usersToAssign.length, error: null };
+  } catch (err) {
+    console.error('Error auto-assigning free agents:', err);
+    return { assigned: 0, error: err.message };
+  }
+}
+
+/**
+ * Check if hack start is within 24-48 hours and send reminders to free agents
+ * @param {string} eventId - Event ID
+ * @param {string} startDate - Event start date (ISO string)
+ * @returns {Promise<{notified: number, error: string|null}>}
+ */
+async function checkAndSendFreeAgentReminders(eventId, startDate) {
+  try {
+    if (!startDate) {
+      console.warn('No start date set for event, skipping reminders');
+      return { notified: 0, error: null };
+    }
+
+    const now = new Date();
+    const hackStart = new Date(startDate);
+    const hoursUntilHack = (hackStart - now) / (1000 * 60 * 60);
+
+    // Check if within 24-48 hour window
+    if (hoursUntilHack < 24 || hoursUntilHack > 48) {
+      console.log(`Hack start is ${hoursUntilHack.toFixed(1)} hours away, outside reminder window`);
+      return { notified: 0, error: null };
+    }
+
+    // Find all free agents who haven't joined a team
+    const { data: freeAgents, error: agentsError } = await supabase
+      .from('User')
+      .select('id, name, email, isFreeAgent')
+      .eq('isFreeAgent', true);
+
+    if (agentsError) throw agentsError;
+
+    if (!freeAgents || freeAgents.length === 0) {
+      return { notified: 0, error: null };
+    }
+
+    // Check which users are already on teams
+    const userIds = freeAgents.map(u => u.id);
+    const { data: existingMembers } = await supabase
+      .from('TeamMember')
+      .select('userId')
+      .in('userId', userIds)
+      .eq('status', 'ACCEPTED');
+
+    const usersOnTeams = new Set((existingMembers || []).map(m => m.userId));
+    const usersToNotify = freeAgents.filter(u => !usersOnTeams.has(u.id));
+
+    // Store reminder sent timestamp (we'll add a field or use a separate table)
+    // For now, we'll just log it - in-app notifications will be handled by UI
+    console.log(`Reminder check: ${usersToNotify.length} free agents to notify`);
+
+    // TODO: Send email reminders (requires email service setup)
+    // For now, in-app notifications will be shown via UI component
+
+    return { notified: usersToNotify.length, error: null };
+  } catch (err) {
+    console.error('Error checking reminders:', err);
+    return { notified: 0, error: err.message };
+  }
+}
+
+// ============================================================================
 // EVENT HOOK
 // ============================================================================
 
@@ -563,7 +751,7 @@ export function useEvent() {
           slug: data.slug,
           year: data.year,
           description: data.description,
-          phase: data.phase?.toLowerCase() || 'setup',
+          phase: PHASE_MAP[data.phase] || 'setup',
           startDate: data.startDate,
           endDate: data.endDate,
           rubricConfig: data.rubricConfig,
@@ -590,23 +778,36 @@ export function useEvent() {
     if (!event?.id) return { error: 'No event found' };
 
     try {
+      // Map app phase (lowercase) to DB enum (uppercase)
+      const dbPhase = REVERSE_PHASE_MAP[newPhase] || 'REGISTRATION';
+      
       const { error: updateError } = await supabase
         .from('Event')
         .update({
-          phase: newPhase.toUpperCase(),
+          phase: dbPhase,
           updatedAt: new Date().toISOString(),
         })
         .eq('id', event.id);
 
       if (updateError) throw updateError;
 
-      setEvent(prev => prev ? { ...prev, phase: newPhase.toLowerCase() } : null);
+      // REMINDER SYSTEM: If phase is changing to 'team_formation', check for reminders
+      if (newPhase === 'team_formation') {
+        await checkAndSendFreeAgentReminders(event.id, event.startDate);
+      }
+
+      // AUTO-ASSIGNMENT: If phase is changing to 'hacking', assign free agents
+      if (newPhase === 'hacking') {
+        await autoAssignFreeAgentsToObservers(event.id);
+      }
+
+      setEvent(prev => prev ? { ...prev, phase: newPhase } : null);
       return { error: null };
     } catch (err) {
       console.error('Error updating phase:', err);
       return { error: err.message };
     }
-  }, [event?.id]);
+  }, [event?.id, event?.startDate]);
 
   return { event, loading, error, updatePhase, refetch: fetchEvent };
 }
@@ -893,23 +1094,12 @@ export function useUsers() {
 
   // Map database roles to app roles
   const dbRoleToAppRole = (dbRole) => {
-    const roleMap = {
-      'USER': 'participant',
-      'JUDGE': 'judge',
-      'ADMIN': 'admin',
-    };
-    return roleMap[dbRole] || 'participant';
+    return ROLE_MAP[dbRole] || 'participant';
   };
 
   // Map app roles to database roles
   const appRoleToDbRole = (appRole) => {
-    const roleMap = {
-      'participant': 'USER',
-      'ambassador': 'USER', // Ambassador is a UI distinction, stored as USER in DB
-      'judge': 'JUDGE',
-      'admin': 'ADMIN',
-    };
-    return roleMap[appRole] || 'USER';
+    return REVERSE_ROLE_MAP[appRole] || 'USER';
   };
 
   const fetchUsers = useCallback(async () => {

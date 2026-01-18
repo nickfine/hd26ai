@@ -587,7 +587,7 @@ export type Database = {
       MemberRole: "OWNER" | "MEMBER"
       MemberStatus: "PENDING" | "ACCEPTED" | "REJECTED"
       TrackSide: "HUMAN" | "AI"
-      UserRole: "USER" | "JUDGE" | "ADMIN"
+      UserRole: "USER" | "AMBASSADOR" | "JUDGE" | "ADMIN"
     }
     CompositeTypes: {
       [_ in never]: never
