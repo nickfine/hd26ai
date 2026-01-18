@@ -429,8 +429,7 @@ function Profile({
                     )}
                   >
                     <User
-                      className="w-14 sm:w-16 h-14 sm:h-16"
-                      className="text-text-secondary"
+                      className="w-14 sm:w-16 h-14 sm:h-16 text-text-secondary"
                     />
                   </div>
                 </div>
@@ -471,8 +470,7 @@ function Profile({
                       type="button"
                       onClick={handleSaveCallsign}
                       disabled={!!callsignError}
-                      className="px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded"
-                      className="bg-arena-elevated border border-arena-border"
+                      className="px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
@@ -484,8 +482,7 @@ function Profile({
                   <button
                     type="button"
                     onClick={() => setShowAvatarPicker(true)}
-                    className="font-medium transition-colors hover:underline"
-                    className="text-text-secondary"
+                    className="font-medium transition-colors hover:underline text-text-secondary"
                   >
                     {user?.avatar ? 'Change avatar' : 'Choose avatar'}
                   </button>
@@ -493,8 +490,7 @@ function Profile({
                   <button
                     type="button"
                     onClick={() => setIsEditingCallsign(true)}
-                    className="font-medium transition-colors hover:underline"
-                    className="text-text-secondary"
+                    className="font-medium transition-colors hover:underline text-text-secondary"
                   >
                     Edit callsign
                   </button>
@@ -517,7 +513,6 @@ function Profile({
                   <button
                     type="button"
                     onClick={() => setIsEditingBio(true)}
-                    className="text-xs font-medium px-3 py-1 rounded transition-colors"
                     className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
                   >
                     Edit
@@ -549,8 +544,7 @@ function Profile({
                     <button
                       type="button"
                       onClick={handleSaveBio}
-                      className="px-4 py-2 text-sm font-medium text-white transition-colors rounded"
-                      className="bg-arena-elevated border border-arena-border"
+                      className="px-4 py-2 text-sm font-medium text-white transition-colors rounded bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
@@ -584,7 +578,6 @@ function Profile({
                   <button
                     type="button"
                     onClick={() => setIsEditingSkills(true)}
-                    className="text-xs font-medium px-3 py-1 rounded transition-colors"
                     className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
                   >
                     Edit
@@ -670,8 +663,7 @@ function Profile({
                         type="button"
                         onClick={handleAddCustomSkill}
                         disabled={selectedSkills.length >= MAX_SKILLS || !customSkillInput.trim()}
-                        className="px-4 py-2 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded"
-                        className="bg-arena-elevated border border-arena-border"
+                        className="px-4 py-2 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded bg-arena-elevated border border-arena-border"
                       >
                         Add
                       </button>
@@ -692,8 +684,7 @@ function Profile({
                     <button
                       type="button"
                       onClick={handleSaveSkills}
-                      className="px-4 py-2 text-sm font-medium text-white transition-colors rounded"
-                      className="bg-arena-elevated border border-arena-border"
+                      className="px-4 py-2 text-sm font-medium text-white transition-colors rounded bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
