@@ -56,8 +56,8 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
     return userInvites.filter(invite => invite.status === 'PENDING' || !invite.status).length;
   }, [userInvites]);
 
-  // Only show team role during registration phase
-  const showTeamRole = eventPhase === 'registration';
+  // Only show team role during registration/teams phase (before hack starts)
+  const showTeamRole = eventPhase === 'registration' || eventPhase === 'teams';
 
   // Don't render if user has no team and no invites (edge case - not registered)
   if (!userTeam && pendingInviteCount === 0 && !user?.isFreeAgent) {
@@ -127,7 +127,7 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
     );
   }
 
-  // On Team Status (only show role during registration phase)
+  // On Team Status (only show role during registration/teams phase)
   if (userTeam && showTeamRole) {
     return (
       <Card variant="accent" padding="md" className="animate-fade-in">
