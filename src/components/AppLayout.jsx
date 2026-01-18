@@ -34,6 +34,8 @@ import NavItem, { NavGroup } from './shared/NavItem';
 import { Container, HStack, VStack } from './layout';
 import Avatar from './ui/Avatar';
 import { cn, formatNameWithCallsign } from '../lib/design-system';
+import NotificationCenter from './shared/NotificationCenter';
+import { useNotifications } from '../hooks/useNotifications';
 import { USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
 import { 
   createUKDate, 
@@ -220,6 +222,7 @@ function AppLayout({
   onPhaseChange = null,
   eventPhases = {},
   devModeEnabled: propDevModeEnabled = false,
+  userInvites = [],
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
@@ -317,6 +320,9 @@ function AppLayout({
       totalTeams,
     };
   }, [teams]);
+  
+  // Notifications
+  const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(user?.id);
 
   const handleNavClick = useCallback((itemId) => {
     setSidebarOpen(false);
@@ -369,6 +375,17 @@ function AppLayout({
 
             {/* War Timer - Isolated component to prevent parent re-renders */}
             <WarTimer />
+
+            {/* Notification Center */}
+            {user?.id && (
+              <NotificationCenter
+                notifications={notifications}
+                unreadCount={unreadCount}
+                onMarkAsRead={markAsRead}
+                onMarkAllAsRead={markAllAsRead}
+                onNavigate={onNavigate}
+              />
+            )}
 
             {/* DEV MODE TOGGLE - Always visible for admins */}
             {user?.role === 'admin' && (
@@ -512,9 +529,23 @@ function AppLayout({
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="relative">
                   <Avatar user={user} size="md" />
+                  {/* Join requests badge (for captains) */}
                   {captainedTeam?.joinRequests?.length > 0 && (
                     <div className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
                       {captainedTeam.joinRequests.length}
+                    </div>
+                  )}
+                  {/* Team invites badge (for free agents) */}
+                  {!userTeam && userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length > 0 && (
+                    <div 
+                      className="absolute -top-1 -right-1 w-5 h-5 bg-brand text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse cursor-pointer"
+                      title={`${userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length} pending invite${userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length !== 1 ? 's' : ''}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigate('marketplace', { tab: 'teams' });
+                      }}
+                    >
+                      {userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length}
                     </div>
                   )}
                 </div>

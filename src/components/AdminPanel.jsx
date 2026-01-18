@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { EVENT_PHASE_ORDER } from '../data/mockData';
 import AppLayout from './AppLayout';
+import AnalyticsDashboard from './AnalyticsDashboard';
 
 // Role configuration for UI display
 const ROLE_CONFIG = {
@@ -85,16 +86,36 @@ function AdminPanel({
   isDevMode = false,
   onDevRoleChange,
   devRoleOverride,
+  onUpdateEventSettings,
 }) {
-  const [activeSection, setActiveSection] = useState('overview'); // 'overview' | 'phases' | 'users' | 'dev'
+  const [activeSection, setActiveSection] = useState('overview'); // 'overview' | 'phases' | 'users' | 'dev' | 'settings'
   const [confirmPhaseChange, setConfirmPhaseChange] = useState(null);
   const [motd, setMotd] = useState(event?.motd || '');
   const [isSavingMotd, setIsSavingMotd] = useState(false);
+  
+  // Settings state
+  const [settings, setSettings] = useState({
+    maxTeamSize: event?.maxTeamSize || 6,
+    maxVotesPerUser: event?.maxVotesPerUser || 5,
+    submissionDeadline: event?.submissionDeadline || '',
+    votingDeadline: event?.votingDeadline || '',
+  });
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   // Sync MOTD state when event changes
   useEffect(() => {
     setMotd(event?.motd || '');
   }, [event?.motd]);
+  
+  // Sync settings state when event changes
+  useEffect(() => {
+    setSettings({
+      maxTeamSize: event?.maxTeamSize || 6,
+      maxVotesPerUser: event?.maxVotesPerUser || 5,
+      submissionDeadline: event?.submissionDeadline || '',
+      votingDeadline: event?.votingDeadline || '',
+    });
+  }, [event]);
   
   // User management state
   const [userSearchTerm, setUserSearchTerm] = useState('');
@@ -103,6 +124,11 @@ function AdminPanel({
   const [roleUpdateFeedback, setRoleUpdateFeedback] = useState(null); // { type: 'success' | 'error', message }
   const [roleFilterDropdownOpen, setRoleFilterDropdownOpen] = useState(false);
   const [roleFilter, setRoleFilter] = useState('all'); // 'all' | 'participant' | 'ambassador' | 'judge' | 'admin'
+  
+  // Bulk operations state
+  const [selectedUsers, setSelectedUsers] = useState(new Set());
+  const [bulkRole, setBulkRole] = useState('participant');
+  const [isBulkUpdating, setIsBulkUpdating] = useState(false);
   
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -226,13 +252,13 @@ function AdminPanel({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={() => onNavigate('analytics')}
+            onClick={() => setActiveSection('analytics')}
             className="flex items-center gap-3 p-4 border-2 border-gray-200 hover:border-purple-400 transition-colors text-left"
           >
             <BarChart3 className="w-6 h-6 text-purple-500" />
             <div>
               <div className="font-bold text-gray-900">View Analytics</div>
-              <div className="text-xs text-gray-500">See voting results & rankings</div>
+              <div className="text-xs text-gray-500">See signups, teams, and engagement</div>
             </div>
             <ChevronRight className="w-5 h-5 text-gray-300 ml-auto" />
           </button>
@@ -609,15 +635,65 @@ function AdminPanel({
               Search users and assign roles. Changes take effect immediately.
             </p>
           </div>
-          <button
-            type="button"
-            onClick={onRefreshUsers}
-            disabled={usersLoading}
-            className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 hover:border-gray-400 transition-colors disabled:opacity-50"
-          >
-            <RefreshCw className={`w-4 h-4 ${usersLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
+          <div className="flex items-center gap-2">
+            {selectedUsers.size > 0 && (
+              <>
+                <select
+                  value={bulkRole}
+                  onChange={(e) => setBulkRole(e.target.value)}
+                  className="px-3 py-2 border-2 border-gray-200 text-sm font-medium focus:outline-none focus:border-purple-500"
+                >
+                  {Object.entries(ROLE_CONFIG).map(([roleKey, config]) => (
+                    <option key={roleKey} value={roleKey}>
+                      {config.label}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  type="button"
+                  onClick={handleBulkRoleChange}
+                  disabled={isBulkUpdating}
+                  className="px-4 py-2 bg-purple-600 text-white font-bold text-sm rounded hover:bg-purple-700 disabled:opacity-50 flex items-center gap-2"
+                >
+                  {isBulkUpdating ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Updating...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="w-4 h-4" />
+                      Assign to {selectedUsers.size}
+                    </>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedUsers(new Set())}
+                  className="px-3 py-2 border-2 border-gray-200 text-gray-600 font-bold text-sm rounded hover:border-gray-400"
+                >
+                  Clear
+                </button>
+              </>
+            )}
+            <button
+              type="button"
+              onClick={handleExportUsers}
+              className="px-4 py-2 bg-green-600 text-white font-bold text-sm rounded hover:bg-green-700 flex items-center gap-2"
+            >
+              <ChevronRight className="w-4 h-4 rotate-[-90deg]" />
+              Export CSV
+            </button>
+            <button
+              type="button"
+              onClick={onRefreshUsers}
+              disabled={usersLoading}
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 hover:border-gray-400 transition-colors disabled:opacity-50"
+            >
+              <RefreshCw className={`w-4 h-4 ${usersLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+          </div>
         </div>
 
         {/* Role Legend */}
@@ -758,10 +834,31 @@ function AdminPanel({
               return (
                 <div
                   key={targetUser.id}
-                  className={`p-4 border-2 border-gray-100 hover:border-gray-200 transition-colors
-                    ${isCurrentUser ? 'bg-purple-50/50' : 'bg-white'}`}
+                  className={`p-4 border-2 transition-colors
+                    ${selectedUsers.has(targetUser.id)
+                      ? 'border-purple-500 bg-purple-50'
+                      : isCurrentUser
+                      ? 'bg-purple-50/50 border-gray-100'
+                      : 'bg-white border-gray-100 hover:border-gray-200'
+                    }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    {/* Checkbox for bulk selection */}
+                    <input
+                      type="checkbox"
+                      checked={selectedUsers.has(targetUser.id)}
+                      onChange={(e) => {
+                        const newSelected = new Set(selectedUsers);
+                        if (e.target.checked) {
+                          newSelected.add(targetUser.id);
+                        } else {
+                          newSelected.delete(targetUser.id);
+                        }
+                        setSelectedUsers(newSelected);
+                      }}
+                      className="w-5 h-5 cursor-pointer"
+                    />
+                    
                     {/* User Info */}
                     <div className="flex items-center gap-3 flex-1 min-w-0">
                       {/* Avatar */}
@@ -957,6 +1054,138 @@ function AdminPanel({
   );
 
   // ============================================================================
+  // RENDER: SETTINGS SECTION
+  // ============================================================================
+  const renderSettings = () => {
+    const handleSaveSettings = async () => {
+      if (!onUpdateEventSettings) return;
+      
+      setIsSavingSettings(true);
+      try {
+        const result = await onUpdateEventSettings({
+          maxTeamSize: parseInt(settings.maxTeamSize, 10),
+          maxVotesPerUser: parseInt(settings.maxVotesPerUser, 10),
+          submissionDeadline: settings.submissionDeadline || null,
+          votingDeadline: settings.votingDeadline || null,
+        });
+        
+        if (result?.error) {
+          alert(`Error updating settings: ${result.error}`);
+        } else {
+          alert('Settings saved successfully!');
+        }
+      } catch (err) {
+        alert(`Error: ${err.message}`);
+      } finally {
+        setIsSavingSettings(false);
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-white border-2 border-gray-200 p-6">
+          <h3 className="font-bold text-gray-900 mb-4">Event Settings</h3>
+          <p className="text-sm text-gray-500 mb-6">
+            Configure event-wide settings that affect team formation, voting, and deadlines.
+          </p>
+
+          <div className="space-y-4">
+            {/* Max Team Size */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Maximum Team Size
+              </label>
+              <input
+              type="number"
+              min="2"
+              max="10"
+              value={settings.maxTeamSize}
+              onChange={(e) => setSettings(prev => ({ ...prev, maxTeamSize: e.target.value }))}
+              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+            />
+              <p className="text-xs text-gray-500 mt-1">
+                Maximum number of members allowed per team (default: 6)
+              </p>
+            </div>
+
+            {/* Max Votes Per User */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Maximum Votes Per User
+              </label>
+              <input
+              type="number"
+              min="1"
+              max="10"
+              value={settings.maxVotesPerUser}
+              onChange={(e) => setSettings(prev => ({ ...prev, maxVotesPerUser: e.target.value }))}
+              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+            />
+              <p className="text-xs text-gray-500 mt-1">
+                Maximum number of votes each user can cast (default: 5)
+              </p>
+            </div>
+
+            {/* Submission Deadline */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Submission Deadline (Optional)
+              </label>
+              <input
+              type="datetime-local"
+              value={settings.submissionDeadline ? new Date(settings.submissionDeadline).toISOString().slice(0, 16) : ''}
+              onChange={(e) => setSettings(prev => ({ ...prev, submissionDeadline: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
+              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+            />
+              <p className="text-xs text-gray-500 mt-1">
+                Deadline for project submissions
+              </p>
+            </div>
+
+            {/* Voting Deadline */}
+            <div>
+              <label className="block text-sm font-bold text-gray-700 mb-2">
+                Voting Deadline (Optional)
+              </label>
+              <input
+              type="datetime-local"
+              value={settings.votingDeadline ? new Date(settings.votingDeadline).toISOString().slice(0, 16) : ''}
+              onChange={(e) => setSettings(prev => ({ ...prev, votingDeadline: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
+              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+            />
+              <p className="text-xs text-gray-500 mt-1">
+                Deadline for voting phase
+              </p>
+            </div>
+
+            {/* Save Button */}
+            <div className="pt-4 border-t border-gray-200">
+              <button
+                type="button"
+                onClick={handleSaveSettings}
+                disabled={isSavingSettings}
+                className="px-6 py-2 bg-purple-600 text-white font-bold rounded hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                {isSavingSettings ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Saving...
+                  </>
+                ) : (
+                  <>
+                    <Check className="w-4 h-4" />
+                    Save Settings
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // ============================================================================
   // MAIN RENDER
   // ============================================================================
   return (
@@ -989,6 +1218,8 @@ function AdminPanel({
             { id: 'overview', label: 'Overview', icon: Settings },
             { id: 'phases', label: 'Event Phases', icon: Clock },
             { id: 'users', label: 'User Roles', icon: UserCog },
+            { id: 'settings', label: 'Settings', icon: Settings },
+            { id: 'analytics', label: 'Analytics', icon: BarChart3 },
             ...(isDevMode ? [{ id: 'dev', label: 'Dev Tools', icon: Settings }] : []),
           ].map((section) => {
             const Icon = section.icon;
@@ -1015,6 +1246,15 @@ function AdminPanel({
         {activeSection === 'overview' && renderOverview()}
         {activeSection === 'phases' && renderPhases()}
         {activeSection === 'users' && renderUsers()}
+        {activeSection === 'settings' && renderSettings()}
+        {activeSection === 'analytics' && (
+          <div className="space-y-6">
+            <div className="bg-white border-2 border-gray-200 p-6">
+              <h3 className="font-bold text-gray-900 mb-4">Event Analytics</h3>
+              <AnalyticsDashboard event={event} />
+            </div>
+          </div>
+        )}
         {activeSection === 'dev' && isDevMode && renderDevTools()}
       </div>
     </AppLayout>

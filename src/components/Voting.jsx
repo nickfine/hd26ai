@@ -19,7 +19,7 @@ import AppLayout from './AppLayout';
 // CONSTANTS
 // ============================================================================
 
-const MAX_VOTES = 5;
+// MAX_VOTES will be passed as prop from App.jsx based on event settings
 
 // ============================================================================
 // MEMOIZED PROJECT CARD COMPONENT
@@ -237,6 +237,7 @@ function Voting({
   onVote,
   permissions = {}, // eslint-disable-line no-unused-vars -- Reserved for future permission-based features
   eventPhase,
+  maxVotes = 5,
 }) {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [filterSide, setFilterSide] = useState('all'); // Keep for compatibility but don't use
@@ -269,7 +270,7 @@ function Voting({
 
   // Vote tracking
   const votesUsed = userVotes.length;
-  const votesRemaining = MAX_VOTES - votesUsed;
+  const votesRemaining = maxVotes - votesUsed;
   const hasVotedFor = (teamId) => userVotes.includes(teamId);
   const canVote = votesRemaining > 0;
 
@@ -315,7 +316,7 @@ function Voting({
           </div>
           <p className="text-gray-600">
             Browse all submitted projects and vote for your favorites. You have{' '}
-            <strong>{MAX_VOTES} votes</strong> to cast.
+            <strong>{maxVotes} votes</strong> to cast.
           </p>
         </div>
 
@@ -333,7 +334,7 @@ function Voting({
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {Array.from({ length: MAX_VOTES }).map((_, i) => (
+            {Array.from({ length: maxVotes }).map((_, i) => (
               <Star
                 key={i}
                 className={`w-6 h-6 transition-all duration-300 ${
@@ -344,7 +345,7 @@ function Voting({
               />
             ))}
             <span className="ml-2 text-sm font-bold text-amber-900">
-              {votesUsed}/{MAX_VOTES} used
+              {votesUsed}/{maxVotes} used
             </span>
           </div>
         </div>

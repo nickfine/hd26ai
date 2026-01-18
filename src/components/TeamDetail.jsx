@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3, ArrowRightLeft } from 'lucide-react';
+import { Users, ChevronRight, User, Crown, X, Clock, Check, XCircle, Send, Circle, CheckCircle2, Edit3, ArrowRightLeft, Mail, RefreshCw } from 'lucide-react';
 import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
+import { useSentTeamInvites, useTeamInviteMutations } from '../hooks/useSupabase';
 
 function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest, onRequestResponse, eventPhase }) {
   const [moreInfoText, setMoreInfoText] = useState(team.moreInfo || '');
@@ -19,6 +20,27 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
   
   // Check if current user is the captain (for demo, we'll check by matching user id or name)
   const isCaptain = user?.id === team.captainId;
+  
+  // Fetch sent invites (for captains)
+  const { invites: sentInvites, loading: sentInvitesLoading, refetch: refetchSentInvites } = useSentTeamInvites(isCaptain ? team.id : null);
+  const { resendInvite, loading: resendLoading } = useTeamInviteMutations();
+  
+  // Calculate invite analytics
+  const inviteStats = {
+    total: sentInvites.length,
+    pending: sentInvites.filter(i => i.status === 'PENDING' && !i.isExpired).length,
+    accepted: sentInvites.filter(i => i.status === 'ACCEPTED').length,
+    declined: sentInvites.filter(i => i.status === 'DECLINED').length,
+    expired: sentInvites.filter(i => i.status === 'EXPIRED' || i.isExpired).length,
+    acceptanceRate: sentInvites.filter(i => i.status === 'ACCEPTED').length / Math.max(1, sentInvites.filter(i => i.status !== 'PENDING' && !i.isExpired).length) * 100,
+  };
+  
+  const handleResendInvite = async (inviteId) => {
+    const result = await resendInvite(inviteId);
+    if (!result.error) {
+      refetchSentInvites();
+    }
+  };
   
   // Check if user is already a member
   const isMember = team.members.some((m) => m.name === user?.name);
@@ -238,6 +260,79 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 </div>
               ))}
             </div>
+          </div>
+        )}
+
+        {/* Sent Invites (Captains Only) */}
+        {isCaptain && (
+          <div className="bg-arena-card border border-arena-border p-4 sm:p-6 mb-4 sm:mb-6 rounded-card">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <Mail className="w-5 h-5 text-text-secondary" />
+                <h2 className="text-xs font-bold uppercase tracking-wide text-text-secondary">
+                  Sent Invites
+                </h2>
+              </div>
+              {inviteStats.total > 0 && (
+                <div className="text-xs text-text-muted">
+                  {inviteStats.accepted}/{inviteStats.total} accepted ({inviteStats.acceptanceRate.toFixed(0)}%)
+                </div>
+              )}
+            </div>
+            
+            {sentInvitesLoading ? (
+              <p className="text-sm text-text-muted">Loading invites...</p>
+            ) : sentInvites.length === 0 ? (
+              <p className="text-sm text-text-muted">No invites sent yet.</p>
+            ) : (
+              <div className="space-y-3">
+                {sentInvites.map((invite) => {
+                  const statusColors = {
+                    PENDING: 'bg-amber-500/20 text-amber-400 border-amber-500/30',
+                    ACCEPTED: 'bg-success/20 text-success border-success/30',
+                    DECLINED: 'bg-error/20 text-error border-error/30',
+                    EXPIRED: 'bg-arena-border text-arena-muted border-arena-border',
+                  };
+                  
+                  return (
+                    <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg">
+                      <div className="flex items-start justify-between mb-2">
+                        <div className="flex-1">
+                          <div className="font-bold text-sm text-white mb-1">{invite.userName}</div>
+                          {invite.message && (
+                            <p className="text-xs text-arena-muted mb-2 line-clamp-2">"{invite.message}"</p>
+                          )}
+                        </div>
+                        <div className={`px-2 py-1 text-xs font-bold rounded border ${statusColors[invite.status] || statusColors.EXPIRED}`}>
+                          {invite.status}
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <div className="text-xs text-arena-muted">
+                          Sent {new Date(invite.createdAt).toLocaleDateString()}
+                          {invite.expiresAt && invite.status === 'PENDING' && (
+                            <span className="ml-2">
+                              • Expires {new Date(invite.expiresAt).toLocaleDateString()}
+                            </span>
+                          )}
+                        </div>
+                        {(invite.status === 'EXPIRED' || invite.status === 'DECLINED') && (
+                          <button
+                            type="button"
+                            onClick={() => handleResendInvite(invite.id)}
+                            disabled={resendLoading}
+                            className="flex items-center gap-1 px-2 py-1 text-xs font-bold text-brand bg-arena-card border border-arena-border rounded hover:bg-arena-elevated transition-colors disabled:opacity-50"
+                          >
+                            <RefreshCw className="w-3 h-3" />
+                            Resend
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
 

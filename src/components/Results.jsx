@@ -8,9 +8,11 @@ import {
   Sparkles,
   Lock,
   Medal,
+  Download,
 } from 'lucide-react';
 import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
+import Button from './ui/Button';
 
 // ============================================================================
 // COMPONENT
@@ -114,6 +116,69 @@ function Results({
       totalJudgeScores,
     };
   }, [teams, submittedProjects]);
+
+  // Export results to CSV
+  const exportResultsToCSV = () => {
+    const csvRows = [];
+    
+    // Header row
+    csvRows.push([
+      'Rank',
+      'Team Name',
+      'Project Name',
+      'Judge Score',
+      'Judge Average %',
+      'Participant Votes',
+      'Total Members',
+      'Awards',
+    ].join(','));
+
+    // Combine both rankings and add rank
+    const allRanked = [...judgesRanked].map((team, idx) => ({
+      ...team,
+      judgeRank: idx + 1,
+      peoplesRank: peoplesRanked.findIndex(t => t.id === team.id) + 1,
+    }));
+
+    // Sort by judge rank for export
+    allRanked.sort((a, b) => a.judgeRank - b.judgeRank);
+
+    // Data rows
+    allRanked.forEach((team) => {
+      const awards = [];
+      if (awardWinners.grand_champion?.id === team.id) {
+        awards.push('Grand Champion');
+      }
+      if (awardWinners.peoples_champion?.id === team.id) {
+        awards.push("People's Choice");
+      }
+
+      csvRows.push([
+        team.judgeRank,
+        `"${team.name}"`,
+        `"${team.submission?.projectName || 'N/A'}"`,
+        calculateJudgeTotal(team),
+        calculateJudgeAverage(team).toFixed(2),
+        team.submission?.participantVotes || 0,
+        team.members?.length || 0,
+        `"${awards.join('; ')}"`,
+      ].join(','));
+    });
+
+    // Create CSV string
+    const csvContent = csvRows.join('\n');
+    
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `hackday-2026-results-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   // ============================================================================
   // RENDER: AWARD WINNER CARD
@@ -321,9 +386,20 @@ function Results({
               <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
                 HACKDAY 2026 RESULTS
               </h1>
-              <p className="text-arena-secondary max-w-2xl mx-auto">
+              <p className="text-arena-secondary max-w-2xl mx-auto mb-4">
                 Congratulations to all participants! Here are the winners of HackDay 2026.
               </p>
+              {isAdmin && (
+                <div className="flex justify-center">
+                  <Button
+                    onClick={exportResultsToCSV}
+                    className="bg-brand hover:bg-brand/90 text-white flex items-center gap-2"
+                  >
+                    <Download className="w-4 h-4" />
+                    Export CSV
+                  </Button>
+                </div>
+              )}
             </div>
 
             {/* Stats Bar */}

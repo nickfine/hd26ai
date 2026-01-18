@@ -44,8 +44,8 @@ import AdminPanel from './components/AdminPanel';
 import Results from './components/Results';
 import Schedule from './components/Schedule';
 
-// Max votes per user for voting phase
-const MAX_VOTES = 5;
+// Max votes per user for voting phase (can be overridden by event settings)
+const DEFAULT_MAX_VOTES = 5;
 
 // Check if we're in demo mode (no Supabase configured)
 const isDemoMode = !import.meta.env.VITE_SUPABASE_URL || 
@@ -114,7 +114,7 @@ function App() {
   // ============================================================================
   
   // Supabase data hooks
-  const { event, updatePhase: updateEventPhase } = useEvent();
+  const { event, updatePhase: updateEventPhase, updateEventSettings } = useEvent();
   const { teams: supabaseTeams, loading: teamsLoading, refetch: refetchTeams } = useTeams(event?.id);
   const { freeAgents: supabaseFreeAgents, refetch: refetchFreeAgents } = useFreeAgents();
   const { 
@@ -142,7 +142,7 @@ function App() {
   const inviteMutations = useTeamInviteMutations();
 
   // Activity feed
-  const { activities: activityFeed } = useActivityFeed(20);
+  const { activities: activityFeed, loading: activityFeedLoading } = useActivityFeed(20);
 
   // Demo mode state (mock data)
   const [mockTeams, setMockTeams] = useState(MOCK_TEAMS);
@@ -962,6 +962,7 @@ function App() {
             onVote={handleVote}
             permissions={getUserPermissions()}
             eventPhase={eventPhase}
+            maxVotes={effectiveEvent?.maxVotesPerUser || DEFAULT_MAX_VOTES}
           />
         );
       
@@ -997,6 +998,7 @@ function App() {
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
             onPhaseChange={handlePhaseChange}
+            onUpdateEventSettings={updateEventSettings}
             eventPhases={EVENT_PHASES}
             onUpdateUserRole={handleUpdateUserRole}
             allUsers={useDemoMode ? mockAllUsers : supabaseUsers}

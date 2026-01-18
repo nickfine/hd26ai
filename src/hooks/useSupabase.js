@@ -758,6 +758,10 @@ export function useEvent() {
           prizesConfig: data.prizesConfig,
           milestones: data.milestones || [],
           motd: data.motd || '', // Message of the Day for admin-editable messages
+          maxTeamSize: data.maxTeamSize || 6,
+          maxVotesPerUser: data.maxVotesPerUser || 5,
+          submissionDeadline: data.submissionDeadline,
+          votingDeadline: data.votingDeadline,
         });
       }
 
@@ -801,6 +805,36 @@ export function useEvent() {
         await autoAssignFreeAgentsToObservers(event.id);
       }
 
+      // Create phase change notification for all users
+      const { data: allUsers } = await supabase
+        .from('User')
+        .select('id');
+
+      if (allUsers && allUsers.length > 0) {
+        const phaseLabels = {
+          registration: 'Registration',
+          team_formation: 'Team Formation',
+          hacking: 'Hacking',
+          submission: 'Submission',
+          voting: 'Voting',
+          judging: 'Judging',
+          results: 'Results',
+        };
+
+        const notifications = allUsers.map(user => ({
+          id: crypto.randomUUID(),
+          userId: user.id,
+          type: 'PHASE_CHANGE',
+          title: 'Phase Changed',
+          message: `Event phase changed to ${phaseLabels[newPhase] || newPhase}`,
+          actionUrl: 'dashboard',
+        }));
+
+        await supabase
+          .from('Notification')
+          .insert(notifications);
+      }
+
       setEvent(prev => prev ? { ...prev, phase: newPhase } : null);
       return { error: null };
     } catch (err) {
@@ -809,7 +843,34 @@ export function useEvent() {
     }
   }, [event?.id, event?.startDate]);
 
-  return { event, loading, error, updatePhase, refetch: fetchEvent };
+  const updateEventSettings = useCallback(async (settings) => {
+    if (!event?.id) {
+      return { error: 'No current event found' };
+    }
+
+    try {
+      const { error: updateError } = await supabase
+        .from('Event')
+        .update({
+          maxTeamSize: settings.maxTeamSize,
+          maxVotesPerUser: settings.maxVotesPerUser,
+          submissionDeadline: settings.submissionDeadline,
+          votingDeadline: settings.votingDeadline,
+          updatedAt: new Date().toISOString(),
+        })
+        .eq('id', event.id);
+
+      if (updateError) throw updateError;
+
+      setEvent(prev => prev ? { ...prev, ...settings } : null);
+      return { error: null };
+    } catch (err) {
+      console.error('Error updating event settings:', err);
+      return { error: err.message };
+    }
+  }, [event?.id]);
+
+  return { event, loading, error, updatePhase, updateEventSettings, refetch: fetchEvent };
 }
 
 // ============================================================================
@@ -890,6 +951,33 @@ export function useTeamMutations() {
 
       if (joinError) throw joinError;
 
+      // Create notification for team captain
+      const { data: team } = await supabase
+        .from('Team')
+        .select('members:TeamMember(userId, role)')
+        .eq('id', teamId)
+        .single();
+
+      const captain = team?.members?.find(m => m.role === 'OWNER');
+      if (captain) {
+        const { data: userData } = await supabase
+          .from('User')
+          .select('name')
+          .eq('id', userId)
+          .single();
+
+        await supabase
+          .from('Notification')
+          .insert({
+            id: crypto.randomUUID(),
+            userId: captain.userId,
+            type: 'JOIN_REQUEST',
+            title: 'Join Request Received',
+            message: `${userData?.name || 'Someone'} wants to join your team`,
+            actionUrl: `teams?teamId=${teamId}`,
+          });
+      }
+
       setLoading(false);
       return { error: null };
     } catch (err) {
@@ -928,6 +1016,18 @@ export function useTeamMutations() {
           .from('User')
           .update({ isFreeAgent: false })
           .eq('id', request.userId);
+
+        // Create notification for the user who was accepted
+        await supabase
+          .from('Notification')
+          .insert({
+            id: crypto.randomUUID(),
+            userId: request.userId,
+            type: 'JOIN_REQUEST',
+            title: 'Join Request Accepted',
+            message: 'Your request to join the team has been accepted',
+            actionUrl: 'teams',
+          });
       } else {
         // Reject - delete request
         const { error: deleteError } = await supabase
@@ -1195,19 +1295,42 @@ export function useTeamInvites(userId) {
           team:Team(id, name, description)
         `)
         .eq('userId', userId)
-        .eq('status', 'PENDING')
+        .in('status', ['PENDING', 'EXPIRED'])
         .order('createdAt', { ascending: false });
 
       if (fetchError) throw fetchError;
 
-      const transformedInvites = (data || []).map(invite => ({
-        id: invite.id,
-        teamId: invite.teamId,
-        teamName: invite.team?.name || 'Unknown Team',
-        message: invite.message || '',
-        createdAt: invite.createdAt,
-        expiresAt: invite.expiresAt,
-      }));
+      const now = new Date();
+      
+      // Check expiration and update expired invites
+      const invitesToUpdate = [];
+      const transformedInvites = (data || []).map(invite => {
+        const expiresAt = invite.expiresAt ? new Date(invite.expiresAt) : null;
+        const isExpired = invite.status === 'PENDING' && expiresAt && expiresAt < now;
+        
+        if (isExpired) {
+          invitesToUpdate.push(invite.id);
+        }
+
+        return {
+          id: invite.id,
+          teamId: invite.teamId,
+          teamName: invite.team?.name || 'Unknown Team',
+          message: invite.message || '',
+          status: isExpired ? 'EXPIRED' : invite.status,
+          createdAt: invite.createdAt,
+          expiresAt: invite.expiresAt,
+          isExpired,
+        };
+      });
+
+      // Update expired invites in database
+      if (invitesToUpdate.length > 0) {
+        await supabase
+          .from('TeamInvite')
+          .update({ status: 'EXPIRED' })
+          .in('id', invitesToUpdate);
+      }
 
       setInvites(transformedInvites);
       setError(null);
@@ -1257,7 +1380,10 @@ export function useTeamInviteMutations() {
         return { error: 'Invite already sent to this user' };
       }
 
-      // Create new invite
+      // Create new invite with expiration (default 7 days)
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+      
       const { error: insertError } = await supabase
         .from('TeamInvite')
         .insert({
@@ -1266,9 +1392,30 @@ export function useTeamInviteMutations() {
           userId,
           message: message.trim() || null,
           status: 'PENDING',
+          expiresAt: expiresAt.toISOString(),
         });
 
       if (insertError) throw insertError;
+
+      // Get team name for notification
+      const { data: teamData } = await supabase
+        .from('Team')
+        .select('name')
+        .eq('id', teamId)
+        .single();
+
+      // Create notification for the invited user
+      await supabase
+        .from('Notification')
+        .insert({
+          id: crypto.randomUUID(),
+          userId,
+          type: 'TEAM_INVITE',
+          title: 'Team Invite Received',
+          message: `You've been invited to join ${teamData?.name || 'a team'}`,
+          actionUrl: 'marketplace',
+          metadata: { teamId, inviteId: crypto.randomUUID() },
+        });
 
       setLoading(false);
       return { error: null };
@@ -1330,6 +1477,33 @@ export function useTeamInviteMutations() {
           .eq('userId', invite.userId)
           .eq('status', 'PENDING')
           .neq('id', inviteId);
+
+        // Create notification for team captain
+        const { data: team } = await supabase
+          .from('Team')
+          .select('members:TeamMember(userId, role)')
+          .eq('id', invite.teamId)
+          .single();
+
+        const captain = team?.members?.find(m => m.role === 'OWNER');
+        if (captain) {
+          const { data: userData } = await supabase
+            .from('User')
+            .select('name')
+            .eq('id', invite.userId)
+            .single();
+            
+          await supabase
+            .from('Notification')
+            .insert({
+              id: crypto.randomUUID(),
+              userId: captain.userId,
+              type: 'TEAM_INVITE',
+              title: 'Invite Accepted',
+              message: `${userData?.name || 'Someone'} accepted your team invite`,
+              actionUrl: `teams?teamId=${invite.teamId}`,
+            });
+        }
       } else {
         // Decline - update status to DECLINED
         const { error: updateError } = await supabase
@@ -1350,12 +1524,138 @@ export function useTeamInviteMutations() {
     }
   }, []);
 
+  // Resend an invite (for captains)
+  const resendInvite = useCallback(async (inviteId) => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      // Fetch existing invite
+      const { data: invite, error: fetchError } = await supabase
+        .from('TeamInvite')
+        .select('teamId, userId, message')
+        .eq('id', inviteId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Update expiration to 7 days from now
+      const expiresAt = new Date();
+      expiresAt.setDate(expiresAt.getDate() + 7);
+
+      // Update invite status back to PENDING and reset expiration
+      const { error: updateError } = await supabase
+        .from('TeamInvite')
+        .update({ 
+          status: 'PENDING',
+          expiresAt: expiresAt.toISOString(),
+          createdAt: new Date().toISOString(),
+        })
+        .eq('id', inviteId);
+
+      if (updateError) throw updateError;
+
+      setLoading(false);
+      return { error: null };
+    } catch (err) {
+      console.error('Error resending invite:', err);
+      setError(err.message);
+      setLoading(false);
+      return { error: err.message };
+    }
+  }, []);
+
   return {
     loading,
     error,
     sendInvite,
     respondToInvite,
+    resendInvite,
   };
+}
+
+// ============================================================================
+// SENT TEAM INVITES HOOK (For Captains)
+// ============================================================================
+
+/**
+ * Hook for fetching invites sent by a team captain
+ */
+export function useSentTeamInvites(teamId) {
+  const [invites, setInvites] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchSentInvites = useCallback(async () => {
+    if (!teamId) {
+      setInvites([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      const { data, error: fetchError } = await supabase
+        .from('TeamInvite')
+        .select(`
+          *,
+          user:User(id, name, email, image)
+        `)
+        .eq('teamId', teamId)
+        .order('createdAt', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      const now = new Date();
+      
+      // Check expiration and update expired invites
+      const invitesToUpdate = [];
+      const transformedInvites = (data || []).map(invite => {
+        const expiresAt = invite.expiresAt ? new Date(invite.expiresAt) : null;
+        const isExpired = invite.status === 'PENDING' && expiresAt && expiresAt < now;
+        
+        if (isExpired) {
+          invitesToUpdate.push(invite.id);
+        }
+
+        return {
+          id: invite.id,
+          userId: invite.userId,
+          userName: invite.user?.name || 'Unknown',
+          userEmail: invite.user?.email || '',
+          userImage: invite.user?.image,
+          message: invite.message || '',
+          status: isExpired ? 'EXPIRED' : invite.status,
+          createdAt: invite.createdAt,
+          expiresAt: invite.expiresAt,
+          isExpired,
+        };
+      });
+
+      // Update expired invites in database
+      if (invitesToUpdate.length > 0) {
+        await supabase
+          .from('TeamInvite')
+          .update({ status: 'EXPIRED' })
+          .in('id', invitesToUpdate);
+      }
+
+      setInvites(transformedInvites);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching sent invites:', err);
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  }, [teamId]);
+
+  useEffect(() => {
+    fetchSentInvites();
+  }, [fetchSentInvites]);
+
+  return { invites, loading, error, refetch: fetchSentInvites };
 }
 
 // ============================================================================
@@ -1407,6 +1707,22 @@ export function useActivityFeed(limit = 20) {
 
       if (joinsError) throw joinsError;
 
+      // Fetch recent project submissions
+      const { data: recentProjects, error: projectsError } = await supabase
+        .from('Project')
+        .select(`
+          id,
+          name,
+          submittedAt,
+          teamId,
+          team:Team(id, name)
+        `)
+        .not('submittedAt', 'is', null)
+        .order('submittedAt', { ascending: false })
+        .limit(limit);
+
+      if (projectsError) throw projectsError;
+
       // Format activities
       const teamActivities = (recentTeams || []).map(team => {
         const creator = team.members?.find(m => m.user)?.user;
@@ -1427,8 +1743,17 @@ export function useActivityFeed(limit = 20) {
         time: member.createdAt,
       }));
 
+      const projectActivities = (recentProjects || []).map(project => ({
+        id: `project-${project.id}`,
+        type: 'submit',
+        user: project.team?.name || 'Unknown Team',
+        team: project.team?.name || 'Unknown Team',
+        project: project.name,
+        time: project.submittedAt,
+      }));
+
       // Combine and sort by time
-      const allActivities = [...teamActivities, ...joinActivities]
+      const allActivities = [...teamActivities, ...joinActivities, ...projectActivities]
         .sort((a, b) => new Date(b.time) - new Date(a.time))
         .slice(0, limit);
 
@@ -1539,13 +1864,228 @@ export function useActivityFeed(limit = 20) {
       )
       .subscribe();
 
+    // Subscribe to Project updates (submissions)
+    const projectChannel = supabase
+      .channel('activity-project-submissions')
+      .on(
+        'postgres_changes',
+        {
+          event: 'UPDATE',
+          schema: 'public',
+          table: 'Project',
+        },
+        async (payload) => {
+          try {
+            // Only track when submittedAt changes from null to a value
+            if (payload.new.submittedAt && !payload.old.submittedAt) {
+              const { data: project } = await supabase
+                .from('Project')
+                .select(`
+                  id,
+                  name,
+                  submittedAt,
+                  teamId,
+                  team:Team(id, name)
+                `)
+                .eq('id', payload.new.id)
+                .single();
+
+              if (project && project.team) {
+                const activity = {
+                  id: `project-${project.id}-${Date.now()}`,
+                  type: 'submit',
+                  user: project.team.name,
+                  team: project.team.name,
+                  project: project.name,
+                  time: project.submittedAt,
+                };
+
+                setActivities(prev => {
+                  // Avoid duplicates
+                  if (prev.some(a => a.id === activity.id)) return prev;
+                  return [activity, ...prev].slice(0, limit);
+                });
+              }
+            }
+          } catch (err) {
+            console.error('Error processing project submission activity:', err);
+          }
+        }
+      )
+      .subscribe();
+
     // Cleanup subscriptions on unmount
     return () => {
       supabase.removeChannel(memberChannel);
       supabase.removeChannel(teamChannel);
+      supabase.removeChannel(projectChannel);
     };
   }, [fetchInitialActivities, limit]);
 
   return { activities, loading, error, refetch: fetchInitialActivities };
+}
+
+// ============================================================================
+// ANALYTICS HOOKS
+// ============================================================================
+
+/**
+ * Hook for fetching analytics data
+ */
+export function useAnalytics() {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Get signups by date
+  const getSignupsByDate = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data, error: fetchError } = await supabase
+        .from('User')
+        .select('createdAt')
+        .order('createdAt', { ascending: true });
+
+      if (fetchError) throw fetchError;
+
+      // Group by date
+      const signupsByDate = {};
+      (data || []).forEach(user => {
+        const date = new Date(user.createdAt).toISOString().split('T')[0];
+        signupsByDate[date] = (signupsByDate[date] || 0) + 1;
+      });
+
+      return { data: signupsByDate, error: null };
+    } catch (err) {
+      console.error('Error fetching signups by date:', err);
+      return { data: null, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Get teams created by date
+  const getTeamsByDate = useCallback(async (eventId) => {
+    try {
+      setLoading(true);
+      let query = supabase
+        .from('Team')
+        .select('createdAt')
+        .eq('isPublic', true)
+        .order('createdAt', { ascending: true });
+
+      if (eventId) {
+        query = query.eq('eventId', eventId);
+      }
+
+      const { data, error: fetchError } = await query;
+
+      if (fetchError) throw fetchError;
+
+      // Group by date
+      const teamsByDate = {};
+      (data || []).forEach(team => {
+        const date = new Date(team.createdAt).toISOString().split('T')[0];
+        teamsByDate[date] = (teamsByDate[date] || 0) + 1;
+      });
+
+      return { data: teamsByDate, error: null };
+    } catch (err) {
+      console.error('Error fetching teams by date:', err);
+      return { data: null, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Get participation by role
+  const getParticipationByRole = useCallback(async () => {
+    try {
+      setLoading(true);
+      const { data, error: fetchError } = await supabase
+        .from('User')
+        .select('role');
+
+      if (fetchError) throw fetchError;
+
+      // Count by role
+      const roleCounts = {};
+      (data || []).forEach(user => {
+        const appRole = ROLE_MAP[user.role] || 'participant';
+        roleCounts[appRole] = (roleCounts[appRole] || 0) + 1;
+      });
+
+      return { data: roleCounts, error: null };
+    } catch (err) {
+      console.error('Error fetching participation by role:', err);
+      return { data: null, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Get user engagement metrics
+  const getUserEngagement = useCallback(async () => {
+    try {
+      setLoading(true);
+      
+      // Get users on teams
+      const { data: teamMembers, error: membersError } = await supabase
+        .from('TeamMember')
+        .select('userId')
+        .eq('status', 'ACCEPTED');
+
+      if (membersError) throw membersError;
+
+      // Get users who voted
+      const { data: votes, error: votesError } = await supabase
+        .from('Vote')
+        .select('userId')
+        .select('userId', { count: 'exact' });
+
+      if (votesError) throw votesError;
+
+      // Get users who submitted projects
+      const { data: projects, error: projectsError } = await supabase
+        .from('Project')
+        .select('teamId')
+        .not('submittedAt', 'is', null);
+
+      if (projectsError) throw projectsError;
+
+      const { data: teamsWithProjects } = await supabase
+        .from('TeamMember')
+        .select('userId')
+        .in('teamId', (projects || []).map(p => p.teamId))
+        .eq('status', 'ACCEPTED');
+
+      const uniqueVoters = new Set((votes || []).map(v => v.userId));
+      const uniqueTeamMembers = new Set((teamMembers || []).map(m => m.userId));
+      const uniqueSubmitters = new Set((teamsWithProjects || []).map(m => m.userId));
+
+      return {
+        data: {
+          totalUsers: uniqueTeamMembers.size + uniqueVoters.size,
+          usersOnTeams: uniqueTeamMembers.size,
+          usersWhoVoted: uniqueVoters.size,
+          usersWhoSubmitted: uniqueSubmitters.size,
+        },
+        error: null,
+      };
+    } catch (err) {
+      console.error('Error fetching user engagement:', err);
+      return { data: null, error: err.message };
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  return {
+    loading,
+    error,
+    getSignupsByDate,
+    getTeamsByDate,
+    getParticipationByRole,
+    getUserEngagement,
+  };
 }
 

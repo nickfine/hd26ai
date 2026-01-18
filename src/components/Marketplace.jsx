@@ -13,6 +13,7 @@ import {
   Check,
   Grid3x3,
   Rows,
+  Clock,
 } from 'lucide-react';
 import { SKILLS } from '../data/mockData';
 import { cn } from '../lib/design-system';
@@ -162,15 +163,45 @@ function Marketplace({
   // Find current user's pending invites
   // Priority: use userInvites prop (from Supabase), fallback to freeAgents data (for demo mode)
   const currentUserAgent = freeAgents.find((a) => a.id === user?.id);
-  const pendingInvites = userInvites.length > 0 
+  const allInvites = userInvites.length > 0 
     ? userInvites.map(invite => ({
         id: invite.id,
         teamId: invite.teamId,
         teamName: invite.teamName,
         message: invite.message || '',
         timestamp: invite.createdAt,
+        expiresAt: invite.expiresAt,
+        status: invite.status,
+        isExpired: invite.isExpired || invite.status === 'EXPIRED',
       }))
     : (currentUserAgent?.teamInvites || []);
+  
+  // Filter to only pending (non-expired) invites for the main display
+  const pendingInvites = allInvites.filter(invite => 
+    invite.status === 'PENDING' && !invite.isExpired
+  );
+  
+  // Separate expired invites for display
+  const expiredInvites = allInvites.filter(invite => 
+    invite.status === 'EXPIRED' || invite.isExpired
+  );
+  
+  // Calculate time until expiration
+  const getTimeUntilExpiration = (expiresAt) => {
+    if (!expiresAt) return null;
+    const now = new Date();
+    const expiry = new Date(expiresAt);
+    const diffMs = expiry - now;
+    if (diffMs <= 0) return null;
+    
+    const hours = Math.floor(diffMs / (1000 * 60 * 60));
+    const days = Math.floor(hours / 24);
+    
+    if (days > 0) return `${days}d ${hours % 24}h`;
+    if (hours > 0) return `${hours}h`;
+    const minutes = Math.floor(diffMs / (1000 * 60));
+    return `${minutes}m`;
+  };
 
   // Handle sending invite - memoized
   const handleSendInvite = useCallback(() => {
@@ -240,6 +271,7 @@ function Marketplace({
       onDevRoleChange={onDevRoleChange}
       onPhaseChange={onPhaseChange}
       eventPhases={eventPhases}
+      userInvites={userInvites}
     >
       <div className="p-4 sm:p-6">
         {/* Status Banner */}
@@ -268,10 +300,19 @@ function Marketplace({
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {pendingInvites.map((invite) => {
+                const timeUntilExpiry = getTimeUntilExpiration(invite.expiresAt);
                 return (
                   <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg">
-                    <div className="font-bold text-sm text-white mb-1">
-                      {invite.teamName}
+                    <div className="flex items-start justify-between mb-1">
+                      <div className="font-bold text-sm text-white">
+                        {invite.teamName}
+                      </div>
+                      {timeUntilExpiry && (
+                        <div className="flex items-center gap-1 px-2 py-0.5 bg-amber-500/20 border border-amber-500/30 rounded text-xs text-amber-400">
+                          <Clock className="w-3 h-3" />
+                          {timeUntilExpiry}
+                        </div>
+                      )}
                     </div>
                     {invite.message && (
                       <p className="text-xs text-arena-muted mb-2 line-clamp-2">
@@ -302,6 +343,34 @@ function Marketplace({
                 );
               })}
             </div>
+            
+            {/* Expired Invites Section */}
+            {expiredInvites.length > 0 && (
+              <div className="mt-4 pt-4 border-t border-arena-border">
+                <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-3">
+                  Expired Invites
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                  {expiredInvites.map((invite) => (
+                    <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg opacity-60">
+                      <div className="flex items-start justify-between mb-1">
+                        <div className="font-bold text-sm text-white">
+                          {invite.teamName}
+                        </div>
+                        <div className="px-2 py-0.5 bg-red-500/20 border border-red-500/30 rounded text-xs text-red-400">
+                          Expired
+                        </div>
+                      </div>
+                      {invite.message && (
+                        <p className="text-xs text-arena-muted mb-2 line-clamp-2">
+                          "{invite.message}"
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
         {/* Page Header */}
