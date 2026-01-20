@@ -574,6 +574,94 @@ function AdminPanel({
     }
   };
 
+  // Handle bulk role change for selected users
+  const handleBulkRoleChange = async () => {
+    if (selectedUsers.size === 0 || !onUpdateUserRole) return;
+
+    setIsBulkUpdating(true);
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const userId of selectedUsers) {
+      const targetUser = allUsers.find(u => u.id === userId);
+      if (!targetUser || targetUser.role === bulkRole) continue;
+
+      try {
+        const result = await onUpdateUserRole(userId, bulkRole);
+        if (result?.error) {
+          errorCount++;
+        } else {
+          successCount++;
+        }
+      } catch (err) {
+        errorCount++;
+      }
+    }
+
+    setIsBulkUpdating(false);
+    setSelectedUsers(new Set());
+
+    if (successCount > 0) {
+      setRoleUpdateFeedback({
+        type: 'success',
+        message: `Successfully updated ${successCount} user${successCount > 1 ? 's' : ''} to ${ROLE_CONFIG[bulkRole]?.label}${errorCount > 0 ? ` (${errorCount} failed)` : ''}`,
+      });
+    } else if (errorCount > 0) {
+      setRoleUpdateFeedback({
+        type: 'error',
+        message: `Failed to update ${errorCount} user${errorCount > 1 ? 's' : ''}`,
+      });
+    }
+
+    // Auto-dismiss feedback after 3 seconds
+    setTimeout(() => setRoleUpdateFeedback(null), 3000);
+  };
+
+  // Export users to CSV
+  const handleExportUsers = () => {
+    const csvRows = [];
+    
+    // Header row
+    csvRows.push([
+      'ID',
+      'Name',
+      'Email',
+      'Role',
+      'Skills',
+      'Bio',
+      'Callsign',
+      'Created At',
+    ].join(','));
+
+    // Data rows
+    allUsers.forEach((u) => {
+      csvRows.push([
+        u.id,
+        `"${(u.name || '').replace(/"/g, '""')}"`,
+        `"${(u.email || '').replace(/"/g, '""')}"`,
+        u.role || 'participant',
+        `"${(u.skills || '').replace(/"/g, '""')}"`,
+        `"${(u.bio || '').replace(/"/g, '""')}"`,
+        `"${(u.callsign || '').replace(/"/g, '""')}"`,
+        u.createdAt || '',
+      ].join(','));
+    });
+
+    // Create CSV string
+    const csvContent = csvRows.join('\n');
+    
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `hackday-2026-users-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // ============================================================================
   // RENDER: DEV TOOLS SECTION
   // ============================================================================
