@@ -1030,6 +1030,7 @@ function App() {
             teams={teams}
             onNavigate={handleNavigate}
             eventPhase={eventPhase}
+            event={event}
           />
         );
       

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
   Calendar,
   Clock,
@@ -14,6 +14,7 @@ import {
   ExternalLink,
   Users,
   Globe,
+  Loader2,
 } from 'lucide-react';
 import AppLayout from './AppLayout';
 import {
@@ -26,6 +27,126 @@ import {
   formatDateForICS,
   generateVTIMEZONE,
 } from '../lib/timezone';
+
+// ============================================================================
+// HELPERS - Transform database milestones to component format
+// ============================================================================
+
+/**
+ * Get icon component based on title/phase
+ */
+const getIconComponent = (title, phase) => {
+  const titleLower = title.toLowerCase();
+  if (titleLower.includes('launch') || titleLower.includes('opening')) return Flag;
+  if (titleLower.includes('registration')) return Users;
+  if (titleLower.includes('webinar') || titleLower.includes('rules')) return Mic;
+  if (titleLower.includes('social') || titleLower.includes('matching')) return Users;
+  if (titleLower.includes('deadline') || titleLower.includes('freeze')) return Clock;
+  if (titleLower.includes('tech check')) return Code;
+  if (titleLower.includes('ceremony')) return Flag;
+  if (titleLower.includes('hacking begins')) return Code;
+  if (titleLower.includes('check-in') || titleLower.includes('standup')) return Mic;
+  if (titleLower.includes('office hours') || titleLower.includes('mentor')) return Sparkles;
+  if (titleLower.includes('night') || titleLower.includes('hangout')) return Moon;
+  if (titleLower.includes('morning') || titleLower.includes('kickoff')) return Sun;
+  if (titleLower.includes('submission')) return Flag;
+  if (titleLower.includes('gallery') || titleLower.includes('browse')) return Trophy;
+  if (titleLower.includes('presentation')) return Mic;
+  if (titleLower.includes('judging') || titleLower.includes('voting')) return Trophy;
+  if (titleLower.includes('award') || titleLower.includes('winner')) return Trophy;
+  if (titleLower.includes('celebration') || titleLower.includes('closing')) return Flag;
+  return Calendar;
+};
+
+/**
+ * Get category from title/phase
+ */
+const getCategory = (title, phase) => {
+  const titleLower = title.toLowerCase();
+  if (titleLower.includes('deadline') || titleLower.includes('due')) return 'deadline';
+  if (titleLower.includes('ceremony') || titleLower.includes('award') || titleLower.includes('celebration')) return 'ceremony';
+  if (titleLower.includes('hacking begins')) return 'hacking';
+  if (titleLower.includes('presentation')) return 'presentation';
+  if (titleLower.includes('judging')) return 'judging';
+  if (titleLower.includes('office hours') || titleLower.includes('hangout') || titleLower.includes('social') || titleLower.includes('check-in')) return 'social';
+  if (phase === 'HACKING') return 'hacking';
+  return 'logistics';
+};
+
+/**
+ * Format date label from timestamp
+ */
+const formatDateLabel = (startTime) => {
+  const date = new Date(startTime);
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const day = date.getUTCDate();
+  const suffix = day === 1 || day === 21 || day === 31 ? 'st' : day === 2 || day === 22 ? 'nd' : day === 3 || day === 23 ? 'rd' : 'th';
+  return `${months[date.getUTCMonth()]} ${day}${suffix}`;
+};
+
+/**
+ * Transform database milestones to the format expected by the component
+ */
+const transformMilestones = (milestones) => {
+  if (!milestones || milestones.length === 0) return null;
+  
+  const preEvent = {
+    date: '2026-06-01',
+    label: 'Pre-Event',
+    subtitle: 'June 1st - 20th',
+    events: [],
+  };
+  
+  const day1 = {
+    date: '2026-06-21',
+    label: 'Day 1',
+    subtitle: 'Sunday, June 21st',
+    events: [],
+  };
+  
+  const day2 = {
+    date: '2026-06-22',
+    label: 'Day 2',
+    subtitle: 'Monday, June 22nd',
+    events: [],
+  };
+  
+  const preEventDates = {};
+  
+  milestones.forEach(m => {
+    const startDate = new Date(m.startTime);
+    const endDate = m.endTime ? new Date(m.endTime) : startDate;
+    const dateStr = startDate.toISOString().split('T')[0];
+    
+    const event = {
+      id: m.id,
+      time: startDate.getUTCHours().toString().padStart(2, '0') + ':' + startDate.getUTCMinutes().toString().padStart(2, '0'),
+      endTime: endDate.getUTCHours().toString().padStart(2, '0') + ':' + endDate.getUTCMinutes().toString().padStart(2, '0'),
+      title: m.title,
+      description: m.description || '',
+      location: m.location || 'Online',
+      category: getCategory(m.title, m.phase),
+      icon: getIconComponent(m.title, m.phase),
+    };
+    
+    // Pre-event: June 1-20
+    if (dateStr < '2026-06-21') {
+      event.date = formatDateLabel(m.startTime);
+      preEventDates[m.id] = dateStr;
+      preEvent.events.push(event);
+    }
+    // Day 1: June 21
+    else if (dateStr === '2026-06-21') {
+      day1.events.push(event);
+    }
+    // Day 2: June 22+
+    else {
+      day2.events.push(event);
+    }
+  });
+  
+  return { preEvent, day1, day2, preEventDates };
+};
 
 // ============================================================================
 // SCHEDULE DATA - Remote Hackathon
@@ -421,11 +542,26 @@ function downloadAllEventsAsICS() {
 // COMPONENT
 // ============================================================================
 
-function Schedule({ user, teams, onNavigate, eventPhase }) {
+function Schedule({ user, teams, onNavigate, eventPhase, event }) {
   const [activeDay, setActiveDay] = useState('preEvent');
   const [showUKTime, setShowUKTime] = useState(false);
 
-  const currentDayData = SCHEDULE_DATA[activeDay];
+  // Transform database milestones or fall back to hardcoded data
+  const scheduleData = useMemo(() => {
+    const transformed = transformMilestones(event?.milestones);
+    if (transformed) {
+      return {
+        data: { preEvent: transformed.preEvent, day1: transformed.day1, day2: transformed.day2 },
+        preEventDates: transformed.preEventDates,
+      };
+    }
+    return {
+      data: SCHEDULE_DATA,
+      preEventDates: PRE_EVENT_DATES,
+    };
+  }, [event?.milestones]);
+
+  const currentDayData = scheduleData.data[activeDay];
   const isPreEvent = activeDay === 'preEvent';
   
   // Get user's timezone info
@@ -433,18 +569,78 @@ function Schedule({ user, teams, onNavigate, eventPhase }) {
   const timezoneName = getTimezoneName();
   const timezoneAbbr = getTimezoneAbbr();
 
-  const handleAddToCalendar = (event) => {
+  const handleAddToCalendar = (calEvent) => {
     // For pre-event items, use the specific date mapping
     let eventDate = currentDayData.date;
-    if (isPreEvent && PRE_EVENT_DATES[event.id]) {
-      eventDate = PRE_EVENT_DATES[event.id];
+    if (isPreEvent && scheduleData.preEventDates[calEvent.id]) {
+      eventDate = scheduleData.preEventDates[calEvent.id];
     }
-    const url = generateGoogleCalendarUrl(event, eventDate);
+    const url = generateGoogleCalendarUrl(calEvent, eventDate);
     window.open(url, '_blank', 'noopener,noreferrer');
   };
 
   const handleAddAllToCalendar = () => {
-    downloadAllEventsAsICS();
+    // Generate ICS from current schedule data
+    const events = [];
+    
+    scheduleData.data.preEvent.events.forEach(ev => {
+      events.push({
+        ...ev,
+        date: scheduleData.preEventDates[ev.id] || scheduleData.data.preEvent.date,
+      });
+    });
+    
+    scheduleData.data.day1.events.forEach(ev => {
+      events.push({ ...ev, date: scheduleData.data.day1.date });
+    });
+    
+    scheduleData.data.day2.events.forEach(ev => {
+      events.push({ ...ev, date: scheduleData.data.day2.date });
+    });
+    
+    // Generate and download ICS
+    const now = new Date().toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+    
+    let icsContent = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'PRODID:-//HackDay 2026//Schedule//EN',
+      'CALSCALE:GREGORIAN',
+      'METHOD:PUBLISH',
+      'X-WR-CALNAME:HackDay 2026 Schedule',
+      generateVTIMEZONE(EVENT_TIMEZONE),
+    ];
+    
+    events.forEach(ev => {
+      const uid = `${ev.id}@hackday2026.com`;
+      const dtStart = formatDateTimeForICS(ev.date, ev.time);
+      const dtEnd = formatDateTimeForICS(ev.date, ev.endTime || ev.time);
+      
+      icsContent.push(
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${now}`,
+        `DTSTART:${dtStart}`,
+        `DTEND:${dtEnd}`,
+        `SUMMARY:HackDay 2026: ${ev.title}`,
+        `DESCRIPTION:${(ev.description || '').replace(/\n/g, '\\n')}`,
+        `LOCATION:${ev.location || 'Online'}`,
+        'END:VEVENT'
+      );
+    });
+    
+    icsContent.push('END:VCALENDAR');
+    
+    const blob = new Blob([icsContent.join('\r\n')], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'hackday-2026-schedule.ics';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -507,7 +703,7 @@ function Schedule({ user, teams, onNavigate, eventPhase }) {
 
         {/* Day Tabs */}
         <div className="flex gap-2 mb-6">
-          {Object.entries(SCHEDULE_DATA).map(([key, day]) => (
+          {Object.entries(scheduleData.data).map(([key, day]) => (
             <button
               key={key}
               type="button"
@@ -538,8 +734,8 @@ function Schedule({ user, teams, onNavigate, eventPhase }) {
               
               // Get event date for conversion
               let eventDate = currentDayData.date;
-              if (isPreEvent && PRE_EVENT_DATES[event.id]) {
-                eventDate = PRE_EVENT_DATES[event.id];
+              if (isPreEvent && scheduleData.preEventDates[event.id]) {
+                eventDate = scheduleData.preEventDates[event.id];
               }
               
               // Convert times to user's timezone
