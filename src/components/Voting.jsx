@@ -13,6 +13,7 @@ import {
   Filter,
 } from 'lucide-react';
 import { cn } from '../lib/design-system';
+import { isValidUrl } from '../lib/constants';
 import AppLayout from './AppLayout';
 
 // ============================================================================
@@ -57,7 +58,7 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
 
         {/* Links */}
         <div className="flex flex-wrap gap-2 mb-4">
-          {submission?.demoVideoUrl && (
+          {isValidUrl(submission?.demoVideoUrl) && (
             <a
               href={submission.demoVideoUrl}
               target="_blank"
@@ -68,7 +69,7 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
               Demo
             </a>
           )}
-          {submission?.repoUrl && (
+          {isValidUrl(submission?.repoUrl) && (
             <a
               href={submission.repoUrl}
               target="_blank"
@@ -79,7 +80,7 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
               Code
             </a>
           )}
-          {submission?.liveDemoUrl && (
+          {isValidUrl(submission?.liveDemoUrl) && (
             <a
               href={submission.liveDemoUrl}
               target="_blank"
@@ -164,7 +165,7 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
 
         {/* Links */}
         <div className="hidden sm:flex items-center gap-2">
-          {submission?.demoVideoUrl && (
+          {isValidUrl(submission?.demoVideoUrl) && (
             <a
               href={submission.demoVideoUrl}
               target="_blank"
@@ -175,7 +176,7 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
               <Video className="w-5 h-5" />
             </a>
           )}
-          {submission?.repoUrl && (
+          {isValidUrl(submission?.repoUrl) && (
             <a
               href={submission.repoUrl}
               target="_blank"
@@ -186,7 +187,7 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
               <Github className="w-5 h-5" />
             </a>
           )}
-          {submission?.liveDemoUrl && (
+          {isValidUrl(submission?.liveDemoUrl) && (
             <a
               href={submission.liveDemoUrl}
               target="_blank"

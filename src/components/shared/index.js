@@ -21,6 +21,9 @@ export { default as BackButton } from './BackButton';
 // StatusBanner
 export { default as StatusBanner } from './StatusBanner';
 
+// ErrorBoundary
+export { default as ErrorBoundary } from './ErrorBoundary';
+
 
 
 

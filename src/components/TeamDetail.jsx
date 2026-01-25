@@ -119,6 +119,21 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
     setIsEditingDescription(false);
   };
 
+  // Handle problem cancel
+  const handleCancelProblem = () => {
+    setProblemInput(team.problem || '');
+    setIsEditingProblem(false);
+  };
+
+  // Handle problem save
+  const handleSaveProblem = () => {
+    const trimmedProblem = problemInput.trim();
+    if (trimmedProblem.length >= 10 && trimmedProblem !== team.problem) {
+      onUpdateTeam(team.id, { problem: trimmedProblem });
+    }
+    setIsEditingProblem(false);
+  };
+
   // Compute common interests from member skills
   const allSkills = team.members.flatMap((member) => member.skills);
   const skillCounts = allSkills.reduce((acc, skill) => {
@@ -716,7 +731,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   <button
                     type="button"
                     onClick={() => onNavigate('submission')}
-                    className={`px-4 py-2 font-bold text-sm text-white transition-colors hover:opacity-90 ${teamConfig.borderRadius}`}
+                    className="px-4 py-2 font-bold text-sm text-white transition-colors hover:opacity-90 rounded-lg"
                     style={{ backgroundColor: 'var(--color-text-secondary)' }}
                   >
                     Start Submission
@@ -771,8 +786,8 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   <button
                     type="button"
                     onClick={() => onNavigate('submission')}
-                    className={`w-full mt-2 py-2.5 flex items-center justify-center gap-2 font-bold text-sm 
-                               transition-colors hover:opacity-90 ${teamConfig.borderRadius}`}
+                    className="w-full mt-2 py-2.5 flex items-center justify-center gap-2 font-bold text-sm 
+                               transition-colors hover:opacity-90 rounded-lg"
                     style={{ backgroundColor: 'var(--color-text-secondary)', color: 'white' }}
                   >
                     {team.submission?.status === 'submitted' ? 'View Submission' : 'Continue Editing'}

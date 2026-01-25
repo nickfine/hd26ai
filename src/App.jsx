@@ -44,6 +44,7 @@ import JudgeScoring from './components/JudgeScoring';
 import AdminPanel from './components/AdminPanel';
 import Results from './components/Results';
 import Schedule from './components/Schedule';
+import { ErrorBoundary } from './components/shared';
 
 // Max votes per user for voting phase (can be overridden by event settings)
 const DEFAULT_MAX_VOTES = 5;
@@ -257,201 +258,241 @@ function App() {
   // TEAM HANDLERS
   // ============================================================================
   const updateTeam = useCallback(async (teamId, updates) => {
-    if (useDemoMode) {
-      setMockTeams(prev =>
-        prev.map(team =>
-          team.id === teamId ? { ...team, ...updates } : team
-        )
-      );
-    } else {
-      await teamMutations.updateTeam(teamId, updates);
-      refetchTeams();
+    try {
+      if (useDemoMode) {
+        setMockTeams(prev =>
+          prev.map(team =>
+            team.id === teamId ? { ...team, ...updates } : team
+          )
+        );
+      } else {
+        const result = await teamMutations.updateTeam(teamId, updates);
+        if (result?.error) {
+          console.error('Failed to update team:', result.error);
+        }
+        refetchTeams();
+      }
+    } catch (error) {
+      console.error('Error updating team:', error);
     }
   }, [useDemoMode, teamMutations, refetchTeams]);
 
   const leaveTeam = useCallback(async (teamId) => {
     if (!effectiveUser) return;
     
-    if (useDemoMode) {
-      // Remove user from team
-      setMockTeams(prev =>
-        prev.map(team => {
-          if (team.id !== teamId) return team;
-          
-          // Remove user from members array
-          const updatedMembers = team.members.filter(
-            m => m.id !== effectiveUser.id && m.name !== effectiveUser.name
-          );
-          
-          // If user was captain and there are remaining members, promote the first one
-          let newCaptainId = team.captainId;
-          if (team.captainId === effectiveUser.id && updatedMembers.length > 0) {
-            newCaptainId = updatedMembers[0].id;
-          }
-          
-          return {
-            ...team,
-            members: updatedMembers,
-            captainId: newCaptainId,
-          };
-        }).filter(team => {
-          // Remove team if it has no members left
-          if (team.id === teamId) {
-            const remainingMembers = team.members.filter(
+    try {
+      if (useDemoMode) {
+        // Remove user from team
+        setMockTeams(prev =>
+          prev.map(team => {
+            if (team.id !== teamId) return team;
+            
+            // Remove user from members array
+            const updatedMembers = team.members.filter(
               m => m.id !== effectiveUser.id && m.name !== effectiveUser.name
             );
-            return remainingMembers.length > 0;
-          }
-          return true;
-        })
-      );
-      
-      // Add user to free agents list
-      setMockFreeAgents(prev => {
-        // Check if already in the list
-        if (prev.some(a => a.id === effectiveUser.id)) return prev;
-        return [
-          ...prev,
-          {
-            id: effectiveUser.id,
-            name: effectiveUser.name,
-            skills: effectiveUser.skills || [],
-            bio: effectiveUser.bio || '',
-            teamInvites: [],
-            autoAssignOptIn: false,
-          }
-        ];
-      });
-    } else {
-      await teamMutations.leaveTeam(teamId, effectiveUser.id);
-      refetchTeams();
+            
+            // If user was captain and there are remaining members, promote the first one
+            let newCaptainId = team.captainId;
+            if (team.captainId === effectiveUser.id && updatedMembers.length > 0) {
+              newCaptainId = updatedMembers[0].id;
+            }
+            
+            return {
+              ...team,
+              members: updatedMembers,
+              captainId: newCaptainId,
+            };
+          }).filter(team => {
+            // Remove team if it has no members left
+            if (team.id === teamId) {
+              const remainingMembers = team.members.filter(
+                m => m.id !== effectiveUser.id && m.name !== effectiveUser.name
+              );
+              return remainingMembers.length > 0;
+            }
+            return true;
+          })
+        );
+        
+        // Add user to free agents list
+        setMockFreeAgents(prev => {
+          // Check if already in the list
+          if (prev.some(a => a.id === effectiveUser.id)) return prev;
+          return [
+            ...prev,
+            {
+              id: effectiveUser.id,
+              name: effectiveUser.name,
+              skills: effectiveUser.skills || [],
+              bio: effectiveUser.bio || '',
+              teamInvites: [],
+              autoAssignOptIn: false,
+            }
+          ];
+        });
+      } else {
+        const result = await teamMutations.leaveTeam(teamId, effectiveUser.id);
+        if (result?.error) {
+          console.error('Failed to leave team:', result.error);
+        }
+        refetchTeams();
+      }
+    } catch (error) {
+      console.error('Error leaving team:', error);
     }
   }, [useDemoMode, effectiveUser, teamMutations, refetchTeams, auth]);
 
   const handleJoinRequest = useCallback(async (teamId, request) => {
-    if (useDemoMode) {
-      setMockTeams(prev =>
-        prev.map(team =>
-          team.id === teamId
-            ? { ...team, joinRequests: [...(team.joinRequests || []), request] }
-            : team
-        )
-      );
-    } else {
-      await teamMutations.requestJoin(teamId, effectiveUser?.id, request.message);
-      refetchTeams();
+    try {
+      if (useDemoMode) {
+        setMockTeams(prev =>
+          prev.map(team =>
+            team.id === teamId
+              ? { ...team, joinRequests: [...(team.joinRequests || []), request] }
+              : team
+          )
+        );
+      } else {
+        const result = await teamMutations.requestJoin(teamId, effectiveUser?.id, request.message);
+        if (result?.error) {
+          console.error('Failed to send join request:', result.error);
+        }
+        refetchTeams();
+      }
+    } catch (error) {
+      console.error('Error sending join request:', error);
     }
   }, [useDemoMode, teamMutations, effectiveUser?.id, refetchTeams]);
 
   const handleRequestResponse = useCallback(async (teamId, requestId, accepted) => {
-    if (useDemoMode) {
-      setMockTeams(prev =>
-        prev.map(team => {
-          if (team.id !== teamId) return team;
+    try {
+      if (useDemoMode) {
+        setMockTeams(prev =>
+          prev.map(team => {
+            if (team.id !== teamId) return team;
 
-          const request = team.joinRequests?.find(r => r.id === requestId);
-          if (!request) return team;
+            const request = team.joinRequests?.find(r => r.id === requestId);
+            if (!request) return team;
 
-          if (accepted) {
-            const newMember = {
-              id: request.userId,
-              name: request.userName,
-              callsign: '',
-              skills: request.userSkills || [],
-            };
-            return {
-              ...team,
-              members: [...team.members, newMember],
-              joinRequests: team.joinRequests.filter(r => r.id !== requestId),
-            };
-          } else {
-            return {
-              ...team,
-              joinRequests: team.joinRequests.filter(r => r.id !== requestId),
-            };
-          }
-        })
-      );
-    } else {
-      await teamMutations.respondToRequest(requestId, accepted);
-      refetchTeams();
+            if (accepted) {
+              const newMember = {
+                id: request.userId,
+                name: request.userName,
+                callsign: '',
+                skills: request.userSkills || [],
+              };
+              return {
+                ...team,
+                members: [...team.members, newMember],
+                joinRequests: team.joinRequests.filter(r => r.id !== requestId),
+              };
+            } else {
+              return {
+                ...team,
+                joinRequests: team.joinRequests.filter(r => r.id !== requestId),
+              };
+            }
+          })
+        );
+      } else {
+        const result = await teamMutations.respondToRequest(requestId, accepted);
+        if (result?.error) {
+          console.error('Failed to respond to request:', result.error);
+        }
+        refetchTeams();
+      }
+    } catch (error) {
+      console.error('Error responding to request:', error);
     }
   }, [useDemoMode, teamMutations, refetchTeams]);
 
   const handleSendInvite = useCallback(async (agentId, teamId, message) => {
-    if (useDemoMode) {
-      const team = mockTeams.find(t => t.id === teamId);
-      if (!team) return;
+    try {
+      if (useDemoMode) {
+        const team = mockTeams.find(t => t.id === teamId);
+        if (!team) return;
 
-      const invite = {
-        id: Date.now(),
-        teamId,
-        teamName: team.name,
-        message,
-        timestamp: new Date().toISOString(),
-      };
+        const invite = {
+          id: Date.now(),
+          teamId,
+          teamName: team.name,
+          message,
+          timestamp: new Date().toISOString(),
+        };
 
-      setMockFreeAgents(prev =>
-        prev.map(agent =>
-          agent.id === agentId
-            ? { ...agent, teamInvites: [...(agent.teamInvites || []), invite] }
-            : agent
-        )
-      );
-    } else {
-      // Supabase mode - use invite mutations
-      const result = await inviteMutations.sendInvite(teamId, agentId, message);
-      if (!result.error) {
-        // Refresh free agents to show updated invites
-        refetchFreeAgents();
+        setMockFreeAgents(prev =>
+          prev.map(agent =>
+            agent.id === agentId
+              ? { ...agent, teamInvites: [...(agent.teamInvites || []), invite] }
+              : agent
+          )
+        );
+      } else {
+        // Supabase mode - use invite mutations
+        const result = await inviteMutations.sendInvite(teamId, agentId, message);
+        if (result?.error) {
+          console.error('Failed to send invite:', result.error);
+        } else {
+          // Refresh free agents to show updated invites
+          refetchFreeAgents();
+        }
+        return result;
       }
-      return result;
+    } catch (error) {
+      console.error('Error sending invite:', error);
     }
   }, [useDemoMode, mockTeams, inviteMutations, refetchFreeAgents]);
 
   const handleInviteResponse = useCallback(async (agentId, inviteId, accepted) => {
-    if (useDemoMode) {
-      const agent = mockFreeAgents.find(a => a.id === agentId);
-      if (!agent) return;
+    try {
+      if (useDemoMode) {
+        const agent = mockFreeAgents.find(a => a.id === agentId);
+        if (!agent) return;
 
-      const invite = agent.teamInvites?.find(i => i.id === inviteId);
-      if (!invite) return;
+        const invite = agent.teamInvites?.find(i => i.id === inviteId);
+        if (!invite) return;
 
-      if (accepted) {
-        const newMember = {
-          id: agent.id,
-          name: agent.name,
-          callsign: '',
-          skills: agent.skills || [],
-        };
+        if (accepted) {
+          const newMember = {
+            id: agent.id,
+            name: agent.name,
+            callsign: '',
+            skills: agent.skills || [],
+          };
 
-        setMockTeams(prev =>
-          prev.map(team =>
-            team.id === invite.teamId
-              ? { ...team, members: [...team.members, newMember] }
-              : team
-          )
-        );
+          setMockTeams(prev =>
+            prev.map(team =>
+              team.id === invite.teamId
+                ? { ...team, members: [...team.members, newMember] }
+                : team
+            )
+          );
 
-        setMockFreeAgents(prev => prev.filter(a => a.id !== agentId));
+          setMockFreeAgents(prev => prev.filter(a => a.id !== agentId));
+        } else {
+          setMockFreeAgents(prev =>
+            prev.map(a =>
+              a.id === agentId
+                ? { ...a, teamInvites: a.teamInvites.filter(i => i.id !== inviteId) }
+                : a
+            )
+          );
+        }
       } else {
-        setMockFreeAgents(prev =>
-          prev.map(a =>
-            a.id === agentId
-              ? { ...a, teamInvites: a.teamInvites.filter(i => i.id !== inviteId) }
-              : a
-          )
-        );
+        // Supabase mode - use invite mutations
+        const result = await inviteMutations.respondToInvite(inviteId, accepted);
+        if (result?.error) {
+          console.error('Failed to respond to invite:', result.error);
+        } else {
+          // Refresh teams and free agents
+          refetchTeams();
+          refetchFreeAgents();
+        }
+        return result;
       }
-    } else {
-      // Supabase mode - use invite mutations
-      const result = await inviteMutations.respondToInvite(inviteId, accepted);
-      if (!result.error) {
-        // Refresh teams and free agents
-        refetchTeams();
-        refetchFreeAgents();
-      }
-      return result;
+    } catch (error) {
+      console.error('Error responding to invite:', error);
     }
   }, [useDemoMode, mockFreeAgents, inviteMutations, refetchTeams, refetchFreeAgents]);
 
@@ -459,51 +500,57 @@ function App() {
   // CREATE TEAM HANDLER
   // ============================================================================
   const handleCreateTeam = useCallback(async (teamData) => {
-    if (useDemoMode) {
-      // Generate a unique ID for the new team
-      const newTeamId = Date.now();
-      
-      const newTeam = {
-        id: newTeamId,
-        name: teamData.name,
-        description: teamData.description,
-        lookingFor: teamData.lookingFor || [],
-        maxMembers: teamData.maxMembers || 6,
-        moreInfo: '',
-        captainId: effectiveUser?.id,
-        isAutoCreated: teamData.isAutoCreated || false,
-        members: [
-          {
-            id: effectiveUser?.id,
-            name: effectiveUser?.name,
-            callsign: '',
-            skills: effectiveUser?.skills || [],
+    try {
+      if (useDemoMode) {
+        // Generate a unique ID for the new team
+        const newTeamId = Date.now();
+        
+        const newTeam = {
+          id: newTeamId,
+          name: teamData.name,
+          description: teamData.description,
+          lookingFor: teamData.lookingFor || [],
+          maxMembers: teamData.maxMembers || 6,
+          moreInfo: '',
+          captainId: effectiveUser?.id,
+          isAutoCreated: teamData.isAutoCreated || false,
+          members: [
+            {
+              id: effectiveUser?.id,
+              name: effectiveUser?.name,
+              callsign: '',
+              skills: effectiveUser?.skills || [],
+            },
+          ],
+          joinRequests: [],
+          submission: {
+            projectId: null,
+            status: 'not_started',
+            projectName: '',
+            description: '',
+            demoVideoUrl: '',
+            repoUrl: '',
+            liveDemoUrl: '',
+            submittedAt: null,
+            lastUpdated: null,
+            participantVotes: 0,
+            judgeScores: [],
           },
-        ],
-        joinRequests: [],
-        submission: {
-          projectId: null,
-          status: 'not_started',
-          projectName: '',
-          description: '',
-          demoVideoUrl: '',
-          repoUrl: '',
-          liveDemoUrl: '',
-          submittedAt: null,
-          lastUpdated: null,
-          participantVotes: 0,
-          judgeScores: [],
-        },
-      };
+        };
 
-      setMockTeams(prev => [newTeam, ...prev]);
-      return { id: newTeamId };
-    } else {
-      const result = await teamMutations.createTeam(teamData, effectiveUser?.id, event?.id);
-      if (!result.error) {
+        setMockTeams(prev => [newTeam, ...prev]);
+        return { id: newTeamId };
+      } else {
+        const result = await teamMutations.createTeam(teamData, effectiveUser?.id, event?.id);
+        if (result?.error) {
+          console.error('Failed to create team:', result.error);
+          return null;
+        }
         refetchTeams();
         return { id: result.data.id };
       }
+    } catch (error) {
+      console.error('Error creating team:', error);
       return null;
     }
   }, [useDemoMode, effectiveUser, teamMutations, event?.id, refetchTeams]);
@@ -1085,9 +1132,11 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-arena-black">
-      {renderView()}
-    </div>
+    <ErrorBoundary>
+      <div className="min-h-screen bg-arena-black">
+        {renderView()}
+      </div>
+    </ErrorBoundary>
   );
 }
 

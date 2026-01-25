@@ -48,3 +48,19 @@ export const REVERSE_ROLE_MAP = {
   judge: 'JUDGE',
   admin: 'ADMIN',
 };
+
+/**
+ * Validates that a URL is a valid http/https URL
+ * Used to prevent XSS via javascript: or data: URLs
+ * @param {string} url - The URL to validate
+ * @returns {boolean} - True if the URL is valid http/https
+ */
+export const isValidUrl = (url) => {
+  if (!url) return false;
+  try {
+    const parsed = new URL(url);
+    return ['http:', 'https:'].includes(parsed.protocol);
+  } catch {
+    return false;
+  }
+};
