@@ -762,12 +762,11 @@ function App() {
       setMockEventMotd(motd);
       return { error: null };
     } else {
-      // In Supabase mode, update MOTD in event table
-      // For now, we'll need to add this to the updatePhase function or create a separate update
-      // This is a placeholder - actual implementation would update the Event table
-      return { error: 'MOTD update not yet implemented for Supabase mode' };
+      // Update MOTD in event table via updateEventSettings
+      const result = await updateEventSettings({ motd });
+      return result;
     }
-  }, [useDemoMode, effectiveUser]);
+  }, [useDemoMode, effectiveUser, updateEventSettings]);
 
   const handleUpdateUserRole = useCallback(async (userId, newRole) => {
     if (!effectiveUser || effectiveUser.role !== 'admin') {

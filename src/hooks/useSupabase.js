@@ -849,15 +849,19 @@ export function useEvent() {
     }
 
     try {
+      // Build update object with only defined settings
+      const updateData = {
+        updatedAt: new Date().toISOString(),
+      };
+      if (settings.maxTeamSize !== undefined) updateData.maxTeamSize = settings.maxTeamSize;
+      if (settings.maxVotesPerUser !== undefined) updateData.maxVotesPerUser = settings.maxVotesPerUser;
+      if (settings.submissionDeadline !== undefined) updateData.submissionDeadline = settings.submissionDeadline;
+      if (settings.votingDeadline !== undefined) updateData.votingDeadline = settings.votingDeadline;
+      if (settings.motd !== undefined) updateData.motd = settings.motd || null;
+
       const { error: updateError } = await supabase
         .from('Event')
-        .update({
-          maxTeamSize: settings.maxTeamSize,
-          maxVotesPerUser: settings.maxVotesPerUser,
-          submissionDeadline: settings.submissionDeadline,
-          votingDeadline: settings.votingDeadline,
-          updatedAt: new Date().toISOString(),
-        })
+        .update(updateData)
         .eq('id', event.id);
 
       if (updateError) throw updateError;

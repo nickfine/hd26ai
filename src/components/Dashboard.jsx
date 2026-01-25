@@ -67,6 +67,17 @@ const MOCK_FAQ = [
   { id: 3, question: 'How is judging done?', answer: 'Projects are judged on innovation, execution, design, and theme adherence. There will be peer voting for People\'s Choice award.' },
 ];
 
+// Phase-specific default messages when no custom MOTD is set
+const PHASE_DEFAULT_MOTD = {
+  registration: "Registration is open! Sign up and join or create an idea.",
+  team_formation: "Form your teams! Browse ideas or create your own.",
+  hacking: "Hacking in progress! Build something amazing.",
+  submission: "Submissions are open! Don't forget to submit your project.",
+  voting: "Voting is live! Check out the projects and cast your votes.",
+  judging: "Judging in progress. Results coming soon!",
+  results: "Results are in! Check out the winners.",
+};
+
 // ============================================================================
 // PROMO TILE COMPONENT
 // ============================================================================
@@ -467,22 +478,27 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
           <VStack gap="4" align="start">
             <HStack gap="3" align="center">
               <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                <MessageSquare className="w-6 h-6 text-brand" />
+                <Zap className="w-6 h-6 text-brand" />
               </div>
               <div>
-                <Card.Label className="text-brand mb-0">Message of the Day</Card.Label>
+                <Card.Label className="text-brand mb-0">Build Mode Active</Card.Label>
                 <Card.Title className="text-white mb-0">Hacking in Progress</Card.Title>
               </div>
             </HStack>
-            {motd ? (
-              <div className="text-base text-text-body whitespace-pre-wrap">
-                {motd}
-              </div>
-            ) : (
-              <p className="text-base text-text-body">
-                The hackathon is underway! Build something amazing with your team. 
-                Remember to submit your project before the deadline.
-              </p>
+            <p className="text-base text-text-body">
+              The hackathon is underway! Build something amazing with your team. 
+              Remember to submit your project before the deadline.
+            </p>
+            {hasTeam && (
+              <Button
+                variant="primary"
+                size="lg"
+                onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
+                leftIcon={<Users className="w-5 h-5" />}
+                rightIcon={<ArrowRight className="w-5 h-5" />}
+              >
+                View Your Team
+              </Button>
             )}
           </VStack>
         </Card>
@@ -680,6 +696,23 @@ function Dashboard({
             />
           </div>
         )}
+
+        {/* MOTD Banner - Shown in all phases */}
+        <div className="mb-6">
+          <Card variant="accent" padding="md" className="animate-fade-in">
+            <HStack gap="3" align="center">
+              <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center">
+                <MessageSquare className="w-5 h-5 text-brand" />
+              </div>
+              <div className="flex-1">
+                <div className="text-xs font-bold text-brand uppercase tracking-wider mb-1">Message of the Day</div>
+                <p className="text-sm text-text-body">
+                  {event?.motd || PHASE_DEFAULT_MOTD[eventPhase] || "Welcome to HackDay 2026!"}
+                </p>
+              </div>
+            </HStack>
+          </Card>
+        </div>
 
         {/* Bento Grid - 24px gap for premium breathing room */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
