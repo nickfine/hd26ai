@@ -154,18 +154,18 @@ WHERE id LIKE 'demo-%'
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================================
--- 4. CREATE TEAMS
+-- 4. CREATE TEAMS (Ideas)
 -- ============================================================================
 INSERT INTO "Team" (id, "eventId", name, description, "lookingFor", "maxSize", "trackSide", "isPublic", "isAutoCreated", "createdAt", "updatedAt")
 VALUES 
-  ('demo-team-human-touch', 'demo-event-2026', 'Human Touch', 'Crafting intuitive interfaces that AI cannot replicate. Proving human creativity trumps machine efficiency.', 'UI/UX Design,Frontend Development', 4, 'HUMAN', true, false, '2026-01-10T12:00:00Z', NOW()),
-  ('demo-team-neural-nexus', 'demo-event-2026', 'Neural Nexus', 'Building autonomous code review agents powered by cutting-edge AI technology.', 'Machine Learning,DevOps', 5, 'AI', true, false, '2026-01-10T14:00:00Z', NOW()),
-  ('demo-team-the-resistance', 'demo-event-2026', 'The Resistance', 'Proving human creativity trumps machine efficiency', 'Product Management,Frontend Development,Mobile Development', 6, 'HUMAN', true, false, '2026-01-10T15:00:00Z', NOW()),
-  ('demo-team-synthetic-minds', 'demo-event-2026', 'Synthetic Minds', 'Leveraging LLMs to solve impossible problems', 'Data Science,Backend Development', 4, 'AI', true, false, '2026-01-10T16:00:00Z', NOW()),
-  ('demo-team-carbon-coalition', 'demo-event-2026', 'Carbon Coalition', 'Old-school engineering with a human heart', 'Hardware/IoT,Security,Backend Development', 5, 'HUMAN', true, false, '2026-01-10T17:00:00Z', NOW()),
-  ('demo-team-digital-overlords', 'demo-event-2026', 'Digital Overlords', 'Why write code when AI can write it for you?', 'Machine Learning,Data Science,DevOps', 4, 'AI', true, false, '2026-01-10T18:00:00Z', NOW()),
-  ('demo-team-analog-army', 'demo-event-2026', 'Analog Army', 'Keeping it real in a synthetic world', 'UI/UX Design,Product Management', 3, 'HUMAN', true, false, '2026-01-10T19:00:00Z', NOW()),
-  ('demo-team-quantum-collective', 'demo-event-2026', 'Quantum Collective', 'AI-first development for the next generation', 'Frontend Development,Backend Development,Machine Learning', 5, 'AI', true, false, '2026-01-10T20:00:00Z', NOW()),
+  ('demo-team-human-touch', 'demo-event-2026', 'Confluence Macro Builder', 'Build custom Confluence macros without code using an intuitive visual drag-and-drop editor.', 'UI/UX Design,Frontend Development', 4, 'HUMAN', true, false, '2026-01-10T12:00:00Z', NOW()),
+  ('demo-team-neural-nexus', 'demo-event-2026', 'AI Code Reviewer', 'Autonomous code review agent that catches bugs, suggests improvements, and enforces best practices.', 'Machine Learning,DevOps', 5, 'AI', true, false, '2026-01-10T14:00:00Z', NOW()),
+  ('demo-team-the-resistance', 'demo-event-2026', 'Team Retro Board', 'Real-time retrospective board with anonymous voting and human-facilitated discussion prompts.', 'Product Management,Frontend Development,Mobile Development', 6, 'HUMAN', true, false, '2026-01-10T15:00:00Z', NOW()),
+  ('demo-team-synthetic-minds', 'demo-event-2026', 'Smart Doc Summary', 'AI-powered document summarization that creates digestible summaries of long Confluence pages.', 'Data Science,Backend Development', 4, 'AI', true, false, '2026-01-10T16:00:00Z', NOW()),
+  ('demo-team-carbon-coalition', 'demo-event-2026', 'Accessibility Checker', 'Automated accessibility audit tool with human-curated remediation guides and WCAG compliance.', 'Hardware/IoT,Security,Backend Development', 5, 'HUMAN', true, false, '2026-01-10T17:00:00Z', NOW()),
+  ('demo-team-digital-overlords', 'demo-event-2026', 'Sprint Predictor', 'ML-based sprint planning that predicts velocity, identifies risks, and suggests scope adjustments.', 'Machine Learning,Data Science,DevOps', 4, 'AI', true, false, '2026-01-10T18:00:00Z', NOW()),
+  ('demo-team-analog-army', 'demo-event-2026', 'Customer Journey Map', 'Visual customer journey mapping with collaborative whiteboarding and stakeholder feedback.', 'UI/UX Design,Product Management', 3, 'HUMAN', true, false, '2026-01-10T19:00:00Z', NOW()),
+  ('demo-team-quantum-collective', 'demo-event-2026', 'Rovo Salesforce Connector', 'Connect Salesforce to Atlassian Rovo for AI-powered CRM insights and automated workflows.', 'Frontend Development,Backend Development,Machine Learning', 5, 'AI', true, false, '2026-01-10T20:00:00Z', NOW()),
   ('demo-team-observers', 'demo-event-2026', 'Observers', 'Watch and learn from the sidelines', '', 999, 'HUMAN', true, true, '2026-01-08T00:00:00Z', NOW())
 ON CONFLICT (id) DO UPDATE SET 
   name = EXCLUDED.name, 
@@ -177,14 +177,14 @@ ON CONFLICT (id) DO UPDATE SET
 -- 5. CREATE TEAM MEMBERS
 -- ============================================================================
 
--- Human Touch (Morgan Riley is captain)
+-- Confluence Macro Builder (Morgan Riley is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-201', 'demo-team-human-touch', 'demo-user-201', 'OWNER', 'ACCEPTED', NOW()),
   ('demo-tm-202', 'demo-team-human-touch', 'demo-user-202', 'MEMBER', 'ACCEPTED', NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- Neural Nexus (Alex Chen is captain)
+-- AI Code Reviewer (Alex Chen is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-101', 'demo-team-neural-nexus', 'demo-user-101', 'OWNER', 'ACCEPTED', NOW()),
@@ -192,7 +192,7 @@ VALUES
   ('demo-tm-103', 'demo-team-neural-nexus', 'demo-user-103', 'MEMBER', 'ACCEPTED', NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- The Resistance (Jamie Foster is captain)
+-- Team Retro Board (Jamie Foster is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-301', 'demo-team-the-resistance', 'demo-user-301', 'OWNER', 'ACCEPTED', NOW()),
@@ -201,14 +201,14 @@ VALUES
   ('demo-tm-304', 'demo-team-the-resistance', 'demo-user-304', 'MEMBER', 'ACCEPTED', NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- Synthetic Minds (Sam Rivera is captain)
+-- Smart Doc Summary (Sam Rivera is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-401', 'demo-team-synthetic-minds', 'demo-user-401', 'OWNER', 'ACCEPTED', NOW()),
   ('demo-tm-402', 'demo-team-synthetic-minds', 'demo-user-402', 'MEMBER', 'ACCEPTED', NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- Carbon Coalition (Pat O'Brien is captain)
+-- Accessibility Checker (Pat O'Brien is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-501', 'demo-team-carbon-coalition', 'demo-user-501', 'OWNER', 'ACCEPTED', NOW()),
@@ -216,20 +216,20 @@ VALUES
   ('demo-tm-503', 'demo-team-carbon-coalition', 'demo-user-503', 'MEMBER', 'ACCEPTED', NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- Digital Overlords (Sage Thompson is captain)
+-- Sprint Predictor (Sage Thompson is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-601', 'demo-team-digital-overlords', 'demo-user-601', 'OWNER', 'ACCEPTED', NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- Analog Army (Robin Sinclair is captain)
+-- Customer Journey Map (Robin Sinclair is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-701', 'demo-team-analog-army', 'demo-user-701', 'OWNER', 'ACCEPTED', NOW()),
   ('demo-tm-702', 'demo-team-analog-army', 'demo-user-702', 'MEMBER', 'ACCEPTED', NOW())
 ON CONFLICT (id) DO NOTHING;
 
--- Quantum Collective (Kai Patel is captain)
+-- Rovo Salesforce Connector (Kai Patel is captain)
 INSERT INTO "TeamMember" (id, "teamId", "userId", role, status, "createdAt")
 VALUES 
   ('demo-tm-801', 'demo-team-quantum-collective', 'demo-user-801', 'OWNER', 'ACCEPTED', NOW()),
@@ -247,7 +247,7 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================================================
 INSERT INTO "TeamInvite" (id, "teamId", "userId", message, status, "createdAt")
 VALUES 
-  ('demo-invite-001', 'demo-team-human-touch', 'demo-free-5001', 'We''d love to have you join Human Touch! Your design skills would be perfect for our Empathy Engine project.', 'PENDING', '2026-01-12T09:00:00Z')
+  ('demo-invite-001', 'demo-team-human-touch', 'demo-free-5001', 'We''d love to have you join Confluence Macro Builder! Your design skills would be perfect for our drag-and-drop editor UI.', 'PENDING', '2026-01-12T09:00:00Z')
 ON CONFLICT (id) DO NOTHING;
 
 -- ============================================================================
@@ -255,12 +255,12 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================================================
 INSERT INTO "Project" (id, "teamId", name, description, "videoUrl", "repoUrl", "demoUrl", "submittedAt", "createdAt", "updatedAt")
 VALUES 
-  ('demo-proj-human-touch', 'demo-team-human-touch', 'Empathy Engine', 'A design system that adapts to user emotional states through micro-interactions and thoughtful UX patterns. It proves that human intuition in design cannot be replicated by algorithms.', 'https://youtube.com/watch?v=example123', 'https://github.com/human-touch/empathy-engine', 'https://empathy-engine.vercel.app', '2026-01-14T09:00:00Z', NOW(), NOW()),
-  ('demo-proj-neural-nexus', 'demo-team-neural-nexus', 'CodeReview AI', 'An autonomous code review agent powered by LLMs that provides intelligent feedback on pull requests. It analyzes code patterns, suggests improvements, and catches bugs before they reach production.', 'https://youtube.com/watch?v=neural123', 'https://github.com/neural-nexus/codereview-ai', 'https://codereview-ai.vercel.app', '2026-01-14T10:30:00Z', NOW(), NOW()),
-  ('demo-proj-the-resistance', 'demo-team-the-resistance', 'HumanFirst', 'A collaborative workspace that prioritizes human connection over efficiency metrics. Features real-time collaboration without AI interference.', 'https://youtube.com/watch?v=resist789', 'https://github.com/the-resistance/humanfirst', 'https://humanfirst.app', '2026-01-14T11:00:00Z', NOW(), NOW()),
-  ('demo-proj-synthetic-minds', 'demo-team-synthetic-minds', 'MindMeld', 'An AI-powered brainstorming tool that generates, combines, and evolves ideas faster than any human team could. Let the machines do the thinking.', 'https://youtube.com/watch?v=synth456', 'https://github.com/synthetic-minds/mindmeld', 'https://mindmeld.ai', '2026-01-14T10:00:00Z', NOW(), NOW()),
-  ('demo-proj-carbon-coalition', 'demo-team-carbon-coalition', 'SecureVault', 'Hardware-backed authentication that proves humans are still the best at security. No AI, no cloud dependencies, just pure engineering.', 'https://youtube.com/watch?v=vault321', 'https://github.com/carbon-coalition/securevault', '', '2026-01-14T09:30:00Z', NOW(), NOW()),
-  ('demo-proj-quantum-collective', 'demo-team-quantum-collective', 'QuantumGen', 'A next-generation code generator that uses multiple AI models in parallel to produce optimal solutions. The future of development is here.', 'https://youtube.com/watch?v=quantum456', 'https://github.com/quantum-collective/quantumgen', 'https://quantumgen.ai', '2026-01-14T08:30:00Z', NOW(), NOW())
+  ('demo-proj-human-touch', 'demo-team-human-touch', 'Confluence Macro Builder', 'A visual drag-and-drop editor for creating custom Confluence macros. No coding required - just design your macro, configure inputs, and publish. Makes Confluence customization accessible to everyone.', 'https://youtube.com/watch?v=macro123', 'https://github.com/demo/confluence-macro-builder', 'https://macro-builder.vercel.app', '2026-01-14T09:00:00Z', NOW(), NOW()),
+  ('demo-proj-neural-nexus', 'demo-team-neural-nexus', 'AI Code Reviewer', 'An autonomous code review agent powered by LLMs. Analyzes pull requests, catches bugs, suggests improvements, and enforces coding standards automatically. Integrates with Bitbucket and GitHub.', 'https://youtube.com/watch?v=reviewer123', 'https://github.com/demo/ai-code-reviewer', 'https://ai-code-reviewer.vercel.app', '2026-01-14T10:30:00Z', NOW(), NOW()),
+  ('demo-proj-the-resistance', 'demo-team-the-resistance', 'Team Retro Board', 'A real-time retrospective board with anonymous voting, customizable templates, and human-facilitated discussion prompts. Built for honest team feedback and actionable improvements.', 'https://youtube.com/watch?v=retro789', 'https://github.com/demo/team-retro-board', 'https://retro-board.vercel.app', '2026-01-14T11:00:00Z', NOW(), NOW()),
+  ('demo-proj-synthetic-minds', 'demo-team-synthetic-minds', 'Smart Doc Summary', 'AI-powered summarization for Confluence pages. Automatically generates executive summaries, key takeaways, and action items from long documents. Supports multiple summary lengths and formats.', 'https://youtube.com/watch?v=summary456', 'https://github.com/demo/smart-doc-summary', 'https://doc-summary.vercel.app', '2026-01-14T10:00:00Z', NOW(), NOW()),
+  ('demo-proj-carbon-coalition', 'demo-team-carbon-coalition', 'Accessibility Checker', 'Automated WCAG compliance checker with human-curated remediation guides. Scans Confluence spaces for accessibility issues and provides clear fix instructions. Supports WCAG 2.1 AA and AAA.', 'https://youtube.com/watch?v=a11y321', 'https://github.com/demo/accessibility-checker', '', '2026-01-14T09:30:00Z', NOW(), NOW()),
+  ('demo-proj-quantum-collective', 'demo-team-quantum-collective', 'Rovo Salesforce Connector', 'Bridges Salesforce CRM with Atlassian Rovo for AI-powered insights. Surface customer data in Jira issues, auto-link deals to projects, and get AI recommendations based on CRM patterns.', 'https://youtube.com/watch?v=rovo456', 'https://github.com/demo/rovo-salesforce', 'https://rovo-sf.vercel.app', '2026-01-14T08:30:00Z', NOW(), NOW())
 ON CONFLICT (id) DO UPDATE SET 
   name = EXCLUDED.name,
   description = EXCLUDED.description,
@@ -271,19 +271,19 @@ ON CONFLICT (id) DO UPDATE SET
 -- ============================================================================
 INSERT INTO "Vote" (id, "projectId", "userId", "createdAt")
 VALUES 
-  -- Votes for Human Touch (People's Champion contender - 4 votes)
+  -- Votes for Confluence Macro Builder (People's Champion contender - 4 votes)
   ('demo-vote-001', 'demo-proj-human-touch', 'demo-user-301', '2026-01-15T10:00:00Z'),
   ('demo-vote-002', 'demo-proj-human-touch', 'demo-user-302', '2026-01-15T10:30:00Z'),
   ('demo-vote-003', 'demo-proj-human-touch', 'demo-user-401', '2026-01-15T11:00:00Z'),
   ('demo-vote-004', 'demo-proj-human-touch', 'demo-user-501', '2026-01-15T11:30:00Z'),
-  -- Votes for Quantum Collective (3 votes)
+  -- Votes for Rovo Salesforce Connector (3 votes)
   ('demo-vote-005', 'demo-proj-quantum-collective', 'demo-user-101', '2026-01-15T12:00:00Z'),
   ('demo-vote-006', 'demo-proj-quantum-collective', 'demo-user-102', '2026-01-15T12:30:00Z'),
   ('demo-vote-007', 'demo-proj-quantum-collective', 'demo-user-601', '2026-01-15T13:00:00Z'),
-  -- Votes for Neural Nexus (2 votes)
+  -- Votes for AI Code Reviewer (2 votes)
   ('demo-vote-008', 'demo-proj-neural-nexus', 'demo-user-701', '2026-01-15T13:30:00Z'),
   ('demo-vote-009', 'demo-proj-neural-nexus', 'demo-user-702', '2026-01-15T14:00:00Z'),
-  -- Votes for The Resistance (1 vote)
+  -- Votes for Team Retro Board (1 vote)
   ('demo-vote-010', 'demo-proj-the-resistance', 'demo-user-201', '2026-01-15T14:30:00Z')
 ON CONFLICT (id) DO NOTHING;
 
@@ -292,21 +292,21 @@ ON CONFLICT (id) DO NOTHING;
 -- ============================================================================
 INSERT INTO "JudgeScore" (id, "projectId", "judgeId", scores, comments, "createdAt", "updatedAt")
 VALUES 
-  -- Human Touch scores (3 judges)
-  ('demo-score-001', 'demo-proj-human-touch', 'demo-judge-3001', '{"innovation": 9, "technical": 7, "presentation": 10, "impact": 8, "theme": 9}', 'Beautiful presentation. The emotional design approach is unique.', '2026-01-16T13:00:00Z', NOW()),
-  ('demo-score-002', 'demo-proj-human-touch', 'demo-judge-3002', '{"innovation": 8, "technical": 7, "presentation": 9, "impact": 9, "theme": 10}', 'Perfect embodiment of the human side. Inspiring work.', '2026-01-16T13:30:00Z', NOW()),
-  ('demo-score-003', 'demo-proj-human-touch', 'demo-judge-3003', '{"innovation": 9, "technical": 8, "presentation": 9, "impact": 8, "theme": 9}', 'A compelling argument for human-centered design.', '2026-01-16T15:00:00Z', NOW()),
-  -- Neural Nexus scores (2 judges)
-  ('demo-score-004', 'demo-proj-neural-nexus', 'demo-judge-3001', '{"innovation": 9, "technical": 9, "presentation": 8, "impact": 9, "theme": 8}', 'Excellent technical execution. The AI integration is seamless.', '2026-01-16T14:00:00Z', NOW()),
-  ('demo-score-005', 'demo-proj-neural-nexus', 'demo-judge-3002', '{"innovation": 8, "technical": 9, "presentation": 7, "impact": 8, "theme": 9}', 'Strong alignment with the AI theme. Very practical solution.', '2026-01-16T14:30:00Z', NOW()),
-  -- The Resistance scores (1 judge)
-  ('demo-score-006', 'demo-proj-the-resistance', 'demo-judge-3001', '{"innovation": 7, "technical": 8, "presentation": 8, "impact": 7, "theme": 8}', 'Solid execution, though the concept is less groundbreaking.', '2026-01-16T15:00:00Z', NOW()),
-  -- Synthetic Minds scores (1 judge)
-  ('demo-score-007', 'demo-proj-synthetic-minds', 'demo-judge-3002', '{"innovation": 8, "technical": 8, "presentation": 7, "impact": 8, "theme": 9}', 'Creative use of AI for ideation. Good theme alignment.', '2026-01-16T14:45:00Z', NOW()),
-  -- Quantum Collective scores (3 judges - TOP SCORER)
-  ('demo-score-008', 'demo-proj-quantum-collective', 'demo-judge-3001', '{"innovation": 10, "technical": 10, "presentation": 9, "impact": 10, "theme": 10}', 'Exceptional. This is the future of software development.', '2026-01-16T12:00:00Z', NOW()),
-  ('demo-score-009', 'demo-proj-quantum-collective', 'demo-judge-3002', '{"innovation": 9, "technical": 10, "presentation": 8, "impact": 9, "theme": 10}', 'Technical masterpiece. Perfect AI theme alignment.', '2026-01-16T12:30:00Z', NOW()),
-  ('demo-score-010', 'demo-proj-quantum-collective', 'demo-judge-3003', '{"innovation": 10, "technical": 9, "presentation": 9, "impact": 10, "theme": 9}', 'Game-changing potential. Well executed.', '2026-01-16T14:00:00Z', NOW())
+  -- Confluence Macro Builder scores (3 judges)
+  ('demo-score-001', 'demo-proj-human-touch', 'demo-judge-3001', '{"innovation": 9, "technical": 7, "presentation": 10, "impact": 8, "theme": 9}', 'Beautiful drag-and-drop interface. Makes macro creation accessible to everyone.', '2026-01-16T13:00:00Z', NOW()),
+  ('demo-score-002', 'demo-proj-human-touch', 'demo-judge-3002', '{"innovation": 8, "technical": 7, "presentation": 9, "impact": 9, "theme": 10}', 'Great UX focus. This will save teams hours of developer time.', '2026-01-16T13:30:00Z', NOW()),
+  ('demo-score-003', 'demo-proj-human-touch', 'demo-judge-3003', '{"innovation": 9, "technical": 8, "presentation": 9, "impact": 8, "theme": 9}', 'Empowers non-technical users. Strong human-centered design.', '2026-01-16T15:00:00Z', NOW()),
+  -- AI Code Reviewer scores (2 judges)
+  ('demo-score-004', 'demo-proj-neural-nexus', 'demo-judge-3001', '{"innovation": 9, "technical": 9, "presentation": 8, "impact": 9, "theme": 8}', 'Excellent LLM integration. Catches real bugs in the demo.', '2026-01-16T14:00:00Z', NOW()),
+  ('demo-score-005', 'demo-proj-neural-nexus', 'demo-judge-3002', '{"innovation": 8, "technical": 9, "presentation": 7, "impact": 8, "theme": 9}', 'Practical AI application. Would use this on my own PRs.', '2026-01-16T14:30:00Z', NOW()),
+  -- Team Retro Board scores (1 judge)
+  ('demo-score-006', 'demo-proj-the-resistance', 'demo-judge-3001', '{"innovation": 7, "technical": 8, "presentation": 8, "impact": 7, "theme": 8}', 'Solid retro tool. Anonymous voting feature is well implemented.', '2026-01-16T15:00:00Z', NOW()),
+  -- Smart Doc Summary scores (1 judge)
+  ('demo-score-007', 'demo-proj-synthetic-minds', 'demo-judge-3002', '{"innovation": 8, "technical": 8, "presentation": 7, "impact": 8, "theme": 9}', 'Great use of AI for document processing. Summary quality is impressive.', '2026-01-16T14:45:00Z', NOW()),
+  -- Rovo Salesforce Connector scores (3 judges - TOP SCORER)
+  ('demo-score-008', 'demo-proj-quantum-collective', 'demo-judge-3001', '{"innovation": 10, "technical": 10, "presentation": 9, "impact": 10, "theme": 10}', 'Exceptional integration. This bridges a real gap between CRM and project tools.', '2026-01-16T12:00:00Z', NOW()),
+  ('demo-score-009', 'demo-proj-quantum-collective', 'demo-judge-3002', '{"innovation": 9, "technical": 10, "presentation": 8, "impact": 9, "theme": 10}', 'Technical masterpiece. The Rovo AI recommendations are spot-on.', '2026-01-16T12:30:00Z', NOW()),
+  ('demo-score-010', 'demo-proj-quantum-collective', 'demo-judge-3003', '{"innovation": 10, "technical": 9, "presentation": 9, "impact": 10, "theme": 9}', 'Game-changing for sales-engineering handoffs. Well executed.', '2026-01-16T14:00:00Z', NOW())
 ON CONFLICT (id) DO UPDATE SET 
   scores = EXCLUDED.scores,
   comments = EXCLUDED.comments,

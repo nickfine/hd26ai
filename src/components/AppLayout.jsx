@@ -176,7 +176,7 @@ const getNavItems = (userRole, eventPhase = 'voting', user = null) => {
   baseItems.push(
     { id: 'new-to-hackday', label: 'New to HackDay?', icon: Sparkles },
     { id: 'schedule', label: 'Schedule', icon: Calendar },
-    { id: 'teams', label: 'Teams', icon: Users },
+    { id: 'teams', label: 'Ideas', icon: Users },
     { id: 'rules', label: 'Rules', icon: BookOpen },
     { id: 'submission', label: 'Submission', icon: Send },
   );
@@ -715,13 +715,13 @@ function AppLayout({
                   </NavItem>
                 </NavGroup>
 
-                {/* Team Stats */}
+                {/* Idea Stats */}
                 <div className="p-4 border-2 border-arena-border rounded-card">
                   <div className="text-xs font-bold uppercase tracking-wide text-arena-secondary mb-3">
-                    Team Status
+                    Idea Status
                   </div>
                   <div className="pt-2 text-center">
-                    <span className="text-xs text-arena-secondary">{teamStats.totalTeams} teams registered</span>
+                    <span className="text-xs text-arena-secondary">{teamStats.totalTeams} ideas registered</span>
                   </div>
                 </div>
               </div>

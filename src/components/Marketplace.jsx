@@ -380,7 +380,7 @@ function Marketplace({
             <span className="font-bold text-sm text-white">FIND YOUR SQUAD</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-white mb-3 font-display">
-            TEAMS
+            IDEAS
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto mb-6">
             Browse open ideas looking for members or discover free agents with matching skills.
@@ -393,7 +393,7 @@ function Marketplace({
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder={activeTab === 'teams' ? 'Search teams or skills...' : 'Search people or skills...'}
+              placeholder={activeTab === 'teams' ? 'Search ideas or skills...' : 'Search people or skills...'}
               className="w-full pl-12 pr-4 py-3 bg-arena-card border border-arena-border
                          focus:border-brand/50 focus:outline-none text-white placeholder-arena-muted
                          text-sm rounded-xl transition-all"
@@ -413,7 +413,7 @@ function Marketplace({
                              ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_20px_rgba(255,107,53,0.3)]' 
                              : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/30 hover:text-white'}`}
               >
-                TEAMS
+                IDEAS
                 <span className={`px-1.5 py-0.5 text-xs rounded-full ${
                   activeTab === 'teams' ? 'bg-white/20' : 'bg-arena-elevated'
                 }`}>
