@@ -1,4 +1,17 @@
 // Mock Data for HackDay Companion App
+//
+// ============================================================================
+// IMPORTANT: DEMO DATA SOURCE OF TRUTH
+// ============================================================================
+// The Supabase database is the SINGLE SOURCE OF TRUTH for demo data.
+// Demo data is seeded via: supabase/migrations/seed_demo_data.sql
+// 
+// This file provides FALLBACK data when the database is unavailable.
+// When updating demo data, update the SQL seed script first, then update
+// this file to match for offline fallback support.
+//
+// Both HD26Forge and HD26AI share the same demo data from the database.
+// ============================================================================
 
 // ============================================================================
 // SKILLS

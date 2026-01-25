@@ -25,6 +25,7 @@ import {
   useTeamInviteMutations,
   useActivityFeed,
 } from './hooks/useSupabase';
+import { useDemoData } from './hooks/useDemoData';
 
 // Components
 import Landing from './components/Landing';
@@ -144,7 +145,11 @@ function App() {
   // Activity feed
   const { activities: activityFeed, loading: activityFeedLoading } = useActivityFeed(20);
 
-  // Demo mode state (mock data)
+  // Database demo data (unified with HD26Forge via seed_demo_data.sql)
+  // Falls back to hardcoded MOCK_* data if database is unavailable
+  const { demoData: dbDemoData, loading: demoDataLoading } = useDemoData(useDemoMode);
+
+  // Demo mode state (mock data - will be overridden by database data if available)
   const [mockTeams, setMockTeams] = useState(MOCK_TEAMS);
   const [mockFreeAgents, setMockFreeAgents] = useState(MOCK_FREE_AGENTS);
   const [mockUserVotes, setMockUserVotes] = useState([]);
@@ -158,6 +163,26 @@ function App() {
     ...MOCK_USERS.judges,
     ...MOCK_USERS.admins,
   ]);
+
+  // Update mock data from database when available
+  useEffect(() => {
+    if (dbDemoData) {
+      console.log('[App] Using demo data from database');
+      setMockTeams(dbDemoData.teams);
+      setMockFreeAgents(dbDemoData.freeAgents);
+      setMockAllUsers([
+        ...dbDemoData.users.participants,
+        ...dbDemoData.users.ambassadors,
+        ...dbDemoData.users.judges,
+        ...dbDemoData.users.admins,
+      ]);
+      // Use event phase from database demo event
+      if (dbDemoData.event?.phase) {
+        const phase = dbDemoData.event.phase.toLowerCase();
+        setMockEventPhase(phase);
+      }
+    }
+  }, [dbDemoData]);
 
   // Effective data (Supabase or mock)
   const teams = useMemo(() => {

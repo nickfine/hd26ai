@@ -5,6 +5,10 @@
  * and the application's internal representation.
  */
 
+// Demo event ID - shared with HD26Forge for unified demo data
+// This event is seeded via supabase/migrations/seed_demo_data.sql
+export const DEMO_EVENT_ID = 'demo-event-2026';
+
 // Phase mapping: DB enum (uppercase) -> app format (lowercase)
 export const PHASE_MAP = {
   SETUP: 'setup',
