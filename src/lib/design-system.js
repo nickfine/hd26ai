@@ -199,25 +199,25 @@ export const SIZE_CLASSES = {
 
 export const BUTTON_VARIANTS = {
   primary: {
-    base: 'bg-arena-elevated text-white border border-arena-border',
-    hover: 'hover:bg-arena-card hover:-translate-y-0.5',
-    active: 'active:bg-arena-elevated active:translate-y-0',
-    focus: 'focus-visible:ring-text-secondary',
+    base: 'bg-brand text-white border border-brand',
+    hover: 'hover:bg-brand/90 hover:-translate-y-0.5',
+    active: 'active:bg-brand/80 active:translate-y-0',
+    focus: 'focus-visible:ring-brand',
   },
   secondary: {
-    base: 'bg-transparent text-white border-2 border-arena-border',
+    base: 'bg-transparent text-text-primary border-2 border-arena-border',
     hover: 'hover:bg-arena-card hover:border-text-secondary hover:-translate-y-0.5',
     active: 'active:bg-arena-elevated active:translate-y-0',
     focus: 'focus-visible:ring-text-secondary',
   },
   ghost: {
     base: 'bg-transparent text-text-secondary border-2 border-transparent',
-    hover: 'hover:bg-arena-card hover:text-white',
+    hover: 'hover:bg-arena-card hover:text-text-primary',
     active: 'active:bg-arena-elevated',
     focus: 'focus-visible:ring-text-secondary',
   },
   danger: {
-    base: 'bg-error text-white border border-arena-border',
+    base: 'bg-error text-white border border-error',
     hover: 'hover:bg-error/90 hover:-translate-y-0.5',
     active: 'active:bg-error/80 active:translate-y-0',
     focus: 'focus-visible:ring-error',

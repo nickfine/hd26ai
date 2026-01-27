@@ -28,6 +28,12 @@ export default {
           muted: 'var(--text-disabled)',
         },
         
+        // Brand color - HackDay orange
+        brand: {
+          DEFAULT: 'var(--accent-brand)',
+          subtle: 'var(--accent-brand-subtle)',
+        },
+        
         // Text colors - use CSS variables for theme-aware colors
         // These map to tokens.css which handles light/dark mode
         text: {
