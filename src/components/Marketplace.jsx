@@ -19,6 +19,7 @@ import { SKILLS } from '../data/mockData';
 import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 import { StatusBanner } from './shared';
+import { MarketplaceSkeleton } from './ui/Skeleton';
 
 function Marketplace({ 
   user, 
@@ -36,7 +37,27 @@ function Marketplace({
   onDevRoleChange = null,
   onPhaseChange = null,
   eventPhases = {},
+  isLoading = false, // Show skeleton loading state
 }) {
+  // Show skeleton while loading
+  if (isLoading) {
+    return (
+      <AppLayout
+        user={user}
+        teams={teams}
+        onNavigate={onNavigate}
+        eventPhase={eventPhase}
+        activeNav="teams"
+        devRoleOverride={devRoleOverride}
+        onDevRoleChange={onDevRoleChange}
+        onPhaseChange={onPhaseChange}
+        eventPhases={eventPhases}
+        userInvites={userInvites}
+      >
+        <MarketplaceSkeleton />
+      </AppLayout>
+    );
+  }
   const [searchTerm, setSearchTerm] = useState('');
   const [activeTab, setActiveTab] = useState(initialTab);
   const [inviteModalAgent, setInviteModalAgent] = useState(null);

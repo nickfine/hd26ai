@@ -35,6 +35,7 @@ import Card from './ui/Card';
 import Badge, { HeartbeatDot, CallsignBadge } from './ui/Badge';
 import StatCard, { StatCardGroup } from './ui/StatCard';
 import LiveActivityFeed from './ui/LiveActivityFeed';
+import { DashboardSkeleton } from './ui/Skeleton';
 import { HStack, VStack } from './layout';
 import { cn, formatNameWithCallsign } from '../lib/design-system';
 import { PROMO_IMAGES } from '../data/mockData';
@@ -640,7 +641,27 @@ function Dashboard({
   eventPhases = {},
   onAutoAssignOptIn = null, // Handler for auto-assign opt-in
   registrations = [], // All registered users for stats
+  isLoading = false, // Show skeleton loading state
 }) {
+  // Show skeleton while loading
+  if (isLoading) {
+    return (
+      <AppLayout
+        user={user}
+        teams={teams}
+        onNavigate={onNavigate}
+        eventPhase={eventPhase}
+        activeNav="dashboard"
+        devRoleOverride={devRoleOverride}
+        onDevRoleChange={onDevRoleChange}
+        onPhaseChange={onPhaseChange}
+        eventPhases={eventPhases}
+        userInvites={userInvites}
+      >
+        <DashboardSkeleton />
+      </AppLayout>
+    );
+  }
   const [expandedFaq, setExpandedFaq] = useState(null);
 
   const toggleFaq = useCallback((id) => {

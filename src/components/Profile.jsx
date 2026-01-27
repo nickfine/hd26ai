@@ -15,6 +15,7 @@ import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 import Modal from './ui/Modal';
 import Button from './ui/Button';
+import { ProfileSkeleton } from './ui/Skeleton';
 
 // Validation for callsign
 const validateCallsign = (value) => {
@@ -180,7 +181,26 @@ function Profile({
   onDevRoleChange = null,
   onPhaseChange = null,
   eventPhases = {},
+  isLoading = false, // Show skeleton loading state
 }) {
+  // Show skeleton while loading
+  if (isLoading) {
+    return (
+      <AppLayout
+        user={user}
+        teams={teams}
+        onNavigate={onNavigate}
+        eventPhase={eventPhase}
+        activeNav="profile"
+        devRoleOverride={devRoleOverride}
+        onDevRoleChange={onDevRoleChange}
+        onPhaseChange={onPhaseChange}
+        eventPhases={eventPhases}
+      >
+        <ProfileSkeleton />
+      </AppLayout>
+    );
+  }
   const [bio, setBio] = useState(user?.bio || '');
   const [isEditingBio, setIsEditingBio] = useState(false);
   
