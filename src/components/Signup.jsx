@@ -298,7 +298,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full mb-4 animate-orange-pulse">
               <Zap className="w-5 h-5 text-brand icon-orange" />
-              <span className="font-bold text-sm text-white">SIGN UP</span>
+              <span className="font-bold text-sm text-text-primary">SIGN UP</span>
             </div>
             <h1 className="text-4xl sm:text-5xl font-black text-brand mb-4 font-display animate-orange-pulse-delay-1">
               JOIN HACKDAY 2026
@@ -324,7 +324,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
                           ? 'bg-brand text-white hover:bg-brand-hover'
                           : currentStep === step.id
                           ? 'bg-brand text-white scale-110 ring-4 ring-brand/30'
-                          : 'bg-arena-border text-arena-muted hover:bg-arena-elevated hover:text-white'
+                          : 'bg-arena-border text-arena-muted hover:bg-arena-elevated hover:text-text-primary'
                       )}
                       aria-label={`Step ${step.id}: ${step.label} - Click to navigate`}
                       aria-current={currentStep === step.id ? 'step' : undefined}
@@ -336,7 +336,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
                       onClick={() => handleStepClick(step.id)}
                       className={cn(
                         'text-xs mt-2 font-bold transition-colors cursor-pointer hover:text-brand focus:outline-none',
-                        currentStep >= step.id ? 'text-white' : 'text-arena-muted'
+                        currentStep >= step.id ? 'text-text-primary' : 'text-arena-muted'
                       )}
                       aria-label={`Go to ${step.label}`}
                     >
@@ -367,7 +367,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
             {currentStep === 1 && (
               <div className="space-y-6 animate-fade-in">
                 <div>
-                  <h2 className="text-2xl font-black text-white mb-6">
+                  <h2 className="text-2xl font-black text-text-primary mb-6">
                     <span className="text-brand">{STEPS[0].id}.</span> Your Identity
                   </h2>
                   
@@ -418,7 +418,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
             {currentStep === 2 && (
               <div className="space-y-6 animate-fade-in">
                 <div>
-                  <h2 className="text-2xl font-black text-white mb-6">
+                  <h2 className="text-2xl font-black text-text-primary mb-6">
                     <span className="text-brand">{STEPS[1].id}.</span> Areas of Interest
                   </h2>
 
@@ -464,7 +464,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
                         maxLength={30}
                         disabled={selectedSkills.length >= MAX_SKILLS}
                         className={cn(
-                          'w-full pl-10 pr-4 py-3 border-2 focus:outline-none text-sm transition-colors rounded-lg bg-arena-black text-white placeholder:text-arena-muted',
+                          'w-full pl-10 pr-4 py-3 border-2 focus:outline-none text-sm transition-colors rounded-lg bg-arena-black text-text-primary placeholder:text-arena-muted',
                           selectedSkills.length >= MAX_SKILLS
                             ? 'border-arena-border opacity-50 cursor-not-allowed'
                             : 'border-arena-border focus:border-brand'
@@ -485,7 +485,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
                                 key={skill}
                                 type="button"
                                 onClick={() => handleAddSkill(skill)}
-                                className="w-full text-left px-3 py-2 text-sm text-arena-secondary hover:bg-arena-elevated hover:text-white rounded transition-colors flex items-center gap-2"
+                                className="w-full text-left px-3 py-2 text-sm text-arena-secondary hover:bg-arena-elevated hover:text-text-primary rounded transition-colors flex items-center gap-2"
                                 aria-label={`Add ${skill}`}
                               >
                                 <Plus className="w-4 h-4" />
@@ -519,7 +519,7 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
             {currentStep === 3 && (
               <div className="space-y-6 animate-fade-in">
                 <div>
-                  <h2 className="text-2xl font-black text-white mb-6">
+                  <h2 className="text-2xl font-black text-text-primary mb-6">
                     <span className="text-brand">{STEPS[2].id}.</span> Join an Idea or Observe
                   </h2>
                   
@@ -552,11 +552,11 @@ function Signup({ user, updateUser, onNavigate, onAutoAssign, teams, eventPhase,
                           <HStack gap="2" align="center" className="mb-2">
                             <Eye className={cn(
                               'w-5 h-5',
-                              isObserver ? 'text-white' : 'text-arena-secondary'
+                              isObserver ? 'text-text-primary' : 'text-arena-secondary'
                             )} />
                             <span className={cn(
                               'font-bold text-lg',
-                              isObserver ? 'text-white' : 'text-white'
+                              isObserver ? 'text-text-primary' : 'text-text-primary'
                             )}>
                               Join as Observer
                             </span>

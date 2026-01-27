@@ -102,7 +102,7 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
           <div className="px-4 py-3 border-b border-arena-border flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Bell className="w-4 h-4 text-text-secondary" />
-              <span className="font-bold text-sm text-white">Notifications</span>
+              <span className="font-bold text-sm text-text-primary">Notifications</span>
               {unreadCount > 0 && (
                 <Badge className="bg-error text-white text-xs">{unreadCount}</Badge>
               )}
@@ -147,7 +147,7 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
                         <div className="flex items-start justify-between gap-2 mb-1">
                           <p className={cn(
                             'text-sm font-semibold',
-                            !notification.read ? 'text-white' : 'text-arena-secondary'
+                            !notification.read ? 'text-text-primary' : 'text-arena-secondary'
                           )}>
                             {notification.title}
                           </p>

@@ -142,7 +142,7 @@ const Select = forwardRef(({
           onClick={() => !disabled && setIsOpen(!isOpen)}
           onKeyDown={handleKeyDown}
           className={cn(
-            'w-full flex items-center justify-between border-2 bg-white text-left',
+            'w-full flex items-center justify-between border-2 bg-arena-card text-left',
             'transition-colors duration-200 focus:outline-none',
             SIZE_MAP[size],
             error
@@ -185,7 +185,7 @@ const Select = forwardRef(({
           <div
             role="listbox"
             className={cn(
-              'absolute z-dropdown w-full mt-1 bg-white border-2 border-neutral-900 shadow-lg',
+              'absolute z-dropdown w-full mt-1 bg-arena-card border-2 border-arena-border shadow-lg',
               'max-h-60 overflow-auto animate-slide-down'
             )}
           >
@@ -331,7 +331,7 @@ export const MultiSelect = forwardRef(({
         disabled={disabled}
         onClick={() => !disabled && setIsOpen(!isOpen)}
         className={cn(
-          'w-full flex items-center justify-between border-2 bg-white text-left min-h-[42px]',
+          'w-full flex items-center justify-between border-2 bg-arena-card text-left min-h-[42px]',
           'transition-colors duration-200 focus:outline-none',
           SIZE_MAP[size],
           error
@@ -370,7 +370,7 @@ export const MultiSelect = forwardRef(({
 
       {/* Dropdown */}
       {isOpen && !disabled && (
-        <div className="absolute z-dropdown w-full mt-1 bg-white border-2 border-neutral-900 shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-dropdown w-full mt-1 bg-arena-card border-2 border-arena-border shadow-lg max-h-60 overflow-auto">
           {options.map((option) => {
             const isSelected = value.includes(option.value);
             return (

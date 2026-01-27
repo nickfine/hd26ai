@@ -304,7 +304,7 @@ function Marketplace({
                 return (
                   <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg">
                     <div className="flex items-start justify-between mb-1">
-                      <div className="font-bold text-sm text-white">
+                      <div className="font-bold text-sm text-text-primary">
                         {invite.teamName}
                       </div>
                       {timeUntilExpiry && (
@@ -323,7 +323,7 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onInviteResponse(user?.id, invite.id, true)}
-                        className="flex-1 py-1.5 text-xs font-bold text-white rounded-lg flex items-center justify-center gap-1
+                        className="flex-1 py-1.5 text-xs font-bold text-text-primary rounded-lg flex items-center justify-center gap-1
                                    transition-all hover:-translate-y-0.5 bg-arena-elevated border border-arena-border"
                       >
                         <Check className="w-3 h-3" />
@@ -333,7 +333,7 @@ function Marketplace({
                         type="button"
                         onClick={() => onInviteResponse(user?.id, invite.id, false)}
                         className="flex-1 py-1.5 text-xs font-bold text-arena-secondary bg-arena-card border border-arena-border rounded-lg
-                                   hover:text-white flex items-center justify-center gap-1 transition-all hover:-translate-y-0.5"
+                                   hover:text-text-primary flex items-center justify-center gap-1 transition-all hover:-translate-y-0.5"
                       >
                         <X className="w-3 h-3" />
                         Decline
@@ -354,7 +354,7 @@ function Marketplace({
                   {expiredInvites.map((invite) => (
                     <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg opacity-60">
                       <div className="flex items-start justify-between mb-1">
-                        <div className="font-bold text-sm text-white">
+                        <div className="font-bold text-sm text-text-primary">
                           {invite.teamName}
                         </div>
                         <div className="px-2 py-0.5 bg-red-500/20 border border-red-500/30 rounded text-xs text-red-400">
@@ -377,9 +377,9 @@ function Marketplace({
         <div className="text-center mb-8">
           <div className="bg-arena-card border border-arena-border inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4">
             <Users className="w-5 h-5 text-text-secondary" />
-            <span className="font-bold text-sm text-white">FIND YOUR SQUAD</span>
+            <span className="font-bold text-sm text-text-primary">FIND YOUR SQUAD</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-black text-text-primary mb-3 font-display">
             IDEAS
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto mb-6">
@@ -395,7 +395,7 @@ function Marketplace({
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder={activeTab === 'teams' ? 'Search ideas or skills...' : 'Search people or skills...'}
               className="w-full pl-12 pr-4 py-3 bg-arena-card border border-arena-border
-                         focus:border-brand/50 focus:outline-none text-white placeholder-arena-muted
+                         focus:border-brand/50 focus:outline-none text-text-primary placeholder-arena-muted
                          text-sm rounded-xl transition-all"
             />
           </div>
@@ -411,7 +411,7 @@ function Marketplace({
                 className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg backdrop-blur-md
                            ${activeTab === 'teams' 
                              ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_20px_rgba(255,107,53,0.3)]' 
-                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/30 hover:text-white'}`}
+                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/30 hover:text-text-primary'}`}
               >
                 IDEAS
                 <span className={`px-1.5 py-0.5 text-xs rounded-full ${
@@ -426,7 +426,7 @@ function Marketplace({
                 className={`px-4 py-2 font-bold text-sm transition-all flex items-center gap-2 whitespace-nowrap rounded-lg backdrop-blur-md
                            ${activeTab === 'people' 
                              ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_20px_rgba(255,107,53,0.3)]' 
-                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/30 hover:text-white'}`}
+                             : 'bg-arena-card border border-arena-border text-arena-secondary hover:border-brand/30 hover:text-text-primary'}`}
               >
                 FREE AGENTS
                 <span className={`px-1.5 py-0.5 text-xs rounded-full ${
@@ -448,7 +448,7 @@ function Marketplace({
                     className={`p-2 transition-all rounded ${
                       viewMode === 'grid'
                         ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_15px_rgba(255,107,53,0.25)]'
-                        : 'text-arena-secondary hover:text-white'
+                        : 'text-arena-secondary hover:text-text-primary'
                     }`}
                     title="Grid View"
                   >
@@ -460,7 +460,7 @@ function Marketplace({
                     className={`p-2 transition-all rounded ${
                       viewMode === 'row'
                         ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_15px_rgba(255,107,53,0.25)]'
-                        : 'text-arena-secondary hover:text-white'
+                        : 'text-arena-secondary hover:text-text-primary'
                     }`}
                     title="Row View"
                   >
@@ -515,7 +515,7 @@ function Marketplace({
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="font-bold text-white truncate">
+                              <h3 className="font-bold text-text-primary truncate">
                                 {team.name}
                               </h3>
                               {hasApplied && (
@@ -566,7 +566,7 @@ function Marketplace({
                         className="w-full h-12 flex items-center justify-center gap-2
                                    font-semibold text-sm transition-all duration-300 
                                    hover:-translate-y-1 rounded-xl
-                                   bg-arena-elevated border border-arena-border text-white hover:bg-arena-card"
+                                   bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-card"
                       >
                         LEARN MORE
                         <ChevronRight className="w-4 h-4" />
@@ -605,7 +605,7 @@ function Marketplace({
                         "p-2 border-2 transition-colors rounded-lg",
                         currentPage === 1
                           ? 'border-arena-border text-arena-muted cursor-not-allowed'
-                          : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
+                          : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-text-primary'
                       )}
                     >
                       <ChevronLeft className="w-4 h-4" />
@@ -624,7 +624,7 @@ function Marketplace({
                             "min-w-[36px] h-9 px-2 border-2 text-sm font-medium transition-colors rounded-lg",
                             currentPage === page
                               ? 'border-brand bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white shadow-[0_0_15px_rgba(255,107,53,0.25)]'
-                              : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
+                              : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-text-primary'
                           )}
                         >
                           {page}
@@ -641,7 +641,7 @@ function Marketplace({
                         "p-2 border-2 transition-colors rounded-lg",
                         currentPage === totalPages
                           ? 'border-arena-border text-arena-muted cursor-not-allowed'
-                          : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-white'
+                          : 'border-arena-border text-arena-secondary hover:border-brand/50 hover:text-text-primary'
                       )}
                     >
                       <ChevronRight className="w-4 h-4" />
@@ -674,7 +674,7 @@ function Marketplace({
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                              <h3 className="font-bold text-white truncate">
+                              <h3 className="font-bold text-text-primary truncate">
                                 {agent.name}
                               </h3>
                               {hasInvited && (
@@ -726,7 +726,7 @@ function Marketplace({
                           className="w-full h-12 flex items-center justify-center gap-2
                                      font-semibold text-sm transition-all duration-300 
                                      hover:-translate-y-1 hover:shadow-2xl rounded-xl shadow-lg
-                                     bg-arena-elevated border border-arena-border text-white hover:bg-arena-border"
+                                     bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-border"
                         >
                           <Send className="w-4 h-4" />
                           INVITE TO TEAM
@@ -775,21 +775,21 @@ function Marketplace({
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
           <div className="bg-arena-card border border-arena-border p-4 sm:p-6 max-w-md w-full mx-4 shadow-2xl rounded-card">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-white">Send Team Invite</h2>
+              <h2 className="text-lg font-bold text-text-primary">Send Team Invite</h2>
               <button
                 type="button"
                 onClick={() => {
                   setInviteModalAgent(null);
                   setInviteMessage('');
                 }}
-                className="p-1 text-arena-muted hover:text-white transition-colors"
+                className="p-1 text-arena-muted hover:text-text-primary transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
             <div className="mb-4 p-3 bg-arena-elevated border border-arena-border rounded-lg">
-              <div className="text-sm font-bold text-white">{inviteModalAgent.name}</div>
+              <div className="text-sm font-bold text-text-primary">{inviteModalAgent.name}</div>
               <div className="text-xs text-arena-muted mb-2">
                 {inviteModalAgent.skills?.join(', ')}
               </div>
@@ -804,7 +804,7 @@ function Marketplace({
                 value={inviteMessage}
                 onChange={(e) => setInviteMessage(e.target.value)}
                 placeholder={`Tell ${inviteModalAgent.name} why they'd be a great fit for ${captainedTeam?.name}...`}
-                className="w-full p-3 border-2 border-arena-border bg-arena-card text-white placeholder-arena-muted
+                className="w-full p-3 border-2 border-arena-border bg-arena-card text-text-primary placeholder-arena-muted
                            focus:border-brand focus:outline-none text-sm resize-none h-24 rounded-lg"
               />
             </div>
@@ -817,7 +817,7 @@ function Marketplace({
                   setInviteMessage('');
                 }}
                 className="flex-1 py-2 border-2 border-arena-border text-arena-secondary font-bold text-sm
-                           hover:border-brand/50 hover:text-white transition-colors rounded-lg"
+                           hover:border-brand/50 hover:text-text-primary transition-colors rounded-lg"
               >
                 Cancel
               </button>
@@ -840,11 +840,11 @@ function Marketplace({
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4 overflow-y-auto">
           <div className="bg-arena-card border border-arena-border p-4 sm:p-6 max-w-lg w-full mx-4 shadow-2xl my-8 rounded-card">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-black text-white">CREATE YOUR IDEA</h2>
+              <h2 className="text-xl font-black text-text-primary">CREATE YOUR IDEA</h2>
               <button
                 type="button"
                 onClick={() => setShowCreateTeamModal(false)}
-                className="p-1 text-arena-muted hover:text-white transition-colors"
+                className="p-1 text-arena-muted hover:text-text-primary transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -860,7 +860,7 @@ function Marketplace({
                 value={newTeam.name}
                 onChange={(e) => setNewTeam((prev) => ({ ...prev, name: e.target.value }))}
                 placeholder="Enter your project idea"
-                className="w-full p-3 border-2 border-arena-border bg-arena-card text-white placeholder-arena-muted
+                className="w-full p-3 border-2 border-arena-border bg-arena-card text-text-primary placeholder-arena-muted
                            focus:border-brand focus:outline-none text-sm rounded-lg"
                 maxLength={50}
               />
@@ -879,7 +879,7 @@ function Marketplace({
                 value={newTeam.description}
                 onChange={(e) => setNewTeam((prev) => ({ ...prev, description: e.target.value }))}
                 placeholder="Describe your team's mission, goals, or project idea..."
-                className="w-full p-3 border-2 border-arena-border bg-arena-card text-white placeholder-arena-muted
+                className="w-full p-3 border-2 border-arena-border bg-arena-card text-text-primary placeholder-arena-muted
                            focus:border-brand focus:outline-none text-sm resize-none h-24 rounded-lg"
                 maxLength={500}
               />
@@ -909,7 +909,7 @@ function Marketplace({
                       onClick={() => toggleSkill(skill)}
                       className={`px-3 py-1.5 text-xs font-medium border-2 transition-all rounded-full
                         ${isSelected
-                          ? 'text-white bg-arena-elevated border-arena-border'
+                          ? 'text-text-primary bg-arena-elevated border-arena-border'
                           : 'border-arena-border text-arena-secondary hover:border-text-secondary'
                         }`}
                     >
@@ -939,7 +939,7 @@ function Marketplace({
                 />
                 <div className="flex items-center gap-1 px-3 py-1 bg-arena-elevated border border-arena-border rounded">
                   <Users className="w-4 h-4 text-arena-secondary" />
-                  <span className="font-bold text-white">{newTeam.maxMembers}</span>
+                  <span className="font-bold text-text-primary">{newTeam.maxMembers}</span>
                 </div>
               </div>
             </div>
@@ -950,7 +950,7 @@ function Marketplace({
                 type="button"
                 onClick={() => setShowCreateTeamModal(false)}
                 className="flex-1 py-3 border-2 border-arena-border text-arena-secondary font-bold text-sm
-                           hover:border-brand/50 hover:text-white transition-colors rounded-lg"
+                           hover:border-brand/50 hover:text-text-primary transition-colors rounded-lg"
               >
                 Cancel
               </button>

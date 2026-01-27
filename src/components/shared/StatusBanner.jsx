@@ -75,7 +75,7 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
             </div>
             <VStack gap="1" align="start" className="flex-1 min-w-0">
               <Card.Label className="text-brand mb-0">You're a Free Agent</Card.Label>
-              <Card.Title className="text-white mb-0 text-base">
+              <Card.Title className="text-text-primary mb-0 text-base">
                 Team captains can find you in the Marketplace
               </Card.Title>
               {pendingInviteCount > 0 && (
@@ -110,7 +110,7 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
           </div>
           <VStack gap="1" align="start" className="flex-1 min-w-0">
             <Card.Label className="text-brand mb-0">You're on Team Observers</Card.Label>
-            <Card.Title className="text-white mb-0 text-base">
+            <Card.Title className="text-text-primary mb-0 text-base">
               as Member
             </Card.Title>
           </VStack>
@@ -138,7 +138,7 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
             </div>
             <VStack gap="1" align="start" className="flex-1 min-w-0">
               <Card.Label className="text-brand mb-0">You're on {userTeam.name}</Card.Label>
-              <Card.Title className="text-white mb-0 text-base">
+              <Card.Title className="text-text-primary mb-0 text-base">
                 as {isCaptain ? 'Captain' : 'Member'}
               </Card.Title>
             </VStack>

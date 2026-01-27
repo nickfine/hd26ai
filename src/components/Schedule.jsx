@@ -656,7 +656,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
         <div className="text-center mb-8">
           <div className="glass-card inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4 backdrop-blur-md border border-white/10">
             <Calendar className="w-5 h-5 text-brand" />
-            <span className="font-bold text-sm text-white">JUNE 1ST - 22ND, 2026</span>
+            <span className="font-bold text-sm text-text-primary">JUNE 1ST - 22ND, 2026</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display"
               style={{ textShadow: '0 0 30px rgba(255, 107, 53, 0.4)' }}>
@@ -676,7 +676,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
                 <button
                   type="button"
                   onClick={() => setShowUKTime(!showUKTime)}
-                  className="text-brand hover:text-white font-bold underline"
+                  className="text-brand hover:text-text-primary font-bold underline"
                 >
                   {showUKTime ? `${EVENT_TIMEZONE} (UK)` : `${timezoneName} (${timezoneAbbr})`}
                 </button>
@@ -690,7 +690,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
           <button
             type="button"
             onClick={handleAddAllToCalendar}
-            className="flex items-center gap-2 px-6 py-3 font-bold text-white
+            className="flex items-center gap-2 px-6 py-3 font-bold text-text-primary
                        bg-gradient-to-r from-[#FF8A50] to-[#FF4500] 
                        hover:from-[#FF9966] hover:to-[#FF5722]
                        hover:-translate-y-0.5 transition-all rounded-lg 
@@ -711,11 +711,11 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
               className={`flex-1 py-3 px-4 font-bold text-center transition-all rounded-card backdrop-blur-md
                 ${activeDay === key
                   ? 'bg-gradient-to-r from-[#FF8A50] to-[#FF4500] text-white border border-white/20 shadow-[0_0_20px_rgba(255,107,53,0.3)]'
-                  : 'glass-card text-arena-secondary hover:border-brand/30 hover:text-white'
+                  : 'glass-card text-arena-secondary hover:border-brand/30 hover:text-text-primary'
                 }`}
             >
               <div className="text-lg">{day.label}</div>
-              <div className={`text-xs ${activeDay === key ? 'text-white/70' : 'text-arena-muted'}`}>
+              <div className={`text-xs ${activeDay === key ? 'text-text-primary/70' : 'text-arena-muted'}`}>
                 {day.subtitle}
               </div>
             </button>
@@ -818,7 +818,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
                     </div>
 
                     {/* Title & Description */}
-                    <h3 className="text-lg font-bold text-white mb-1"
+                    <h3 className="text-lg font-bold text-text-primary mb-1"
                         style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.4)' }}>
                       {event.title}
                     </h3>
@@ -831,7 +831,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
                       type="button"
                       onClick={() => handleAddToCalendar(event)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold 
-                                 text-white bg-arena-elevated hover:bg-arena-border rounded transition-colors"
+                                 text-text-primary bg-arena-elevated hover:bg-arena-border rounded transition-colors"
                     >
                       <Calendar className="w-3.5 h-3.5" />
                       Add to Google Calendar
@@ -849,7 +849,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
           <div className="glass-card inline-block p-6 rounded-card">
             <div className="flex items-center justify-center gap-2 mb-3">
               <Clock className="w-5 h-5 text-brand" />
-              <span className="font-bold text-white"
+              <span className="font-bold text-text-primary"
                     style={{ textShadow: '0 0 20px rgba(255, 107, 53, 0.4)' }}>
                 Remote Hackathon
               </span>
@@ -864,7 +864,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
                 type="button"
                 onClick={() => onNavigate('rules')}
                 className="px-4 py-2 text-sm font-bold text-arena-secondary 
-                           glass-card hover:text-white hover:border-brand/30
+                           glass-card hover:text-text-primary hover:border-brand/30
                            rounded-lg transition-all"
               >
                 View Rules
@@ -872,7 +872,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
               <button
                 type="button"
                 onClick={() => onNavigate('dashboard')}
-                className="px-4 py-2 text-sm font-bold text-white 
+                className="px-4 py-2 text-sm font-bold text-text-primary 
                            bg-gradient-to-r from-[#FF8A50] to-[#FF4500]
                            hover:from-[#FF9966] hover:to-[#FF5722]
                            hover:-translate-y-0.5 transition-all rounded-lg"

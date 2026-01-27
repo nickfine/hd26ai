@@ -69,7 +69,7 @@ const UserBadge = forwardRef(({
           name={user.name}
           size={sizeConfig.avatar}
         />
-        <span className={cn('font-bold text-white', sizeConfig.text)}>
+        <span className={cn('font-bold text-text-primary', sizeConfig.text)}>
           {user.name}
         </span>
       </Component>
@@ -98,7 +98,7 @@ const UserBadge = forwardRef(({
         />
         <div className="flex-1 min-w-0 text-left">
           {/* Name with callsign - new capsule style */}
-          <div className={cn('font-bold text-white flex items-center gap-1 flex-wrap', sizeConfig.text)}>
+          <div className={cn('font-bold text-text-primary flex items-center gap-1 flex-wrap', sizeConfig.text)}>
             {nameFormatted.hasCallsign ? (
               <>
                 {nameFormatted.firstName}
@@ -165,7 +165,7 @@ const UserBadge = forwardRef(({
       />
       <div className="flex-1 min-w-0 text-left">
         {/* Name with callsign - new style */}
-        <div className={cn('font-bold text-white flex items-center gap-1 flex-wrap', sizeConfig.text)}>
+        <div className={cn('font-bold text-text-primary flex items-center gap-1 flex-wrap', sizeConfig.text)}>
           {nameFormatted.hasCallsign ? (
             <>
               {nameFormatted.firstName}

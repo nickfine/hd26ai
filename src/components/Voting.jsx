@@ -30,17 +30,17 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
   const submission = team.submission;
 
   return (
-    <div className="group relative bg-white border-2 border-gray-200 transition-all duration-300 hover:shadow-lg overflow-hidden rounded-lg">
+    <div className="group relative bg-arena-card border-2 border-arena-border transition-all duration-300 hover:shadow-lg overflow-hidden rounded-lg">
       {/* Header with team info */}
-      <div className="px-4 py-3 border-b border-gray-200 bg-gray-50">
+      <div className="px-4 py-3 border-b border-arena-border bg-arena-elevated">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Users className="w-4 h-4 text-gray-600" />
-            <span className="text-xs font-bold uppercase tracking-wide text-gray-700">
+            <Users className="w-4 h-4 text-text-secondary" />
+            <span className="text-xs font-bold uppercase tracking-wide text-text-primary">
               {team.name}
             </span>
           </div>
-          <div className="flex items-center gap-1 text-xs text-gray-500">
+          <div className="flex items-center gap-1 text-xs text-text-secondary">
             <Users className="w-3 h-3" />
             {team.members?.length || 0}
           </div>
@@ -49,10 +49,10 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
 
       {/* Project content */}
       <div className="p-4">
-        <h3 className="text-lg font-black text-gray-900 mb-2 line-clamp-1">
+        <h3 className="text-lg font-black text-text-primary mb-2 line-clamp-1">
           {submission?.projectName || 'Untitled Project'}
         </h3>
-        <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+        <p className="text-sm text-text-secondary mb-4 line-clamp-3">
           {submission?.description || 'No description provided.'}
         </p>
 
@@ -63,7 +63,7 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
               href={submission.demoVideoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-text-secondary bg-arena-elevated hover:bg-gray-200 transition-colors"
             >
               <Video className="w-3 h-3" />
               Demo
@@ -74,7 +74,7 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
               href={submission.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-text-secondary bg-arena-elevated hover:bg-gray-200 transition-colors"
             >
               <Github className="w-3 h-3" />
               Code
@@ -85,7 +85,7 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
               href={submission.liveDemoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors"
+              className="inline-flex items-center gap-1 px-2 py-1 text-xs font-bold text-text-secondary bg-arena-elevated hover:bg-gray-200 transition-colors"
             >
               <Globe className="w-3 h-3" />
               Live
@@ -105,8 +105,8 @@ const ProjectCard = memo(function ProjectCard({ team, isVoted, canVote, onVote }
               isVoted
                 ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
                 : canVote
-                ? 'border-2 border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-600'
-                : 'border-2 border-gray-100 text-gray-300 cursor-not-allowed'
+                ? 'border-2 border-arena-border text-text-secondary hover:border-amber-400 hover:text-amber-600'
+                : 'border-2 border-arena-border text-arena-muted cursor-not-allowed'
             }`}
         >
           <Star
@@ -139,26 +139,26 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
 
   return (
     <div
-      className={`group bg-white border-2 border-gray-200 transition-all duration-200 hover:shadow-md`}
+      className={`group bg-arena-card border-2 border-arena-border transition-all duration-200 hover:shadow-md`}
       style={{ borderColor: isVoted ? 'rgb(251, 191, 36)' : undefined }}
     >
       <div className="flex items-center gap-4 p-4">
         {/* Team indicator */}
-        <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100">
-          <Users className="w-6 h-6 text-gray-600" />
+        <div className="w-12 h-12 flex-shrink-0 flex items-center justify-center rounded-lg bg-arena-elevated">
+          <Users className="w-6 h-6 text-text-secondary" />
         </div>
 
         {/* Project info */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
-            <h3 className="text-base font-black text-gray-900 truncate">
+            <h3 className="text-base font-black text-text-primary truncate">
               {submission?.projectName || 'Untitled Project'}
             </h3>
-            <span className="text-xs font-bold px-2 py-0.5 bg-gray-100 text-gray-700 rounded">
+            <span className="text-xs font-bold px-2 py-0.5 bg-arena-elevated text-text-primary rounded">
               {team.name}
             </span>
           </div>
-          <p className="text-sm text-gray-600 truncate">
+          <p className="text-sm text-text-secondary truncate">
             {submission?.description || 'No description provided.'}
           </p>
         </div>
@@ -170,7 +170,7 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
               href={submission.demoVideoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 text-arena-muted hover:text-text-secondary transition-colors"
               title="Watch Demo"
             >
               <Video className="w-5 h-5" />
@@ -181,7 +181,7 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
               href={submission.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 text-arena-muted hover:text-text-secondary transition-colors"
               title="View Code"
             >
               <Github className="w-5 h-5" />
@@ -192,7 +192,7 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
               href={submission.liveDemoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
+              className="p-2 text-arena-muted hover:text-text-secondary transition-colors"
               title="Try Live Demo"
             >
               <ExternalLink className="w-5 h-5" />
@@ -210,8 +210,8 @@ const ProjectRow = memo(function ProjectRow({ team, isVoted, canVote, onVote }) 
               isVoted
                 ? 'bg-amber-400 text-amber-900 hover:bg-amber-500'
                 : canVote
-                ? 'border-2 border-gray-200 text-gray-600 hover:border-amber-400 hover:text-amber-600'
-                : 'border-2 border-gray-100 text-gray-300 cursor-not-allowed'
+                ? 'border-2 border-arena-border text-text-secondary hover:border-amber-400 hover:text-amber-600'
+                : 'border-2 border-arena-border text-arena-muted cursor-not-allowed'
             }`}
         >
           <Star
@@ -287,9 +287,9 @@ function Voting({
   // ============================================================================
   const renderEmptyState = () => (
     <div className="text-center py-16">
-      <Sparkles className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-      <h3 className="text-xl font-bold text-gray-900 mb-2">No Projects Found</h3>
-      <p className="text-gray-600 max-w-md mx-auto">
+      <Sparkles className="w-16 h-16 mx-auto mb-4 text-arena-muted" />
+      <h3 className="text-xl font-bold text-text-primary mb-2">No Projects Found</h3>
+      <p className="text-text-secondary max-w-md mx-auto">
         {searchQuery
           ? 'Try adjusting your filters or search query.'
           : 'No projects have been submitted yet. Check back soon!'}
@@ -313,9 +313,9 @@ function Voting({
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <Star className="w-8 h-8 text-amber-500" />
-            <h1 className="text-3xl font-black text-gray-900">PROJECT GALLERY</h1>
+            <h1 className="text-3xl font-black text-text-primary">PROJECT GALLERY</h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             Browse all submitted projects and vote for your favorites. You have{' '}
             <strong>{maxVotes} votes</strong> to cast.
           </p>
@@ -355,24 +355,24 @@ function Voting({
         <div className="mb-6 flex flex-col sm:flex-row gap-4">
           {/* Search */}
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-arena-muted" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search projects..."
-              className="w-full pl-10 pr-4 py-3 border-2 border-gray-200 focus:border-gray-900 focus:outline-none text-sm"
+              className="w-full pl-10 pr-4 py-3 border-2 border-arena-border focus:border-arena-border focus:outline-none text-sm"
             />
           </div>
 
 
           {/* View Toggle */}
-          <div className="flex items-center border-2 border-gray-200 bg-white">
+          <div className="flex items-center border-2 border-arena-border bg-arena-card">
             <button
               type="button"
               onClick={() => setViewMode('grid')}
               className={`p-2.5 transition-colors ${
-                viewMode === 'grid' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-600'
+                viewMode === 'grid' ? 'bg-arena-elevated text-text-primary' : 'text-arena-muted hover:text-text-secondary'
               }`}
               title="Grid View"
             >
@@ -382,7 +382,7 @@ function Voting({
               type="button"
               onClick={() => setViewMode('list')}
               className={`p-2.5 transition-colors ${
-                viewMode === 'list' ? 'bg-gray-900 text-white' : 'text-gray-400 hover:text-gray-600'
+                viewMode === 'list' ? 'bg-arena-elevated text-text-primary' : 'text-arena-muted hover:text-text-secondary'
               }`}
               title="List View"
             >
@@ -392,7 +392,7 @@ function Voting({
         </div>
 
         {/* Results count */}
-        <div className="mb-4 text-sm text-gray-500">
+        <div className="mb-4 text-sm text-text-secondary">
           {filteredProjects.length} project{filteredProjects.length !== 1 ? 's' : ''}{' '}
           {searchQuery ? 'found' : 'submitted'}
         </div>

@@ -120,7 +120,7 @@ const CardTitle = forwardRef(({
     <Component
       ref={ref}
       className={cn(
-        'text-lg font-bold text-white font-heading',
+        'text-lg font-bold text-text-primary font-heading',
         className
       )}
       {...props}

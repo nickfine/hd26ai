@@ -121,7 +121,7 @@ function Rules({ user, teams, onNavigate, eventPhase }) {
         {/* Section Header */}
         <div className="relative p-6 border-b border-arena-border bg-arena-elevated">
           <div>
-            <h2 className="text-2xl font-heading font-black text-white">
+            <h2 className="text-2xl font-heading font-black text-text-primary">
               {rules.title}
             </h2>
             <p className="text-sm text-text-secondary">{rules.subtitle}</p>
@@ -147,7 +147,7 @@ function Rules({ user, teams, onNavigate, eventPhase }) {
                   <div className="flex items-start gap-4">
                     <Check className="w-6 h-6 text-success flex-shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-semibold text-white">{item.title}</div>
+                      <div className="font-semibold text-text-primary">{item.title}</div>
                       <div className="text-sm text-text-secondary mt-1">{item.description}</div>
                       <div className="text-xs text-success bg-success/10 px-3 py-1.5 rounded-full 
                                       inline-flex items-center gap-1 mt-2 border border-success/20">
@@ -179,7 +179,7 @@ function Rules({ user, teams, onNavigate, eventPhase }) {
                   <div className="flex items-start gap-4">
                     <X className="w-6 h-6 text-error flex-shrink-0 mt-0.5" />
                     <div>
-                      <div className="font-semibold text-white">{item.title}</div>
+                      <div className="font-semibold text-text-primary">{item.title}</div>
                       <div className="text-sm text-text-secondary mt-1">{item.description}</div>
                       <div className="text-xs text-error bg-error/10 px-3 py-1.5 rounded-full 
                                       inline-flex items-center gap-1 mt-2 border border-error/20">
@@ -228,9 +228,9 @@ function Rules({ user, teams, onNavigate, eventPhase }) {
         <div className="text-center mb-10">
           <div className="bg-arena-card border border-arena-border inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4">
             <FileText className="w-5 h-5 text-text-secondary" />
-            <span className="font-bold text-sm text-white">RULES</span>
+            <span className="font-bold text-sm text-text-primary">RULES</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-heading font-black text-white mb-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-heading font-black text-text-primary mb-3 font-display">
             HACKDAY RULES
           </h1>
           <p className="text-arena-secondary max-w-2xl mx-auto">
@@ -240,7 +240,7 @@ function Rules({ user, teams, onNavigate, eventPhase }) {
 
         {/* General Rules */}
         <div className="mb-10">
-          <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-xl font-bold text-text-primary mb-4 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5 text-text-secondary" />
             General Rules (All Teams)
           </h2>
@@ -258,7 +258,7 @@ function Rules({ user, teams, onNavigate, eventPhase }) {
                       <Icon className="w-5 h-5 text-brand" />
                     </div>
                     <div>
-                      <div className="font-bold text-white">{rule.title}</div>
+                      <div className="font-bold text-text-primary">{rule.title}</div>
                       <div className="text-sm text-text-secondary">{rule.description}</div>
                     </div>
                   </div>
@@ -276,10 +276,10 @@ function Rules({ user, teams, onNavigate, eventPhase }) {
         {/* Bottom CTA */}
         <div className="mt-10 text-center">
           <div className="bg-arena-card border border-arena-border inline-block p-6 rounded-card">
-            <h3 className="text-lg font-bold text-white mb-2">
+            <h3 className="text-lg font-bold text-text-primary mb-2">
               Questions about the rules?
             </h3>
-            <p className="text-sm text-gray-300 mb-4">
+            <p className="text-sm text-arena-muted mb-4">
               Reach out to the organizers on Slack or check the FAQ section.
             </p>
             <button

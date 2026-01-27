@@ -173,7 +173,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
               </div>
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2 flex-wrap">
-                  <h1 className="text-xl sm:text-2xl font-black text-white">
+                  <h1 className="text-xl sm:text-2xl font-black text-text-primary">
                     {team.name}
                   </h1>
                   {isCaptain && !isEditingName && (
@@ -183,7 +183,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                         setTeamNameInput(team.name);
                         setIsEditingName(true);
                       }}
-                      className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
+                      className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-text-primary"
                     >
                       Edit Idea
                     </button>
@@ -197,7 +197,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
               </div>
             </div>
             {isMember && (
-              <span className="inline-flex items-center text-white font-bold 
+              <span className="inline-flex items-center text-text-primary font-bold 
                            px-5 py-2 rounded-full text-sm uppercase tracking-wider 
                            border border-arena-border bg-arena-elevated flex-shrink-0">
                 You're on this team
@@ -224,7 +224,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                         <User className="w-5 h-5 text-text-secondary" />
                       </div>
                       <div>
-                        <span className="font-bold text-white">{request.userName}</span>
+                        <span className="font-bold text-text-primary">{request.userName}</span>
                         <p className="text-xs text-text-muted">
                           {new Date(request.timestamp).toLocaleDateString()}
                         </p>
@@ -313,7 +313,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                     <div key={invite.id} className="p-3 bg-arena-elevated border border-arena-border rounded-lg">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <div className="font-bold text-sm text-white mb-1">{invite.userName}</div>
+                          <div className="font-bold text-sm text-text-primary mb-1">{invite.userName}</div>
                           {invite.message && (
                             <p className="text-xs text-arena-muted mb-2 line-clamp-2">"{invite.message}"</p>
                           )}
@@ -381,7 +381,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 value={descriptionInput}
                 onChange={(e) => setDescriptionInput(e.target.value)}
                 placeholder="Describe your team's project goal..."
-                className={`w-full p-3 border-2 focus:outline-none text-base sm:text-lg resize-none transition-colors bg-arena-elevated text-white placeholder:text-text-muted rounded-card
+                className={`w-full p-3 border-2 focus:outline-none text-base sm:text-lg resize-none transition-colors bg-arena-elevated text-text-primary placeholder:text-text-muted rounded-card
                   ${descriptionInput.trim().length < 10 ? 'border-error/50' : 'border-arena-border focus:border-text-secondary'}`}
                 rows={3}
                 maxLength={500}
@@ -406,7 +406,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   type="button"
                   onClick={handleSaveDescription}
                   disabled={descriptionInput.trim().length < 10}
-                  className="px-4 py-2 text-sm font-medium text-white rounded transition-colors disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-medium text-text-primary rounded transition-colors disabled:opacity-50"
                   style={{ backgroundColor: 'var(--color-text-secondary)' }}
                 >
                   Save
@@ -448,7 +448,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 value={problemInput}
                 onChange={(e) => setProblemInput(e.target.value)}
                 placeholder="Describe the problem your team is going to solve..."
-                className={`w-full p-3 border-2 focus:outline-none text-base sm:text-lg resize-none transition-colors bg-arena-elevated text-white placeholder:text-text-muted rounded-card
+                className={`w-full p-3 border-2 focus:outline-none text-base sm:text-lg resize-none transition-colors bg-arena-elevated text-text-primary placeholder:text-text-muted rounded-card
                   ${problemInput.trim().length < 10 ? 'border-error/50' : 'border-arena-border focus:border-text-secondary'}`}
                 rows={3}
                 maxLength={500}
@@ -473,7 +473,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   type="button"
                   onClick={handleSaveProblem}
                   disabled={problemInput.trim().length < 10}
-                  className="px-4 py-2 text-sm font-medium text-white rounded transition-colors disabled:opacity-50"
+                  className="px-4 py-2 text-sm font-medium text-text-primary rounded transition-colors disabled:opacity-50"
                   style={{ backgroundColor: 'var(--color-text-secondary)' }}
                 >
                   Save
@@ -516,7 +516,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 value={moreInfoText}
                 onChange={(e) => setMoreInfoText(e.target.value)}
                 placeholder="Add additional information about your project..."
-                className="w-full p-3 border border-arena-border bg-arena-elevated text-white placeholder:text-text-muted rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-text-secondary transition-all"
+                className="w-full p-3 border border-arena-border bg-arena-elevated text-text-primary placeholder:text-text-muted rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-text-secondary transition-all"
                 rows={4}
               />
               <div className="flex gap-2 justify-end">
@@ -536,7 +536,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                     onUpdateTeam(team.id, { moreInfo: moreInfoText });
                     setIsEditingMoreInfo(false);
                   }}
-                  className="px-4 py-2 text-sm font-medium text-white rounded-lg transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-text-primary rounded-lg transition-colors"
                   style={{ backgroundColor: 'var(--color-text-secondary)' }}
                 >
                   Save
@@ -584,7 +584,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   <div className="flex flex-col min-w-0 flex-1">
                     <div className="flex items-center gap-2 flex-wrap">
                       <span
-                        className="font-bold text-white truncate"
+                        className="font-bold text-text-primary truncate"
                       >
                         {member.name}
                       </span>
@@ -731,7 +731,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   <button
                     type="button"
                     onClick={() => onNavigate('submission')}
-                    className="px-4 py-2 font-bold text-sm text-white transition-colors hover:opacity-90 rounded-lg"
+                    className="px-4 py-2 font-bold text-sm text-text-primary transition-colors hover:opacity-90 rounded-lg"
                     style={{ backgroundColor: 'var(--color-text-secondary)' }}
                   >
                     Start Submission
@@ -743,7 +743,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 {team.submission?.projectName && (
                   <div>
                     <div className="text-xs text-text-muted mb-1">Project Name</div>
-                    <div className="font-bold text-white">{team.submission.projectName}</div>
+                    <div className="font-bold text-text-primary">{team.submission.projectName}</div>
                   </div>
                 )}
                 {team.submission?.description && (
@@ -813,7 +813,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             className={`w-full py-3 sm:py-4 flex items-center justify-center gap-2
                        font-bold text-base sm:text-lg transition-all duration-300
                        hover:-translate-y-1 hover:shadow-2xl rounded-card
-                       bg-arena-elevated border border-arena-border text-white hover:bg-arena-border`}
+                       bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-border`}
           >
             REQUEST TO JOIN
             <ChevronRight className="w-5 h-5" />
@@ -832,14 +832,14 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white">Request to Join</h3>
+              <h3 className="text-lg font-bold text-text-primary">Request to Join</h3>
               <button
                 type="button"
                 onClick={() => {
                   setShowRequestModal(false);
                   setRequestMessage('');
                 }}
-                className="p-1 text-text-muted hover:text-white transition-colors"
+                className="p-1 text-text-muted hover:text-text-primary transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -847,13 +847,13 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             
             <div className="mb-4">
               <p className="text-sm text-text-secondary mb-2">
-                Send a message to <span className="font-semibold text-white">{team.name}</span> captain:
+                Send a message to <span className="font-semibold text-text-primary">{team.name}</span> captain:
               </p>
               <textarea
                 value={requestMessage}
                 onChange={(e) => setRequestMessage(e.target.value)}
                 placeholder="Tell the team why you'd like to join and what you can contribute..."
-                className="w-full p-3 border border-arena-border bg-arena-elevated text-white placeholder:text-text-muted rounded-lg resize-none focus:outline-none focus:ring-2 transition-all text-base"
+                className="w-full p-3 border border-arena-border bg-arena-elevated text-text-primary placeholder:text-text-muted rounded-lg resize-none focus:outline-none focus:ring-2 transition-all text-base"
                 style={{ '--tw-ring-color': 'var(--color-text-secondary)' }}
                 rows={4}
               />
@@ -886,7 +886,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   setShowRequestModal(false);
                   setRequestMessage('');
                 }}
-                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-white transition-all"
+                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-text-primary transition-all"
               >
                 Cancel
               </button>
@@ -894,7 +894,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 type="button"
                 onClick={handleSubmitRequest}
                 className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all hover:-translate-y-0.5
-                           bg-arena-elevated border border-arena-border text-white hover:bg-arena-border disabled:opacity-50`}
+                           bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-border disabled:opacity-50`}
               >
                 Send Request
               </button>
@@ -914,11 +914,11 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white">Edit Idea</h3>
+              <h3 className="text-lg font-bold text-text-primary">Edit Idea</h3>
               <button
                 type="button"
                 onClick={handleCancelTeamName}
-                className="p-1 text-text-muted hover:text-white transition-colors"
+                className="p-1 text-text-muted hover:text-text-primary transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -934,7 +934,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 onChange={(e) => setTeamNameInput(e.target.value)}
                 placeholder="Enter project idea"
                 maxLength={50}
-                className={`w-full px-3 py-3 border-2 focus:outline-none transition-colors text-base bg-arena-elevated text-white placeholder:text-text-muted rounded-card
+                className={`w-full px-3 py-3 border-2 focus:outline-none transition-colors text-base bg-arena-elevated text-text-primary placeholder:text-text-muted rounded-card
                   ${teamNameInput.trim().length < 3 ? 'border-error/50' : 'border-arena-border focus:border-text-secondary'}`}
                 autoFocus
                 onKeyDown={(e) => {
@@ -956,7 +956,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
               <button
                 type="button"
                 onClick={handleCancelTeamName}
-                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-white transition-all"
+                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-text-primary transition-all"
               >
                 Cancel
               </button>
@@ -965,7 +965,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                 onClick={handleSaveTeamName}
                 disabled={teamNameInput.trim().length < 3}
                 className={`flex-1 py-3 text-sm font-bold rounded-lg transition-all hover:-translate-y-0.5 disabled:opacity-50 disabled:hover:translate-y-0
-                           bg-arena-elevated border border-arena-border text-white hover:bg-arena-border disabled:opacity-50`}
+                           bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-border disabled:opacity-50`}
               >
                 Save
               </button>
@@ -985,14 +985,14 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             }}
           >
             <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-white">Transfer Captain Role</h3>
+              <h3 className="text-lg font-bold text-text-primary">Transfer Captain Role</h3>
               <button
                 type="button"
                 onClick={() => {
                   setShowTransferModal(false);
                   setMemberToTransfer(null);
                 }}
-                className="p-1 text-text-muted hover:text-white transition-colors"
+                className="p-1 text-text-muted hover:text-text-primary transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -1012,7 +1012,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                       <Crown className="w-3.5 h-3.5 text-yellow-800" />
                     </div>
                   </div>
-                  <p className="text-sm font-medium text-white">You</p>
+                  <p className="text-sm font-medium text-text-primary">You</p>
                   <p className="text-xs text-text-muted">Current Captain</p>
                 </div>
 
@@ -1029,7 +1029,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   >
                     <User className="w-7 h-7 text-white" />
                   </div>
-                  <p className="text-sm font-medium text-white">{memberToTransfer.name}</p>
+                  <p className="text-sm font-medium text-text-primary">{memberToTransfer.name}</p>
                   <p className="text-xs text-text-muted">New Captain</p>
                 </div>
               </div>
@@ -1049,7 +1049,7 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
                   setShowTransferModal(false);
                   setMemberToTransfer(null);
                 }}
-                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-white transition-all"
+                className="flex-1 py-3 text-sm font-bold text-text-secondary glass-card rounded-lg hover:text-text-primary transition-all"
               >
                 Cancel
               </button>

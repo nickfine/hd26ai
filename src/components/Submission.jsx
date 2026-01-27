@@ -162,7 +162,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
               <Upload className="w-5 h-5 text-brand" />
-              <span className="font-bold text-sm text-white">SUBMIT YOUR PROJECT</span>
+              <span className="font-bold text-sm text-text-primary">SUBMIT YOUR PROJECT</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
               PROJECT SUBMISSION
@@ -174,7 +174,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
 
           <div className="text-center py-12">
             <Users className="w-16 h-16 mx-auto mb-4 text-arena-muted" />
-            <h2 className="text-2xl font-bold text-white mb-2">No Team Yet</h2>
+            <h2 className="text-2xl font-bold text-text-primary mb-2">No Team Yet</h2>
             <p className="text-arena-secondary mb-6">
               You need to join or create an idea before you can submit a project.
             </p>
@@ -208,7 +208,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
           <div className="text-center mb-8">
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
               <Upload className="w-5 h-5 text-brand" />
-              <span className="font-bold text-sm text-white">SUBMIT YOUR PROJECT</span>
+              <span className="font-bold text-sm text-text-primary">SUBMIT YOUR PROJECT</span>
             </div>
             <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
               PROJECT SUBMISSION
@@ -223,7 +223,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
             <div className="flex items-center gap-3">
               <Users className="w-6 h-6 text-text-secondary" />
               <div>
-                <div className="font-bold text-white">
+                <div className="font-bold text-text-primary">
                   {userTeam.name}
                 </div>
                 <div className="text-xs text-arena-secondary">
@@ -259,7 +259,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                     <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-1">
                       Project Name
                     </div>
-                    <div className="text-white font-medium">{userTeam.submission.projectName}</div>
+                    <div className="text-text-primary font-medium">{userTeam.submission.projectName}</div>
                   </div>
                 )}
                 {userTeam.submission?.description && (
@@ -344,7 +344,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
             <Upload className="w-5 h-5 text-brand" />
-            <span className="font-bold text-sm text-white">SUBMIT YOUR PROJECT</span>
+            <span className="font-bold text-sm text-text-primary">SUBMIT YOUR PROJECT</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display">
             PROJECT SUBMISSION
@@ -361,7 +361,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
             <div className="flex items-center gap-3">
               <Users className="w-6 h-6 text-text-secondary" />
               <div>
-                <div className="font-bold text-white">
+                <div className="font-bold text-text-primary">
                   {userTeam.name}
                 </div>
                 <div className="text-xs text-arena-secondary">
@@ -394,7 +394,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                 value={formData.projectName}
                 onChange={(e) => handleChange('projectName', e.target.value)}
                 placeholder="Enter your project name"
-                className="w-full p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
+                className="w-full p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-text-primary placeholder-arena-muted text-base"
               />
             </div>
 
@@ -408,7 +408,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                 onChange={(e) => handleChange('description', e.target.value)}
                 placeholder="Describe what your project does, the problem it solves, and how it works..."
                 rows={5}
-                className="w-full p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base resize-none"
+                className="w-full p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-text-primary placeholder-arena-muted text-base resize-none"
               />
             </div>
 
@@ -424,7 +424,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                   value={formData.demoVideoUrl}
                   onChange={(e) => handleChange('demoVideoUrl', e.target.value)}
                   placeholder="https://youtube.com/watch?v=..."
-                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
+                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-text-primary placeholder-arena-muted text-base"
                 />
               </div>
               <p className="mt-2 text-xs text-arena-muted">
@@ -444,7 +444,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                   value={formData.repoUrl}
                   onChange={(e) => handleChange('repoUrl', e.target.value)}
                   placeholder="https://github.com/your-team/project"
-                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
+                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-text-primary placeholder-arena-muted text-base"
                 />
               </div>
             </div>
@@ -461,7 +461,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                   value={formData.liveDemoUrl}
                   onChange={(e) => handleChange('liveDemoUrl', e.target.value)}
                   placeholder="https://your-project.vercel.app"
-                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-white placeholder-arena-muted text-base"
+                  className="flex-1 p-3 bg-arena-black border border-arena-border rounded-lg focus:border-brand focus:outline-none text-text-primary placeholder-arena-muted text-base"
                 />
               </div>
             </div>
@@ -490,7 +490,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                           <Circle className="w-4 h-4 text-arena-muted" />
                         )}
                       </div>
-                      <span className={`text-sm ${isComplete ? 'text-white' : 'text-arena-muted'}`}>
+                      <span className={`text-sm ${isComplete ? 'text-text-primary' : 'text-arena-muted'}`}>
                         {field.label}
                         {field.required && !isComplete && (
                           <span className="text-human ml-1">*</span>
@@ -503,7 +503,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
               <div className="mt-4 pt-4 border-t border-arena-border">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-arena-secondary">Progress</span>
-                  <span className="font-bold text-white">
+                  <span className="font-bold text-text-primary">
                     {completedRequired.length}/{requiredFields.length} required
                   </span>
                 </div>
@@ -532,7 +532,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                 onClick={handleSaveDraft}
                 disabled={isSaving}
                 className="w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
-                           border border-arena-border text-arena-secondary hover:border-brand hover:text-white
+                           border border-arena-border text-arena-secondary hover:border-brand hover:text-text-primary
                            transition-colors disabled:opacity-50 rounded-lg"
               >
                 <Save className="w-4 h-4" />
@@ -554,7 +554,7 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
                   onClick={handleSubmit}
                   disabled={!canSubmit || isSaving}
                   className={`w-full py-3 flex items-center justify-center gap-2 font-bold text-sm
-                             text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg
+                             text-text-primary transition-colors disabled:opacity-50 disabled:cursor-not-allowed rounded-lg
                              ${canSubmit ? 'bg-arena-elevated border border-arena-border' : 'bg-gray-600'}`}
                 >
                   <Send className="w-4 h-4" />

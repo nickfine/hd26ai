@@ -267,7 +267,7 @@ export const ProgressSteps = ({
               {step.label && (
                 <span className={cn(
                   'mt-2 text-xs font-medium whitespace-nowrap',
-                  isActive ? 'text-white' : 'text-text-muted'
+                  isActive ? 'text-text-primary' : 'text-text-muted'
                 )}>
                   {step.label}
                 </span>

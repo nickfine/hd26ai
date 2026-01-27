@@ -103,9 +103,9 @@ function NewToHackDay({ user, teams, onNavigate, eventPhase }) {
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
             <Sparkles className="w-5 h-5 text-text-secondary" />
-            <span className="font-bold text-sm text-white">GETTING STARTED</span>
+            <span className="font-bold text-sm text-text-primary">GETTING STARTED</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-white mb-3 font-display">
+          <h1 className="text-3xl sm:text-4xl font-black text-text-primary mb-3 font-display">
             NEW TO HACKDAY?
           </h1>
           <p className="text-text-body max-w-2xl mx-auto">
@@ -203,7 +203,7 @@ function NewToHackDay({ user, teams, onNavigate, eventPhase }) {
                       <Icon className="w-5 h-5 text-brand" />
                     </div>
                     <div>
-                      <div className="font-bold text-white mb-1">{rule.title}</div>
+                      <div className="font-bold text-text-primary mb-1">{rule.title}</div>
                       <div className="text-sm text-text-body">{rule.description}</div>
                     </div>
                   </HStack>

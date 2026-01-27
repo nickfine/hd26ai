@@ -42,7 +42,7 @@ class ErrorBoundary extends Component {
             </div>
 
             {/* Error Message */}
-            <h2 className="text-xl font-bold text-white mb-2">
+            <h2 className="text-xl font-bold text-text-primary mb-2">
               Something went wrong
             </h2>
             <p className="text-text-secondary mb-6">
@@ -62,7 +62,7 @@ class ErrorBoundary extends Component {
             <div className="flex gap-3 justify-center">
               <button
                 onClick={this.handleReset}
-                className="px-4 py-2 bg-arena-elevated border border-arena-border text-white font-medium rounded-lg hover:bg-arena-border transition-colors"
+                className="px-4 py-2 bg-arena-elevated border border-arena-border text-text-primary font-medium rounded-lg hover:bg-arena-border transition-colors"
               >
                 Try Again
               </button>

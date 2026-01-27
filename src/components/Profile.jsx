@@ -142,7 +142,7 @@ function AvatarPickerModal({
           <Button
             variant="ghost"
             onClick={handleClear}
-            className="mr-auto text-arena-muted hover:text-white"
+            className="mr-auto text-arena-muted hover:text-text-primary"
           >
             Remove Avatar
           </Button>
@@ -388,7 +388,7 @@ function Profile({
               {/* Name, Callsign, and Role - Stacked */}
               <div className="text-center mb-5">
                 {/* Full Name */}
-                <div className="text-lg sm:text-xl font-bold text-white flex items-center justify-center gap-2">
+                <div className="text-lg sm:text-xl font-bold text-text-primary flex items-center justify-center gap-2">
                   <span>{user?.name || 'Unknown'}</span>
                   {isCaptain && <Crown className="w-5 h-5 text-yellow-500 flex-shrink-0" />}
                 </div>
@@ -452,7 +452,7 @@ function Profile({
                     onChange={(e) => handleCallsignChange(e.target.value)}
                     placeholder="Enter your callsign"
                     maxLength={20}
-                    className={`w-full px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted 
+                    className={`w-full px-3 py-2 border-2 bg-arena-black text-text-primary placeholder-arena-muted 
                       focus:outline-none text-sm transition-colors rounded
                       ${callsignError 
                         ? 'border-error focus:border-error' 
@@ -478,7 +478,7 @@ function Profile({
                       type="button"
                       onClick={handleSaveCallsign}
                       disabled={!!callsignError}
-                      className="px-3 py-1.5 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded bg-arena-elevated border border-arena-border"
+                      className="px-3 py-1.5 text-sm font-medium text-text-primary transition-colors disabled:opacity-50 rounded bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
@@ -521,7 +521,7 @@ function Profile({
                   <button
                     type="button"
                     onClick={() => setIsEditingBio(true)}
-                    className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
+                    className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-text-primary"
                   >
                     Edit
                   </button>
@@ -534,7 +534,7 @@ function Profile({
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
                     placeholder="Tell everyone what you're hoping to learn, build, or achieve during HackDay..."
-                    className="w-full p-3 border-2 border-arena-border bg-arena-black text-white placeholder-arena-muted
+                    className="w-full p-3 border-2 border-arena-border bg-arena-black text-text-primary placeholder-arena-muted
                                focus:border-brand focus:outline-none text-sm resize-none transition-colors"
                     rows={4}
                   />
@@ -552,14 +552,14 @@ function Profile({
                     <button
                       type="button"
                       onClick={handleSaveBio}
-                      className="px-4 py-2 text-sm font-medium text-white transition-colors rounded bg-arena-elevated border border-arena-border"
+                      className="px-4 py-2 text-sm font-medium text-text-primary transition-colors rounded bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
                   </div>
                 </div>
               ) : (
-                <p className="text-white text-sm sm:text-base">
+                <p className="text-text-primary text-sm sm:text-base">
                   {user?.bio || (
                     <span className="text-arena-muted italic">
                       Click Edit to share what you're looking for in HackDay...
@@ -586,7 +586,7 @@ function Profile({
                   <button
                     type="button"
                     onClick={() => setIsEditingSkills(true)}
-                    className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-white"
+                    className="text-xs font-medium px-3 py-1 rounded transition-colors bg-arena-elevated border border-arena-border text-text-secondary hover:text-text-primary"
                   >
                     Edit
                   </button>
@@ -660,7 +660,7 @@ function Profile({
                         placeholder="Type a skill and press Enter"
                         maxLength={30}
                         disabled={selectedSkills.length >= MAX_SKILLS}
-                        className={`flex-1 px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted 
+                        className={`flex-1 px-3 py-2 border-2 bg-arena-black text-text-primary placeholder-arena-muted 
                           focus:outline-none text-sm transition-colors rounded
                           ${customSkillError 
                             ? 'border-human focus:border-human' 
@@ -671,7 +671,7 @@ function Profile({
                         type="button"
                         onClick={handleAddCustomSkill}
                         disabled={selectedSkills.length >= MAX_SKILLS || !customSkillInput.trim()}
-                        className="px-4 py-2 text-sm font-medium text-white transition-colors disabled:opacity-50 rounded bg-arena-elevated border border-arena-border"
+                        className="px-4 py-2 text-sm font-medium text-text-primary transition-colors disabled:opacity-50 rounded bg-arena-elevated border border-arena-border"
                       >
                         Add
                       </button>
@@ -692,7 +692,7 @@ function Profile({
                     <button
                       type="button"
                       onClick={handleSaveSkills}
-                      className="px-4 py-2 text-sm font-medium text-white transition-colors rounded bg-arena-elevated border border-arena-border"
+                      className="px-4 py-2 text-sm font-medium text-text-primary transition-colors rounded bg-arena-elevated border border-arena-border"
                     >
                       Save
                     </button>
@@ -745,7 +745,7 @@ function Profile({
                   </div>
                   
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base sm:text-lg font-bold text-white">
+                    <h3 className="text-base sm:text-lg font-bold text-text-primary">
                       {userTeam.name}
                     </h3>
                     <span className="text-sm font-bold uppercase text-text-secondary">
@@ -767,7 +767,7 @@ function Profile({
                   type="button"
                   onClick={() => onNavigateToTeam(userTeam.id)}
                   className={`w-full mt-4 py-3 flex items-center justify-center gap-2
-                             font-bold text-sm transition-all text-white
+                             font-bold text-sm transition-all text-text-primary
                              bg-arena-elevated border border-arena-border hover:bg-arena-border rounded-lg`}
                 >
                   {isCaptain ? 'Manage Team' : 'View Team Details'}
@@ -806,7 +806,7 @@ function Profile({
                           onLeaveTeam(userTeam.id);
                           setShowLeaveConfirm(false);
                         }}
-                        className="flex-1 px-3 py-2 text-sm font-medium text-white bg-human rounded hover:bg-human/80 transition-colors"
+                        className="flex-1 px-3 py-2 text-sm font-medium text-text-primary bg-human rounded hover:bg-human/80 transition-colors"
                       >
                         Leave Team
                       </button>
@@ -857,7 +857,7 @@ function Profile({
                         className={`w-full py-3 font-bold text-sm transition-all flex items-center justify-center gap-2 rounded-lg
                           ${isAutoAssigning
                             ? 'bg-arena-elevated text-arena-muted cursor-wait'
-                            : 'bg-arena-elevated border border-arena-border text-white hover:bg-arena-border'
+                            : 'bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-border'
                           }`}
                       >
                         {isAutoAssigning ? (

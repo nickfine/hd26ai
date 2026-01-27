@@ -124,7 +124,7 @@ function Modal({
         ref={modalRef}
         tabIndex={-1}
         className={cn(
-          'relative w-full bg-white border-2 border-neutral-900 shadow-xl',
+          'relative w-full bg-arena-card border-2 border-arena-border shadow-xl',
           'animate-slide-up',
           SIZE_MAP[size],
           className

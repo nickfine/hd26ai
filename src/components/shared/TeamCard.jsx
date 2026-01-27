@@ -67,7 +67,7 @@ const TeamCard = forwardRef(({
           
           {/* Team Info */}
           <div className="flex-1 min-w-0">
-            <h4 className="font-bold text-white truncate">
+            <h4 className="font-bold text-text-primary truncate">
               {team.name}
             </h4>
             <div className="flex items-center gap-2 text-xs text-text-muted">
@@ -105,7 +105,7 @@ const TeamCard = forwardRef(({
               <Users className="w-6 h-6 text-text-secondary" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-white">
+              <h3 className="text-lg font-bold text-text-primary">
                 {team.name}
               </h3>
             </div>
@@ -183,7 +183,7 @@ const TeamCard = forwardRef(({
             <Users className="w-5 h-5 text-text-secondary" />
           </div>
           <div>
-            <h4 className="font-bold text-white">
+            <h4 className="font-bold text-text-primary">
               {team.name}
             </h4>
             <div className="flex items-center gap-2 text-xs text-text-muted">
@@ -293,7 +293,7 @@ export const TeamMemberItem = ({
         />
         <div>
           <div className="flex items-center gap-2">
-            <span className="font-bold text-sm text-white">
+            <span className="font-bold text-sm text-text-primary">
               {member.name}
             </span>
             {isCaptain && (

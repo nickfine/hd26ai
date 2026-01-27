@@ -191,9 +191,9 @@ function AdminPanel({
         <h2 className="text-3xl font-black mb-2">{currentPhaseInfo.label}</h2>
         <p className="opacity-80">{currentPhaseInfo.description}</p>
         <div className="mt-4 flex items-center gap-2">
-          <div className="flex-1 h-2 bg-white/20 rounded-full overflow-hidden">
+          <div className="flex-1 h-2 bg-arena-card/20 rounded-full overflow-hidden">
             <div
-              className="h-full bg-white transition-all duration-500"
+              className="h-full bg-arena-card transition-all duration-500"
               style={{
                 width: `${((currentPhaseIndex + 1) / EVENT_PHASE_ORDER.length) * 100}%`,
               }}
@@ -207,99 +207,99 @@ function AdminPanel({
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white border-2 border-gray-200 p-4">
+        <div className="bg-arena-card border-2 border-arena-border p-4">
           <div className="flex items-center gap-2 mb-2">
-            <Users className="w-5 h-5 text-gray-400" />
-            <span className="text-xs font-bold text-gray-500 uppercase">Teams</span>
+            <Users className="w-5 h-5 text-arena-muted" />
+            <span className="text-xs font-bold text-text-secondary uppercase">Teams</span>
           </div>
-          <div className="text-3xl font-black text-gray-900">{stats.totalTeams}</div>
-          <div className="text-xs text-gray-500 mt-1">
+          <div className="text-3xl font-black text-text-primary">{stats.totalTeams}</div>
+          <div className="text-xs text-text-secondary mt-1">
             Total teams
           </div>
         </div>
 
-        <div className="bg-white border-2 border-gray-200 p-4">
+        <div className="bg-arena-card border-2 border-arena-border p-4">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="w-5 h-5 text-amber-400" />
-            <span className="text-xs font-bold text-gray-500 uppercase">Submissions</span>
+            <span className="text-xs font-bold text-text-secondary uppercase">Submissions</span>
           </div>
-          <div className="text-3xl font-black text-gray-900">{stats.submittedProjects}</div>
-          <div className="text-xs text-gray-500 mt-1">projects submitted</div>
+          <div className="text-3xl font-black text-text-primary">{stats.submittedProjects}</div>
+          <div className="text-xs text-text-secondary mt-1">projects submitted</div>
         </div>
 
-        <div className="bg-white border-2 border-gray-200 p-4">
+        <div className="bg-arena-card border-2 border-arena-border p-4">
           <div className="flex items-center gap-2 mb-2">
             <Star className="w-5 h-5 text-amber-400" />
-            <span className="text-xs font-bold text-gray-500 uppercase">Votes</span>
+            <span className="text-xs font-bold text-text-secondary uppercase">Votes</span>
           </div>
-          <div className="text-3xl font-black text-gray-900">{stats.totalVotes}</div>
-          <div className="text-xs text-gray-500 mt-1">total votes cast</div>
+          <div className="text-3xl font-black text-text-primary">{stats.totalVotes}</div>
+          <div className="text-xs text-text-secondary mt-1">total votes cast</div>
         </div>
 
-        <div className="bg-white border-2 border-gray-200 p-4">
+        <div className="bg-arena-card border-2 border-arena-border p-4">
           <div className="flex items-center gap-2 mb-2">
             <Gavel className="w-5 h-5 text-purple-500" />
-            <span className="text-xs font-bold text-gray-500 uppercase">Judging</span>
+            <span className="text-xs font-bold text-text-secondary uppercase">Judging</span>
           </div>
-          <div className="text-3xl font-black text-gray-900">{stats.fullyJudged}</div>
-          <div className="text-xs text-gray-500 mt-1">fully judged</div>
+          <div className="text-3xl font-black text-text-primary">{stats.fullyJudged}</div>
+          <div className="text-xs text-text-secondary mt-1">fully judged</div>
         </div>
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-white border-2 border-gray-200 p-6">
-        <h3 className="font-bold text-gray-900 mb-4">Quick Actions</h3>
+      <div className="bg-arena-card border-2 border-arena-border p-6">
+        <h3 className="font-bold text-text-primary mb-4">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <button
             type="button"
             onClick={() => setActiveSection('analytics')}
-            className="flex items-center gap-3 p-4 border-2 border-gray-200 hover:border-purple-400 transition-colors text-left"
+            className="flex items-center gap-3 p-4 border-2 border-arena-border hover:border-purple-400 transition-colors text-left"
           >
             <BarChart3 className="w-6 h-6 text-purple-500" />
             <div>
-              <div className="font-bold text-gray-900">View Analytics</div>
-              <div className="text-xs text-gray-500">See signups, teams, and engagement</div>
+              <div className="font-bold text-text-primary">View Analytics</div>
+              <div className="text-xs text-text-secondary">See signups, teams, and engagement</div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-300 ml-auto" />
+            <ChevronRight className="w-5 h-5 text-arena-muted ml-auto" />
           </button>
 
           <button
             type="button"
             onClick={() => setActiveSection('phases')}
-            className="flex items-center gap-3 p-4 border-2 border-gray-200 hover:border-amber-400 transition-colors text-left"
+            className="flex items-center gap-3 p-4 border-2 border-arena-border hover:border-amber-400 transition-colors text-left"
           >
             <Clock className="w-6 h-6 text-amber-500" />
             <div>
-              <div className="font-bold text-gray-900">Manage Phases</div>
-              <div className="text-xs text-gray-500">Change event phase</div>
+              <div className="font-bold text-text-primary">Manage Phases</div>
+              <div className="text-xs text-text-secondary">Change event phase</div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-300 ml-auto" />
+            <ChevronRight className="w-5 h-5 text-arena-muted ml-auto" />
           </button>
 
           <button
             type="button"
             onClick={() => onNavigate('marketplace')}
-            className="flex items-center gap-3 p-4 border-2 border-gray-200 hover:border-green-400 transition-colors text-left"
+            className="flex items-center gap-3 p-4 border-2 border-arena-border hover:border-green-400 transition-colors text-left"
           >
             <Users className="w-6 h-6 text-green-500" />
             <div>
-              <div className="font-bold text-gray-900">View Teams</div>
-              <div className="text-xs text-gray-500">Browse all teams</div>
+              <div className="font-bold text-text-primary">View Teams</div>
+              <div className="text-xs text-text-secondary">Browse all teams</div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-300 ml-auto" />
+            <ChevronRight className="w-5 h-5 text-arena-muted ml-auto" />
           </button>
 
           <button
             type="button"
             onClick={() => setActiveSection('users')}
-            className="flex items-center gap-3 p-4 border-2 border-gray-200 hover:border-blue-400 transition-colors text-left"
+            className="flex items-center gap-3 p-4 border-2 border-arena-border hover:border-blue-400 transition-colors text-left"
           >
             <UserCog className="w-6 h-6 text-blue-500" />
             <div>
-              <div className="font-bold text-gray-900">Manage Users</div>
-              <div className="text-xs text-gray-500">Assign roles</div>
+              <div className="font-bold text-text-primary">Manage Users</div>
+              <div className="text-xs text-text-secondary">Assign roles</div>
             </div>
-            <ChevronRight className="w-5 h-5 text-gray-300 ml-auto" />
+            <ChevronRight className="w-5 h-5 text-arena-muted ml-auto" />
           </button>
         </div>
       </div>
@@ -338,16 +338,16 @@ function AdminPanel({
     <div className="space-y-6">
       {/* MOTD Editor - Only show during hacking phase */}
       {eventPhase === 'hacking' && (
-        <div className="bg-white border-2 border-gray-200 p-6">
-          <h3 className="font-bold text-gray-900 mb-2">Message of the Day (MOTD)</h3>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-arena-card border-2 border-arena-border p-6">
+          <h3 className="font-bold text-text-primary mb-2">Message of the Day (MOTD)</h3>
+          <p className="text-sm text-text-secondary mb-4">
             Update the message displayed in the hero banner during the hacking phase.
           </p>
           <textarea
             value={motd}
             onChange={(e) => setMotd(e.target.value)}
             placeholder="Enter your message of the day..."
-            className="w-full px-3 py-2 border-2 border-gray-200 rounded mb-3 min-h-[120px] focus:outline-none focus:border-purple-500"
+            className="w-full px-3 py-2 border-2 border-arena-border rounded mb-3 min-h-[120px] focus:outline-none focus:border-purple-500"
             disabled={isSavingMotd}
           />
           <button
@@ -361,9 +361,9 @@ function AdminPanel({
         </div>
       )}
 
-      <div className="bg-white border-2 border-gray-200 p-6">
-        <h3 className="font-bold text-gray-900 mb-2">Event Phase Control</h3>
-        <p className="text-sm text-gray-500 mb-6">
+      <div className="bg-arena-card border-2 border-arena-border p-6">
+        <h3 className="font-bold text-text-primary mb-2">Event Phase Control</h3>
+        <p className="text-sm text-text-secondary mb-6">
           Change the current phase of the hackday event. This affects what features are available
           to participants.
         </p>
@@ -383,8 +383,8 @@ function AdminPanel({
                   isCurrent
                     ? 'border-purple-500 bg-purple-50'
                     : isPast
-                    ? 'border-gray-200 bg-gray-50 opacity-60'
-                    : 'border-gray-200 bg-white'
+                    ? 'border-arena-border bg-arena-elevated opacity-60'
+                    : 'border-arena-border bg-arena-card'
                 }`}
               >
                 <div className="flex items-center gap-4">
@@ -393,7 +393,7 @@ function AdminPanel({
                     className={`w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-full font-bold
                       ${isCurrent ? 'bg-purple-500 text-white' : ''}
                       ${isPast ? 'bg-green-100 text-green-600' : ''}
-                      ${!isCurrent && !isPast ? 'bg-gray-100 text-gray-400' : ''}
+                      ${!isCurrent && !isPast ? 'bg-arena-elevated text-arena-muted' : ''}
                     `}
                   >
                     {isPast ? (
@@ -407,8 +407,8 @@ function AdminPanel({
 
                   {/* Phase info */}
                   <div className="flex-1">
-                    <div className="font-bold text-gray-900">{phase?.label}</div>
-                    <div className="text-xs text-gray-500">{phase?.description}</div>
+                    <div className="font-bold text-text-primary">{phase?.label}</div>
+                    <div className="text-xs text-text-secondary">{phase?.description}</div>
                   </div>
 
                   {/* Action */}
@@ -421,7 +421,7 @@ function AdminPanel({
                           ? 'bg-red-600 text-white hover:bg-red-700'
                           : isNext
                           ? 'bg-purple-600 text-white hover:bg-purple-700'
-                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                          : 'bg-gray-200 text-text-secondary hover:bg-gray-300'
                       }`}
                     >
                       {isConfirming ? 'Click to Confirm' : 'Activate'}
@@ -680,9 +680,9 @@ function AdminPanel({
       </div>
 
       {/* Role Impersonation */}
-      <div className="bg-white border-2 border-gray-200 p-6">
-        <h3 className="font-bold text-gray-900 mb-2">Role Impersonation</h3>
-        <p className="text-sm text-gray-500 mb-4">
+      <div className="bg-arena-card border-2 border-arena-border p-6">
+        <h3 className="font-bold text-text-primary mb-2">Role Impersonation</h3>
+        <p className="text-sm text-text-secondary mb-4">
           Temporarily override your role to test different user experiences. This affects both UI visibility and actions.
         </p>
         <select
@@ -693,7 +693,7 @@ function AdminPanel({
             const finalRole = newRole === realRole ? null : newRole;
             onDevRoleChange?.(finalRole);
           }}
-          className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+          className="w-full px-3 py-2 border-2 border-arena-border rounded focus:outline-none focus:border-purple-500"
         >
           <option value={user?.role || 'participant'}>Your Real Role: {user?.role || 'participant'}</option>
           <option value="participant">Participant</option>
@@ -715,11 +715,11 @@ function AdminPanel({
   // ============================================================================
   const renderUsers = () => (
     <div className="space-y-6">
-      <div className="bg-white border-2 border-gray-200 p-6">
+      <div className="bg-arena-card border-2 border-arena-border p-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
           <div>
-            <h3 className="font-bold text-gray-900 mb-1">User Role Management</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="font-bold text-text-primary mb-1">User Role Management</h3>
+            <p className="text-sm text-text-secondary">
               Search users and assign roles. Changes take effect immediately.
             </p>
           </div>
@@ -729,7 +729,7 @@ function AdminPanel({
                 <select
                   value={bulkRole}
                   onChange={(e) => setBulkRole(e.target.value)}
-                  className="px-3 py-2 border-2 border-gray-200 text-sm font-medium focus:outline-none focus:border-purple-500"
+                  className="px-3 py-2 border-2 border-arena-border text-sm font-medium focus:outline-none focus:border-purple-500"
                 >
                   {Object.entries(ROLE_CONFIG).map(([roleKey, config]) => (
                     <option key={roleKey} value={roleKey}>
@@ -758,7 +758,7 @@ function AdminPanel({
                 <button
                   type="button"
                   onClick={() => setSelectedUsers(new Set())}
-                  className="px-3 py-2 border-2 border-gray-200 text-gray-600 font-bold text-sm rounded hover:border-gray-400"
+                  className="px-3 py-2 border-2 border-arena-border text-text-secondary font-bold text-sm rounded hover:border-arena-border-strong"
                 >
                   Clear
                 </button>
@@ -776,7 +776,7 @@ function AdminPanel({
               type="button"
               onClick={onRefreshUsers}
               disabled={usersLoading}
-              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-600 border border-gray-200 hover:border-gray-400 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-text-secondary border border-arena-border hover:border-arena-border-strong transition-colors disabled:opacity-50"
             >
               <RefreshCw className={`w-4 h-4 ${usersLoading ? 'animate-spin' : ''}`} />
               Refresh
@@ -795,7 +795,7 @@ function AdminPanel({
                   <Icon className={`w-4 h-4 ${config.textColor}`} />
                   <span className={`font-bold text-sm ${config.textColor}`}>{config.label}</span>
                 </div>
-                <p className="text-xs text-gray-500">{count} users</p>
+                <p className="text-xs text-text-secondary">{count} users</p>
               </div>
             );
           })}
@@ -805,19 +805,19 @@ function AdminPanel({
         <div className="flex flex-col sm:flex-row gap-3 mb-4">
           {/* Search Input */}
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-arena-muted" />
             <input
               type="text"
               value={userSearchTerm}
               onChange={(e) => { setUserSearchTerm(e.target.value); resetPage(); }}
               placeholder="Search by name or email..."
-              className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 focus:border-purple-500 focus:outline-none text-sm"
+              className="w-full pl-10 pr-4 py-2 border-2 border-arena-border focus:border-purple-500 focus:outline-none text-sm"
             />
             {userSearchTerm && (
               <button
                 type="button"
                 onClick={() => { setUserSearchTerm(''); resetPage(); }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-arena-muted hover:text-text-secondary"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -829,13 +829,13 @@ function AdminPanel({
             <button
               type="button"
               onClick={() => setRoleFilterDropdownOpen(!roleFilterDropdownOpen)}
-              className="flex items-center gap-2 px-4 py-2 border-2 border-gray-200 hover:border-gray-400 transition-colors text-sm font-medium text-gray-700 w-full sm:w-auto"
+              className="flex items-center gap-2 px-4 py-2 border-2 border-arena-border hover:border-arena-border-strong transition-colors text-sm font-medium text-text-primary w-full sm:w-auto"
             >
               {roleFilter === 'all' ? 'All Roles' : ROLE_CONFIG[roleFilter]?.label}
               <ChevronDown className="w-4 h-4" />
             </button>
             {roleFilterDropdownOpen && (
-              <div className="absolute right-0 mt-1 w-48 bg-white border-2 border-gray-200 shadow-lg z-10">
+              <div className="absolute right-0 mt-1 w-48 bg-arena-card border-2 border-arena-border shadow-lg z-10">
                 <button
                   type="button"
                   onClick={() => {
@@ -843,8 +843,8 @@ function AdminPanel({
                     setRoleFilterDropdownOpen(false);
                     resetPage();
                   }}
-                  className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center justify-between
-                    ${roleFilter === 'all' ? 'bg-purple-50 text-purple-700' : 'text-gray-700'}`}
+                  className={`w-full px-4 py-2 text-left text-sm hover:bg-arena-elevated flex items-center justify-between
+                    ${roleFilter === 'all' ? 'bg-purple-50 text-purple-700' : 'text-text-primary'}`}
                 >
                   All Roles
                   {roleFilter === 'all' && <Check className="w-4 h-4" />}
@@ -858,8 +858,8 @@ function AdminPanel({
                       setRoleFilterDropdownOpen(false);
                       resetPage();
                     }}
-                    className={`w-full px-4 py-2 text-left text-sm hover:bg-gray-50 flex items-center justify-between
-                      ${roleFilter === roleKey ? 'bg-purple-50 text-purple-700' : 'text-gray-700'}`}
+                    className={`w-full px-4 py-2 text-left text-sm hover:bg-arena-elevated flex items-center justify-between
+                      ${roleFilter === roleKey ? 'bg-purple-50 text-purple-700' : 'text-text-primary'}`}
                   >
                     {config.label}
                     {roleFilter === roleKey && <Check className="w-4 h-4" />}
@@ -894,13 +894,13 @@ function AdminPanel({
         {usersLoading ? (
           <div className="py-12 text-center">
             <Loader2 className="w-8 h-8 mx-auto mb-3 text-purple-500 animate-spin" />
-            <p className="text-sm text-gray-500">Loading users...</p>
+            <p className="text-sm text-text-secondary">Loading users...</p>
           </div>
         ) : filteredUsers.length === 0 ? (
-          <div className="py-12 text-center border-2 border-dashed border-gray-200">
-            <Users className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-            <h4 className="font-bold text-gray-600 mb-1">No Users Found</h4>
-            <p className="text-sm text-gray-500">
+          <div className="py-12 text-center border-2 border-dashed border-arena-border">
+            <Users className="w-12 h-12 mx-auto mb-3 text-arena-muted" />
+            <h4 className="font-bold text-text-secondary mb-1">No Users Found</h4>
+            <p className="text-sm text-text-secondary">
               {userSearchTerm
                 ? 'Try a different search term'
                 : roleFilter !== 'all'
@@ -910,7 +910,7 @@ function AdminPanel({
           </div>
         ) : (
           <div className="space-y-2">
-            <div className="text-xs text-gray-500 mb-2">
+            <div className="text-xs text-text-secondary mb-2">
               Showing {startIndex + 1}–{Math.min(endIndex, filteredUsers.length)} of {filteredUsers.length} users
               {filteredUsers.length !== allUsers.length && ` (${allUsers.length} total)`}
             </div>
@@ -926,8 +926,8 @@ function AdminPanel({
                     ${selectedUsers.has(targetUser.id)
                       ? 'border-purple-500 bg-purple-50'
                       : isCurrentUser
-                      ? 'bg-purple-50/50 border-gray-100'
-                      : 'bg-white border-gray-100 hover:border-gray-200'
+                      ? 'bg-purple-50/50 border-arena-border'
+                      : 'bg-arena-card border-arena-border hover:border-arena-border'
                     }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3">
@@ -958,7 +958,7 @@ function AdminPanel({
                         />
                       ) : (
                         <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                          <span className="text-gray-500 font-bold text-sm">
+                          <span className="text-text-secondary font-bold text-sm">
                             {targetUser.name?.charAt(0)?.toUpperCase() || '?'}
                           </span>
                         </div>
@@ -967,7 +967,7 @@ function AdminPanel({
                       {/* Name & Email */}
                       <div className="min-w-0 flex-1">
                         <div className="flex items-center gap-2 flex-wrap">
-                          <span className="font-bold text-gray-900 truncate">
+                          <span className="font-bold text-text-primary truncate">
                             {targetUser.name}
                           </span>
                           {isCurrentUser && (
@@ -976,7 +976,7 @@ function AdminPanel({
                             </span>
                           )}
                         </div>
-                        <div className="text-sm text-gray-500 truncate">{targetUser.email}</div>
+                        <div className="text-sm text-text-secondary truncate">{targetUser.email}</div>
                       </div>
                     </div>
 
@@ -994,8 +994,8 @@ function AdminPanel({
                         value={targetUser.role}
                         onChange={(e) => handleRoleChangeClick(targetUser, e.target.value)}
                         disabled={isCurrentUser}
-                        className={`px-3 py-2 border-2 border-gray-200 text-sm font-medium focus:border-purple-500 focus:outline-none
-                          ${isCurrentUser ? 'opacity-50 cursor-not-allowed bg-gray-50' : 'cursor-pointer hover:border-gray-400'}`}
+                        className={`px-3 py-2 border-2 border-arena-border text-sm font-medium focus:border-purple-500 focus:outline-none
+                          ${isCurrentUser ? 'opacity-50 cursor-not-allowed bg-arena-elevated' : 'cursor-pointer hover:border-arena-border-strong'}`}
                         title={isCurrentUser ? "You can't change your own role" : 'Change role'}
                       >
                         {Object.entries(ROLE_CONFIG).map(([roleKey, config]) => (
@@ -1012,8 +1012,8 @@ function AdminPanel({
 
             {/* Pagination Controls */}
             {totalPages > 1 && (
-              <div className="flex items-center justify-between pt-4 mt-4 border-t border-gray-200">
-                <div className="text-sm text-gray-500">
+              <div className="flex items-center justify-between pt-4 mt-4 border-t border-arena-border">
+                <div className="text-sm text-text-secondary">
                   Page {currentPage} of {totalPages}
                 </div>
                 
@@ -1025,8 +1025,8 @@ function AdminPanel({
                     disabled={currentPage === 1}
                     className={`p-2 border-2 transition-colors
                       ${currentPage === 1
-                        ? 'border-gray-100 text-gray-300 cursor-not-allowed'
-                        : 'border-gray-200 text-gray-600 hover:border-purple-400 hover:text-purple-600'
+                        ? 'border-arena-border text-arena-muted cursor-not-allowed'
+                        : 'border-arena-border text-text-secondary hover:border-purple-400 hover:text-purple-600'
                       }`}
                   >
                     <ChevronLeft className="w-4 h-4" />
@@ -1035,7 +1035,7 @@ function AdminPanel({
                   {/* Page Numbers */}
                   {getPageNumbers().map((page, idx) => (
                     page === '...' ? (
-                      <span key={`ellipsis-${idx}`} className="px-2 text-gray-400">...</span>
+                      <span key={`ellipsis-${idx}`} className="px-2 text-arena-muted">...</span>
                     ) : (
                       <button
                         key={page}
@@ -1044,7 +1044,7 @@ function AdminPanel({
                         className={`min-w-[36px] h-9 px-2 border-2 text-sm font-medium transition-colors
                           ${currentPage === page
                             ? 'border-purple-500 bg-purple-500 text-white'
-                            : 'border-gray-200 text-gray-600 hover:border-purple-400'
+                            : 'border-arena-border text-text-secondary hover:border-purple-400'
                           }`}
                       >
                         {page}
@@ -1059,8 +1059,8 @@ function AdminPanel({
                     disabled={currentPage === totalPages}
                     className={`p-2 border-2 transition-colors
                       ${currentPage === totalPages
-                        ? 'border-gray-100 text-gray-300 cursor-not-allowed'
-                        : 'border-gray-200 text-gray-600 hover:border-purple-400 hover:text-purple-600'
+                        ? 'border-arena-border text-arena-muted cursor-not-allowed'
+                        : 'border-arena-border text-text-secondary hover:border-purple-400 hover:text-purple-600'
                       }`}
                   >
                     <ChevronRight className="w-4 h-4" />
@@ -1075,13 +1075,13 @@ function AdminPanel({
       {/* Role Change Confirmation Modal */}
       {roleChangeConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white p-6 max-w-md w-full shadow-2xl">
+          <div className="bg-arena-card p-6 max-w-md w-full shadow-2xl">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-bold text-gray-900">Confirm Role Change</h2>
+              <h2 className="text-lg font-bold text-text-primary">Confirm Role Change</h2>
               <button
                 type="button"
                 onClick={() => setRoleChangeConfirm(null)}
-                className="p-1 text-gray-400 hover:text-gray-600"
+                className="p-1 text-arena-muted hover:text-text-secondary"
                 disabled={isUpdatingRole}
               >
                 <X className="w-5 h-5" />
@@ -1089,7 +1089,7 @@ function AdminPanel({
             </div>
 
             <div className="mb-6">
-              <p className="text-gray-700 mb-4">
+              <p className="text-text-primary mb-4">
                 Change <span className="font-bold">{roleChangeConfirm.userName}</span> from{' '}
                 <span className={`font-bold ${ROLE_CONFIG[roleChangeConfirm.currentRole]?.textColor}`}>
                   {ROLE_CONFIG[roleChangeConfirm.currentRole]?.label}
@@ -1112,7 +1112,7 @@ function AdminPanel({
                 type="button"
                 onClick={() => setRoleChangeConfirm(null)}
                 disabled={isUpdatingRole}
-                className="flex-1 py-2.5 border-2 border-gray-200 text-gray-600 font-bold text-sm hover:border-gray-400 transition-colors disabled:opacity-50"
+                className="flex-1 py-2.5 border-2 border-arena-border text-text-secondary font-bold text-sm hover:border-arena-border-strong transition-colors disabled:opacity-50"
               >
                 Cancel
               </button>
@@ -1171,16 +1171,16 @@ function AdminPanel({
 
     return (
       <div className="space-y-6">
-        <div className="bg-white border-2 border-gray-200 p-6">
-          <h3 className="font-bold text-gray-900 mb-4">Event Settings</h3>
-          <p className="text-sm text-gray-500 mb-6">
+        <div className="bg-arena-card border-2 border-arena-border p-6">
+          <h3 className="font-bold text-text-primary mb-4">Event Settings</h3>
+          <p className="text-sm text-text-secondary mb-6">
             Configure event-wide settings that affect team formation, voting, and deadlines.
           </p>
 
           <div className="space-y-4">
             {/* Max Team Size */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-text-primary mb-2">
                 Maximum Team Size
               </label>
               <input
@@ -1189,16 +1189,16 @@ function AdminPanel({
               max="10"
               value={settings.maxTeamSize}
               onChange={(e) => setSettings(prev => ({ ...prev, maxTeamSize: e.target.value }))}
-              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+              className="w-full px-3 py-2 border-2 border-arena-border rounded focus:outline-none focus:border-purple-500"
             />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-secondary mt-1">
                 Maximum number of members allowed per team (default: 6)
               </p>
             </div>
 
             {/* Max Votes Per User */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-text-primary mb-2">
                 Maximum Votes Per User
               </label>
               <input
@@ -1207,47 +1207,47 @@ function AdminPanel({
               max="10"
               value={settings.maxVotesPerUser}
               onChange={(e) => setSettings(prev => ({ ...prev, maxVotesPerUser: e.target.value }))}
-              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+              className="w-full px-3 py-2 border-2 border-arena-border rounded focus:outline-none focus:border-purple-500"
             />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-secondary mt-1">
                 Maximum number of votes each user can cast (default: 5)
               </p>
             </div>
 
             {/* Submission Deadline */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-text-primary mb-2">
                 Submission Deadline (Optional)
               </label>
               <input
               type="datetime-local"
               value={settings.submissionDeadline ? new Date(settings.submissionDeadline).toISOString().slice(0, 16) : ''}
               onChange={(e) => setSettings(prev => ({ ...prev, submissionDeadline: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
-              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+              className="w-full px-3 py-2 border-2 border-arena-border rounded focus:outline-none focus:border-purple-500"
             />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-secondary mt-1">
                 Deadline for project submissions
               </p>
             </div>
 
             {/* Voting Deadline */}
             <div>
-              <label className="block text-sm font-bold text-gray-700 mb-2">
+              <label className="block text-sm font-bold text-text-primary mb-2">
                 Voting Deadline (Optional)
               </label>
               <input
               type="datetime-local"
               value={settings.votingDeadline ? new Date(settings.votingDeadline).toISOString().slice(0, 16) : ''}
               onChange={(e) => setSettings(prev => ({ ...prev, votingDeadline: e.target.value ? new Date(e.target.value).toISOString() : '' }))}
-              className="w-full px-3 py-2 border-2 border-gray-200 rounded focus:outline-none focus:border-purple-500"
+              className="w-full px-3 py-2 border-2 border-arena-border rounded focus:outline-none focus:border-purple-500"
             />
-              <p className="text-xs text-gray-500 mt-1">
+              <p className="text-xs text-text-secondary mt-1">
                 Deadline for voting phase
               </p>
             </div>
 
             {/* Save Button */}
-            <div className="pt-4 border-t border-gray-200">
+            <div className="pt-4 border-t border-arena-border">
               <button
                 type="button"
                 onClick={handleSaveSettings}
@@ -1293,9 +1293,9 @@ function AdminPanel({
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <Shield className="w-8 h-8 text-purple-600" />
-            <h1 className="text-3xl font-black text-gray-900">ADMIN PANEL</h1>
+            <h1 className="text-3xl font-black text-text-primary">ADMIN PANEL</h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             Manage the hackday event, phases, and user roles.
           </p>
         </div>
@@ -1320,7 +1320,7 @@ function AdminPanel({
                   ${
                     activeSection === section.id
                       ? 'bg-purple-600 text-white'
-                      : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'
+                      : 'bg-arena-card border-2 border-arena-border text-text-secondary hover:border-arena-border-strong'
                   }`}
               >
                 <Icon className="w-4 h-4" />
@@ -1337,8 +1337,8 @@ function AdminPanel({
         {activeSection === 'settings' && renderSettings()}
         {activeSection === 'analytics' && (
           <div className="space-y-6">
-            <div className="bg-white border-2 border-gray-200 p-6">
-              <h3 className="font-bold text-gray-900 mb-4">Event Analytics</h3>
+            <div className="bg-arena-card border-2 border-arena-border p-6">
+              <h3 className="font-bold text-text-primary mb-4">Event Analytics</h3>
               <AnalyticsDashboard event={event} />
             </div>
           </div>

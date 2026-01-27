@@ -156,23 +156,23 @@ function VotingAnalytics({
   const renderStats = () => (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {/* Total Projects */}
-      <div className="bg-white border-2 border-gray-200 p-4">
+      <div className="bg-arena-card border-2 border-arena-border p-4">
         <div className="flex items-center gap-2 mb-2">
-          <Target className="w-5 h-5 text-gray-400" />
-          <span className="text-xs font-bold text-gray-500 uppercase">Projects</span>
+          <Target className="w-5 h-5 text-arena-muted" />
+          <span className="text-xs font-bold text-text-secondary uppercase">Projects</span>
         </div>
-        <div className="text-3xl font-black text-gray-900">{stats.totalProjects}</div>
-        <div className="text-xs text-gray-500 mt-1">submitted</div>
+        <div className="text-3xl font-black text-text-primary">{stats.totalProjects}</div>
+        <div className="text-xs text-text-secondary mt-1">submitted</div>
       </div>
 
       {/* Total Votes */}
-      <div className="bg-white border-2 border-gray-200 p-4">
+      <div className="bg-arena-card border-2 border-arena-border p-4">
         <div className="flex items-center gap-2 mb-2">
           <Star className="w-5 h-5 text-amber-400" />
-          <span className="text-xs font-bold text-gray-500 uppercase">Votes</span>
+          <span className="text-xs font-bold text-text-secondary uppercase">Votes</span>
         </div>
-        <div className="text-3xl font-black text-gray-900">{stats.totalVotes}</div>
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-3xl font-black text-text-primary">{stats.totalVotes}</div>
+        <div className="text-xs text-text-secondary mt-1">
           <span className="text-green-600">{stats.humanVotes} human</span>
           {' · '}
           <span className="text-cyan-600">{stats.aiVotes} AI</span>
@@ -180,27 +180,27 @@ function VotingAnalytics({
       </div>
 
       {/* Judge Progress */}
-      <div className="bg-white border-2 border-gray-200 p-4">
+      <div className="bg-arena-card border-2 border-arena-border p-4">
         <div className="flex items-center gap-2 mb-2">
           <Award className="w-5 h-5 text-purple-500" />
-          <span className="text-xs font-bold text-gray-500 uppercase">Judging</span>
+          <span className="text-xs font-bold text-text-secondary uppercase">Judging</span>
         </div>
-        <div className="text-3xl font-black text-gray-900">{stats.judgeProgress}%</div>
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-3xl font-black text-text-primary">{stats.judgeProgress}%</div>
+        <div className="text-xs text-text-secondary mt-1">
           {stats.fullyJudged}/{stats.totalProjects} complete
         </div>
       </div>
 
       {/* Event Phase */}
-      <div className="bg-white border-2 border-gray-200 p-4">
+      <div className="bg-arena-card border-2 border-arena-border p-4">
         <div className="flex items-center gap-2 mb-2">
           <TrendingUp className="w-5 h-5 text-blue-500" />
-          <span className="text-xs font-bold text-gray-500 uppercase">Phase</span>
+          <span className="text-xs font-bold text-text-secondary uppercase">Phase</span>
         </div>
-        <div className="text-lg font-black text-gray-900 capitalize">
+        <div className="text-lg font-black text-text-primary capitalize">
           {eventPhase?.replace('_', ' ')}
         </div>
-        <div className="text-xs text-gray-500 mt-1">current stage</div>
+        <div className="text-xs text-text-secondary mt-1">current stage</div>
       </div>
     </div>
   );
@@ -214,46 +214,46 @@ function VotingAnalytics({
     const isExpanded = expandedTeam === team.id;
 
     return (
-      <div key={team.id} className="bg-white border-2 border-gray-200 overflow-hidden">
+      <div key={team.id} className="bg-arena-card border-2 border-arena-border overflow-hidden">
         <div
-          className="flex items-center gap-4 p-4 cursor-pointer hover:bg-gray-50"
+          className="flex items-center gap-4 p-4 cursor-pointer hover:bg-arena-elevated"
           onClick={() => setExpandedTeam(isExpanded ? null : team.id)}
         >
           {/* Rank */}
           <div
             className={`w-10 h-10 flex-shrink-0 flex items-center justify-center font-black text-lg
               ${rank === 1 ? 'bg-amber-400 text-amber-900' : ''}
-              ${rank === 2 ? 'bg-gray-300 text-gray-700' : ''}
+              ${rank === 2 ? 'bg-gray-300 text-text-primary' : ''}
               ${rank === 3 ? 'bg-amber-600 text-amber-100' : ''}
-              ${rank > 3 ? 'bg-gray-100 text-gray-500' : ''}
+              ${rank > 3 ? 'bg-arena-elevated text-text-secondary' : ''}
             `}
           >
             {rank}
           </div>
 
           {/* Team indicator */}
-          <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100">
-            <Users className="w-5 h-5 text-gray-600" />
+          <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg bg-arena-elevated">
+            <Users className="w-5 h-5 text-text-secondary" />
           </div>
 
           {/* Project info */}
           <div className="flex-1 min-w-0">
             <h3
-              className="text-base font-black text-gray-900 truncate"
+              className="text-base font-black text-text-primary truncate"
             >
               {team.submission?.projectName || 'Untitled'}
             </h3>
-            <p className="text-sm text-gray-500 truncate">{team.name}</p>
+            <p className="text-sm text-text-secondary truncate">{team.name}</p>
           </div>
 
           {/* Scores */}
           <div className="hidden sm:flex items-center gap-6">
             {showVotes && (
               <div className="text-center">
-                <div className="text-xs font-bold text-gray-400 uppercase mb-1">Votes</div>
+                <div className="text-xs font-bold text-arena-muted uppercase mb-1">Votes</div>
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-amber-400" />
-                  <span className="font-bold text-gray-900">
+                  <span className="font-bold text-text-primary">
                     {team.submission?.participantVotes || 0}
                   </span>
                 </div>
@@ -261,17 +261,17 @@ function VotingAnalytics({
             )}
             {showJudge && (
               <div className="text-center">
-                <div className="text-xs font-bold text-gray-400 uppercase mb-1">Judge</div>
+                <div className="text-xs font-bold text-arena-muted uppercase mb-1">Judge</div>
                 <div className="flex items-center gap-1">
                   <Award className="w-4 h-4 text-purple-500" />
-                  <span className="font-bold text-gray-900">{judgeAvg.toFixed(0)}%</span>
+                  <span className="font-bold text-text-primary">{judgeAvg.toFixed(0)}%</span>
                 </div>
               </div>
             )}
           </div>
 
           {/* Expand indicator */}
-          <div className="text-gray-400">
+          <div className="text-arena-muted">
             {isExpanded ? (
               <ChevronUp className="w-5 h-5" />
             ) : (
@@ -282,18 +282,18 @@ function VotingAnalytics({
 
         {/* Expanded details */}
         {isExpanded && (
-          <div className="border-t border-gray-200 p-4 bg-gray-50">
-            <p className="text-sm text-gray-600 mb-4">{team.submission?.description}</p>
+          <div className="border-t border-arena-border p-4 bg-arena-elevated">
+            <p className="text-sm text-text-secondary mb-4">{team.submission?.description}</p>
 
             {/* Judge breakdown */}
             {judgeScores.length > 0 && (
               <div className="space-y-3">
-                <h4 className="text-xs font-bold text-gray-500 uppercase">Judge Scores</h4>
+                <h4 className="text-xs font-bold text-text-secondary uppercase">Judge Scores</h4>
                 {judgeScores.map((score) => (
-                  <div key={score.judgeId} className="bg-white p-3 border border-gray-200">
+                  <div key={score.judgeId} className="bg-arena-card p-3 border border-arena-border">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-bold text-sm">{score.judgeName}</span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-text-secondary">
                         {Object.values(score.scores).reduce((a, b) => a + b, 0)}/
                         {judgeCriteria.length * 10}
                       </span>
@@ -301,13 +301,13 @@ function VotingAnalytics({
                     <div className="grid grid-cols-5 gap-2 text-xs">
                       {judgeCriteria.map((criterion) => (
                         <div key={criterion.id} className="text-center">
-                          <div className="text-gray-400 truncate">{criterion.label}</div>
+                          <div className="text-arena-muted truncate">{criterion.label}</div>
                           <div className="font-bold">{score.scores[criterion.id]}/10</div>
                         </div>
                       ))}
                     </div>
                     {score.comments && (
-                      <p className="text-xs text-gray-500 mt-2 italic">"{score.comments}"</p>
+                      <p className="text-xs text-text-secondary mt-2 italic">"{score.comments}"</p>
                     )}
                   </div>
                 ))}
@@ -315,7 +315,7 @@ function VotingAnalytics({
             )}
 
             {judgeScores.length === 0 && (
-              <div className="text-sm text-gray-400 italic">No judge scores yet</div>
+              <div className="text-sm text-arena-muted italic">No judge scores yet</div>
             )}
           </div>
         )}
@@ -332,14 +332,14 @@ function VotingAnalytics({
     return (
       <div
         key={awardKey}
-        className="bg-gradient-to-br from-white to-gray-50 border-2 border-gray-200 p-6"
+        className="bg-gradient-to-br from-white to-gray-50 border-2 border-arena-border p-6"
       >
         <div className="text-4xl mb-3">{award.emoji}</div>
-        <h3 className="text-lg font-black text-gray-900 mb-1">{award.label}</h3>
-        <p className="text-xs text-gray-500 mb-4">{award.description}</p>
-        <div className="p-4 rounded-lg bg-gray-100">
+        <h3 className="text-lg font-black text-text-primary mb-1">{award.label}</h3>
+        <p className="text-xs text-text-secondary mb-4">{award.description}</p>
+        <div className="p-4 rounded-lg bg-arena-elevated">
           <div className="flex items-center gap-2 mb-1">
-            <Users className="w-4 h-4 text-gray-600" />
+            <Users className="w-4 h-4 text-text-secondary" />
             <span
               className="font-black"
               style={{ color: config.color }}
@@ -347,7 +347,7 @@ function VotingAnalytics({
               {winner.submission?.projectName}
             </span>
           </div>
-          <p className="text-sm text-gray-600">{winner.name}</p>
+          <p className="text-sm text-text-secondary">{winner.name}</p>
           <div className="flex items-center gap-4 mt-2 text-xs">
             {award.determinedBy === 'votes' ? (
               <span className="flex items-center gap-1">
@@ -375,7 +375,7 @@ function VotingAnalytics({
         return (
           <div className="space-y-3">
             {rankedProjects.length === 0 ? (
-              <div className="text-center py-12 text-gray-400">
+              <div className="text-center py-12 text-arena-muted">
                 <BarChart3 className="w-12 h-12 mx-auto mb-3 opacity-50" />
                 <p>No submitted projects yet</p>
               </div>
@@ -408,7 +408,7 @@ function VotingAnalytics({
       case 'judges':
         return (
           <div className="space-y-3">
-            <div className="bg-purple-50 border-2 border-purple-200 p-4 mb-4">
+            <div className="bg-brand-subtle border-2 border-purple-200 p-4 mb-4">
               <div className="flex items-center gap-2">
                 <Trophy className="w-5 h-5 text-purple-600" />
                 <span className="font-bold text-purple-900">Judge Rankings</span>
@@ -429,9 +429,9 @@ function VotingAnalytics({
             <div className="bg-gradient-to-r from-amber-50 to-purple-50 border-2 border-amber-200 p-4 mb-6">
               <div className="flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-amber-600" />
-                <span className="font-bold text-gray-900">Award Winners</span>
+                <span className="font-bold text-text-primary">Award Winners</span>
               </div>
-              <p className="text-sm text-gray-600 mt-1">
+              <p className="text-sm text-text-secondary mt-1">
                 Based on current voting and judging data. Final until results phase.
               </p>
             </div>
@@ -464,9 +464,9 @@ function VotingAnalytics({
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
             <BarChart3 className="w-8 h-8 text-purple-500" />
-            <h1 className="text-3xl font-black text-gray-900">VOTING ANALYTICS</h1>
+            <h1 className="text-3xl font-black text-text-primary">VOTING ANALYTICS</h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             Real-time voting data and judge scores.{' '}
             <span className="text-purple-600 font-medium">
               {user?.role === 'judge' ? 'Judge' : 'Admin'} View
@@ -496,8 +496,8 @@ function VotingAnalytics({
                   className={`px-4 py-2 text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap
                     ${
                       activeTab === tab.id
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-white border-2 border-gray-200 text-gray-600 hover:border-gray-400'
+                        ? 'bg-arena-elevated text-text-primary'
+                        : 'bg-arena-card border-2 border-arena-border text-text-secondary hover:border-arena-border-strong'
                     }`}
                 >
                   <Icon className="w-4 h-4" />

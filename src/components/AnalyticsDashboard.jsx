@@ -125,22 +125,22 @@ function AnalyticsDashboard({ event }) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <Card className="text-center">
             <Users className="w-8 h-8 text-brand mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">{engagementData.usersOnTeams}</div>
+            <div className="text-2xl font-black text-text-primary">{engagementData.usersOnTeams}</div>
             <div className="text-xs text-arena-secondary">Users on Teams</div>
           </Card>
           <Card className="text-center">
             <Award className="w-8 h-8 text-brand mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">{engagementData.usersWhoVoted}</div>
+            <div className="text-2xl font-black text-text-primary">{engagementData.usersWhoVoted}</div>
             <div className="text-xs text-arena-secondary">Users Who Voted</div>
           </Card>
           <Card className="text-center">
             <TrendingUp className="w-8 h-8 text-brand mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">{engagementData.usersWhoSubmitted}</div>
+            <div className="text-2xl font-black text-text-primary">{engagementData.usersWhoSubmitted}</div>
             <div className="text-xs text-arena-secondary">Users Who Submitted</div>
           </Card>
           <Card className="text-center">
             <BarChart3 className="w-8 h-8 text-brand mx-auto mb-2" />
-            <div className="text-2xl font-black text-white">{engagementData.totalUsers}</div>
+            <div className="text-2xl font-black text-text-primary">{engagementData.totalUsers}</div>
             <div className="text-xs text-arena-secondary">Total Active Users</div>
           </Card>
         </div>
@@ -149,7 +149,7 @@ function AnalyticsDashboard({ event }) {
       {/* Signups Over Time */}
       <Card>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="font-bold text-white flex items-center gap-2">
+          <h3 className="font-bold text-text-primary flex items-center gap-2">
             <Calendar className="w-5 h-5" />
             Signups Over Time
           </h3>
@@ -171,7 +171,7 @@ function AnalyticsDashboard({ event }) {
                     className="bg-brand h-full rounded-full transition-all"
                     style={{ width: `${(count / Math.max(...signupsChartData.map(d => d.count))) * 100}%` }}
                   />
-                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-text-primary">
                     {count}
                   </span>
                 </div>
@@ -185,7 +185,7 @@ function AnalyticsDashboard({ event }) {
 
       {/* Teams Created Over Time */}
       <Card>
-        <h3 className="font-bold text-white flex items-center gap-2 mb-4">
+        <h3 className="font-bold text-text-primary flex items-center gap-2 mb-4">
           <Users className="w-5 h-5" />
           Teams Created Over Time
         </h3>
@@ -199,7 +199,7 @@ function AnalyticsDashboard({ event }) {
                     className="bg-violet h-full rounded-full transition-all"
                     style={{ width: `${(count / Math.max(...teamsChartData.map(d => d.count), 1)) * 100}%` }}
                   />
-                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-white">
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-text-primary">
                     {count}
                   </span>
                 </div>
@@ -213,7 +213,7 @@ function AnalyticsDashboard({ event }) {
 
       {/* Participation by Role */}
       <Card>
-        <h3 className="font-bold text-white flex items-center gap-2 mb-4">
+        <h3 className="font-bold text-text-primary flex items-center gap-2 mb-4">
           <BarChart3 className="w-5 h-5" />
           Participation by Role
         </h3>
@@ -226,7 +226,7 @@ function AnalyticsDashboard({ event }) {
               return (
                 <div key={role}>
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-sm font-semibold text-white">{role}</span>
+                    <span className="text-sm font-semibold text-text-primary">{role}</span>
                     <span className="text-sm text-arena-secondary">{count} ({percentage.toFixed(1)}%)</span>
                   </div>
                   <div className="bg-arena-elevated rounded-full h-4 overflow-hidden">

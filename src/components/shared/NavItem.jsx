@@ -50,7 +50,7 @@ const NavItem = forwardRef(({
         'w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all duration-200',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500',
         active
-          ? 'bg-neutral-900 text-white'
+          ? 'bg-arena-elevated text-text-primary'
           : highlight
             ? highlightStyles[highlight]
             : 'text-neutral-600 hover:bg-neutral-100',
@@ -76,7 +76,7 @@ const NavItem = forwardRef(({
         <span className={cn(
           'px-1.5 py-0.5 text-xs font-bold rounded-full min-w-[1.25rem] text-center',
           active
-            ? 'bg-white text-neutral-900'
+            ? 'bg-arena-card text-text-primary'
             : 'bg-error-500 text-white'
         )}>
           {badge > 99 ? '99+' : badge}

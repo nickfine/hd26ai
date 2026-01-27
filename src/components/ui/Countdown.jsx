@@ -151,7 +151,7 @@ const DigitDisplay = ({ value, label, isSeconds, size, isPulsing, heroMode }) =>
             'font-mono relative z-10',
             (heroMode || isHeroSize) ? 'font-black tracking-tighter' : 'font-bold tracking-tight',
             isSeconds ? sizeConfig.seconds : sizeConfig.digit,
-            'text-white',
+            'text-text-primary',
             'transition-all duration-150',
             getGlitchStyles()
           )}

@@ -120,7 +120,7 @@ function TabsTab({
     pills: cn(
       'px-3 py-1.5 text-sm rounded-md',
       isActive
-        ? 'bg-white text-neutral-900 shadow-sm'
+        ? 'bg-arena-card text-text-primary shadow-sm'
         : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50',
       disabled && 'opacity-50 cursor-not-allowed'
     ),
@@ -134,7 +134,7 @@ function TabsTab({
     enclosed: cn(
       'px-4 py-2.5 text-sm border-2 border-b-0 -mb-[2px] rounded-t-lg',
       isActive
-        ? 'border-neutral-200 border-b-white bg-white text-neutral-900'
+        ? 'border-neutral-200 border-b-white bg-arena-card text-text-primary'
         : 'border-transparent text-neutral-500 hover:text-neutral-700',
       disabled && 'opacity-50 cursor-not-allowed'
     ),
@@ -157,7 +157,7 @@ function TabsTab({
         <span className={cn(
           'px-1.5 py-0.5 text-xs rounded-full',
           isActive
-            ? 'bg-neutral-900 text-white'
+            ? 'bg-arena-elevated text-text-primary'
             : 'bg-neutral-200 text-neutral-600'
         )}>
           {count}

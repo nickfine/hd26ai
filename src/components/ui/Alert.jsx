@@ -201,7 +201,7 @@ export const Toast = forwardRef(({
       
       <div className="flex-1 min-w-0">
         {title && (
-          <h4 className="font-bold text-white mb-0.5">
+          <h4 className="font-bold text-text-primary mb-0.5">
             {title}
           </h4>
         )}

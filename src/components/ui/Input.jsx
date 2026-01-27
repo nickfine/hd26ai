@@ -99,7 +99,7 @@ const Input = forwardRef(({
           aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
           className={cn(
             // Base styles
-            'w-full border-2 bg-arena-black text-white placeholder-arena-muted rounded-card',
+            'w-full border-2 bg-arena-black text-text-primary placeholder-arena-muted rounded-card',
             'transition-colors duration-200',
             'focus:outline-none focus:ring-0',
             // Size
@@ -123,7 +123,7 @@ const Input = forwardRef(({
             <button
               type="button"
               onClick={onClear}
-              className="text-arena-muted hover:text-white transition-colors"
+              className="text-arena-muted hover:text-text-primary transition-colors"
               aria-label="Clear input"
             >
               <X className={ICON_SIZE_MAP[size]} />
@@ -135,7 +135,7 @@ const Input = forwardRef(({
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="text-arena-muted hover:text-white transition-colors"
+              className="text-arena-muted hover:text-text-primary transition-colors"
               aria-label={showPassword ? 'Hide password' : 'Show password'}
             >
               {showPassword ? (
@@ -248,7 +248,7 @@ export const TextArea = forwardRef(({
         aria-describedby={error ? `${inputId}-error` : helperText ? `${inputId}-helper` : undefined}
         className={cn(
           // Base styles
-          'w-full px-3 py-2 border-2 bg-arena-black text-white placeholder-arena-muted text-sm rounded-card',
+          'w-full px-3 py-2 border-2 bg-arena-black text-text-primary placeholder-arena-muted text-sm rounded-card',
           'transition-colors duration-200',
           'focus:outline-none focus:ring-0',
           // Resize

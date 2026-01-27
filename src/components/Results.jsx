@@ -189,9 +189,9 @@ function Results({
     const awardStyles = {
       grand_champion: {
         gradient: 'from-gray-600 via-gray-400 to-gray-600',
-        border: 'border-gray-400',
+        border: 'border-arena-border',
         bg: 'bg-arena-card',
-        text: 'text-white',
+        text: 'text-text-primary',
         glow: '',
       },
       peoples_champion: {
@@ -240,7 +240,7 @@ function Results({
         >
           <div className="flex items-center gap-2 mb-2">
             <Users className="w-5 h-5 text-text-secondary" />
-            <span className="font-black text-lg text-white">
+            <span className="font-black text-lg text-text-primary">
               {winner.submission?.projectName}
             </span>
           </div>
@@ -300,7 +300,7 @@ function Results({
         {/* Info */}
         <div className="flex-1 min-w-0">
           <div
-            className="font-bold text-sm truncate text-white"
+            className="font-bold text-sm truncate text-text-primary"
           >
             {team.submission?.projectName}
           </div>
@@ -334,7 +334,7 @@ function Results({
         <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-arena-card flex items-center justify-center">
           <Lock className="w-12 h-12 text-arena-muted" />
         </div>
-        <h2 className="text-2xl font-black text-white mb-3">Results Coming Soon</h2>
+        <h2 className="text-2xl font-black text-text-primary mb-3">Results Coming Soon</h2>
         <p className="text-arena-secondary mb-6">
           The winners will be announced during the Results phase. Check back after judging
           is complete!
@@ -379,7 +379,7 @@ function Results({
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full mb-4">
                 <Trophy className="w-5 h-5 text-brand" />
-                <span className="font-bold text-sm text-white">
+                <span className="font-bold text-sm text-text-primary">
                   {isResultsPhase ? 'WINNERS ANNOUNCED' : 'PREVIEW MODE (Admin Only)'}
                 </span>
               </div>
@@ -426,7 +426,7 @@ function Results({
             <div className="mb-12">
               <div className="flex items-center gap-3 mb-6">
                 <Trophy className="w-8 h-8 text-brand" />
-                <h2 className="text-2xl font-black text-white">AWARD WINNERS</h2>
+                <h2 className="text-2xl font-black text-text-primary">AWARD WINNERS</h2>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {Object.entries(awards).map(([key, award], index) =>
@@ -441,7 +441,7 @@ function Results({
               <div className="bg-arena-card border border-arena-border rounded-xl overflow-hidden">
                 <div className="px-4 py-3 bg-violet/10 border-b border-arena-border flex items-center gap-2">
                   <Award className="w-5 h-5 text-violet" />
-                  <h3 className="font-black text-white">Judge Rankings</h3>
+                  <h3 className="font-black text-text-primary">Judge Rankings</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
                   {judgesRanked.map((team, idx) =>
@@ -454,7 +454,7 @@ function Results({
               <div className="bg-arena-card border border-arena-border rounded-xl overflow-hidden">
                 <div className="px-4 py-3 bg-brand/10 border-b border-arena-border flex items-center gap-2">
                   <Crown className="w-5 h-5 text-brand" />
-                  <h3 className="font-black text-white">People's Vote</h3>
+                  <h3 className="font-black text-text-primary">People's Vote</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
                   {peoplesRanked.map((team, idx) =>

@@ -138,32 +138,32 @@ function JudgeScoring({
         type="button"
         onClick={() => handleSelectTeam(team.id)}
         className={`w-full text-left p-4 border-2 transition-all flex items-center gap-3
-          ${isSelected ? 'border-purple-500 bg-purple-50' : 'border-gray-200 hover:border-gray-300 bg-white'}`}
+          ${isSelected ? 'border-purple-500 bg-brand-subtle' : 'border-arena-border hover:border-arena-border bg-arena-card'}`}
       >
         {/* Status indicator */}
         {scored ? (
           <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
         ) : (
-          <Circle className="w-5 h-5 text-gray-300 flex-shrink-0" />
+          <Circle className="w-5 h-5 text-arena-muted flex-shrink-0" />
         )}
 
         {/* Team icon */}
-        <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-gray-100">
-          <Users className="w-4 h-4 text-gray-600" />
+        <div className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-lg bg-arena-elevated">
+          <Users className="w-4 h-4 text-text-secondary" />
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <h3
-            className={`font-bold text-sm truncate ${scored ? 'text-gray-600' : 'text-gray-900'}`}
+            className={`font-bold text-sm truncate ${scored ? 'text-text-secondary' : 'text-text-primary'}`}
           >
             {team.submission?.projectName || 'Untitled'}
           </h3>
-          <p className="text-xs text-gray-500 truncate">{team.name}</p>
+          <p className="text-xs text-text-secondary truncate">{team.name}</p>
         </div>
 
         {/* Arrow */}
-        <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-purple-500' : 'text-gray-300'}`} />
+        <ChevronRight className={`w-4 h-4 flex-shrink-0 ${isSelected ? 'text-purple-500' : 'text-arena-muted'}`} />
       </button>
     );
   };
@@ -174,7 +174,7 @@ function JudgeScoring({
   const renderScoringForm = () => {
     if (!selectedTeam) {
       return (
-        <div className="flex items-center justify-center h-full text-gray-400">
+        <div className="flex items-center justify-center h-full text-arena-muted">
           <div className="text-center">
             <Gavel className="w-12 h-12 mx-auto mb-3 opacity-50" />
             <p>Select a project to score</p>
@@ -188,9 +188,9 @@ function JudgeScoring({
     return (
       <div className="h-full overflow-auto">
         {/* Project Header */}
-        <div className="p-6 border-b-2 border-gray-200 bg-gray-50">
+        <div className="p-6 border-b-2 border-arena-border bg-arena-elevated">
           <div className="flex items-center gap-2 mb-2">
-            <Users className="w-5 h-5 text-gray-600" />
+            <Users className="w-5 h-5 text-text-secondary" />
             <span
               className="text-sm font-bold uppercase tracking-wide"
               style={{ color: config.color }}
@@ -199,11 +199,11 @@ function JudgeScoring({
             </span>
           </div>
           <h2
-            className="text-2xl font-black text-gray-900 mb-2"
+            className="text-2xl font-black text-text-primary mb-2"
           >
             {submission?.projectName || 'Untitled Project'}
           </h2>
-          <p className="text-gray-600">{submission?.description}</p>
+          <p className="text-text-secondary">{submission?.description}</p>
 
           {/* Links */}
           <div className="flex flex-wrap gap-2 mt-4">
@@ -212,7 +212,7 @@ function JudgeScoring({
                 href={submission.demoVideoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 hover:border-gray-400 transition-colors"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-text-secondary bg-arena-card border border-arena-border hover:border-arena-border-strong transition-colors"
               >
                 <Video className="w-3 h-3" />
                 Watch Demo
@@ -223,7 +223,7 @@ function JudgeScoring({
                 href={submission.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 hover:border-gray-400 transition-colors"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-text-secondary bg-arena-card border border-arena-border hover:border-arena-border-strong transition-colors"
               >
                 <Github className="w-3 h-3" />
                 View Code
@@ -234,7 +234,7 @@ function JudgeScoring({
                 href={submission.liveDemoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-gray-600 bg-white border border-gray-200 hover:border-gray-400 transition-colors"
+                className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-bold text-text-secondary bg-arena-card border border-arena-border hover:border-arena-border-strong transition-colors"
               >
                 <Globe className="w-3 h-3" />
                 Try Live
@@ -243,7 +243,7 @@ function JudgeScoring({
           </div>
 
           {/* Team members */}
-          <div className="flex items-center gap-2 mt-4 text-sm text-gray-500">
+          <div className="flex items-center gap-2 mt-4 text-sm text-text-secondary">
             <Users className="w-4 h-4" />
             <span>{selectedTeam.members?.length || 0} members</span>
           </div>
@@ -252,12 +252,12 @@ function JudgeScoring({
         {/* Scoring Section */}
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-black text-gray-900">Score This Project</h3>
+            <h3 className="text-lg font-black text-text-primary">Score This Project</h3>
             <div className="text-right">
               <div className="text-2xl font-black text-purple-600">
                 {totalScore}/{maxScore}
               </div>
-              <div className="text-xs text-gray-500">total score</div>
+              <div className="text-xs text-text-secondary">total score</div>
             </div>
           </div>
 
@@ -267,8 +267,8 @@ function JudgeScoring({
               <div key={criterion.id}>
                 <div className="flex items-center justify-between mb-2">
                   <div>
-                    <label className="font-bold text-gray-900">{criterion.label}</label>
-                    <p className="text-xs text-gray-500">{criterion.description}</p>
+                    <label className="font-bold text-text-primary">{criterion.label}</label>
+                    <p className="text-xs text-text-secondary">{criterion.description}</p>
                   </div>
                   <div className="flex items-center gap-2">
                     <input
@@ -277,9 +277,9 @@ function JudgeScoring({
                       max="10"
                       value={scores[criterion.id] || 0}
                       onChange={(e) => handleScoreChange(criterion.id, e.target.value)}
-                      className="w-16 text-center font-bold text-lg border-2 border-gray-200 focus:border-purple-500 focus:outline-none py-1"
+                      className="w-16 text-center font-bold text-lg border-2 border-arena-border focus:border-purple-500 focus:outline-none py-1"
                     />
-                    <span className="text-gray-400 text-sm">/10</span>
+                    <span className="text-arena-muted text-sm">/10</span>
                   </div>
                 </div>
                 {/* Score slider */}
@@ -291,7 +291,7 @@ function JudgeScoring({
                       onClick={() => handleScoreChange(criterion.id, i + 1)}
                       className={`flex-1 h-3 transition-all ${
                         i < (scores[criterion.id] || 0)
-                          ? 'bg-purple-500'
+                          ? 'bg-brand-subtle0'
                           : 'bg-gray-200 hover:bg-gray-300'
                       }`}
                     />
@@ -303,7 +303,7 @@ function JudgeScoring({
 
           {/* Comments */}
           <div className="mt-8">
-            <label className="flex items-center gap-2 font-bold text-gray-900 mb-2">
+            <label className="flex items-center gap-2 font-bold text-text-primary mb-2">
               <MessageSquare className="w-4 h-4" />
               Comments (Optional)
             </label>
@@ -315,7 +315,7 @@ function JudgeScoring({
               }}
               placeholder="Add any notes or feedback for this project..."
               rows={3}
-              className="w-full p-3 border-2 border-gray-200 focus:border-purple-500 focus:outline-none text-sm resize-none"
+              className="w-full p-3 border-2 border-arena-border focus:border-purple-500 focus:outline-none text-sm resize-none"
             />
           </div>
 
@@ -325,7 +325,7 @@ function JudgeScoring({
               type="button"
               onClick={handleSave}
               disabled={saveStatus === 'saving'}
-              className={`flex-1 py-3 font-bold text-white flex items-center justify-center gap-2 transition-all
+              className={`flex-1 py-3 font-bold text-text-primary flex items-center justify-center gap-2 transition-all
                 ${saveStatus === 'saving' ? 'bg-gray-400' : 'bg-purple-600 hover:bg-purple-700'}`}
             >
               {saveStatus === 'saving' ? (
@@ -380,25 +380,25 @@ function JudgeScoring({
         <div className="mb-6">
           <div className="flex items-center gap-3 mb-2">
             <Gavel className="w-8 h-8 text-amber-500" />
-            <h1 className="text-3xl font-black text-gray-900">JUDGE SCORING</h1>
+            <h1 className="text-3xl font-black text-text-primary">JUDGE SCORING</h1>
           </div>
-          <p className="text-gray-600">
+          <p className="text-text-secondary">
             Score submitted projects on the judging criteria.{' '}
             <span className="text-amber-600 font-medium">Judge: {user?.name}</span>
           </p>
         </div>
 
         {/* Progress Bar */}
-        <div className="mb-6 p-4 bg-white border-2 border-gray-200">
+        <div className="mb-6 p-4 bg-arena-card border-2 border-arena-border">
           <div className="flex items-center justify-between mb-2">
-            <span className="text-sm font-bold text-gray-600">Your Scoring Progress</span>
+            <span className="text-sm font-bold text-text-secondary">Your Scoring Progress</span>
             <span className="text-sm font-bold text-purple-600">
               {progress.scored}/{progress.total} projects scored
             </span>
           </div>
           <div className="h-3 bg-gray-200 overflow-hidden">
             <div
-              className="h-full bg-purple-500 transition-all duration-500"
+              className="h-full bg-brand-subtle0 transition-all duration-500"
               style={{ width: `${progress.percentage}%` }}
             />
           </div>
@@ -408,16 +408,16 @@ function JudgeScoring({
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Project List */}
           <div className="lg:col-span-1">
-            <div className="bg-white border-2 border-gray-200 overflow-hidden">
-              <div className="p-4 border-b border-gray-200 bg-gray-50">
-                <h2 className="font-bold text-gray-900">Projects to Score</h2>
-                <p className="text-xs text-gray-500 mt-1">
+            <div className="bg-arena-card border-2 border-arena-border overflow-hidden">
+              <div className="p-4 border-b border-arena-border bg-arena-elevated">
+                <h2 className="font-bold text-text-primary">Projects to Score</h2>
+                <p className="text-xs text-text-secondary mt-1">
                   {submittedProjects.length} submitted
                 </p>
               </div>
               <div className="divide-y divide-gray-100 max-h-[600px] overflow-auto">
                 {submittedProjects.length === 0 ? (
-                  <div className="p-8 text-center text-gray-400">
+                  <div className="p-8 text-center text-arena-muted">
                     <p>No projects submitted yet</p>
                   </div>
                 ) : (
@@ -429,7 +429,7 @@ function JudgeScoring({
 
           {/* Scoring Form */}
           <div className="lg:col-span-2">
-            <div className="bg-white border-2 border-gray-200 min-h-[600px]">
+            <div className="bg-arena-card border-2 border-arena-border min-h-[600px]">
               {renderScoringForm()}
             </div>
           </div>
