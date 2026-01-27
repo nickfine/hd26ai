@@ -160,7 +160,7 @@ const SignupPromoBox = memo(function SignupPromoBox({ user, teams, onNavigate })
   return (
     <Card variant="accent" padding="md" className="animate-fade-in stagger-1">
       <Card.Label className="text-brand">Get Started</Card.Label>
-      <Card.Title className="text-white mb-3">Complete Your Setup</Card.Title>
+      <Card.Title className="text-text-primary mb-3">Complete Your Setup</Card.Title>
       <p className="text-sm text-text-body mb-4">
         Join an idea to start participating in HackDay 2026!
       </p>
@@ -186,7 +186,7 @@ const NewToHackDayPromo = memo(function NewToHackDayPromo({ onNavigate }) {
   return (
     <Card variant="outlined" padding="lg" className="animate-fade-in stagger-2">
       <VStack gap="3" align="start">
-        <h3 className="text-3xl font-black text-white leading-tight">
+        <h3 className="text-3xl font-black text-text-primary leading-tight">
           New to HackDay?{' '}
           <button
             onClick={() => onNavigate('new-to-hackday')}
@@ -240,7 +240,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 </div>
                 <div>
                   <Card.Label className="text-brand mb-0">Team Confirmed</Card.Label>
-                  <Card.Title className="text-white mb-0">You're All Set!</Card.Title>
+                  <Card.Title className="text-text-primary mb-0">You're All Set!</Card.Title>
                 </div>
               </HStack>
               <p className="text-base text-text-body">
@@ -276,11 +276,11 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 </div>
                 <div>
                   <Card.Label className="text-brand mb-0">Application Pending</Card.Label>
-                  <Card.Title className="text-white mb-0">Waiting for Approval</Card.Title>
+                  <Card.Title className="text-text-primary mb-0">Waiting for Approval</Card.Title>
                 </div>
               </HStack>
               <p className="text-base text-text-body">
-                Your application to join <span className="font-bold text-white">{appliedTeam?.name}</span> is pending approval from the team captain. 
+                Your application to join <span className="font-bold text-text-primary">{appliedTeam?.name}</span> is pending approval from the team captain. 
                 You'll be notified once they respond.
               </p>
             </VStack>
@@ -300,7 +300,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 </div>
                 <div>
                   <Card.Label className="text-brand mb-0">Welcome to HackDay!</Card.Label>
-                  <Card.Title className="text-white mb-0">Join Your Idea</Card.Title>
+                  <Card.Title className="text-text-primary mb-0">Join Your Idea</Card.Title>
                 </div>
               </HStack>
               <p className="text-base text-text-body">
@@ -340,7 +340,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
               <div>
                 <Card.Label className="text-brand mb-0">Registration Open</Card.Label>
-                <Card.Title className="text-white mb-0">Join HackDay 2026</Card.Title>
+                <Card.Title className="text-text-primary mb-0">Join HackDay 2026</Card.Title>
               </div>
             </HStack>
             <p className="text-base text-text-body">
@@ -371,7 +371,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 </div>
                 <div>
                   <Card.Label className="text-brand mb-0">Team Confirmed</Card.Label>
-                  <Card.Title className="text-white mb-0">You're All Set!</Card.Title>
+                  <Card.Title className="text-text-primary mb-0">You're All Set!</Card.Title>
                 </div>
               </HStack>
               <p className="text-base text-text-body">
@@ -407,11 +407,11 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
                 </div>
                 <div>
                   <Card.Label className="text-brand mb-0">Application Pending</Card.Label>
-                  <Card.Title className="text-white mb-0">Waiting for Approval</Card.Title>
+                  <Card.Title className="text-text-primary mb-0">Waiting for Approval</Card.Title>
                 </div>
               </HStack>
               <p className="text-base text-text-body">
-                Your application to join <span className="font-bold text-white">{appliedTeam?.name}</span> is pending approval from the team captain. 
+                Your application to join <span className="font-bold text-text-primary">{appliedTeam?.name}</span> is pending approval from the team captain. 
                 You'll be notified once they respond.
               </p>
             </VStack>
@@ -429,7 +429,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
               <div>
                 <Card.Label className="text-brand mb-0">Team Formation</Card.Label>
-                <Card.Title className="text-white mb-0">Find Your Squad</Card.Title>
+                <Card.Title className="text-text-primary mb-0">Find Your Squad</Card.Title>
               </div>
             </HStack>
             <p className="text-base text-text-body">
@@ -469,7 +469,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
             </HStack>
             <p className="text-base text-text-body">
-              You're part of <span className="font-bold text-white">{userTeam.name}</span>. 
+              You're part of <span className="font-bold text-text-primary">{userTeam.name}</span>. 
               Make sure your team is complete before hacking begins!
             </p>
           </VStack>
@@ -486,7 +486,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
               <div>
                 <Card.Label className="text-brand mb-0">Build Mode Active</Card.Label>
-                <Card.Title className="text-white mb-0">Hacking in Progress</Card.Title>
+                <Card.Title className="text-text-primary mb-0">Hacking in Progress</Card.Title>
               </div>
             </HStack>
             <p className="text-base text-text-body">
@@ -518,7 +518,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
               <div>
                 <Card.Label className="text-warning mb-0">Submission Deadline</Card.Label>
-                <Card.Title className="text-white mb-0">Time is Running Out!</Card.Title>
+                <Card.Title className="text-text-primary mb-0">Time is Running Out!</Card.Title>
               </div>
             </HStack>
             <p className="text-base text-text-body">
@@ -547,7 +547,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
               <div>
                 <Card.Label className="text-brand mb-0">Voting Open</Card.Label>
-                <Card.Title className="text-white mb-0">Choose Your Favorites</Card.Title>
+                <Card.Title className="text-text-primary mb-0">Choose Your Favorites</Card.Title>
               </div>
             </HStack>
             <p className="text-base text-text-body">
@@ -577,7 +577,7 @@ const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNa
               </div>
               <div>
                 <Card.Label className="text-brand mb-0">HackDay 2026 Complete</Card.Label>
-                <Card.Title className="text-white mb-0">Thank You for Participating!</Card.Title>
+                <Card.Title className="text-text-primary mb-0">Thank You for Participating!</Card.Title>
               </div>
             </HStack>
             <p className="text-base text-text-body">
@@ -689,7 +689,7 @@ function Dashboard({
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full mb-4 animate-orange-pulse">
             <Zap className="w-5 h-5 text-brand icon-orange" />
-            <span className="font-bold text-sm text-white">MISSION CONTROL</span>
+            <span className="font-bold text-sm text-text-primary">MISSION CONTROL</span>
           </div>
           <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display animate-orange-pulse-delay-1">
             DASHBOARD
@@ -795,7 +795,7 @@ function Dashboard({
           {eventPhase === 'voting' && (
             <Card variant="accent" padding="md" className="animate-fade-in stagger-3">
               <Card.Label className="text-brand">Project Gallery</Card.Label>
-              <Card.Title className="text-white mb-3">Vote for Projects</Card.Title>
+              <Card.Title className="text-text-primary mb-3">Vote for Projects</Card.Title>
               <p className="text-sm text-text-body mb-4">
                 Browse all submitted hackathon projects and vote for your favorites!
               </p>
@@ -838,7 +838,7 @@ function Dashboard({
                     <div className="text-xs font-mono font-bold text-brand">{item.time}</div>
                   </div>
                   <div>
-                    <div className="text-sm font-bold text-white">{item.title}</div>
+                    <div className="text-sm font-bold text-text-primary">{item.title}</div>
                     <div className="text-xs text-text-body">{item.description}</div>
                   </div>
                 </HStack>
@@ -884,7 +884,7 @@ function Dashboard({
                     <div className="min-w-0">
                       <div className={cn(
                         'font-bold text-sm',
-                        isAI ? 'text-ai' : isHuman ? 'text-human' : 'text-white'
+                        isAI ? 'text-ai' : isHuman ? 'text-human' : 'text-text-primary'
                       )}>
                         {award.title}
                       </div>
@@ -919,7 +919,7 @@ function Dashboard({
                     onClick={() => toggleFaq(faq.id)}
                     className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-arena-elevated transition-colors"
                   >
-                    <span className="font-bold text-sm text-white">{faq.question}</span>
+                    <span className="font-bold text-sm text-text-primary">{faq.question}</span>
                     {expandedFaq === faq.id 
                       ? <ChevronUp className="w-4 h-4 text-text-muted" />
                       : <ChevronDown className="w-4 h-4 text-text-muted" />
