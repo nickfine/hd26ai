@@ -130,7 +130,7 @@ const WarTimer = memo(function WarTimer() {
   return (
     <div 
       className={cn(
-        'hidden md:flex items-center gap-3 px-4 py-2 text-white rounded-card',
+        'hidden md:flex items-center gap-3 px-4 py-2 rounded-card border border-arena-border',
         timeRemaining.status === 'live' 
           ? 'bg-arena-elevated animate-pulse' 
           : timeRemaining.status === 'ended'
@@ -142,14 +142,14 @@ const WarTimer = memo(function WarTimer() {
         : undefined
       }
     >
-      <Clock className="w-5 h-5 text-arena-secondary" />
+      <Clock className="w-5 h-5 text-text-secondary" />
       <div className="min-w-0">
-        <div className="font-mono text-2xl font-bold tracking-wider text-white">
+        <div className="font-mono text-2xl font-bold tracking-wider text-text-primary">
           {timeRemaining.display}
         </div>
         <div className={cn(
           'text-xs uppercase tracking-wide truncate',
-          timeRemaining.status === 'live' ? 'text-white font-bold' : 'text-arena-secondary'
+          timeRemaining.status === 'live' ? 'text-text-primary font-bold' : 'text-text-secondary'
         )}>
           {timeRemaining.label}
         </div>
@@ -334,7 +334,7 @@ function AppLayout({
   }, [onNavigate]);
 
   return (
-    <div className="min-h-screen bg-hackday text-white">
+    <div className="min-h-screen bg-hackday text-text-primary">
       {/* DEV MODE - Remove before production */}
       {devModeActive && (
         <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-bold sticky top-0 z-50">
@@ -355,7 +355,7 @@ function AppLayout({
               <button
                 type="button"
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden p-2 -ml-2 text-arena-secondary hover:text-white"
+                className="lg:hidden p-2 -ml-2 text-text-secondary hover:text-text-primary"
               >
                 <Menu className="w-5 h-5" />
               </button>
@@ -369,7 +369,7 @@ function AppLayout({
             >
               <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
               <div className="hidden sm:block">
-                <div className="font-black text-lg tracking-tight text-white">HACKDAY 2026</div>
+                <div className="font-black text-lg tracking-tight text-text-primary">HACKDAY 2026</div>
               </div>
             </button>
 
@@ -396,7 +396,7 @@ function AppLayout({
                   'flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all',
                   devModeEnabled
                     ? 'bg-yellow-500 text-black hover:bg-yellow-400'
-                    : 'bg-arena-card border border-arena-border text-arena-secondary hover:text-white'
+                    : 'bg-arena-card border border-arena-border text-text-secondary hover:text-text-primary'
                 )}
                 title={devModeEnabled ? 'Hide Dev Controls' : 'Show Dev Controls'}
               >
@@ -434,7 +434,7 @@ function AppLayout({
                       <div className="space-y-4">
                         <div className="flex items-center gap-2 mb-3 pb-3 border-b border-arena-border">
                           <Wrench className="w-5 h-5 text-yellow-500" />
-                          <span className="font-bold text-white">Dev Controls</span>
+                          <span className="font-bold text-text-primary">Dev Controls</span>
                         </div>
                         
                         {/* Role Impersonation */}
@@ -449,7 +449,7 @@ function AppLayout({
                               const realRole = user?.role || 'participant';
                               onDevRoleChange?.(newRole === realRole ? null : newRole);
                             }}
-                            className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-white text-sm focus:outline-none focus:border-yellow-500"
+                            className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
                           >
                             <option value={user?.role || 'participant'}>Real: {user?.role || 'participant'}</option>
                             <option value="participant">Participant</option>
@@ -476,7 +476,7 @@ function AppLayout({
                                 onPhaseChange(e.target.value);
                                 setDevControlsOpen(false);
                               }}
-                              className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-white text-sm focus:outline-none focus:border-yellow-500"
+                              className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
                             >
                               {Object.entries(eventPhases).map(([key, phase]) => (
                                 <option key={key} value={key}>{phase.label}</option>
@@ -513,7 +513,7 @@ function AppLayout({
                     <Users className="w-5 h-5 text-text-secondary" />
                   </div>
                   <div className="text-left">
-                    <p className="font-bold text-white text-sm">
+                    <p className="font-bold text-text-primary text-sm">
                       {userTeam.name}
                     </p>
                     <p className="text-xs text-text-secondary">
@@ -550,7 +550,7 @@ function AppLayout({
                   )}
                 </div>
                 <div className="text-left sm:text-right">
-                  <p className="font-semibold text-white text-sm">
+                  <p className="font-semibold text-text-primary text-sm">
                     {user?.name || 'User'}
                   </p>
                   <p className="text-xs text-text-secondary">
@@ -583,7 +583,7 @@ function AppLayout({
                     <span className="text-xs font-bold text-text-secondary">{currentPhaseIndex + 1}/{EVENT_PHASE_ORDER.length}</span>
                   </div>
                   <div className="h-4 w-px bg-arena-border" />
-                  <span className="text-sm font-bold text-white">{currentPhase?.label}</span>
+                  <span className="text-sm font-bold text-text-primary">{currentPhase?.label}</span>
                   <div className="h-4 w-px bg-arena-border" />
                   <div className="flex gap-1">
                     {EVENT_PHASE_ORDER.map((_, idx) => (
@@ -591,7 +591,7 @@ function AppLayout({
                         key={idx}
                         className={cn(
                           'w-2 h-2 rounded-full',
-                          idx < currentPhaseIndex ? 'bg-white' : idx === currentPhaseIndex ? 'bg-text-secondary' : 'bg-arena-border'
+                          idx < currentPhaseIndex ? 'bg-brand' : idx === currentPhaseIndex ? 'bg-brand/60' : 'bg-arena-border'
                         )}
                       />
                     ))}
@@ -614,16 +614,16 @@ function AppLayout({
                     <div className={cn(
                       'w-6 h-6 flex items-center justify-center text-xs font-bold rounded',
                       isComplete 
-                        ? 'bg-white text-arena-bg' 
+                        ? 'bg-brand text-white' 
                         : isActive 
-                          ? 'bg-text-secondary text-white animate-pulse' 
-                          : 'bg-arena-border text-arena-muted'
+                          ? 'bg-brand/80 text-white animate-pulse' 
+                          : 'bg-arena-border text-text-muted'
                     )}>
                       {isComplete ? '✓' : index + 1}
                     </div>
                     <span className={cn(
                       'text-xs font-bold whitespace-nowrap',
-                      isActive ? 'text-text-secondary' : isComplete ? 'text-white' : 'text-arena-muted'
+                      isActive ? 'text-brand' : isComplete ? 'text-text-primary' : 'text-text-muted'
                     )}>
                       {phase?.label}
                     </span>
@@ -631,7 +631,7 @@ function AppLayout({
                   {index < EVENT_PHASE_ORDER.length - 1 && (
                     <div className={cn(
                       'w-8 h-0.5 mx-2',
-                      isComplete ? 'bg-white' : 'bg-arena-border'
+                      isComplete ? 'bg-brand' : 'bg-arena-border'
                     )} />
                   )}
                 </HStack>
@@ -670,7 +670,7 @@ function AppLayout({
                 <button
                   type="button"
                   onClick={() => setSidebarOpen(false)}
-                  className="lg:hidden absolute top-4 right-4 p-2 text-arena-muted hover:text-white"
+                  className="lg:hidden absolute top-4 right-4 p-2 text-text-muted hover:text-text-primary"
                 >
                   <X className="w-5 h-5" />
                 </button>
@@ -709,7 +709,7 @@ function AppLayout({
                   <NavItem
                     icon={<LogOut />}
                     onClick={() => onNavigate('signout')}
-                    className="mt-4 text-arena-muted hover:text-white"
+                    className="mt-4 text-text-muted hover:text-text-primary"
                   >
                     Sign Out
                   </NavItem>
