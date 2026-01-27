@@ -241,6 +241,170 @@ export const BADGE_VARIANTS = {
 };
 
 // =============================================================================
+// SKILL COLOR SYSTEM
+// Skills are grouped into categories with distinct colors
+// =============================================================================
+
+export const SKILL_CATEGORIES = {
+  development: {
+    label: 'Development',
+    color: '#3B82F6', // blue
+    bgClass: 'bg-blue-500/15',
+    textClass: 'text-blue-400',
+    borderClass: 'border-blue-500/30',
+  },
+  design: {
+    label: 'Design',
+    color: '#EC4899', // pink
+    bgClass: 'bg-pink-500/15',
+    textClass: 'text-pink-400',
+    borderClass: 'border-pink-500/30',
+  },
+  data: {
+    label: 'Data & AI',
+    color: '#8B5CF6', // purple
+    bgClass: 'bg-purple-500/15',
+    textClass: 'text-purple-400',
+    borderClass: 'border-purple-500/30',
+  },
+  infrastructure: {
+    label: 'Infrastructure',
+    color: '#10B981', // emerald
+    bgClass: 'bg-emerald-500/15',
+    textClass: 'text-emerald-400',
+    borderClass: 'border-emerald-500/30',
+  },
+  business: {
+    label: 'Business',
+    color: '#F59E0B', // amber
+    bgClass: 'bg-amber-500/15',
+    textClass: 'text-amber-400',
+    borderClass: 'border-amber-500/30',
+  },
+  other: {
+    label: 'Other',
+    color: '#6B7280', // gray
+    bgClass: 'bg-neutral-500/15',
+    textClass: 'text-neutral-400',
+    borderClass: 'border-neutral-500/30',
+  },
+};
+
+// Map skills to categories - O(1) lookup
+const SKILL_TO_CATEGORY_MAP = {
+  'frontend development': 'development',
+  'backend development': 'development',
+  'mobile development': 'development',
+  'ui/ux design': 'design',
+  'graphic design': 'design',
+  'machine learning': 'data',
+  'data science': 'data',
+  'ai/ml': 'data',
+  'devops': 'infrastructure',
+  'security': 'infrastructure',
+  'cloud': 'infrastructure',
+  'hardware/iot': 'infrastructure',
+  'product management': 'business',
+  'project management': 'business',
+  'marketing': 'business',
+};
+
+/**
+ * Get the category for a skill
+ * @param {string} skill - The skill name
+ * @returns {string} The category key
+ */
+export function getSkillCategory(skill) {
+  if (!skill) return 'other';
+  const normalizedSkill = skill.toLowerCase().trim();
+  return SKILL_TO_CATEGORY_MAP[normalizedSkill] || 'other';
+}
+
+/**
+ * Get the styling config for a skill
+ * @param {string} skill - The skill name
+ * @returns {object} The category styling config
+ */
+export function getSkillConfig(skill) {
+  const category = getSkillCategory(skill);
+  return SKILL_CATEGORIES[category] || SKILL_CATEGORIES.other;
+}
+
+/**
+ * Get Tailwind classes for a skill badge
+ * @param {string} skill - The skill name
+ * @returns {string} Tailwind classes
+ */
+export function getSkillClasses(skill) {
+  const config = getSkillConfig(skill);
+  return `${config.bgClass} ${config.textClass} ${config.borderClass}`;
+}
+
+// =============================================================================
+// CARD DIFFERENTIATION
+// Visual indicators for different card states
+// =============================================================================
+
+export const CARD_STATES = {
+  yourTeam: {
+    label: 'Your Idea',
+    borderClass: 'border-brand/50 ring-1 ring-brand/20',
+    badgeClass: 'bg-brand/20 text-brand border-brand/30',
+    icon: '★',
+  },
+  matchingSkills: {
+    label: 'Skills Match',
+    borderClass: 'border-success/50 ring-1 ring-success/20',
+    badgeClass: 'bg-success/20 text-success border-success/30',
+    icon: '✓',
+  },
+  teamFull: {
+    label: 'Team Full',
+    borderClass: 'border-arena-border opacity-60',
+    badgeClass: 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30',
+    icon: '●',
+  },
+  default: {
+    borderClass: 'border-arena-border',
+    badgeClass: '',
+    icon: '',
+  },
+};
+
+/**
+ * Get the card state based on team and user context
+ * @param {object} team - The team object
+ * @param {object} user - The current user object
+ * @returns {object} The card state config
+ */
+export function getCardState(team, user) {
+  if (!team || !user) return CARD_STATES.default;
+  
+  // Check if user is captain
+  if (team.captainId === user.id) {
+    return CARD_STATES.yourTeam;
+  }
+  
+  // Check if team is full
+  if (team.members?.length >= (team.maxMembers || 6)) {
+    return CARD_STATES.teamFull;
+  }
+  
+  // Check if user's skills match what the team is looking for
+  if (user.skills?.length > 0 && team.lookingFor?.length > 0) {
+    const userSkillsLower = user.skills.map(s => s.toLowerCase());
+    const hasMatch = team.lookingFor.some(skill => 
+      userSkillsLower.includes(skill.toLowerCase())
+    );
+    if (hasMatch) {
+      return CARD_STATES.matchingSkills;
+    }
+  }
+  
+  return CARD_STATES.default;
+}
+
+// =============================================================================
 // EXPORT ALL
 // =============================================================================
 
@@ -258,4 +422,10 @@ export default {
   BUTTON_VARIANTS,
   CARD_VARIANTS,
   BADGE_VARIANTS,
+  SKILL_CATEGORIES,
+  getSkillCategory,
+  getSkillConfig,
+  getSkillClasses,
+  CARD_STATES,
+  getCardState,
 };

@@ -9,7 +9,7 @@
 
 import { forwardRef } from 'react';
 import { X } from 'lucide-react';
-import { cn, BADGE_VARIANTS, SIZE_CLASSES } from '../../lib/design-system';
+import { cn, BADGE_VARIANTS, SIZE_CLASSES, getSkillClasses, getSkillConfig } from '../../lib/design-system';
 
 /**
  * @typedef {Object} BadgeProps
@@ -467,5 +467,122 @@ export const CallsignBadge = forwardRef(({
 });
 
 CallsignBadge.displayName = 'CallsignBadge';
+
+/**
+ * ColoredSkillChip - Skill chip with category-based coloring
+ * Colors are determined by skill category (development, design, data, etc.)
+ * 
+ * @example
+ * <ColoredSkillChip skill="Frontend Development" />
+ * <ColoredSkillChip skill="Machine Learning" showDot />
+ */
+export const ColoredSkillChip = forwardRef(({
+  skill,
+  showDot = false,
+  removable = false,
+  onRemove,
+  className,
+  children,
+  ...props
+}, ref) => {
+  const config = getSkillConfig(skill || children);
+  const colorClasses = getSkillClasses(skill || children);
+
+  return (
+    <span
+      ref={ref}
+      className={cn(
+        'inline-flex items-center gap-1.5',
+        'px-2.5 py-1',
+        'text-xs font-medium',
+        'rounded-lg border',
+        'transition-all duration-200 hover:scale-105',
+        colorClasses,
+        className
+      )}
+      {...props}
+    >
+      {showDot && (
+        <span 
+          className="w-1.5 h-1.5 rounded-full flex-shrink-0"
+          style={{ backgroundColor: config.color }}
+        />
+      )}
+      {skill || children}
+      
+      {/* Remove button */}
+      {removable && onRemove && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            onRemove();
+          }}
+          className="flex-shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors -mr-0.5"
+          aria-label="Remove"
+        >
+          <X className="w-3 h-3" />
+        </button>
+      )}
+    </span>
+  );
+});
+
+ColoredSkillChip.displayName = 'ColoredSkillChip';
+
+/**
+ * CardStateBadge - Badge that indicates card state (Your Team, Skills Match, etc.)
+ * 
+ * @example
+ * <CardStateBadge state="yourTeam" />
+ * <CardStateBadge state="matchingSkills" />
+ */
+export const CardStateBadge = forwardRef(({
+  state = 'default',
+  className,
+  ...props
+}, ref) => {
+  // Import dynamically to avoid circular deps
+  const CARD_STATES = {
+    yourTeam: {
+      label: 'Your Idea',
+      badgeClass: 'bg-brand/20 text-brand border-brand/30',
+      icon: '★',
+    },
+    matchingSkills: {
+      label: 'Skills Match',
+      badgeClass: 'bg-success/20 text-success border-success/30',
+      icon: '✓',
+    },
+    teamFull: {
+      label: 'Team Full',
+      badgeClass: 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30',
+      icon: '●',
+    },
+  };
+
+  const config = CARD_STATES[state];
+  if (!config) return null;
+
+  return (
+    <span
+      ref={ref}
+      className={cn(
+        'inline-flex items-center gap-1',
+        'px-2 py-0.5',
+        'text-[10px] font-bold uppercase tracking-wide',
+        'rounded-full border',
+        config.badgeClass,
+        className
+      )}
+      {...props}
+    >
+      <span>{config.icon}</span>
+      {config.label}
+    </span>
+  );
+});
+
+CardStateBadge.displayName = 'CardStateBadge';
 
 export default Badge;

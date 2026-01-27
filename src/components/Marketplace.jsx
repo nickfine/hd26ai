@@ -16,10 +16,11 @@ import {
   Clock,
 } from 'lucide-react';
 import { SKILLS } from '../data/mockData';
-import { cn } from '../lib/design-system';
+import { cn, getCardState } from '../lib/design-system';
 import AppLayout from './AppLayout';
 import { StatusBanner } from './shared';
 import { MarketplaceSkeleton } from './ui/Skeleton';
+import { ColoredSkillChip, CardStateBadge } from './ui/Badge';
 
 function Marketplace({ 
   user, 
@@ -523,37 +524,66 @@ function Marketplace({
               )}>
                 {paginatedTeams.map((team) => {
                   const hasApplied = team.joinRequests?.some((r) => r.userName === user?.name);
+                  const cardState = getCardState(team, user);
+                  const isYourTeam = cardState === 'yourTeam' || team.captainId === user?.id;
+                  const isTeamFull = team.members?.length >= (team.maxMembers || 6);
+                  const hasSkillMatch = cardState.label === 'Skills Match';
 
                   return (
                     <div
                       key={team.id}
                       className={cn(
-                        "bg-arena-card border border-arena-border p-4 sm:p-5 transition-all duration-300",
-                        "hover:-translate-y-1",
-                        "rounded-card",
+                        "bg-arena-card p-4 sm:p-5 transition-all duration-300",
+                        "rounded-card border",
+                        // Card state styling
+                        isYourTeam && "border-brand/50 ring-1 ring-brand/20",
+                        hasSkillMatch && !isYourTeam && "border-success/50 ring-1 ring-success/20",
+                        isTeamFull && !isYourTeam && "border-arena-border opacity-60",
+                        !isYourTeam && !hasSkillMatch && !isTeamFull && "border-arena-border",
+                        // Hover effects (disabled for full teams)
+                        !isTeamFull && "hover:-translate-y-1",
                         viewMode === 'row' && "md:col-span-2"
                       )}
                     >
                       {/* Team Header */}
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg bg-arena-elevated">
-                            <Users className="w-5 h-5 text-text-secondary" />
+                          <div className={cn(
+                            "w-10 h-10 flex-shrink-0 flex items-center justify-center rounded-lg",
+                            isYourTeam ? "bg-brand/20" : "bg-arena-elevated"
+                          )}>
+                            <Users className={cn(
+                              "w-5 h-5",
+                              isYourTeam ? "text-brand" : "text-text-secondary"
+                            )} />
                           </div>
                           <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
                               <h3 className="font-bold text-text-primary truncate">
                                 {team.name}
                               </h3>
-                              {hasApplied && (
-                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-warning/20 text-warning rounded-full">
+                              {/* Status badges */}
+                              {isYourTeam && (
+                                <CardStateBadge state="yourTeam" />
+                              )}
+                              {hasSkillMatch && !isYourTeam && (
+                                <CardStateBadge state="matchingSkills" />
+                              )}
+                              {isTeamFull && !isYourTeam && (
+                                <CardStateBadge state="teamFull" />
+                              )}
+                              {hasApplied && !isYourTeam && (
+                                <span className="px-2 py-0.5 text-xs font-bold uppercase bg-warning/20 text-warning rounded-full border border-warning/30">
                                   Applied
                                 </span>
                               )}
                             </div>
                           </div>
                         </div>
-                        <div className="flex items-center gap-1 text-sm text-arena-secondary flex-shrink-0">
+                        <div className={cn(
+                          "flex items-center gap-1 text-sm flex-shrink-0",
+                          isTeamFull ? "text-arena-muted" : "text-arena-secondary"
+                        )}>
                           <Users className="w-4 h-4" />
                           <span>
                             {team.members.length}/{team.maxMembers}
@@ -564,19 +594,18 @@ function Marketplace({
                       {/* Description */}
                       <p className="text-sm text-arena-secondary mb-4 line-clamp-2">{team.description}</p>
 
-                      {/* Looking For */}
+                      {/* Looking For - with colored skill chips */}
                       <div className="mb-4">
                         <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-2">
                           Looking For
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {team.lookingFor.slice(0, 3).map((skill) => (
-                            <span
-                              key={skill}
-                              className="px-2.5 py-1 text-xs border border-arena-border rounded-lg transition-transform hover:scale-105 bg-arena-elevated text-text-secondary"
-                            >
-                              {skill}
-                            </span>
+                            <ColoredSkillChip 
+                              key={skill} 
+                              skill={skill}
+                              showDot
+                            />
                           ))}
                           {team.lookingFor.length > 3 && (
                             <span className="px-2 py-1 text-xs text-arena-muted">
@@ -590,12 +619,16 @@ function Marketplace({
                       <button
                         type="button"
                         onClick={() => onNavigateToTeam(team.id)}
-                        className="w-full h-12 flex items-center justify-center gap-2
-                                   font-semibold text-sm transition-all duration-300 
-                                   hover:-translate-y-1 rounded-xl
-                                   bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-card"
+                        className={cn(
+                          "w-full h-12 flex items-center justify-center gap-2",
+                          "font-semibold text-sm transition-all duration-300 rounded-xl",
+                          isYourTeam 
+                            ? "bg-brand/10 border border-brand/30 text-brand hover:bg-brand/20" 
+                            : "bg-arena-elevated border border-arena-border text-text-primary hover:bg-arena-card",
+                          !isTeamFull && "hover:-translate-y-1"
+                        )}
                       >
-                        LEARN MORE
+                        {isYourTeam ? 'MANAGE IDEA' : 'LEARN MORE'}
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     </div>
@@ -723,19 +756,18 @@ function Marketplace({
                       {/* Bio */}
                       <p className="text-sm text-arena-secondary mb-4 line-clamp-2">{agent.bio}</p>
 
-                      {/* Skills */}
+                      {/* Skills - with colored chips */}
                       <div className="mb-4">
                         <div className="text-xs font-bold uppercase tracking-wide text-arena-muted mb-2">
                           Skills
                         </div>
                         <div className="flex flex-wrap gap-1.5">
                           {agent.skills?.slice(0, 3).map((skill) => (
-                            <span
-                              key={skill}
-                              className="px-2.5 py-1 text-xs border border-arena-border text-text-secondary rounded-lg bg-arena-elevated"
-                            >
-                              {skill}
-                            </span>
+                            <ColoredSkillChip 
+                              key={skill} 
+                              skill={skill}
+                              showDot
+                            />
                           ))}
                           {agent.skills?.length > 3 && (
                             <span className="px-2 py-1 text-xs text-arena-muted">
