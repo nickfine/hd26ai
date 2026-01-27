@@ -13,27 +13,28 @@ export default {
       // =======================================================================
       colors: {
         
-        // Arena surfaces (dark mode)
+        // Arena surfaces - use CSS variables for theme-aware colors
         arena: {
-          black: '#0B0A08',      // Warm black - makes orange glow
-          bg: '#0B0A08',         // Alias for bg-arena-bg
-          card: '#111111',       // Card/panel bg
-          elevated: '#1A1A1A',   // Elevated surfaces
-          border: '#1F1F1F',     // Subtle borders
-          'border-strong': '#2A2A2A',
-          'glass': 'rgba(15, 15, 15, 0.72)',
-          'glass-border': 'rgba(255, 100, 0, 0.18)',  // Warm orange-tinted
+          black: 'var(--surface-secondary)',
+          bg: 'var(--surface-secondary)',
+          card: 'var(--surface-primary)',
+          elevated: 'var(--surface-elevated)',
+          border: 'var(--border-default)',
+          'border-strong': 'var(--border-default)',
+          'glass': 'var(--surface-glass)',
+          'glass-border': 'var(--border-subtle)',
           // Text colors for arena namespace (allows text-arena-secondary etc.)
-          secondary: '#AAAAAA',
-          muted: '#888888',
+          secondary: 'var(--text-secondary)',
+          muted: 'var(--text-disabled)',
         },
         
-        // Text colors
+        // Text colors - use CSS variables for theme-aware colors
+        // These map to tokens.css which handles light/dark mode
         text: {
-          primary: '#FFFFFF',
-          body: '#E0E0E0',       // Body text
-          secondary: '#AAAAAA',
-          muted: '#888888',
+          primary: 'var(--text-primary)',
+          body: 'var(--text-secondary)',        // Body text - maps to secondary for good contrast
+          secondary: 'var(--text-secondary)',   // Descriptions, labels
+          muted: 'var(--text-disabled)',        // Tertiary/muted text
         },
         
         // Status Colors

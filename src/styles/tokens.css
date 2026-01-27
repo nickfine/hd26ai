@@ -18,6 +18,7 @@
   --surface-primary: #FFFFFF;     /* Default card/content backgrounds */
   --surface-secondary: #F7F8F9;   /* Page backgrounds, sidebars */
   --surface-elevated: #FFFFFF;    /* Modals, dropdowns, popovers - sits above primary */
+  --surface-glass: rgba(255, 255, 255, 0.85);  /* Frosted glass effect */
   
   /* Legacy aliases - map to new semantic tokens for backwards compatibility */
   --color-bg-primary: var(--surface-secondary);
@@ -180,6 +181,7 @@
   --surface-primary: #1D2125;     /* Card backgrounds - slightly lighter than page */
   --surface-secondary: #161A1D;   /* Page background - darkest surface */
   --surface-elevated: #22272B;    /* Modals, dropdowns - lightest surface */
+  --surface-glass: rgba(22, 26, 29, 0.85);  /* Frosted glass effect - dark mode */
   
   /* Legacy aliases */
   --color-bg-primary: var(--surface-secondary);
