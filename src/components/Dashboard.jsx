@@ -642,6 +642,8 @@ function Dashboard({
   onAutoAssignOptIn = null, // Handler for auto-assign opt-in
   registrations = [], // All registered users for stats
   isLoading = false, // Show skeleton loading state
+  simulateLoading = false,
+  onSimulateLoadingChange = null,
 }) {
   // Show skeleton while loading
   if (isLoading) {
@@ -657,6 +659,8 @@ function Dashboard({
         onPhaseChange={onPhaseChange}
         eventPhases={eventPhases}
         userInvites={userInvites}
+        simulateLoading={simulateLoading}
+        onSimulateLoadingChange={onSimulateLoadingChange}
       >
         <DashboardSkeleton />
       </AppLayout>
@@ -704,6 +708,8 @@ function Dashboard({
       onPhaseChange={onPhaseChange}
       eventPhases={eventPhases}
       userInvites={userInvites}
+      simulateLoading={simulateLoading}
+      onSimulateLoadingChange={onSimulateLoadingChange}
     >
       <div className="p-4 sm:p-6">
         {/* Page Header with orange pulse animation */}

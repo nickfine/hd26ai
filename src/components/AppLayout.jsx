@@ -301,6 +301,8 @@ function AppLayout({
   eventPhases = {},
   devModeEnabled: propDevModeEnabled = false,
   userInvites = [],
+  simulateLoading = false,
+  onSimulateLoadingChange = null,
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
@@ -570,6 +572,26 @@ function AppLayout({
                         {showPhaseSwitcher && !onPhaseChange && (
                           <div className="text-xs text-arena-secondary">
                             <p>Phase switching requires backend dev mode to be enabled.</p>
+                          </div>
+                        )}
+                        
+                        {/* Simulate Loading Toggle */}
+                        {onSimulateLoadingChange && (
+                          <div className="pt-3 border-t border-arena-border">
+                            <label className="flex items-center gap-3 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={simulateLoading}
+                                onChange={(e) => onSimulateLoadingChange(e.target.checked)}
+                                className="w-4 h-4 rounded border-arena-border bg-arena-elevated accent-yellow-500"
+                              />
+                              <span className="text-sm text-text-primary">Simulate Loading</span>
+                            </label>
+                            {simulateLoading && (
+                              <p className="mt-1 text-xs text-yellow-500">
+                                Showing skeleton loading states
+                              </p>
+                            )}
                           </div>
                         )}
                       </div>

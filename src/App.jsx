@@ -67,6 +67,7 @@ function App() {
   // DEV MODE - Remove before production
   // Dev mode allows testing controls (role impersonation, phase switching) with real Supabase data
   const [devRoleOverride, setDevRoleOverride] = useState(null);
+  const [simulateLoading, setSimulateLoading] = useState(false);
 
   // Effective user (from Supabase or demo mode)
   const effectiveUser = useMemo(() => {
@@ -971,6 +972,9 @@ function App() {
             onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
             onAutoAssignOptIn={handleAutoAssignOptIn}
+            isLoading={simulateLoading}
+            simulateLoading={simulateLoading}
+            onSimulateLoadingChange={setSimulateLoading}
           />
         );
       
@@ -992,6 +996,9 @@ function App() {
             onDevRoleChange={setDevRoleOverride}
             onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
+            isLoading={simulateLoading}
+            simulateLoading={simulateLoading}
+            onSimulateLoadingChange={setSimulateLoading}
           />
         );
       
@@ -1010,6 +1017,9 @@ function App() {
             onDevRoleChange={setDevRoleOverride}
             onPhaseChange={handlePhaseChange}
             eventPhases={EVENT_PHASES}
+            isLoading={simulateLoading}
+            simulateLoading={simulateLoading}
+            onSimulateLoadingChange={setSimulateLoading}
           />
         );
       

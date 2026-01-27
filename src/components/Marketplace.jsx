@@ -38,6 +38,8 @@ function Marketplace({
   onPhaseChange = null,
   eventPhases = {},
   isLoading = false, // Show skeleton loading state
+  simulateLoading = false,
+  onSimulateLoadingChange = null,
 }) {
   // Show skeleton while loading
   if (isLoading) {
@@ -53,6 +55,8 @@ function Marketplace({
         onPhaseChange={onPhaseChange}
         eventPhases={eventPhases}
         userInvites={userInvites}
+        simulateLoading={simulateLoading}
+        onSimulateLoadingChange={onSimulateLoadingChange}
       >
         <MarketplaceSkeleton />
       </AppLayout>
@@ -293,6 +297,8 @@ function Marketplace({
       onPhaseChange={onPhaseChange}
       eventPhases={eventPhases}
       userInvites={userInvites}
+      simulateLoading={simulateLoading}
+      onSimulateLoadingChange={onSimulateLoadingChange}
     >
       <div className="p-4 sm:p-6">
         {/* Status Banner */}

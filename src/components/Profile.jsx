@@ -182,6 +182,8 @@ function Profile({
   onPhaseChange = null,
   eventPhases = {},
   isLoading = false, // Show skeleton loading state
+  simulateLoading = false,
+  onSimulateLoadingChange = null,
 }) {
   // Show skeleton while loading
   if (isLoading) {
@@ -196,6 +198,8 @@ function Profile({
         onDevRoleChange={onDevRoleChange}
         onPhaseChange={onPhaseChange}
         eventPhases={eventPhases}
+        simulateLoading={simulateLoading}
+        onSimulateLoadingChange={onSimulateLoadingChange}
       >
         <ProfileSkeleton />
       </AppLayout>
@@ -373,6 +377,8 @@ function Profile({
       onDevRoleChange={onDevRoleChange}
       onPhaseChange={onPhaseChange}
       eventPhases={eventPhases}
+      simulateLoading={simulateLoading}
+      onSimulateLoadingChange={onSimulateLoadingChange}
     >
       <div className="p-4 sm:p-6">
         {/* Captain Alert Banner */}
