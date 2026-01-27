@@ -28,6 +28,9 @@ import {
   UserPlus,
   Settings,
   Wrench,
+  Sun,
+  Moon,
+  Monitor,
 } from 'lucide-react';
 import Badge, { RoleBadge } from './ui/Badge';
 import NavItem, { NavGroup } from './shared/NavItem';
@@ -36,6 +39,7 @@ import Avatar from './ui/Avatar';
 import { cn, formatNameWithCallsign } from '../lib/design-system';
 import NotificationCenter from './shared/NotificationCenter';
 import { useNotifications } from '../hooks/useNotifications';
+import { useTheme } from '../hooks/useTheme';
 import { USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
 import { 
   createUKDate, 
@@ -154,6 +158,80 @@ const WarTimer = memo(function WarTimer() {
           {timeRemaining.label}
         </div>
       </div>
+    </div>
+  );
+});
+
+// ============================================================================
+// THEME TOGGLE
+// ============================================================================
+
+const ThemeToggle = memo(function ThemeToggle() {
+  const { theme, setTheme, resolvedTheme, isSystemTheme } = useTheme();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const themes = [
+    { id: 'light', label: 'Light', icon: Sun },
+    { id: 'dark', label: 'Dark', icon: Moon },
+    { id: 'system', label: 'System', icon: Monitor },
+  ];
+
+  const currentTheme = themes.find(t => t.id === theme) || themes[2];
+  const CurrentIcon = currentTheme.icon;
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={cn(
+          'flex items-center justify-center w-9 h-9 rounded-lg transition-all',
+          'bg-arena-card border border-arena-border',
+          'text-text-secondary hover:text-text-primary hover:bg-arena-elevated'
+        )}
+        title={`Theme: ${currentTheme.label}${isSystemTheme ? ` (${resolvedTheme})` : ''}`}
+        aria-label="Toggle theme"
+      >
+        <CurrentIcon className="w-4 h-4" />
+      </button>
+
+      {/* Theme dropdown */}
+      {isOpen && (
+        <>
+          <div 
+            className="fixed inset-0 z-40" 
+            onClick={() => setIsOpen(false)}
+          />
+          <div className="absolute right-0 top-full mt-2 w-36 bg-arena-card border border-arena-border rounded-lg shadow-xl z-50 py-1 overflow-hidden">
+            {themes.map((t) => {
+              const Icon = t.icon;
+              const isActive = theme === t.id;
+              return (
+                <button
+                  key={t.id}
+                  type="button"
+                  onClick={() => {
+                    setTheme(t.id);
+                    setIsOpen(false);
+                  }}
+                  className={cn(
+                    'w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors',
+                    isActive 
+                      ? 'bg-brand/10 text-brand' 
+                      : 'text-text-secondary hover:text-text-primary hover:bg-arena-elevated'
+                  )}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="font-medium">{t.label}</span>
+                  {isActive && (
+                    <span className="ml-auto text-brand">✓</span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
     </div>
   );
 });
@@ -386,6 +464,9 @@ function AppLayout({
                 onNavigate={onNavigate}
               />
             )}
+
+            {/* Theme Toggle */}
+            <ThemeToggle />
 
             {/* DEV MODE TOGGLE - Always visible for admins */}
             {user?.role === 'admin' && (
