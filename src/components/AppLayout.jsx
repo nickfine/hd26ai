@@ -425,7 +425,7 @@ function AppLayout({
       {/* ================================================================== */}
       {/* HEADER */}
       {/* ================================================================== */}
-      <header className={`border-b border-arena-border px-4 sm:px-6 py-4 bg-arena-black ${devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40`}>
+      <header className={`px-4 sm:px-6 py-4 bg-arena-black ${devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40`}>
         <Container size="xl" padding="none">
           <HStack justify="between" align="center">
             {/* Mobile menu button */}
