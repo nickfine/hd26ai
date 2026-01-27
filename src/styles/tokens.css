@@ -1,70 +1,117 @@
 /* =============================================================================
-   DESIGN SYSTEM TOKENS - NEUTRAL THEME
-   CSS Custom Properties
+   DESIGN SYSTEM TOKENS - HD26AI
+   CSS Custom Properties with Light/Dark Mode Support
+   
+   ARCHITECTURE NOTE: Dark mode is handled entirely through token overrides in
+   this single file using [data-color-mode="dark"]. This ensures a single source
+   of truth and prevents specificity conflicts. Do not create separate stylesheets.
    ============================================================================= */
 
+/* =============================================================================
+   LIGHT MODE TOKENS (Default)
+   ============================================================================= */
 :root {
   /* =========================================================================
-     CORE COLORS
+     SURFACE TOKENS - Use for backgrounds
+     Hierarchy: secondary (page) < primary (cards) < elevated (modals/popovers)
      ========================================================================= */
+  --surface-primary: #FFFFFF;     /* Default card/content backgrounds */
+  --surface-secondary: #F7F8F9;   /* Page backgrounds, sidebars */
+  --surface-elevated: #FFFFFF;    /* Modals, dropdowns, popovers - sits above primary */
   
-  /* Background Surfaces */
-  --color-bg-primary: #0B0A08;
-  --color-bg-card: #111111;
-  --color-bg-elevated: #1A1A1A;
-  
-  /* Borders */
-  --color-border: #1F1F1F;
-  --color-border-strong: #2A2A2A;
-  
-  /* Text Hierarchy */
-  --color-text-primary: #FFFFFF;
-  --color-text-body: #E0E0E0;
-  --color-text-secondary: #AAAAAA;
-  --color-text-muted: #888888;
-  
-  /* Neutral */
-  --color-neutral: #666666;
-  --color-neutral-light: rgba(102, 102, 102, 0.1);
+  /* Legacy aliases - map to new semantic tokens for backwards compatibility */
+  --color-bg-primary: var(--surface-secondary);
+  --color-bg-card: var(--surface-primary);
+  --color-bg-elevated: var(--surface-elevated);
   
   /* =========================================================================
-     SEMANTIC COLORS
+     BORDER TOKENS
      ========================================================================= */
+  --border-default: #DFE1E6;      /* Card borders, primary dividers */
+  --border-subtle: #EBECF0;       /* Secondary dividers, inner separators */
   
-  --color-success: #00FF9D;
-  --color-success-light: rgba(0, 255, 157, 0.1);
-  --color-warning: #FF8A00;
-  --color-warning-light: rgba(255, 138, 0, 0.1);
-  --color-error: #FF4500;
-  --color-error-light: rgba(255, 69, 0, 0.1);
-  --color-info: #00D4FF;
-  --color-info-light: rgba(0, 212, 255, 0.1);
+  /* Legacy aliases */
+  --color-border: var(--border-default);
+  --color-border-strong: #C1C7D0; /* Stronger border for emphasis */
+  
+  /* =========================================================================
+     TEXT TOKENS - Semantic hierarchy
+     WCAG AA Contrast Requirements: 4.5:1 for normal text, 3:1 for large text
+     ========================================================================= */
+  --text-primary: #172B4D;        /* Headings, primary content - 12.6:1 contrast on white */
+  --text-secondary: #44546F;      /* Body text, descriptions - 7.2:1 contrast on white */
+  --text-disabled: #6B778C;       /* Disabled states, placeholders - 4.6:1 contrast on white */
+  
+  /* Legacy aliases */
+  --color-text-primary: var(--text-primary);
+  --color-text-body: var(--text-secondary);  /* Body text uses secondary */
+  --color-text-secondary: #5E6C84; /* Slightly lighter secondary - 5.5:1 contrast */
+  --color-text-muted: var(--text-disabled);
+  
+  /* =========================================================================
+     ACCENT TOKENS - Brand identity (use sparingly)
+     ========================================================================= */
+  --accent-brand: #FF5630;        /* HackDay orange-red - CTAs, key highlights only */
+  --accent-brand-subtle: #FFEBE6; /* Brand backgrounds for badges, highlights */
+  
+  /* =========================================================================
+     STATUS TOKENS - Semantic feedback colours
+     ========================================================================= */
+  --status-success: #36B37E;            /* Positive actions, confirmations */
+  --status-success-subtle: #E3FCEF;     /* Success backgrounds */
+  --status-warning: #FFAB00;            /* Warnings, deadlines approaching */
+  --status-warning-subtle: #FFFAE6;     /* Warning backgrounds */
+  --status-danger: #DE350B;             /* Errors, destructive actions */
+  --status-danger-subtle: #FFEBE6;      /* Error backgrounds */
+  --status-info: #0065FF;               /* Informational, neutral highlights */
+  --status-info-subtle: #DEEBFF;        /* Info backgrounds */
+  
+  /* Legacy status aliases */
+  --color-success: var(--status-success);
+  --color-success-light: var(--status-success-subtle);
+  --color-warning: var(--status-warning);
+  --color-warning-light: var(--status-warning-subtle);
+  --color-error: var(--status-danger);
+  --color-error-light: var(--status-danger-subtle);
+  --color-info: var(--status-info);
+  --color-info-light: var(--status-info-subtle);
+  
+  /* =========================================================================
+     INTERACTIVE TOKENS - Buttons, links
+     ========================================================================= */
+  --interactive-primary: #0052CC;       /* Primary button backgrounds, links */
+  --interactive-hover: #0065FF;         /* Hover state for interactive elements */
+  
+  /* =========================================================================
+     HIGHLIGHT TOKENS - Special indicators
+     ========================================================================= */
+  --highlight-yellow: #FFF0B3;          /* Current team/idea indicator, "you are here" */
+  
+  /* =========================================================================
+     NEUTRAL TOKENS (for non-team-specific elements)
+     ========================================================================= */
+  --color-neutral: #6B778C;
+  --color-neutral-light: rgba(107, 119, 140, 0.1);
   
   /* =========================================================================
      TYPOGRAPHY
      ========================================================================= */
-  
   --font-heading: 'Satoshi', system-ui, -apple-system, sans-serif;
   --font-body: 'Satoshi', system-ui, -apple-system, sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
   
   /* =========================================================================
-     SHADOWS
+     SHADOWS - Light mode uses darker shadows
      ========================================================================= */
-  
-  /* Elevation shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
-  
-  /* Card hover lift */
-  --shadow-card-hover: 0 8px 25px -5px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px 0 rgba(9, 30, 66, 0.08);
+  --shadow-md: 0 4px 8px -2px rgba(9, 30, 66, 0.08), 0 0 0 1px rgba(9, 30, 66, 0.08);
+  --shadow-lg: 0 8px 16px -4px rgba(9, 30, 66, 0.08), 0 0 0 1px rgba(9, 30, 66, 0.08);
+  --shadow-xl: 0 20px 32px -8px rgba(9, 30, 66, 0.08), 0 0 0 1px rgba(9, 30, 66, 0.08);
+  --shadow-card-hover: 0 8px 16px -4px rgba(9, 30, 66, 0.12);
   
   /* =========================================================================
      ANIMATION & TRANSITIONS
      ========================================================================= */
-  
   --duration-fast: 150ms;
   --duration-normal: 200ms;
   --duration-slow: 300ms;
@@ -77,20 +124,18 @@
   /* =========================================================================
      BORDER RADIUS
      ========================================================================= */
-  
   --radius-none: 0;
   --radius-sm: 0.25rem;
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
   --radius-2xl: 1.25rem;
-  --radius-card: 24px;              /* Premium 24px corners - matches Tailwind config */
+  --radius-card: 24px;            /* Premium 24px corners */
   --radius-full: 9999px;
   
   /* =========================================================================
      Z-INDEX SCALE
      ========================================================================= */
-  
   --z-base: 0;
   --z-dropdown: 1000;
   --z-sticky: 1020;
@@ -104,41 +149,136 @@
   /* =========================================================================
      SPACING
      ========================================================================= */
-  
   --space-0: 0;
-  --space-1: 0.25rem;
-  --space-2: 0.5rem;
-  --space-3: 0.75rem;
-  --space-4: 1rem;
-  --space-5: 1.25rem;
-  --space-6: 1.5rem;
-  --space-8: 2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
+  --space-1: 0.25rem;   /* 4px */
+  --space-2: 0.5rem;    /* 8px */
+  --space-3: 0.75rem;   /* 12px */
+  --space-4: 1rem;      /* 16px */
+  --space-5: 1.25rem;   /* 20px */
+  --space-6: 1.5rem;    /* 24px */
+  --space-8: 2rem;      /* 32px */
+  --space-10: 2.5rem;   /* 40px */
+  --space-12: 3rem;     /* 48px */
+  --space-16: 4rem;     /* 64px */
   
   /* =========================================================================
      FOCUS RING
      ========================================================================= */
-  
   --focus-ring-width: 2px;
   --focus-ring-offset: 2px;
-  --focus-ring-color: var(--color-text-secondary);
+  --focus-ring-color: var(--interactive-primary);
 }
 
 /* =============================================================================
-   ROLE THEME CLASSES
-   Apply these to parent elements to theme children
+   DARK MODE TOKENS
+   Apply via [data-color-mode="dark"] on html element
+   ============================================================================= */
+[data-color-mode="dark"] {
+  /* =========================================================================
+     SURFACE TOKENS - Darker is further back, lighter is elevated
+     ========================================================================= */
+  --surface-primary: #1D2125;     /* Card backgrounds - slightly lighter than page */
+  --surface-secondary: #161A1D;   /* Page background - darkest surface */
+  --surface-elevated: #22272B;    /* Modals, dropdowns - lightest surface */
+  
+  /* Legacy aliases */
+  --color-bg-primary: var(--surface-secondary);
+  --color-bg-card: var(--surface-primary);
+  --color-bg-elevated: var(--surface-elevated);
+  
+  /* =========================================================================
+     BORDER TOKENS - Subtle with transparency for depth
+     ========================================================================= */
+  --border-default: #A6C5E229;    /* 16% opacity - visible but subtle */
+  --border-subtle: #A1BDD914;     /* 8% opacity - very subtle separators */
+  
+  /* Legacy aliases */
+  --color-border: var(--border-default);
+  --color-border-strong: #A6C5E240; /* 25% opacity for stronger borders */
+  
+  /* =========================================================================
+     TEXT TOKENS - Good contrast on dark backgrounds
+     WCAG AA Contrast Requirements: 4.5:1 for normal text, 3:1 for large text
+     ========================================================================= */
+  --text-primary: #DEE4EA;        /* Primary text - 11:1 contrast on #1D2125 */
+  --text-secondary: #9FADBC;      /* Body text, descriptions - 6.1:1 contrast */
+  --text-disabled: #738496;       /* Disabled states - 4.5:1 contrast */
+  
+  /* Legacy aliases */
+  --color-text-primary: #F4F5F7;  /* Headings - near white for high emphasis */
+  --color-text-body: #C5CED7;     /* Body - 8:1 contrast */
+  --color-text-secondary: #A1AEBE; /* Secondary - 5.5:1 contrast */
+  --color-text-muted: #8293A3;    /* Muted - 4.5:1 contrast */
+  
+  /* =========================================================================
+     ACCENT TOKENS - Slightly lighter for dark backgrounds
+     ========================================================================= */
+  --accent-brand: #FF7452;        /* Lighter orange maintains vibrancy on dark */
+  --accent-brand-subtle: #43290F; /* Darkened brand background */
+  
+  /* =========================================================================
+     STATUS TOKENS - Lighter foregrounds, darker subtle backgrounds
+     ========================================================================= */
+  --status-success: #57D9A3;            /* Lighter green for dark mode */
+  --status-success-subtle: #1C3329;     /* Dark green background */
+  --status-warning: #FFAB00;            /* Yellow unchanged - good contrast */
+  --status-warning-subtle: #332E1B;     /* Dark amber background */
+  --status-danger: #FF5C38;             /* Lighter red for dark mode */
+  --status-danger-subtle: #3D1F1A;      /* Dark red background */
+  --status-info: #579DFF;               /* Lighter blue for dark mode */
+  --status-info-subtle: #1C2B41;        /* Dark blue background */
+  
+  /* Legacy status aliases */
+  --color-success: #00FF9D;
+  --color-success-light: rgba(0, 255, 157, 0.1);
+  --color-warning: #FF8A00;
+  --color-warning-light: rgba(255, 138, 0, 0.1);
+  --color-error: #FF4500;
+  --color-error-light: rgba(255, 69, 0, 0.1);
+  --color-info: #00D4FF;
+  --color-info-light: rgba(0, 212, 255, 0.1);
+  
+  /* =========================================================================
+     INTERACTIVE TOKENS
+     ========================================================================= */
+  --interactive-primary: #579DFF;       /* Lighter blue for dark mode */
+  --interactive-hover: #85B8FF;         /* Even lighter on hover */
+  
+  /* =========================================================================
+     HIGHLIGHT TOKENS
+     ========================================================================= */
+  --highlight-yellow: #3D3100;          /* Darkened yellow background */
+  
+  /* =========================================================================
+     NEUTRAL TOKENS
+     ========================================================================= */
+  --color-neutral: #666666;
+  --color-neutral-light: rgba(102, 102, 102, 0.1);
+  
+  /* =========================================================================
+     SHADOWS - Dark mode uses subtle lighter glows or very dark shadows
+     ========================================================================= */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+  --shadow-card-hover: 0 8px 25px -5px rgba(0, 0, 0, 0.6);
+  
+  /* =========================================================================
+     FOCUS RING - Visible against dark backgrounds
+     ========================================================================= */
+  --focus-ring-color: var(--text-secondary);
+}
+
+/* =============================================================================
+   UTILITY CLASSES
    ============================================================================= */
 
+/* Role theme classes - for themed sections */
 .theme-neutral {
   --theme-color: var(--color-neutral);
   --theme-color-light: var(--color-neutral-light);
 }
-
-/* =============================================================================
-   BASE ELEMENT STYLES
-   ============================================================================= */
 
 /* Focus visible outline for accessibility */
 .focus-ring {
@@ -186,4 +326,3 @@
 .btn-hover-scale:active:not(:disabled) {
   transform: scale(0.98);
 }
-

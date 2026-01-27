@@ -73,3 +73,14 @@ export {
   MiniCountdown 
 } from './Countdown';
 
+// StatCard
+export { 
+  default as StatCard, 
+  StatCardGroup 
+} from './StatCard';
+
+// LiveActivityFeed
+export { 
+  default as LiveActivityFeed,
+  LivePulse
+} from './LiveActivityFeed';

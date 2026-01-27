@@ -45,6 +45,7 @@ import AdminPanel from './components/AdminPanel';
 import Results from './components/Results';
 import Schedule from './components/Schedule';
 import { ErrorBoundary } from './components/shared';
+import DesignSystemTest from './pages/DesignSystemTest';
 
 // Max votes per user for voting phase (can be overridden by event settings)
 const DEFAULT_MAX_VOTES = 5;
@@ -899,6 +900,26 @@ function App() {
     }
   }, [auth.isAuthenticated, auth.profile, useDemoMode, currentView]);
 
+  // ============================================================================
+  // URL HASH NAVIGATION (Development utility)
+  // Allows direct navigation to views via URL hash, e.g., #design-system
+  // ============================================================================
+  useEffect(() => {
+    const handleHashChange = () => {
+      const hash = window.location.hash.slice(1); // Remove # prefix
+      if (hash && ['design-system', 'dashboard', 'login', 'marketplace', 'profile', 'rules', 'results', 'schedule'].includes(hash)) {
+        setCurrentView(hash);
+      }
+    };
+    
+    // Check on mount
+    handleHashChange();
+    
+    // Listen for hash changes
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, []);
+
 
   // ============================================================================
   // VIEW RENDERING
@@ -1124,6 +1145,13 @@ function App() {
           />
         );
       }
+      
+      case 'design-system':
+        return (
+          <DesignSystemTest
+            onNavigate={handleNavigate}
+          />
+        );
       
       default:
         return <Landing onNavigate={setCurrentView} />;

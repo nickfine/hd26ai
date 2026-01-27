@@ -22,17 +22,22 @@
 }
 
 /* =============================================================================
-   BASE LAYER - DARK MODE ARENA THEME
+   BASE LAYER - SUPPORTS LIGHT/DARK MODE
    ============================================================================= */
 
 @layer base {
-  /* Root element setup */
+  /* Root element setup - light mode default */
   html {
     scroll-behavior: smooth;
+    color-scheme: light;
+  }
+  
+  /* Dark mode color scheme */
+  html[data-color-mode="dark"] {
     color-scheme: dark;
   }
 
-  /* Body defaults */
+  /* Body defaults - uses CSS variables that change with theme */
   body {
     background-color: var(--color-bg-primary);
     color: var(--color-text-body);
@@ -40,11 +45,14 @@
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Smooth theme transitions */
+    transition: background-color var(--duration-normal) var(--easing-default),
+                color var(--duration-normal) var(--easing-default);
   }
 
   /* Better default focus styles */
   :focus-visible {
-    outline: 2px solid var(--color-text-secondary);
+    outline: 2px solid var(--focus-ring-color);
     outline-offset: 2px;
   }
 
@@ -62,17 +70,23 @@
 
   /* Default link styling */
   a {
-    color: var(--color-text-secondary);
+    color: var(--interactive-primary);
     text-decoration: none;
     transition: color 200ms ease;
   }
 
   a:hover {
-    color: var(--color-text-primary);
+    color: var(--interactive-hover);
   }
 
-  /* Selection colors */
+  /* Selection colors - light mode */
   ::selection {
+    background-color: var(--interactive-primary);
+    color: white;
+  }
+  
+  /* Selection colors - dark mode */
+  [data-color-mode="dark"] ::selection {
     background-color: rgba(255, 255, 255, 0.2);
     color: var(--color-text-primary);
   }
@@ -158,8 +172,8 @@
 
   .input:focus {
     outline: none;
-    border-color: var(--color-text-secondary);
-    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.1);
+    border-color: var(--interactive-primary);
+    box-shadow: 0 0 0 2px var(--status-info-subtle);
   }
 
   /* Badge base styles */
