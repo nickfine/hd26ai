@@ -51,7 +51,7 @@ const DemoRoleButton = ({ icon: Icon, label, onClick, variant = 'primary', class
     type="button"
     onClick={onClick}
     className={cn(
-      'w-full py-3 text-white font-bold transition-colors text-sm flex items-center justify-center gap-2',
+      'w-full py-3 text-text-primary font-bold transition-colors text-sm flex items-center justify-center gap-2',
       className
     )}
     style={style}
@@ -74,7 +74,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
             <button
               type="button"
               onClick={() => onNavigate('landing')}
-              className="flex items-center gap-2 text-text-secondary hover:text-white transition-colors"
+              className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               <span className="text-sm hidden sm:inline">Back</span>
@@ -94,7 +94,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
           <Card variant="outlined" padding="lg">
             <VStack align="center" gap="6">
               <VStack align="center" gap="2">
-                <h1 className="text-xl sm:text-2xl font-black text-white font-display">
+                <h1 className="text-xl sm:text-2xl font-black text-text-primary font-display">
                   AUTHENTICATE
                 </h1>
                 <p className="text-sm text-arena-secondary">
@@ -136,7 +136,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
             <button
               type="button"
               onClick={() => setShowDemoMode(!showDemoMode)}
-              className="w-full py-2 text-sm text-arena-muted hover:text-white 
+              className="w-full py-2 text-sm text-arena-muted hover:text-text-primary 
                          transition-colors flex items-center justify-center gap-2"
             >
               <Users className="w-4 h-4" />
@@ -163,8 +163,8 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                           className={cn(
                             'flex flex-col items-center justify-center py-2 px-1 rounded transition-all',
                             isSelected 
-                              ? 'bg-brand text-white' 
-                              : 'bg-arena-elevated text-arena-muted hover:bg-arena-border hover:text-white border border-arena-border'
+                              ? 'bg-brand text-text-primary' 
+                              : 'bg-arena-elevated text-arena-muted hover:bg-arena-border hover:text-text-primary border border-arena-border'
                           )}
                           title={phase.label}
                         >
@@ -176,7 +176,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                   </div>
                   <div className="mt-2 text-center">
                     <span className="text-xs text-arena-muted">
-                      Simulating: <span className="font-semibold text-white">{EVENT_PHASES.find(p => p.id === selectedPhase)?.label}</span> phase
+                      Simulating: <span className="font-semibold text-text-primary">{EVENT_PHASES.find(p => p.id === selectedPhase)?.label}</span> phase
                     </span>
                   </div>
                 </div>

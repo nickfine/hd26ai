@@ -24,7 +24,7 @@ function Landing({ onNavigate }) {
           <HStack justify="between" align="center">
             <HStack gap="3" align="center">
               <img src={adaptLogo} alt="Adaptavist" className="h-6 sm:h-8 w-auto" />
-              <span className="font-heading font-bold text-base sm:text-lg tracking-tight text-white">
+              <span className="font-heading font-bold text-base sm:text-lg tracking-tight text-text-primary">
                 HACKDAY 2026
               </span>
             </HStack>
@@ -47,7 +47,7 @@ function Landing({ onNavigate }) {
             <div className="landing-zone-header flex flex-col items-center">
               {/* Title */}
               <VStack align="center" gap="2" className="landing-title-group mt-4">
-                <h1 className="landing-title text-4xl sm:text-6xl md:text-8xl font-heading font-black text-white tracking-tight text-center">
+                <h1 className="landing-title text-4xl sm:text-6xl md:text-8xl font-heading font-black text-text-primary tracking-tight text-center">
                   HACKDAY 2026
                 </h1>
                 <p className="landing-subhead text-lg sm:text-2xl text-text-secondary text-center max-w-lg mt-6">
@@ -86,7 +86,7 @@ function Landing({ onNavigate }) {
                 padding="sm" 
                 className="text-center min-w-[90px] sm:min-w-[120px] bg-arena-card/50 backdrop-blur-sm border-arena-border transition-colors"
               >
-                <div className="text-2xl sm:text-4xl font-heading font-black text-white">48</div>
+                <div className="text-2xl sm:text-4xl font-heading font-black text-text-primary">48</div>
                 <div className="text-xs text-text-muted uppercase tracking-wide font-mono">Hours</div>
               </Card>
               <Card 
@@ -94,7 +94,7 @@ function Landing({ onNavigate }) {
                 padding="sm" 
                 className="text-center min-w-[90px] sm:min-w-[120px] bg-arena-card/50 backdrop-blur-sm border-arena-border transition-colors"
               >
-                <div className="text-2xl sm:text-4xl font-heading font-black text-white">∞</div>
+                <div className="text-2xl sm:text-4xl font-heading font-black text-text-primary">∞</div>
                 <div className="text-xs text-text-muted uppercase tracking-wide font-mono">Possibilities</div>
               </Card>
               <Card 
@@ -102,7 +102,7 @@ function Landing({ onNavigate }) {
                 padding="sm" 
                 className="text-center min-w-[90px] sm:min-w-[120px] bg-arena-card/50 backdrop-blur-sm border-arena-border transition-colors"
               >
-                <div className="text-2xl sm:text-4xl font-heading font-black text-white">1</div>
+                <div className="text-2xl sm:text-4xl font-heading font-black text-text-primary">1</div>
                 <div className="text-xs text-text-muted uppercase tracking-wide font-mono">Winner</div>
               </Card>
             </HStack>
