@@ -20,7 +20,7 @@ export default {
           card: 'var(--surface-primary)',
           elevated: 'var(--surface-elevated)',
           border: 'var(--border-default)',
-          'border-strong': 'var(--border-default)',
+          'border-strong': 'var(--color-border-strong)',
           'glass': 'var(--surface-glass)',
           'glass-border': 'var(--border-subtle)',
           // Text colors for arena namespace (allows text-arena-secondary etc.)
