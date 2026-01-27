@@ -423,9 +423,11 @@ function AppLayout({
         </div>
       )}
       {/* ================================================================== */}
-      {/* HEADER */}
+      {/* STICKY HEADER + EVENT BAR CONTAINER */}
       {/* ================================================================== */}
-      <header className={`px-4 sm:px-6 py-4 bg-arena-black ${devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40`}>
+      <div className={`${devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40 bg-arena-black`}>
+      {/* HEADER */}
+      <header className="px-4 sm:px-6 py-4">
         <Container size="xl" padding="none">
           <HStack justify="between" align="center">
             {/* Mobile menu button */}
@@ -647,9 +649,7 @@ function AppLayout({
         </Container>
       </header>
 
-      {/* ================================================================== */}
       {/* EVENT STATUS BAR */}
-      {/* ================================================================== */}
       <div className="border-b border-arena-border bg-arena-card px-4 sm:px-6 py-3">
         <Container size="xl" padding="none">
           {/* Mobile: Compact current phase display */}
@@ -721,6 +721,8 @@ function AppLayout({
           </HStack>
         </Container>
       </div>
+      </div>
+      {/* END STICKY HEADER + EVENT BAR CONTAINER */}
 
       {/* ================================================================== */}
       {/* MAIN LAYOUT */}
@@ -740,10 +742,10 @@ function AppLayout({
           {/* ================================================================ */}
           {showSidebar && (
             <aside className={cn(
-              'fixed lg:static inset-y-0 left-0 z-50',
+              'fixed lg:static inset-y-0 left-0',
               'w-[280px] bg-arena-black',
               'transform transition-transform duration-300 ease-in-out',
-              sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0',
+              sidebarOpen ? 'translate-x-0 z-50' : '-translate-x-full lg:translate-x-0 lg:z-30',
               'overflow-y-auto'
             )}>
               <div className="p-4 sm:p-6 space-y-6">
