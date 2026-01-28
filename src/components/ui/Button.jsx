@@ -71,14 +71,17 @@ const Button = forwardRef(({
       )}
       {...props}
     >
-      {/* Loading Spinner */}
+      {/* Loading Spinner - decorative, button text announces loading state */}
       {loading && (
-        <Loader2 className={cn(iconSize, 'animate-spin', children && 'mr-2')} />
+        <Loader2 
+          className={cn(iconSize, 'animate-spin', children && 'mr-2')} 
+          aria-hidden="true"
+        />
       )}
       
-      {/* Left Icon */}
+      {/* Left Icon - decorative when button has text */}
       {!loading && leftIcon && (
-        <span className={cn(iconSize, 'flex-shrink-0')}>
+        <span className={cn(iconSize, 'flex-shrink-0')} aria-hidden="true">
           {leftIcon}
         </span>
       )}
@@ -86,9 +89,9 @@ const Button = forwardRef(({
       {/* Button Text */}
       {children && <span>{children}</span>}
       
-      {/* Right Icon */}
+      {/* Right Icon - decorative when button has text */}
       {!loading && rightIcon && (
-        <span className={cn(iconSize, 'flex-shrink-0')}>
+        <span className={cn(iconSize, 'flex-shrink-0')} aria-hidden="true">
           {rightIcon}
         </span>
       )}
@@ -145,9 +148,9 @@ export const IconButton = forwardRef(({
       {...props}
     >
       {loading ? (
-        <Loader2 className={cn(iconSize, 'animate-spin')} />
+        <Loader2 className={cn(iconSize, 'animate-spin')} aria-hidden="true" />
       ) : (
-        <span className={iconSize}>{icon}</span>
+        <span className={iconSize} aria-hidden="true">{icon}</span>
       )}
     </button>
   );

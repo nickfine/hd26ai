@@ -416,6 +416,11 @@ function AppLayout({
 
   return (
     <div className="min-h-screen bg-hackday text-text-primary">
+      {/* Skip Link for Keyboard Navigation (WCAG 2.4.1) */}
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
+      
       {/* DEV MODE - Remove before production */}
       {devModeActive && (
         <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-bold sticky top-0 z-50">
@@ -786,7 +791,11 @@ function AppLayout({
           {/* ================================================================ */}
           {/* MAIN CONTENT */}
           {/* ================================================================ */}
-          <main className={cn('flex-1', showSidebar && 'min-h-[calc(100vh-200px)]')}>
+          <main 
+            id="main-content" 
+            className={cn('flex-1', showSidebar && 'min-h-[calc(100vh-200px)]')}
+            tabIndex={-1}
+          >
             {children}
           </main>
         </div>

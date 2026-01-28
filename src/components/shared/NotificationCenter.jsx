@@ -115,11 +115,16 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
           'hover:bg-arena-elevated',
           isOpen && 'bg-arena-elevated'
         )}
-        aria-label="Notifications"
+        aria-label={`Notifications${unreadCount > 0 ? `, ${unreadCount} unread` : ''}`}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
       >
-        <Bell className="w-5 h-5 text-text-secondary" />
+        <Bell className="w-5 h-5 text-text-secondary" aria-hidden="true" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center">
+          <span 
+            className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center"
+            aria-hidden="true"
+          >
             {unreadCount > 9 ? '9+' : unreadCount}
           </span>
         )}
@@ -130,7 +135,7 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
           {/* Header */}
           <div className="px-4 py-3 border-b border-arena-border flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <Bell className="w-4 h-4 text-text-secondary" />
+              <Bell className="w-4 h-4 text-text-secondary" aria-hidden="true" />
               <span className="font-bold text-sm text-text-primary">Notifications</span>
               {unreadCount > 0 && (
                 <Badge className="bg-error text-white text-xs">{unreadCount}</Badge>
@@ -168,7 +173,7 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
                       : 'text-arena-secondary hover:bg-arena-elevated hover:text-text-primary'
                   )}
                 >
-                  <Icon className="w-3.5 h-3.5" />
+                  <Icon className="w-3.5 h-3.5" aria-hidden="true" />
                   {category.label}
                   {count > 0 && category.id !== 'all' && (
                     <span className={cn(
@@ -183,8 +188,13 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
             })}
           </div>
 
-          {/* Notifications List */}
-          <div className="overflow-y-auto flex-1">
+          {/* Notifications List - aria-live for screen reader announcements (WCAG 4.1.3) */}
+          <div 
+            className="overflow-y-auto flex-1"
+            role="region"
+            aria-label="Notification list"
+            aria-live="polite"
+          >
             {filteredNotifications.length === 0 ? (
               <div className="p-6 text-center">
                 <div className="text-3xl mb-2">

@@ -300,13 +300,18 @@ const LiveActivityFeed = memo(function LiveActivityFeed({
         </div>
       )}
       
-      {/* Activity list */}
+      {/* Activity list - aria-live for screen reader announcements (WCAG 4.1.3) */}
       <div 
         className="space-y-1 max-h-80 overflow-y-auto rounded-lg"
         style={{ 
           backgroundColor: 'var(--surface-primary)',
           border: '1px solid var(--border-default)',
         }}
+        role="log"
+        aria-live="polite"
+        aria-label="Live activity feed"
+        aria-atomic="false"
+        aria-relevant="additions"
       >
         {displayedActivities.length > 0 ? (
           displayedActivities.map((activity, index) => (

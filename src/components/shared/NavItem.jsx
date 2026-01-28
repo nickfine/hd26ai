@@ -46,6 +46,7 @@ const NavItem = forwardRef(({
       type="button"
       onClick={onClick}
       disabled={disabled}
+      aria-current={active ? 'page' : undefined}
       className={cn(
         'w-full px-3 py-2 flex items-center gap-3 text-sm font-bold transition-all duration-200',
         'focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-neutral-500',
@@ -59,9 +60,9 @@ const NavItem = forwardRef(({
       )}
       {...props}
     >
-      {/* Icon */}
+      {/* Icon - decorative, hidden from screen readers */}
       {icon && (
-        <span className="w-4 h-4 flex-shrink-0">
+        <span className="w-4 h-4 flex-shrink-0" aria-hidden="true">
           {icon}
         </span>
       )}
