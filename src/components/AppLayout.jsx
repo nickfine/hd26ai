@@ -36,6 +36,7 @@ import Badge, { RoleBadge } from './ui/Badge';
 import NavItem, { NavGroup } from './shared/NavItem';
 import { Container, HStack, VStack } from './layout';
 import Avatar from './ui/Avatar';
+import { PhaseIndicator } from './ui';
 import { cn, formatNameWithCallsign } from '../lib/design-system';
 import NotificationCenter from './shared/NotificationCenter';
 import { useNotifications } from '../hooks/useNotifications';
@@ -671,76 +672,25 @@ function AppLayout({
         </Container>
       </header>
 
-      {/* EVENT STATUS BAR */}
+      {/* EVENT STATUS BAR - Enhanced Phase Timeline */}
       <div className="border-b border-arena-border bg-arena-card px-4 sm:px-6 py-3">
         <Container size="xl" padding="none">
-          {/* Mobile: Compact current phase display */}
+          {/* Mobile: Compact phase indicator */}
           <div className="sm:hidden">
-            {(() => {
-              const currentPhaseIndex = EVENT_PHASE_ORDER.indexOf(eventPhase);
-              const currentPhase = EVENT_PHASES_CONFIG[eventPhase];
-              return (
-                <div className="flex items-center justify-center gap-3">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-xs text-arena-muted">Phase</span>
-                    <span className="text-xs font-bold text-text-secondary">{currentPhaseIndex + 1}/{EVENT_PHASE_ORDER.length}</span>
-                  </div>
-                  <div className="h-4 w-px bg-arena-border" />
-                  <span className="text-sm font-bold text-text-primary">{currentPhase?.label}</span>
-                  <div className="h-4 w-px bg-arena-border" />
-                  <div className="flex gap-1">
-                    {EVENT_PHASE_ORDER.map((_, idx) => (
-                      <div
-                        key={idx}
-                        className={cn(
-                          'w-2 h-2 rounded-full',
-                          idx < currentPhaseIndex ? 'bg-brand' : idx === currentPhaseIndex ? 'bg-brand/60' : 'bg-arena-border'
-                        )}
-                      />
-                    ))}
-                  </div>
-                </div>
-              );
-            })()}
+            <PhaseIndicator 
+              phases={EVENT_PHASES_CONFIG}
+              currentPhase={eventPhase}
+              compact
+            />
           </div>
 
-          {/* Desktop: Full phase timeline */}
-          <HStack justify="center" gap="4" className="hidden sm:flex">
-            {EVENT_PHASE_ORDER.map((phaseKey, index) => {
-              const phase = EVENT_PHASES_CONFIG[phaseKey];
-              const currentPhaseIndex = EVENT_PHASE_ORDER.indexOf(eventPhase);
-              const isActive = phaseKey === eventPhase;
-              const isComplete = index < currentPhaseIndex;
-              return (
-                <HStack key={phaseKey} gap="0" align="center">
-                  <HStack gap="1" align="center">
-                    <div className={cn(
-                      'w-6 h-6 flex items-center justify-center text-xs font-bold rounded',
-                      isComplete 
-                        ? 'bg-brand text-white' 
-                        : isActive 
-                          ? 'bg-brand/80 text-white animate-pulse' 
-                          : 'bg-arena-border text-text-muted'
-                    )}>
-                      {isComplete ? '✓' : index + 1}
-                    </div>
-                    <span className={cn(
-                      'text-xs font-bold whitespace-nowrap',
-                      isActive ? 'text-brand' : isComplete ? 'text-text-primary' : 'text-text-muted'
-                    )}>
-                      {phase?.label}
-                    </span>
-                  </HStack>
-                  {index < EVENT_PHASE_ORDER.length - 1 && (
-                    <div className={cn(
-                      'w-8 h-0.5 mx-2',
-                      isComplete ? 'bg-brand' : 'bg-arena-border'
-                    )} />
-                  )}
-                </HStack>
-              );
-            })}
-          </HStack>
+          {/* Desktop: Full animated phase timeline */}
+          <div className="hidden sm:block">
+            <PhaseIndicator 
+              phases={EVENT_PHASES_CONFIG}
+              currentPhase={eventPhase}
+            />
+          </div>
         </Container>
       </div>
       </div>

@@ -112,3 +112,10 @@ export {
   ErrorBanner,
   EmptyState,
 } from './ErrorState';
+
+// Phase Indicator (event timeline)
+export {
+  default as PhaseIndicator,
+  PhaseStep,
+  ConnectingLine,
+} from './PhaseIndicator';
