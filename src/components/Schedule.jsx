@@ -15,6 +15,8 @@ import {
   Users,
   Globe,
   Loader2,
+  Sunrise,
+  Sunset,
 } from 'lucide-react';
 import AppLayout from './AppLayout';
 import {
@@ -31,6 +33,26 @@ import {
 // ============================================================================
 // HELPERS - Transform database milestones to component format
 // ============================================================================
+
+/**
+ * Get time period from event time (for section headers)
+ */
+const getTimePeriod = (time) => {
+  if (!time) return null;
+  const hour = parseInt(time.split(':')[0], 10);
+  if (hour < 12) return 'morning';
+  if (hour < 17) return 'afternoon';
+  return 'evening';
+};
+
+/**
+ * Time period metadata for headers
+ */
+const TIME_PERIODS = {
+  morning: { label: 'Morning', icon: Sunrise, color: 'text-amber-400', bg: 'bg-amber-400/10' },
+  afternoon: { label: 'Afternoon', icon: Sun, color: 'text-orange-400', bg: 'bg-orange-400/10' },
+  evening: { label: 'Evening', icon: Sunset, color: 'text-purple-400', bg: 'bg-purple-400/10' },
+};
 
 /**
  * Get icon component based on title/phase
@@ -727,10 +749,15 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
           {/* Timeline Line - Animated glow */}
           <div className="absolute left-[23px] sm:left-[31px] top-0 bottom-0 w-0.5 timeline-line" />
 
-          {/* Events */}
+          {/* Events with Time Period Headers */}
           <div className="space-y-4">
             {currentDayData.events.map((event, index) => {
               const Icon = event.icon;
+              const currentPeriod = !isPreEvent ? getTimePeriod(event.time) : null;
+              const prevEvent = index > 0 ? currentDayData.events[index - 1] : null;
+              const prevPeriod = prevEvent && !isPreEvent ? getTimePeriod(prevEvent.time) : null;
+              const showPeriodHeader = currentPeriod && currentPeriod !== prevPeriod;
+              const periodInfo = showPeriodHeader ? TIME_PERIODS[currentPeriod] : null;
               
               // Get event date for conversion
               let eventDate = currentDayData.date;
@@ -763,18 +790,32 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
                 : '';
               
               return (
-                <div key={event.id} className="relative flex gap-4">
-                  {/* Timeline Node - with orange glow */}
-                  <div className="relative z-10 flex-shrink-0">
-                    {/* Glow backdrop */}
-                    <div className="absolute inset-0 rounded-full bg-brand/20 blur-xl scale-125" />
-                    <div
-                      className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-arena-black 
-                                  flex items-center justify-center shadow-md glass-card"
-                    >
-                      <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
+                <div key={event.id}>
+                  {/* Time Period Header */}
+                  {showPeriodHeader && periodInfo && (
+                    <div className="relative flex gap-4 mb-4">
+                      <div className="w-12 sm:w-16 flex-shrink-0" /> {/* Spacer for timeline alignment */}
+                      <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${periodInfo.bg}`}>
+                        <periodInfo.icon className={`w-4 h-4 ${periodInfo.color}`} />
+                        <span className={`text-sm font-bold uppercase tracking-wide ${periodInfo.color}`}>
+                          {periodInfo.label}
+                        </span>
+                      </div>
                     </div>
-                  </div>
+                  )}
+                  
+                  <div className="relative flex gap-4">
+                    {/* Timeline Node - with orange glow */}
+                    <div className="relative z-10 flex-shrink-0">
+                      {/* Glow backdrop */}
+                      <div className="absolute inset-0 rounded-full bg-brand/20 blur-xl scale-125" />
+                      <div
+                        className="relative w-12 h-12 sm:w-16 sm:h-16 rounded-full border-4 border-arena-black 
+                                    flex items-center justify-center shadow-md glass-card"
+                      >
+                        <Icon className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
+                      </div>
+                    </div>
 
                   {/* Event Card - Glass styling */}
                   <div
@@ -837,6 +878,7 @@ function Schedule({ user, teams, onNavigate, eventPhase, event }) {
                       Add to Google Calendar
                       <ExternalLink className="w-3 h-3" />
                     </button>
+                  </div>
                   </div>
                 </div>
               );

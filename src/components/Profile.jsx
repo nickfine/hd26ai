@@ -9,6 +9,11 @@ import {
   X,
   Plus,
   Zap,
+  Activity,
+  UserPlus,
+  Star,
+  Send,
+  Calendar,
 } from 'lucide-react';
 import { SKILLS, AVATARS } from '../data/mockData';
 import { cn } from '../lib/design-system';
@@ -925,6 +930,111 @@ function Profile({
                 </div>
               </div>
             )}
+
+            {/* Activity History Section */}
+            <div className="bg-arena-card p-4 sm:p-6 border-2 border-arena-border rounded-lg">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Activity className="w-4 h-4 text-brand" />
+                  <span className="text-xs font-bold uppercase tracking-wide text-arena-secondary">
+                    Activity History
+                  </span>
+                </div>
+              </div>
+              
+              {/* Activity Timeline */}
+              <div className="relative">
+                {/* Timeline line */}
+                <div className="absolute left-3 top-2 bottom-2 w-0.5 bg-arena-border" />
+                
+                {/* Activity Items */}
+                <div className="space-y-4">
+                  {/* Registered Activity */}
+                  <div className="relative flex gap-3 pl-1">
+                    <div className="relative z-10 w-5 h-5 rounded-full bg-ai/20 border-2 border-ai flex items-center justify-center flex-shrink-0">
+                      <Calendar className="w-2.5 h-2.5 text-ai" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm text-text-primary">Registered for HackDay 2026</p>
+                      <p className="text-xs text-arena-muted">
+                        {user?.createdAt 
+                          ? new Date(user.createdAt).toLocaleDateString('en-GB', { 
+                              day: 'numeric', month: 'short', year: 'numeric' 
+                            })
+                          : 'Recently'}
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Team Joined Activity */}
+                  {userTeam && (
+                    <div className="relative flex gap-3 pl-1">
+                      <div className="relative z-10 w-5 h-5 rounded-full bg-brand/20 border-2 border-brand flex items-center justify-center flex-shrink-0">
+                        <UserPlus className="w-2.5 h-2.5 text-brand" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-text-primary">
+                          {isCaptain ? 'Created' : 'Joined'} <span className="font-medium">{userTeam.name}</span>
+                        </p>
+                        <p className="text-xs text-arena-muted">
+                          {isCaptain ? 'Team Captain' : 'Team Member'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Profile Updated Activity */}
+                  {(user?.callsign || (user?.skills && user.skills.length > 0)) && (
+                    <div className="relative flex gap-3 pl-1">
+                      <div className="relative z-10 w-5 h-5 rounded-full bg-purple-500/20 border-2 border-purple-500 flex items-center justify-center flex-shrink-0">
+                        <User className="w-2.5 h-2.5 text-purple-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-text-primary">Updated profile</p>
+                        <p className="text-xs text-arena-muted">
+                          {user?.callsign && `Callsign: "${user.callsign}"`}
+                          {user?.callsign && user?.skills?.length > 0 && ' · '}
+                          {user?.skills?.length > 0 && `${user.skills.length} skill${user.skills.length > 1 ? 's' : ''}`}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Submission Activity (if team has submitted) */}
+                  {userTeam?.submission && (
+                    <div className="relative flex gap-3 pl-1">
+                      <div className="relative z-10 w-5 h-5 rounded-full bg-emerald-500/20 border-2 border-emerald-500 flex items-center justify-center flex-shrink-0">
+                        <Send className="w-2.5 h-2.5 text-emerald-500" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm text-text-primary">
+                          Submitted <span className="font-medium">{userTeam.submission.projectName}</span>
+                        </p>
+                        <p className="text-xs text-arena-muted">Project submitted for judging</p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+              
+              {/* Stats Summary */}
+              <div className="mt-4 pt-4 border-t border-arena-border">
+                <div className="grid grid-cols-3 gap-4 text-center">
+                  <div>
+                    <p className="text-lg font-bold text-text-primary">{userTeam ? 1 : 0}</p>
+                    <p className="text-xs text-arena-muted">Teams</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-text-primary">{user?.skills?.length || 0}</p>
+                    <p className="text-xs text-arena-muted">Skills</p>
+                  </div>
+                  <div>
+                    <p className="text-lg font-bold text-text-primary">{userTeam?.submission ? 1 : 0}</p>
+                    <p className="text-xs text-arena-muted">Submissions</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
