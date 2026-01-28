@@ -8,6 +8,7 @@ import {
 import confetti from 'canvas-confetti';
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
+import useReducedMotion from '../hooks/useReducedMotion';
 
 // ============================================================================
 // CONFETTI CELEBRATION
@@ -68,34 +69,42 @@ function Results({
 }) {
   const [showContent, setShowContent] = useState(false);
   const celebrationFired = useRef(false);
+  const prefersReducedMotion = useReducedMotion();
 
   // Check if results should be visible
   const isResultsPhase = eventPhase === 'results';
   const isAdmin = user?.role === 'admin';
   const canViewResults = isResultsPhase || isAdmin;
 
-  // Fire celebration confetti on first view of results
+  // Fire celebration confetti on first view of results (respects reduced motion)
   useEffect(() => {
     if (canViewResults && !celebrationFired.current) {
       celebrationFired.current = true;
-      // Small delay for dramatic effect
-      const timer = setTimeout(() => {
-        fireCelebration();
-      }, 500);
       
-      // Show content after confetti starts
-      const contentTimer = setTimeout(() => {
-        setShowContent(true);
-      }, 300);
+      // Only fire confetti if user doesn't prefer reduced motion
+      if (!prefersReducedMotion) {
+        // Small delay for dramatic effect
+        const timer = setTimeout(() => {
+          fireCelebration();
+        }, 500);
+        
+        // Show content after confetti starts
+        const contentTimer = setTimeout(() => {
+          setShowContent(true);
+        }, 300);
 
-      return () => {
-        clearTimeout(timer);
-        clearTimeout(contentTimer);
-      };
+        return () => {
+          clearTimeout(timer);
+          clearTimeout(contentTimer);
+        };
+      } else {
+        // If reduced motion, show content immediately
+        setShowContent(true);
+      }
     } else if (canViewResults) {
       setShowContent(true);
     }
-  }, [canViewResults]);
+  }, [canViewResults, prefersReducedMotion]);
 
   // Get only submitted projects
   const submittedProjects = useMemo(() => {

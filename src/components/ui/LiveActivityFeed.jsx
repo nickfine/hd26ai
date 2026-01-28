@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { cn, formatNameWithCallsign } from '../../lib/design-system';
 import { CallsignBadge } from './Badge';
+import useReducedMotion from '../../hooks/useReducedMotion';
 
 // Activity type configuration with icons and colors
 const ACTIVITY_CONFIG = {
@@ -184,17 +185,13 @@ const ActivityItem = memo(function ActivityItem({
   activity, 
   isNew = false,
   showIcon = true,
+  prefersReducedMotion = false,
 }) {
   const config = ACTIVITY_CONFIG[activity.type] || ACTIVITY_CONFIG.join;
   const Icon = config.icon;
   const relativeTime = formatRelativeTime(activity.time);
   const absoluteTime = getAbsoluteTime(activity.time);
   const formatted = formatNameWithCallsign(activity.user, activity.callsign);
-  
-  // Check for reduced motion
-  const prefersReducedMotion = typeof window !== 'undefined'
-    ? window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    : false;
   
   return (
     <div 
@@ -280,6 +277,8 @@ const LiveActivityFeed = memo(function LiveActivityFeed({
   className,
   emptyMessage = 'No activity yet',
 }) {
+  const prefersReducedMotion = useReducedMotion();
+  
   // Slice to max items
   const displayedActivities = useMemo(() => 
     activities.slice(0, maxItems),
@@ -315,6 +314,7 @@ const LiveActivityFeed = memo(function LiveActivityFeed({
               key={activity.id || index}
               activity={activity}
               isNew={index === 0}
+              prefersReducedMotion={prefersReducedMotion}
             />
           ))
         ) : (
