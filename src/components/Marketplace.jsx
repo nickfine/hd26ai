@@ -21,6 +21,7 @@ import AppLayout from './AppLayout';
 import { StatusBanner } from './shared';
 import { MarketplaceSkeleton } from './ui/Skeleton';
 import { ColoredSkillChip, CardStateBadge } from './ui/Badge';
+import { EmptyState } from './ui/ErrorState';
 
 function Marketplace({ 
   user, 
@@ -638,14 +639,17 @@ function Marketplace({
 
               {/* Empty State - Teams */}
               {filteredTeams.length === 0 && (
-                <div className="text-center py-12 text-arena-muted">
-                  <Users className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>
-                    {searchTerm
-                      ? 'No teams found matching your search.'
-                      : 'No teams available.'}
-                  </p>
-                </div>
+                <EmptyState
+                  emoji="💡"
+                  title={searchTerm ? 'No Ideas Found' : 'No Ideas Yet'}
+                  message={searchTerm 
+                    ? 'Try adjusting your search or filters to find more ideas.'
+                    : 'Be the first to share your idea for HackDay 2026!'
+                  }
+                  action={!searchTerm && onCreateTeam ? onCreateTeam : undefined}
+                  actionText="Create an Idea"
+                  compact
+                />
               )}
 
               {/* Pagination Controls */}
@@ -816,14 +820,15 @@ function Marketplace({
 
               {/* Empty State - People */}
               {filteredAgents.length === 0 && (
-                <div className="text-center py-12 text-arena-muted">
-                  <User className="w-12 h-12 mx-auto mb-4 opacity-50" />
-                  <p>
-                    {searchTerm
-                      ? 'No free agents found matching your search.'
-                      : 'No free agents available for the selected filter.'}
-                  </p>
-                </div>
+                <EmptyState
+                  emoji="🔍"
+                  title={searchTerm ? 'No Free Agents Found' : 'All Teamed Up!'}
+                  message={searchTerm 
+                    ? 'Try adjusting your search or skill filters.'
+                    : 'Everyone has found a team. Check the Ideas tab to see what\'s being built!'
+                  }
+                  compact
+                />
               )}
             </>
           )}

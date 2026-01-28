@@ -180,44 +180,85 @@ export const ErrorBanner = memo(function ErrorBanner({
 
 /**
  * EmptyState - For when there's no data (not an error)
+ * 
+ * @example
+ * // With icon component
+ * <EmptyState icon={Users} title="No Teams" message="Join or create a team" />
+ * 
+ * // With emoji
+ * <EmptyState emoji="🚀" title="No Projects" message="Start building!" />
+ * 
+ * // With action
+ * <EmptyState 
+ *   emoji="👥"
+ *   title="No Team Yet"
+ *   message="Find teammates to build with"
+ *   action={() => navigate('marketplace')}
+ *   actionText="Browse Ideas"
+ * />
  */
 export const EmptyState = memo(function EmptyState({
   icon: CustomIcon,
+  emoji,
   title = 'No data',
   message = 'There\'s nothing here yet.',
   action,
   actionText = 'Get Started',
+  secondaryAction,
+  secondaryActionText,
+  compact = false,
   className,
 }) {
   return (
     <div className={cn(
-      'flex flex-col items-center justify-center py-12 px-4 text-center',
+      'flex flex-col items-center justify-center text-center',
+      compact ? 'py-8 px-4' : 'py-12 px-4',
       className
     )}>
-      {/* Icon */}
-      <div className="w-16 h-16 rounded-full bg-arena-elevated flex items-center justify-center mb-4">
-        {CustomIcon ? (
-          <CustomIcon className="w-8 h-8 text-text-muted" />
+      {/* Icon or Emoji */}
+      <div className={cn(
+        'rounded-full bg-arena-elevated flex items-center justify-center mb-4',
+        compact ? 'w-12 h-12' : 'w-16 h-16'
+      )}>
+        {emoji ? (
+          <span className={compact ? 'text-2xl' : 'text-3xl'}>{emoji}</span>
+        ) : CustomIcon ? (
+          <CustomIcon className={cn(compact ? 'w-6 h-6' : 'w-8 h-8', 'text-text-muted')} />
         ) : (
-          <FileQuestion className="w-8 h-8 text-text-muted" />
+          <FileQuestion className={cn(compact ? 'w-6 h-6' : 'w-8 h-8', 'text-text-muted')} />
         )}
       </div>
 
       {/* Title */}
-      <h3 className="text-lg font-bold text-text-primary mb-2">
+      <h3 className={cn(
+        'font-bold text-text-primary mb-2',
+        compact ? 'text-base' : 'text-lg'
+      )}>
         {title}
       </h3>
 
       {/* Message */}
-      <p className="text-text-secondary text-sm max-w-md mb-6">
+      <p className={cn(
+        'text-text-secondary max-w-md',
+        compact ? 'text-xs mb-4' : 'text-sm mb-6'
+      )}>
         {message}
       </p>
 
-      {/* Action */}
-      {action && (
-        <Button variant="primary" onClick={action}>
-          {actionText}
-        </Button>
+      {/* Actions */}
+      {(action || secondaryAction) && (
+        <div className="flex flex-wrap items-center justify-center gap-3">
+          {action && (
+            <Button variant="primary" size={compact ? 'sm' : 'md'} onClick={action}>
+              {actionText}
+            </Button>
+          )}
+          {secondaryAction && (
+            <Button variant="secondary" size={compact ? 'sm' : 'md'} onClick={secondaryAction}>
+              {secondaryActionText}
+            </Button>
+          )}
+        </div>
       )}
     </div>
   );

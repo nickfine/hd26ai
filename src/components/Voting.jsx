@@ -15,6 +15,7 @@ import {
 import { cn } from '../lib/design-system';
 import { isValidUrl } from '../lib/constants';
 import AppLayout from './AppLayout';
+import { EmptyState } from './ui/ErrorState';
 
 // ============================================================================
 // CONSTANTS
@@ -286,15 +287,13 @@ function Voting({
   // RENDER: EMPTY STATE
   // ============================================================================
   const renderEmptyState = () => (
-    <div className="text-center py-16">
-      <Sparkles className="w-16 h-16 mx-auto mb-4 text-arena-muted" />
-      <h3 className="text-xl font-bold text-text-primary mb-2">No Projects Found</h3>
-      <p className="text-text-secondary max-w-md mx-auto">
-        {searchQuery
-          ? 'Try adjusting your filters or search query.'
-          : 'No projects have been submitted yet. Check back soon!'}
-      </p>
-    </div>
+    <EmptyState
+      emoji={searchQuery ? '🔍' : '🚀'}
+      title={searchQuery ? 'No Projects Found' : 'Projects Coming Soon'}
+      message={searchQuery
+        ? 'Try adjusting your filters or search query.'
+        : 'Teams are still building their projects. Check back during the voting phase!'}
+    />
   );
 
   // ============================================================================

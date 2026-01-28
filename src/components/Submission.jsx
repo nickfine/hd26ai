@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
+import { EmptyState } from './ui/ErrorState';
 
 // ============================================================================
 // SUBMISSION REQUIREMENTS
@@ -172,20 +173,13 @@ function Submission({ user, teams, onNavigate, onUpdateSubmission, eventPhase })
             </p>
           </div>
 
-          <div className="text-center py-12">
-            <Users className="w-16 h-16 mx-auto mb-4 text-arena-muted" />
-            <h2 className="text-2xl font-bold text-text-primary mb-2">No Team Yet</h2>
-            <p className="text-arena-secondary mb-6">
-              You need to join or create an idea before you can submit a project.
-            </p>
-            <button
-              type="button"
-              onClick={() => onNavigate('marketplace')}
-              className="px-6 py-3 bg-brand text-white font-bold text-sm hover:bg-brand/90 transition-colors rounded-lg"
-            >
-              Find a Team
-            </button>
-          </div>
+          <EmptyState
+            emoji="👥"
+            title="No Team Yet"
+            message="You need to join or create an idea before you can submit a project."
+            action={() => onNavigate('marketplace')}
+            actionText="Find a Team"
+          />
         </div>
       </AppLayout>
     );
