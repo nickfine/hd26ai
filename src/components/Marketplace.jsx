@@ -1,6 +1,5 @@
 import { useState, useEffect, memo, useCallback, useMemo } from 'react';
 import {
-  Eye,
   Users,
   Plus,
   Search,

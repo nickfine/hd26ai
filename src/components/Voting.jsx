@@ -8,9 +8,7 @@ import {
   Github,
   Globe,
   ExternalLink,
-  Sparkles,
   Users,
-  Filter,
 } from 'lucide-react';
 import { cn } from '../lib/design-system';
 import { isValidUrl } from '../lib/constants';
