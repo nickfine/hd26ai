@@ -68,15 +68,19 @@ const PhaseStep = memo(({
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      {/* Phase circle with icon */}
+      {/* Phase circle with icon - ECD: active phase larger for hierarchy */}
       <div 
         className={cn(
-          'w-10 h-10 rounded-full flex items-center justify-center',
-          'border-2 transition-all duration-300',
-          'relative z-10',
-          isComplete && 'bg-brand border-brand text-white',
-          isActive && !isComplete && 'bg-brand/20 border-brand text-brand animate-pulse',
-          !isActive && !isComplete && 'bg-arena-elevated border-arena-border text-text-muted',
+          'rounded-full flex items-center justify-center',
+          'transition-all duration-300 relative z-10',
+          // Size: active is larger for visual hierarchy
+          isActive && !isComplete ? 'w-12 h-12' : 'w-10 h-10',
+          // Complete state: solid brand
+          isComplete && 'bg-brand border-2 border-brand text-white',
+          // Active state: prominent, no pulse (ECD: purposeful, not decorative)
+          isActive && !isComplete && 'bg-brand/20 border-2 border-brand text-brand scale-110',
+          // Inactive state: subtle, no border (ECD: restraint)
+          !isActive && !isComplete && 'bg-arena-elevated/50 text-text-muted/60',
           onClick && 'cursor-pointer hover:scale-110'
         )}
       >
@@ -84,17 +88,19 @@ const PhaseStep = memo(({
           <Check className="w-5 h-5" strokeWidth={3} />
         ) : (
           <Icon className={cn(
-            'w-5 h-5',
+            isActive ? 'w-6 h-6' : 'w-5 h-5',
             isActive && PHASE_COLORS[phase.id]
           )} />
         )}
       </div>
       
-      {/* Phase label */}
+      {/* Phase label - ECD: hierarchy through weight and opacity */}
       <span className={cn(
-        'mt-2 text-xs font-medium text-center whitespace-nowrap',
-        'transition-colors duration-200',
-        isActive ? 'text-brand font-bold' : isComplete ? 'text-text-primary' : 'text-text-muted'
+        'mt-2 text-xs text-center whitespace-nowrap',
+        'transition-all duration-200',
+        isActive && 'text-brand font-bold text-sm',
+        isComplete && 'text-text-primary font-medium',
+        !isActive && !isComplete && 'text-text-muted/60 font-normal'
       )}>
         {phase.label}
       </span>
@@ -123,7 +129,7 @@ PhaseStep.displayName = 'PhaseStep';
  * Connecting line between phases with animation
  */
 const ConnectingLine = memo(({ isComplete, isActive, isAnimating }) => (
-  <div className="flex-1 h-0.5 mx-1 relative overflow-hidden">
+  <div className="flex-1 h-0.5 mx-3 sm:mx-4 min-w-[32px] sm:min-w-[48px] relative overflow-hidden">
     {/* Base line */}
     <div className={cn(
       'absolute inset-0 transition-colors duration-500',
@@ -192,9 +198,9 @@ const PhaseIndicator = memo(({
     );
   }
   
-  // Full desktop view
+  // Full desktop view - ECD: generous spacing, even distribution
   return (
-    <div className={cn('flex items-start justify-center gap-0', className)}>
+    <div className={cn('flex items-start justify-between w-full max-w-4xl mx-auto', className)}>
       {phaseKeys.map((phaseKey, index) => {
         const phase = phases[phaseKey];
         const isActive = index === currentIndex;
