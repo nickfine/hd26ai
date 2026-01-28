@@ -11,7 +11,6 @@ import {
   Zap,
   Activity,
   UserPlus,
-  Star,
   Send,
   Calendar,
 } from 'lucide-react';
