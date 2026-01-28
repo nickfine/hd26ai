@@ -1,10 +1,8 @@
 import { useMemo, useEffect, useState, useRef } from 'react';
 import {
-  Trophy,
   Star,
   Award,
   Users,
-  Lock,
   Download,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
