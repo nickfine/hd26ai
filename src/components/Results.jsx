@@ -1,15 +1,11 @@
 import { useMemo, useEffect, useState, useRef } from 'react';
 import {
   Trophy,
-  Crown,
   Star,
   Award,
   Users,
-  Sparkles,
   Lock,
-  Medal,
   Download,
-  PartyPopper,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import AppLayout from './AppLayout';
@@ -258,69 +254,53 @@ function Results({
   const renderAwardCard = (awardKey, award, winner, index) => {
     if (!winner) return null;
 
+    // ECD: Simplified to 2 accent colors, removed gratuitous gradients
     const awardStyles = {
       grand_champion: {
-        gradient: 'from-yellow-500 via-amber-400 to-yellow-600',
-        border: 'border-yellow-500/50',
-        bg: 'bg-gradient-to-br from-yellow-950/30 to-amber-950/20',
+        border: 'border-yellow-500/40',
+        bg: 'bg-yellow-950/20',
         text: 'text-yellow-400',
-        glow: 'shadow-[0_0_30px_rgba(234,179,8,0.3)]',
-        iconBg: 'bg-gradient-to-br from-yellow-400 to-amber-600',
-        ribbon: 'bg-gradient-to-r from-yellow-600 via-yellow-400 to-yellow-600',
+        iconBg: 'bg-yellow-500',
+        accent: 'bg-yellow-500',
       },
       peoples_champion: {
-        gradient: 'from-violet-500 via-purple-400 to-indigo-500',
-        border: 'border-violet-500/50',
-        bg: 'bg-gradient-to-br from-violet-950/30 to-purple-950/20',
+        border: 'border-violet-500/40',
+        bg: 'bg-violet-950/20',
         text: 'text-violet-400',
-        glow: 'shadow-[0_0_30px_rgba(139,92,246,0.3)]',
-        iconBg: 'bg-gradient-to-br from-violet-400 to-purple-600',
-        ribbon: 'bg-gradient-to-r from-violet-600 via-purple-400 to-violet-600',
+        iconBg: 'bg-violet-500',
+        accent: 'bg-violet-500',
       },
     };
 
     const style = awardStyles[awardKey] || awardStyles.grand_champion;
     const isGrand = awardKey === 'grand_champion';
 
+    // ECD: Simplified - removed shimmer, glow ring, corner sparkles, pulsing ribbon
+    // Kept: clean card, single accent bar, trophy icon, subtle hover
     return (
       <div
         key={awardKey}
-        className={`relative overflow-hidden border-2 ${style.border} ${style.bg} p-6 rounded-2xl
-          ${style.glow} transform transition-all duration-500 hover:scale-[1.02]
-          animate-award-reveal`}
-        style={{ animationDelay: `${index * 300 + 500}ms` }}
+        className={`relative overflow-hidden border ${style.border} ${style.bg} p-6 rounded-xl
+          transition-all duration-300 hover:border-opacity-60 animate-award-reveal`}
+        style={{ animationDelay: `${index * 200 + 400}ms` }}
         onAnimationEnd={() => index === 0 && fireWinnerSpotlight()}
       >
-        {/* Animated shimmer effect */}
-        <div className="absolute inset-0 overflow-hidden rounded-2xl">
-          <div className={`absolute -inset-full bg-gradient-to-r from-transparent via-white/5 to-transparent
-            animate-shimmer`} style={{ animationDelay: `${index * 500}ms` }} />
-        </div>
+        {/* Single accent bar - restrained */}
+        <div className={`absolute top-0 left-0 right-0 h-1 ${style.accent}`} />
 
-        {/* Top ribbon */}
-        <div className={`absolute top-0 left-0 right-0 h-1.5 ${style.ribbon} animate-pulse`} />
-
-        {/* Corner sparkles */}
-        <Sparkles className={`absolute top-3 right-3 w-5 h-5 ${style.text} animate-twinkle`} />
-        <Sparkles className={`absolute top-3 left-3 w-5 h-5 ${style.text} animate-twinkle`} 
-          style={{ animationDelay: '0.5s' }} />
-
-        {/* Trophy icon with glow */}
+        {/* Trophy icon - simplified, no glow ring */}
         <div className="flex justify-center mb-5">
-          <div className={`relative w-24 h-24 rounded-full ${style.iconBg} 
-              flex items-center justify-center shadow-2xl animate-trophy-bounce`}>
-            <span className="text-5xl filter drop-shadow-lg">
+          <div className={`w-20 h-20 rounded-full ${style.iconBg} 
+              flex items-center justify-center shadow-lg`}>
+            <span className="text-4xl">
               {isGrand ? '🏆' : '👑'}
             </span>
-            {/* Glow ring */}
-            <div className={`absolute inset-0 rounded-full ${style.iconBg} opacity-50 
-              animate-ping-slow`} />
           </div>
         </div>
 
         {/* Award title */}
         <div className="text-center mb-4">
-          <h3 className={`text-2xl font-black ${style.text} mb-1 tracking-wide`}>
+          <h3 className={`text-xl font-black ${style.text} mb-1`}>
             {isGrand ? 'GRAND CHAMPION' : "PEOPLE'S CHAMPION"}
           </h3>
           <p className="text-xs text-arena-muted">
@@ -328,42 +308,35 @@ function Results({
           </p>
         </div>
 
-        {/* Winner info card */}
-        <div className="p-4 border border-white/10 rounded-xl bg-black/30 backdrop-blur-sm">
-          <div className="flex items-center gap-3 mb-3">
-            <div className={`w-10 h-10 rounded-lg ${style.iconBg} flex items-center justify-center`}>
-              <Trophy className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <h4 className="font-black text-lg text-text-primary leading-tight">
-                {winner.submission?.projectName}
-              </h4>
-              <p className="text-sm text-arena-secondary">{winner.name}</p>
-            </div>
-          </div>
+        {/* Winner info - cleaner structure */}
+        <div className="p-4 rounded-lg bg-black/20">
+          <h4 className="font-bold text-lg text-text-primary mb-1">
+            {winner.submission?.projectName}
+          </h4>
+          <p className="text-sm text-arena-secondary mb-3">{winner.name}</p>
           
           {/* Stats row */}
           <div className="flex items-center justify-between pt-3 border-t border-white/10">
-            {isGrand ? (
-              <div className="flex items-center gap-2">
-                <Award className={`w-4 h-4 ${style.text}`} />
-                <span className={`font-bold ${style.text}`}>
-                  {calculateJudgeAverage(winner).toFixed(0)}%
-                </span>
-                <span className="text-xs text-arena-muted">judge score</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Star className={`w-4 h-4 ${style.text}`} />
-                <span className={`font-bold ${style.text}`}>
-                  {winner.submission?.participantVotes}
-                </span>
-                <span className="text-xs text-arena-muted">votes</span>
-              </div>
-            )}
-            <div className="flex items-center gap-1 text-arena-muted">
+            <div className="flex items-center gap-2">
+              {isGrand ? (
+                <>
+                  <Award className={`w-4 h-4 ${style.text}`} />
+                  <span className={`font-bold ${style.text}`}>
+                    {calculateJudgeAverage(winner).toFixed(0)}%
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Star className={`w-4 h-4 ${style.text}`} />
+                  <span className={`font-bold ${style.text}`}>
+                    {winner.submission?.participantVotes}
+                  </span>
+                </>
+              )}
+            </div>
+            <div className="flex items-center gap-1 text-arena-muted text-sm">
               <Users className="w-4 h-4" />
-              <span className="text-sm">{winner.members?.length}</span>
+              <span>{winner.members?.length} members</span>
             </div>
           </div>
         </div>
@@ -419,16 +392,16 @@ function Results({
           <div className="text-xs text-arena-muted truncate">{team.name}</div>
         </div>
 
-        {/* Score */}
+        {/* Score - ECD: Clean, no animation on icons */}
         <div className="text-right">
           {showVotes ? (
             <div className={`flex items-center gap-1 font-bold ${isTopThree ? 'text-yellow-400' : 'text-brand'}`}>
-              <Star className={`w-4 h-4 ${isTopThree ? 'animate-twinkle' : ''}`} />
+              <Star className="w-4 h-4" />
               <span>{team.submission?.participantVotes || 0}</span>
             </div>
           ) : (
             <div className={`flex items-center gap-1 font-bold ${isTopThree ? 'text-violet-400' : 'text-violet'}`}>
-              <Award className={`w-4 h-4 ${isTopThree ? 'animate-twinkle' : ''}`} />
+              <Award className="w-4 h-4" />
               <span>{calculateJudgeAverage(team).toFixed(0)}%</span>
             </div>
           )}
@@ -438,41 +411,29 @@ function Results({
   };
 
   // ============================================================================
-  // RENDER: COMING SOON (if not results phase) - Enhanced anticipation
+  // RENDER: COMING SOON - ECD: Simplified, restrained
   // ============================================================================
   const renderComingSoon = () => (
     <div className="min-h-[60vh] flex items-center justify-center">
       <div className="text-center max-w-md px-4">
-        {/* Animated trophy with suspense */}
-        <div className="relative w-32 h-32 mx-auto mb-8">
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-yellow-500/20 to-amber-500/10 
-            animate-pulse" />
-          <div className="absolute inset-2 rounded-full bg-arena-card flex items-center justify-center
-            border-2 border-dashed border-yellow-500/30">
-            <div className="text-5xl animate-bounce" style={{ animationDuration: '2s' }}>🏆</div>
-          </div>
-          {/* Sparkle decorations */}
-          <Sparkles className="absolute -top-2 -right-2 w-6 h-6 text-yellow-400 animate-twinkle" />
-          <Sparkles className="absolute -bottom-2 -left-2 w-5 h-5 text-violet-400 animate-twinkle" 
-            style={{ animationDelay: '0.5s' }} />
+        {/* Trophy icon - clean, no excessive decoration */}
+        <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-arena-card border border-arena-border
+          flex items-center justify-center">
+          <span className="text-5xl">🏆</span>
         </div>
         
-        <h2 className="text-3xl font-black text-text-primary mb-3">
+        <h2 className="text-2xl font-black text-text-primary mb-3">
           Results Coming Soon
         </h2>
-        <p className="text-arena-secondary mb-2">
-          The winners will be announced during the Results phase.
-        </p>
-        <p className="text-arena-muted text-sm mb-8">
-          Check back after judging is complete! 🎉
+        <p className="text-arena-secondary mb-8">
+          Winners will be announced during the Results phase.
         </p>
         
         <button
           type="button"
           onClick={() => onNavigate('dashboard')}
-          className="px-8 py-3 bg-gradient-to-r from-brand to-violet-600 text-white font-bold 
-            hover:from-brand/90 hover:to-violet-600/90 transition-all duration-300 rounded-xl
-            shadow-lg shadow-brand/25"
+          className="px-6 py-3 bg-brand text-white font-bold hover:bg-brand/90 
+            transition-colors rounded-lg"
         >
           Back to Dashboard
         </button>
@@ -505,42 +466,34 @@ function Results({
           renderComingSoon()
         ) : (
           <>
-            {/* Page Header - Celebration Style */}
-            <div className={`text-center mb-12 ${showContent ? 'animate-celebration-header' : 'opacity-0'}`}>
-              {/* Celebration badge */}
-              <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-yellow-500/20 via-amber-500/10 to-violet-500/20 
-                border border-yellow-500/30 rounded-full mb-6 backdrop-blur-sm">
-                <PartyPopper className="w-5 h-5 text-yellow-400 animate-bounce" />
-                <span className="font-black text-sm text-yellow-400 tracking-wider">
-                  {isResultsPhase ? '🎉 WINNERS ANNOUNCED 🎉' : '👁️ PREVIEW MODE (Admin)'}
+            {/* Page Header - ECD: Simplified, type-driven */}
+            <div className={`text-center mb-12 ${showContent ? 'animate-fade-in-up' : 'opacity-0'}`}>
+              {/* Status badge - single icon, no animation overload */}
+              <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card 
+                border border-arena-border rounded-full mb-6">
+                <span className="text-lg">{isResultsPhase ? '🎉' : '👁️'}</span>
+                <span className="font-bold text-sm text-text-primary">
+                  {isResultsPhase ? 'Winners Announced' : 'Preview Mode'}
                 </span>
-                <PartyPopper className="w-5 h-5 text-violet-400 animate-bounce" style={{ animationDelay: '0.2s' }} />
               </div>
               
-              {/* Main title with gradient */}
-              <h1 className="text-4xl sm:text-5xl font-black mb-4 font-display">
-                <span className="bg-gradient-to-r from-yellow-400 via-amber-400 to-yellow-500 bg-clip-text text-transparent">
-                  HACKDAY 2026
-                </span>
-                <br />
-                <span className="text-text-primary">RESULTS</span>
+              {/* Main title - clean, no gradient text */}
+              <h1 className="text-4xl sm:text-5xl font-black text-text-primary mb-4">
+                HackDay 2026 Results
               </h1>
               
-              <p className="text-arena-secondary max-w-2xl mx-auto mb-6 text-lg">
-                Congratulations to all participants! Here are the winners of HackDay 2026.
+              <p className="text-arena-secondary max-w-xl mx-auto mb-6">
+                Congratulations to all participants!
               </p>
               
               {isAdmin && (
-                <div className="flex justify-center">
-                  <Button
-                    onClick={exportResultsToCSV}
-                    className="bg-gradient-to-r from-brand to-violet-600 hover:from-brand/90 hover:to-violet-600/90 
-                      text-white flex items-center gap-2 shadow-lg shadow-brand/25"
-                  >
-                    <Download className="w-4 h-4" />
-                    Export Results CSV
-                  </Button>
-                </div>
+                <Button
+                  onClick={exportResultsToCSV}
+                  className="bg-brand hover:bg-brand/90 text-white"
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  Export CSV
+                </Button>
               )}
             </div>
 
@@ -565,36 +518,26 @@ function Results({
               ))}
             </div>
 
-            {/* Award Winners - Trophy Section */}
+            {/* Award Winners - ECD: Type-driven, no decorative icons */}
             <div className={`mb-12 ${showContent ? '' : 'opacity-0'}`}>
-              <div className="flex items-center justify-center gap-3 mb-8">
-                <Sparkles className="w-6 h-6 text-yellow-400 animate-twinkle" />
-                <h2 className="text-2xl sm:text-3xl font-black text-text-primary tracking-wide">
-                  AWARD WINNERS
-                </h2>
-                <Sparkles className="w-6 h-6 text-violet-400 animate-twinkle" style={{ animationDelay: '0.5s' }} />
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <h2 className="text-2xl font-black text-text-primary text-center mb-8">
+                Award Winners
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto">
                 {Object.entries(awards).map(([key, award], index) =>
                   renderAwardCard(key, award, awardWinners[key], index)
                 )}
               </div>
             </div>
 
-            {/* Leaderboards - Full Rankings */}
+            {/* Leaderboards - ECD: Clean headers, consistent structure */}
             <div className={`grid grid-cols-1 lg:grid-cols-2 gap-6 ${showContent ? '' : 'opacity-0'}`}>
               {/* Judge Rankings */}
               <div className="bg-arena-card border border-arena-border rounded-xl overflow-hidden
-                animate-fade-in-up" style={{ animationDelay: '700ms' }}>
-                <div className="px-4 py-4 bg-gradient-to-r from-violet-500/20 to-purple-500/10 
-                  border-b border-arena-border flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-violet-500/20 flex items-center justify-center">
-                    <Award className="w-5 h-5 text-violet-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-text-primary">Judge Rankings</h3>
-                    <p className="text-xs text-arena-muted">Based on expert evaluation scores</p>
-                  </div>
+                animate-fade-in-up" style={{ animationDelay: '500ms' }}>
+                <div className="px-4 py-3 border-b border-arena-border flex items-center gap-2">
+                  <Award className="w-5 h-5 text-violet-400" />
+                  <h3 className="font-bold text-text-primary">Judge Rankings</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
                   {judgesRanked.map((team, idx) =>
@@ -605,16 +548,10 @@ function Results({
 
               {/* People's Vote Rankings */}
               <div className="bg-arena-card border border-arena-border rounded-xl overflow-hidden
-                animate-fade-in-up" style={{ animationDelay: '800ms' }}>
-                <div className="px-4 py-4 bg-gradient-to-r from-yellow-500/20 to-amber-500/10 
-                  border-b border-arena-border flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-                    <Crown className="w-5 h-5 text-yellow-400" />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-text-primary">People's Choice</h3>
-                    <p className="text-xs text-arena-muted">Community votes from all participants</p>
-                  </div>
+                animate-fade-in-up" style={{ animationDelay: '600ms' }}>
+                <div className="px-4 py-3 border-b border-arena-border flex items-center gap-2">
+                  <Star className="w-5 h-5 text-yellow-400" />
+                  <h3 className="font-bold text-text-primary">People's Choice</h3>
                 </div>
                 <div className="max-h-[400px] overflow-y-auto">
                   {peoplesRanked.map((team, idx) =>
@@ -638,39 +575,21 @@ function Results({
           </>
         )}
 
-        {/* CSS Animations - Enhanced Celebration */}
+        {/* CSS Animations - ECD: Reduced to essential, purposeful motion */}
       <style>{`
         @keyframes fade-in-up {
-          from { opacity: 0; transform: translateY(20px); }
+          from { opacity: 0; transform: translateY(16px); }
           to { opacity: 1; transform: translateY(0); }
         }
         
         @keyframes award-reveal {
-          0% { opacity: 0; transform: scale(0.8) translateY(30px); }
-          50% { transform: scale(1.05) translateY(-5px); }
-          100% { opacity: 1; transform: scale(1) translateY(0); }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         
-        @keyframes trophy-bounce {
-          0%, 100% { transform: translateY(0) rotate(0deg); }
-          25% { transform: translateY(-8px) rotate(-3deg); }
-          75% { transform: translateY(-4px) rotate(3deg); }
-        }
-        
-        @keyframes shimmer {
-          0% { transform: translateX(-100%) skewX(-15deg); }
-          100% { transform: translateX(200%) skewX(-15deg); }
-        }
-        
-        @keyframes ping-slow {
-          0% { transform: scale(1); opacity: 0.5; }
-          50% { transform: scale(1.3); opacity: 0; }
-          100% { transform: scale(1); opacity: 0; }
-        }
-        
-        @keyframes twinkle {
-          0%, 100% { opacity: 0.3; transform: scale(1); }
-          50% { opacity: 1; transform: scale(1.2); }
+        @keyframes leaderboard-row {
+          from { opacity: 0; transform: translateX(-12px); }
+          to { opacity: 1; transform: translateX(0); }
         }
         
         @keyframes blob {
@@ -679,54 +598,23 @@ function Results({
           66% { transform: translate(-20px, 20px) scale(0.9); }
         }
         
-        @keyframes leaderboard-row {
-          from { opacity: 0; transform: translateX(-20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-        
-        @keyframes celebration-header {
-          0% { opacity: 0; transform: scale(0.5); }
-          50% { transform: scale(1.1); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        
         .animate-fade-in-up {
-          animation: fade-in-up 0.6s ease-out forwards;
+          animation: fade-in-up 0.5s ease-out forwards;
           opacity: 0;
         }
         
         .animate-award-reveal {
-          animation: award-reveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: award-reveal 0.5s ease-out forwards;
           opacity: 0;
         }
         
-        .animate-trophy-bounce {
-          animation: trophy-bounce 2s ease-in-out infinite;
-        }
-        
-        .animate-shimmer {
-          animation: shimmer 3s ease-in-out infinite;
-        }
-        
-        .animate-ping-slow {
-          animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
-        }
-        
-        .animate-twinkle {
-          animation: twinkle 1.5s ease-in-out infinite;
+        .animate-leaderboard-row {
+          animation: leaderboard-row 0.3s ease-out forwards;
+          opacity: 0;
         }
         
         .animate-blob {
           animation: blob 7s infinite;
-        }
-        
-        .animate-leaderboard-row {
-          animation: leaderboard-row 0.4s ease-out forwards;
-          opacity: 0;
-        }
-        
-        .animate-celebration-header {
-          animation: celebration-header 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
         
         .animation-delay-2000 { animation-delay: 2s; }
