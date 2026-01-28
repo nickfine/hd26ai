@@ -12,7 +12,6 @@ import {
   PartyPopper,
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { cn } from '../lib/design-system';
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
 
@@ -73,7 +72,6 @@ function Results({
   eventPhase,
   awards = {},
 }) {
-  const [hasAnimated, setHasAnimated] = useState(false);
   const [showContent, setShowContent] = useState(false);
   const celebrationFired = useRef(false);
 
@@ -89,7 +87,6 @@ function Results({
       // Small delay for dramatic effect
       const timer = setTimeout(() => {
         fireCelebration();
-        setHasAnimated(true);
       }, 500);
       
       // Show content after confetti starts
