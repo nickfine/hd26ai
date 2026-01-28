@@ -13,12 +13,10 @@
  */
 
 import { useMemo } from 'react';
-import { User, Users, Eye, Mail, ArrowRight } from 'lucide-react';
+import { User, Users, Eye, ArrowRight } from 'lucide-react';
 import Card from '../ui/Card';
 import Button from '../ui/Button';
-import Badge from '../ui/Badge';
 import { HStack, VStack } from '../layout';
-import { cn } from '../../lib/design-system';
 
 /**
  * @typedef {Object} StatusBannerProps

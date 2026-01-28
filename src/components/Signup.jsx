@@ -4,14 +4,14 @@
  */
 
 import { useState, useEffect, useRef, useCallback } from 'react';
-import { Eye, Check, Plus, Users, Zap, ChevronRight, ChevronLeft, X, Search } from 'lucide-react';
+import { Eye, Check, Plus, Zap, ChevronRight, ChevronLeft, Search } from 'lucide-react';
 import { SKILLS } from '../data/mockData';
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
 import Input from './ui/Input';
 import Badge from './ui/Badge';
 import { HStack, VStack } from './layout';
-import { cn, getRoleConfig } from '../lib/design-system';
+import { cn } from '../lib/design-system';
 
 const MAX_SKILLS = 5;
 const MIN_NAME_LENGTH = 2;
