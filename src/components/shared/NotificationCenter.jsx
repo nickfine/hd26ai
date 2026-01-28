@@ -1,17 +1,46 @@
 /**
  * NotificationCenter Component
  * Displays a dropdown notification center with unread count badge
+ * Supports category filtering (All, Invites, Activity, System)
  */
 
-import { useState, useRef, useEffect } from 'react';
-import { Bell, Check, X, ExternalLink } from 'lucide-react';
+import { useState, useRef, useEffect, useMemo } from 'react';
+import { Bell, Users, Activity, Settings, Inbox } from 'lucide-react';
 import Button from '../ui/Button';
 import Badge from '../ui/Badge';
 import { cn } from '../../lib/design-system';
 
+// Notification categories for filtering
+const NOTIFICATION_CATEGORIES = [
+  { id: 'all', label: 'All', icon: Inbox },
+  { id: 'invites', label: 'Invites', icon: Users, types: ['TEAM_INVITE', 'JOIN_REQUEST'] },
+  { id: 'activity', label: 'Activity', icon: Activity, types: ['PHASE_CHANGE', 'TEAM_UPDATE'] },
+  { id: 'system', label: 'System', icon: Settings, types: ['REMINDER', 'ANNOUNCEMENT'] },
+];
+
 function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead, onMarkAllAsRead, onNavigate }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('all');
   const dropdownRef = useRef(null);
+
+  // Filter notifications by category
+  const filteredNotifications = useMemo(() => {
+    if (activeCategory === 'all') return notifications;
+    const category = NOTIFICATION_CATEGORIES.find(c => c.id === activeCategory);
+    if (!category?.types) return notifications;
+    return notifications.filter(n => category.types.includes(n.type));
+  }, [notifications, activeCategory]);
+
+  // Count unread per category
+  const categoryUnreadCounts = useMemo(() => {
+    const counts = { all: unreadCount };
+    NOTIFICATION_CATEGORIES.forEach(cat => {
+      if (cat.types) {
+        counts[cat.id] = notifications.filter(n => !n.read && cat.types.includes(n.type)).length;
+      }
+    });
+    return counts;
+  }, [notifications, unreadCount]);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -97,7 +126,7 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 top-full mt-2 w-80 bg-arena-card border-2 border-arena-border rounded-lg shadow-xl z-50 max-h-96 overflow-hidden flex flex-col">
+        <div className="absolute right-0 top-full mt-2 w-96 bg-arena-card border-2 border-arena-border rounded-lg shadow-xl z-50 max-h-[480px] overflow-hidden flex flex-col">
           {/* Header */}
           <div className="px-4 py-3 border-b border-arena-border flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -120,16 +149,65 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
             )}
           </div>
 
+          {/* Category Tabs */}
+          <div className="px-2 py-2 border-b border-arena-border flex gap-1 overflow-x-auto">
+            {NOTIFICATION_CATEGORIES.map((category) => {
+              const Icon = category.icon;
+              const count = categoryUnreadCounts[category.id] || 0;
+              const isActive = activeCategory === category.id;
+              
+              return (
+                <button
+                  key={category.id}
+                  type="button"
+                  onClick={() => setActiveCategory(category.id)}
+                  className={cn(
+                    'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all whitespace-nowrap',
+                    isActive
+                      ? 'bg-brand/20 text-brand'
+                      : 'text-arena-secondary hover:bg-arena-elevated hover:text-text-primary'
+                  )}
+                >
+                  <Icon className="w-3.5 h-3.5" />
+                  {category.label}
+                  {count > 0 && category.id !== 'all' && (
+                    <span className={cn(
+                      'px-1.5 py-0.5 rounded-full text-[10px] font-bold',
+                      isActive ? 'bg-brand text-white' : 'bg-arena-elevated text-arena-secondary'
+                    )}>
+                      {count}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+
           {/* Notifications List */}
           <div className="overflow-y-auto flex-1">
-            {notifications.length === 0 ? (
+            {filteredNotifications.length === 0 ? (
               <div className="p-6 text-center">
-                <Bell className="w-8 h-8 text-arena-muted mx-auto mb-2" />
-                <p className="text-sm text-arena-muted">No notifications</p>
+                <div className="text-3xl mb-2">
+                  {activeCategory === 'invites' ? '👥' : 
+                   activeCategory === 'activity' ? '📊' : 
+                   activeCategory === 'system' ? '⚙️' : '📭'}
+                </div>
+                <p className="text-sm font-medium text-text-secondary mb-1">
+                  {activeCategory === 'all' ? 'No notifications yet' :
+                   activeCategory === 'invites' ? 'No team invites' :
+                   activeCategory === 'activity' ? 'No activity updates' :
+                   'No system notifications'}
+                </p>
+                <p className="text-xs text-arena-muted">
+                  {activeCategory === 'invites' ? 'Team invitations will appear here' :
+                   activeCategory === 'activity' ? 'Phase changes and updates will appear here' :
+                   activeCategory === 'system' ? 'Reminders and announcements will appear here' :
+                   'You\'re all caught up!'}
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-arena-border">
-                {notifications.map((notification) => (
+                {filteredNotifications.map((notification) => (
                   <button
                     key={notification.id}
                     type="button"
@@ -140,7 +218,14 @@ function NotificationCenter({ notifications = [], unreadCount = 0, onMarkAsRead,
                     )}
                   >
                     <div className="flex items-start gap-3">
-                      <div className="text-lg flex-shrink-0">
+                      <div className={cn(
+                        'w-8 h-8 rounded-full flex items-center justify-center text-base flex-shrink-0',
+                        notification.type === 'TEAM_INVITE' || notification.type === 'JOIN_REQUEST'
+                          ? 'bg-blue-500/20'
+                          : notification.type === 'PHASE_CHANGE' || notification.type === 'TEAM_UPDATE'
+                          ? 'bg-emerald-500/20'
+                          : 'bg-amber-500/20'
+                      )}>
                         {getNotificationIcon(notification.type)}
                       </div>
                       <div className="flex-1 min-w-0">
