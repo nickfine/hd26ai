@@ -24,6 +24,12 @@ export { default as StatusBanner } from './StatusBanner';
 // ErrorBoundary
 export { default as ErrorBoundary } from './ErrorBoundary';
 
+// MotdBanner
+export { default as MotdBanner } from './MotdBanner';
+
+// FreeAgentReminderBanner
+export { default as FreeAgentReminderBanner } from './FreeAgentReminderBanner';
+
 
 
 

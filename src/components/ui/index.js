@@ -105,9 +105,7 @@ export {
   default as LoadingState,
   LoadingOverlay,
   LoadingButton,
-} from './LoadingState';
-
-// Error State
+} from './LoadingState';// Error State
 export {
   default as ErrorState,
   ErrorBanner,

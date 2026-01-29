@@ -42,6 +42,7 @@ import LiveActivityFeed from './ui/LiveActivityFeed';
 import { DashboardSkeleton } from './ui/Skeleton';
 import { HStack, VStack } from './layout';
 import { cn } from '../lib/design-system';
+import { MotdBanner } from './shared';
 
 // ============================================================================
 // MOCK DATA
@@ -749,6 +750,11 @@ function Dashboard({
       <div className="p-4 sm:p-6 max-w-7xl mx-auto">
         {/* Section 1: Mission Banner */}
         <MissionBanner userRole={userRole} />
+        
+        {/* Section 1.5: MOTD Banner */}
+        <div className="mb-6">
+          <MotdBanner eventPhase={eventPhase} userRole={userRole} />
+        </div>
         
         {/* Section 2: Active Ideas Widget + Team Status (2 columns) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">

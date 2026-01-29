@@ -156,6 +156,4 @@ The app uses a consistent design system with:
 - Tailwind configuration in `tailwind.config.js`
 - Reusable UI components in `components/ui/`
 
-## License
-
-MIT
+## LicenseMIT
