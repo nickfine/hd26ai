@@ -247,7 +247,11 @@ const getNavItems = (userRole, eventPhase = 'voting', user = null) => {
   ];
 
   // Add Sign Up navigation item during registration phase or for users without a team
-  const showSignup = eventPhase === 'registration' || (user && !user.teamId);
+  // Only show if user hasn't completed registration (has name and skills)
+  const hasCompletedRegistration = user && user.name && user.skills && user.skills.length > 0;
+  const showSignup = !hasCompletedRegistration && (
+    eventPhase === 'registration' || (user && !user.teamId)
+  );
   if (showSignup) {
     baseItems.push({ id: 'signup', label: 'Sign Up', icon: UserPlus });
   }
