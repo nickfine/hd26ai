@@ -181,6 +181,7 @@ function Profile({
   onLeaveTeam,
   onAutoAssign,
   eventPhase,
+  realUserRole = null,
   devRoleOverride = null,
   onDevRoleChange = null,
   onPhaseChange = null,
@@ -198,6 +199,7 @@ function Profile({
         onNavigate={onNavigate}
         eventPhase={eventPhase}
         activeNav="profile"
+        realUserRole={realUserRole}
         devRoleOverride={devRoleOverride}
         onDevRoleChange={onDevRoleChange}
         onPhaseChange={onPhaseChange}
@@ -377,6 +379,7 @@ function Profile({
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="profile"
+      realUserRole={realUserRole}
       devRoleOverride={devRoleOverride}
       onDevRoleChange={onDevRoleChange}
       onPhaseChange={onPhaseChange}

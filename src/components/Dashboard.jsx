@@ -675,6 +675,7 @@ function Dashboard({
   event,
   activityFeed = null,
   userInvites = [],
+  realUserRole = null,
   devRoleOverride = null,
   onDevRoleChange = null,
   onPhaseChange = null,
@@ -694,6 +695,7 @@ function Dashboard({
         onNavigate={onNavigate}
         eventPhase={eventPhase}
         activeNav="dashboard"
+        realUserRole={realUserRole}
         devRoleOverride={devRoleOverride}
         onDevRoleChange={onDevRoleChange}
         onPhaseChange={onPhaseChange}
@@ -739,6 +741,7 @@ function Dashboard({
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="dashboard"
+      realUserRole={realUserRole}
       devRoleOverride={devRoleOverride}
       onDevRoleChange={onDevRoleChange}
       onPhaseChange={onPhaseChange}

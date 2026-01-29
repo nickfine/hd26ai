@@ -34,6 +34,7 @@ function Marketplace({
   initialTab = 'teams',
   eventPhase,
   userInvites = [], // Invites for the current user (from Supabase)
+  realUserRole = null,
   devRoleOverride = null,
   onDevRoleChange = null,
   onPhaseChange = null,
@@ -51,6 +52,7 @@ function Marketplace({
         onNavigate={onNavigate}
         eventPhase={eventPhase}
         activeNav="teams"
+        realUserRole={realUserRole}
         devRoleOverride={devRoleOverride}
         onDevRoleChange={onDevRoleChange}
         onPhaseChange={onPhaseChange}
@@ -293,6 +295,7 @@ function Marketplace({
       onNavigate={onNavigate}
       eventPhase={eventPhase}
       activeNav="teams"
+      realUserRole={realUserRole}
       devRoleOverride={devRoleOverride}
       onDevRoleChange={onDevRoleChange}
       onPhaseChange={onPhaseChange}

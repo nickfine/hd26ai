@@ -69,9 +69,21 @@ function App() {
   const [devRoleOverride, setDevRoleOverride] = useState(null);
   const [simulateLoading, setSimulateLoading] = useState(false);
 
-  // Effective user (from Supabase or demo mode)
+  // Track the REAL user role (before any dev override is applied)
+  // This allows admins to keep dev controls visible even when impersonating other roles
+  const realUserRole = useMemo(() => {
+    if (useDemoMode && demoUser) return demoUser.role;
+    if (auth.profile) return ROLE_MAP[auth.profile.role] || 'participant';
+    return null;
+  }, [useDemoMode, demoUser, auth.profile]);
+
+  // Effective user (from Supabase or demo mode, with optional role override)
   const effectiveUser = useMemo(() => {
     if (useDemoMode && demoUser) {
+      // In demo mode, apply role override directly
+      if (devRoleOverride) {
+        return { ...demoUser, role: devRoleOverride };
+      }
       return demoUser;
     }
     if (auth.profile) {
@@ -88,23 +100,21 @@ function App() {
         autoAssignOptIn: auth.profile.autoAssignOptIn || false,
       };
       
-      // DEV MODE: Apply role override if active (admin-only, gated by env var)
-      const isDevMode = import.meta.env.VITE_ENABLE_DEV_MODE === 'true' && 
-                        baseUser.role === 'admin';
-      if (isDevMode && devRoleOverride) {
+      // DEV MODE: Apply role override if real user is admin
+      if (realUserRole === 'admin' && devRoleOverride) {
         return { ...baseUser, role: devRoleOverride };
       }
       
       return baseUser;
     }
     return null;
-  }, [useDemoMode, demoUser, auth.profile, devRoleOverride]);
+  }, [useDemoMode, demoUser, auth.profile, devRoleOverride, realUserRole]);
   
-  // DEV MODE: Check if dev mode is active (requires env var AND admin role)
+  // DEV MODE: Check if dev mode is active
+  // Active when real user is admin (persists even when impersonating other roles)
   const devModeActive = useMemo(() => {
-    return import.meta.env.VITE_ENABLE_DEV_MODE === 'true' && 
-           effectiveUser?.role === 'admin';
-  }, [effectiveUser?.role]);
+    return realUserRole === 'admin';
+  }, [realUserRole]);
 
   // ============================================================================
   // NAVIGATION STATE
@@ -967,6 +977,7 @@ function App() {
             event={effectiveEvent}
             activityFeed={useDemoMode ? null : activityFeed}
             userInvites={useDemoMode ? [] : userInvites}
+            realUserRole={realUserRole}
             devRoleOverride={devRoleOverride}
             onDevRoleChange={setDevRoleOverride}
             onPhaseChange={handlePhaseChange}
@@ -992,6 +1003,7 @@ function App() {
             initialTab={marketplaceInitialTab}
             eventPhase={eventPhase}
             userInvites={useDemoMode ? [] : userInvites}
+            realUserRole={realUserRole}
             devRoleOverride={devRoleOverride}
             onDevRoleChange={setDevRoleOverride}
             onPhaseChange={handlePhaseChange}
@@ -1013,6 +1025,7 @@ function App() {
             onLeaveTeam={leaveTeam}
             onAutoAssign={handleAutoAssign}
             eventPhase={eventPhase}
+            realUserRole={realUserRole}
             devRoleOverride={devRoleOverride}
             onDevRoleChange={setDevRoleOverride}
             onPhaseChange={handlePhaseChange}

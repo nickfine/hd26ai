@@ -296,11 +296,11 @@ function AppLayout({
   children,
   showSidebar = true,
   isDevMode = false,
+  realUserRole = null,
   devRoleOverride = null,
   onDevRoleChange = null,
   onPhaseChange = null,
   eventPhases = {},
-  devModeEnabled: propDevModeEnabled = false,
   userInvites = [],
   simulateLoading = false,
   onSimulateLoadingChange = null,
@@ -308,44 +308,12 @@ function AppLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
   
-  // DEV MODE - Check localStorage for user preference (admin only)
-  // Use prop if provided, otherwise check localStorage
-  const [devModeEnabled, setDevModeEnabled] = useState(() => {
-    if (propDevModeEnabled !== false) {
-      return propDevModeEnabled;
-    }
-    if (user?.role === 'admin') {
-      try {
-        return localStorage.getItem('hd26ai_dev_mode_enabled') === 'true';
-      } catch {
-        return false;
-      }
-    }
-    return false;
-  });
+  // DEV MODE - Use realUserRole to check if user is actually an admin
+  // This persists even when impersonating other roles
+  const isRealAdmin = (realUserRole || user?.role) === 'admin';
   
-  // Update localStorage when dev mode is toggled
-  useEffect(() => {
-    if (user?.role === 'admin') {
-      try {
-        localStorage.setItem('hd26ai_dev_mode_enabled', devModeEnabled ? 'true' : 'false');
-      } catch {
-        // Ignore localStorage errors
-      }
-    }
-  }, [devModeEnabled, user?.role]);
-  
-  // DEV MODE - Calculate if dev mode is active (user preference OR env var AND admin role)
-  // devModeEnabled is the UI toggle state (from localStorage)
-  // isDevMode is passed from parent (for demo mode)
-  // VITE_ENABLE_DEV_MODE is the environment variable
-  const devModeActive = isDevMode || (
-    (devModeEnabled || import.meta.env.VITE_ENABLE_DEV_MODE === 'true') && 
-    user?.role === 'admin'
-  );
-  
-  // Show phase switcher if dev mode is enabled via UI toggle OR env var
-  const showPhaseSwitcher = devModeEnabled || import.meta.env.VITE_ENABLE_DEV_MODE === 'true';
+  // Dev mode is active when real user is admin (and either impersonating or in dev mode)
+  const devModeActive = isRealAdmin && (devRoleOverride || isDevMode);
 
   // Mouse-reactive breathing vignette (throttled for performance)
   useEffect(() => {
@@ -421,13 +389,10 @@ function AppLayout({
         Skip to main content
       </a>
       
-      {/* DEV MODE - Remove before production */}
+      {/* DEV MODE BANNER */}
       {devModeActive && (
         <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-bold sticky top-0 z-50">
           🔧 DEVELOPMENT MODE ACTIVE - Testing with real data
-          {!import.meta.env.VITE_ENABLE_DEV_MODE && (
-            <span className="ml-2 text-xs opacity-75">(UI Toggle Enabled)</span>
-          )}
         </div>
       )}
       {/* ================================================================== */}
@@ -478,50 +443,33 @@ function AppLayout({
             {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* DEV MODE TOGGLE - Always visible for admins */}
-            {user?.role === 'admin' && (
-              <button
-                type="button"
-                onClick={() => setDevModeEnabled(!devModeEnabled)}
-                className={cn(
-                  'flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all',
-                  devModeEnabled
-                    ? 'bg-yellow-500 text-black hover:bg-yellow-400'
-                    : 'bg-arena-card border border-arena-border text-text-secondary hover:text-text-primary'
-                )}
-                title={devModeEnabled ? 'Hide Dev Controls' : 'Show Dev Controls'}
-              >
-                <Wrench className="w-3 h-3" />
-                <span className="hidden sm:inline">DEV</span>
-              </button>
-            )}
-
-            {/* DEV MODE CONTROLS - Remove before production */}
-            {devModeActive && (
-              <div className="relative">
+            {/* DEV MODE CONTROLS - Single button with dropdown (visible to real admins, even when impersonating) */}
+            {isRealAdmin && (
+              <div className="relative z-[60]">
                 <button
                   type="button"
                   onClick={() => setDevControlsOpen(!devControlsOpen)}
                   className={cn(
-                    'bg-yellow-500 text-black border-2 border-yellow-600 flex items-center gap-2 px-3 py-2 rounded-lg cursor-pointer',
-                    'transition-all duration-200 font-bold text-sm',
-                    'hover:bg-yellow-400'
+                    'flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all',
+                    devModeActive
+                      ? 'bg-yellow-500 text-black hover:bg-yellow-400'
+                      : 'bg-arena-card border border-arena-border text-text-secondary hover:text-text-primary'
                   )}
-                  title="Dev Mode Controls"
+                  title="Dev Controls"
                 >
-                  <Wrench className="w-4 h-4" />
+                  <Wrench className="w-3 h-3" />
                   <span className="hidden sm:inline">DEV</span>
-                  <ChevronDown className={cn('w-4 h-4 transition-transform', devControlsOpen && 'rotate-180')} />
+                  <ChevronDown className={cn('w-3 h-3 transition-transform', devControlsOpen && 'rotate-180')} />
                 </button>
-                
+
                 {/* Dev Controls Dropdown */}
                 {devControlsOpen && (
                   <>
                     <div 
-                      className="fixed inset-0 z-40" 
+                      className="fixed inset-0 z-[55]" 
                       onClick={() => setDevControlsOpen(false)}
                     />
-                    <div className="absolute right-0 top-full mt-2 w-64 bg-arena-card border-2 border-yellow-500 rounded-lg shadow-xl z-50 p-4">
+                    <div className="absolute left-0 top-full mt-2 w-64 bg-arena-card border-2 border-yellow-500 rounded-lg shadow-xl z-[60] p-4">
                       <div className="space-y-4">
                         <div className="flex items-center gap-2 mb-3 pb-3 border-b border-arena-border">
                           <Wrench className="w-5 h-5 text-yellow-500" />
@@ -529,36 +477,38 @@ function AppLayout({
                         </div>
                         
                         {/* Role Impersonation */}
-                        <div>
-                          <label className="text-xs font-bold text-arena-secondary mb-2 block">
-                            Role Impersonation
-                          </label>
-                          <select
-                            value={devRoleOverride || user?.role || 'participant'}
-                            onChange={(e) => {
-                              const newRole = e.target.value;
-                              const realRole = user?.role || 'participant';
-                              onDevRoleChange?.(newRole === realRole ? null : newRole);
-                            }}
-                            className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
-                          >
-                            <option value={user?.role || 'participant'}>Real: {user?.role || 'participant'}</option>
-                            <option value="participant">Participant</option>
-                            <option value="ambassador">Ambassador</option>
-                            <option value="judge">Judge</option>
-                            <option value="admin">Admin</option>
-                          </select>
-                          {devRoleOverride && (
-                            <p className="mt-1 text-xs text-yellow-500">
-                              Impersonating: {devRoleOverride}
-                            </p>
-                          )}
-                        </div>
+                        {onDevRoleChange && (
+                          <div>
+                            <label className="text-xs font-bold text-text-muted mb-2 block">
+                              Role Impersonation
+                            </label>
+                            <select
+                              value={devRoleOverride || realUserRole || 'participant'}
+                              onChange={(e) => {
+                                const newRole = e.target.value;
+                                const actualRole = realUserRole || 'participant';
+                                onDevRoleChange?.(newRole === actualRole ? null : newRole);
+                              }}
+                              className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
+                            >
+                              <option value={realUserRole || 'participant'}>Real: {realUserRole || 'participant'}</option>
+                              <option value="participant">Participant</option>
+                              <option value="ambassador">Ambassador</option>
+                              <option value="judge">Judge</option>
+                              <option value="admin">Admin</option>
+                            </select>
+                            {devRoleOverride && (
+                              <p className="mt-1 text-xs text-yellow-500">
+                                Impersonating: {devRoleOverride}
+                              </p>
+                            )}
+                          </div>
+                        )}
                         
                         {/* Phase Switcher */}
-                        {showPhaseSwitcher && onPhaseChange && (
+                        {onPhaseChange && (
                           <div>
-                            <label className="text-xs font-bold text-arena-secondary mb-2 block">
+                            <label className="text-xs font-bold text-text-muted mb-2 block">
                               Event Phase
                             </label>
                             <select
@@ -573,11 +523,6 @@ function AppLayout({
                                 <option key={key} value={key}>{phase.label}</option>
                               ))}
                             </select>
-                          </div>
-                        )}
-                        {showPhaseSwitcher && !onPhaseChange && (
-                          <div className="text-xs text-arena-secondary">
-                            <p>Phase switching requires backend dev mode to be enabled.</p>
                           </div>
                         )}
                         
