@@ -100,8 +100,10 @@ function App() {
         autoAssignOptIn: auth.profile.autoAssignOptIn || false,
       };
       
-      // DEV MODE: Apply role override if real user is admin
-      if (realUserRole === 'admin' && devRoleOverride) {
+      // DEV MODE: Apply role override for any user during development
+      // TODO: REVERT BEFORE BETA - Change back to admin-only:
+      //   if (realUserRole === 'admin' && devRoleOverride) {
+      if (devRoleOverride) {
         return { ...baseUser, role: devRoleOverride };
       }
       
@@ -111,10 +113,11 @@ function App() {
   }, [useDemoMode, demoUser, auth.profile, devRoleOverride, realUserRole]);
   
   // DEV MODE: Check if dev mode is active
-  // Active when real user is admin (persists even when impersonating other roles)
+  // TODO: REVERT BEFORE BETA - Change back to admin-only:
+  //   return realUserRole === 'admin';
   const devModeActive = useMemo(() => {
-    return realUserRole === 'admin';
-  }, [realUserRole]);
+    return true; // TEMPORARY: Dev mode available for all users
+  }, []);
 
   // ============================================================================
   // NAVIGATION STATE

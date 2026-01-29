@@ -308,12 +308,14 @@ function AppLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
   
-  // DEV MODE - Use realUserRole to check if user is actually an admin
-  // This persists even when impersonating other roles
-  const isRealAdmin = (realUserRole || user?.role) === 'admin';
+  // DEV MODE - Show for all users during development
+  // TODO: REVERT BEFORE BETA - Change back to admin-only:
+  //   const isRealAdmin = (realUserRole || user?.role) === 'admin';
+  //   const devModeActive = isRealAdmin && (devRoleOverride || isDevMode);
+  const isRealAdmin = true; // TEMPORARY: Show dev controls for all users
   
-  // Dev mode is active when real user is admin (and either impersonating or in dev mode)
-  const devModeActive = isRealAdmin && (devRoleOverride || isDevMode);
+  // Dev mode is active when impersonating or in dev mode
+  const devModeActive = devRoleOverride || isDevMode;
 
   // Mouse-reactive breathing vignette (throttled for performance)
   useEffect(() => {
