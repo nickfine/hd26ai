@@ -746,17 +746,17 @@ function App() {
   // ADMIN HANDLERS
   // ============================================================================
   const handlePhaseChange = useCallback(async (newPhase) => {
-    if (!effectiveUser || effectiveUser.role !== 'admin') return;
+    // TODO: REVERT BEFORE BETA - Restore admin check:
+    //   if (!effectiveUser || effectiveUser.role !== 'admin') return;
     
-    // Allow phase changes in real mode if dev mode is active
-    if (useDemoMode || devModeActive) {
-      if (useDemoMode) {
-        setMockEventPhase(newPhase);
-      } else {
-        await updateEventPhase(newPhase);
-      }
+    // Allow phase changes in demo mode or when dev mode is active (now enabled for all users)
+    if (useDemoMode) {
+      setMockEventPhase(newPhase);
+    } else if (devModeActive) {
+      // In production with dev mode, update via Supabase
+      await updateEventPhase(newPhase);
     }
-  }, [useDemoMode, devModeActive, effectiveUser, updateEventPhase]);
+  }, [useDemoMode, devModeActive, updateEventPhase]);
 
   const handleAutoAssignOptIn = useCallback(async (optIn) => {
     if (!effectiveUser) return;
