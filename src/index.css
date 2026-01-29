@@ -22,6 +22,20 @@
 }
 
 /* =============================================================================
+   ANIMATION - Subtle Pulse for Active Phase
+   ECD: "Mission control heartbeat" - signs of life, not fireworks
+   Respects prefers-reduced-motion via the global rule above
+   ============================================================================= */
+@keyframes pulse-subtle {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 86, 48, 0.2); }
+  50% { box-shadow: 0 0 0 8px rgba(255, 86, 48, 0); }
+}
+
+.animate-pulse-subtle {
+  animation: pulse-subtle 3s ease-in-out infinite;
+}
+
+/* =============================================================================
    ACCESSIBILITY - Screen Reader Only
    Visually hidden but accessible to screen readers (WCAG 2.1)
    ============================================================================= */
@@ -433,4 +447,85 @@
 
 .timeline-line {
   background: var(--color-border);
+}
+
+/* =============================================================================
+   FIGMA DASHBOARD GRADIENTS & STYLES
+   ============================================================================= */
+
+/* Cyan-Blue gradient for icons and accents */
+.gradient-cyan-blue {
+  background: linear-gradient(135deg, #00B8DB 0%, #155DFC 100%);
+}
+
+/* Gradient text utility */
+.text-gradient-cyan {
+  background: linear-gradient(90deg, #00D3F2 0%, #51A2FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Stat accent backgrounds */
+.bg-cyan-accent {
+  background-color: rgba(0, 184, 219, 0.1);
+}
+
+.bg-orange-accent {
+  background-color: rgba(255, 105, 0, 0.1);
+}
+
+.bg-purple-accent {
+  background-color: rgba(173, 70, 255, 0.1);
+}
+
+/* Cyan border separator */
+.border-cyan-subtle {
+  border-color: rgba(0, 184, 219, 0.2);
+}
+
+/* Status colors from Figma */
+.text-cyan-primary {
+  color: #00D3F2;
+}
+
+.text-orange-primary {
+  color: #FF6900;
+}
+
+.text-purple-primary {
+  color: #AD46FF;
+}
+
+/* Trend colors */
+.text-trend-up {
+  color: #00FF9D;
+}
+
+.text-trend-down {
+  color: #FF4500;
+}
+
+/* Active Ideas Widget glow shadow */
+.shadow-cyan-glow {
+  box-shadow: 0px 10px 15px 0px rgba(0, 184, 219, 0.3), 
+              0px 4px 6px 0px rgba(0, 184, 219, 0.2);
+}
+
+/* Team status active indicator */
+.status-active-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #00FF9D;
+}
+
+/* Schedule timeline connector */
+.timeline-connector {
+  width: 1px;
+  background-color: var(--color-border);
+  position: absolute;
+  left: 24px;
+  top: 48px;
+  bottom: 0;
 }

@@ -280,6 +280,69 @@ export const HeartbeatDot = forwardRef(({
 HeartbeatDot.displayName = 'HeartbeatDot';
 
 /**
+ * StatusDot - ECD semantic status indicator
+ * Three states: success (green pulse), warning (amber), neutral (gray)
+ * 
+ * @example
+ * <StatusDot status="live" />     // Green with pulse
+ * <StatusDot status="warning" />  // Amber, static
+ * <StatusDot status="neutral" />  // Gray, static
+ */
+export const StatusDot = forwardRef(({
+  status = 'neutral', // 'live' | 'success' | 'warning' | 'neutral'
+  size = 'md', // 'sm' | 'md' | 'lg'
+  className,
+  ...props
+}, ref) => {
+  const sizeClasses = {
+    sm: 'h-1.5 w-1.5',
+    md: 'h-2 w-2',
+    lg: 'h-2.5 w-2.5',
+  };
+  
+  const statusConfig = {
+    live: {
+      color: 'bg-[var(--status-success)]',
+      pulse: true,
+    },
+    success: {
+      color: 'bg-[var(--status-success)]',
+      pulse: false,
+    },
+    warning: {
+      color: 'bg-[var(--status-warning)]',
+      pulse: false,
+    },
+    neutral: {
+      color: 'bg-[var(--text-disabled)]',
+      pulse: false,
+    },
+  };
+  
+  const config = statusConfig[status] || statusConfig.neutral;
+  const sizeClass = sizeClasses[size] || sizeClasses.md;
+  
+  if (config.pulse) {
+    return (
+      <span ref={ref} className={cn('relative flex', sizeClass, className)} {...props}>
+        <span className={cn('absolute inline-flex h-full w-full animate-ping rounded-full opacity-75', config.color)} />
+        <span className={cn('relative inline-flex rounded-full', sizeClass, config.color)} />
+      </span>
+    );
+  }
+  
+  return (
+    <span
+      ref={ref}
+      className={cn('inline-flex rounded-full', sizeClass, config.color, className)}
+      {...props}
+    />
+  );
+});
+
+StatusDot.displayName = 'StatusDot';
+
+/**
  * UserCapsule - User name display with callsign
  * 
  * @example

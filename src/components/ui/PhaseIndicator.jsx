@@ -34,19 +34,11 @@ const PHASE_ICONS = {
   results: Trophy,
 };
 
-// Phase colors for active state
-const PHASE_COLORS = {
-  registration: 'text-blue-400',
-  team_formation: 'text-emerald-400',
-  hacking: 'text-purple-400',
-  submission: 'text-orange-400',
-  voting: 'text-pink-400',
-  judging: 'text-amber-400',
-  results: 'text-brand',
-};
+// ECD: Removed per-phase colors - brand color only for active, neutral for all else
 
 /**
  * Single phase step with icon, label, and state
+ * ECD: Reduced visual weight - smaller circles, muted inactive states
  */
 const PhaseStep = memo(({ 
   phase, 
@@ -68,29 +60,30 @@ const PhaseStep = memo(({
       role={onClick ? 'button' : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      {/* Phase circle with icon - ECD: active phase larger for hierarchy */}
+      {/* Phase circle - ECD: reduced sizes, no scale transform */}
       <div 
         className={cn(
           'rounded-full flex items-center justify-center',
           'transition-all duration-300 relative z-10',
-          // Size: active is larger for visual hierarchy
-          isActive && !isComplete ? 'w-12 h-12' : 'w-10 h-10',
+          // Size: reduced for subtlety
+          isActive && !isComplete ? 'w-10 h-10' : 'w-8 h-8',
           // Complete state: solid brand
-          isComplete && 'bg-brand border-2 border-brand text-white',
-          // Active state: prominent, no pulse (ECD: purposeful, not decorative)
-          isActive && !isComplete && 'bg-brand/20 border-2 border-brand text-brand scale-110',
-          // Inactive state: subtle, no border (ECD: restraint)
-          !isActive && !isComplete && 'bg-arena-elevated/50 text-text-muted/60',
-          onClick && 'cursor-pointer hover:scale-110'
+          isComplete && 'bg-brand border border-brand text-white',
+          // Active state: prominent but not oversized (ECD: purposeful, not decorative)
+          // animate-pulse-subtle adds mission control heartbeat - respects prefers-reduced-motion
+          isActive && !isComplete && 'bg-brand/20 border-2 border-brand text-brand animate-pulse-subtle',
+          // Inactive state: very subtle (ECD: restraint)
+          !isActive && !isComplete && 'bg-arena-elevated/30 text-text-muted/40',
+          onClick && 'cursor-pointer hover:scale-105'
         )}
       >
+        {/* ECD: Icons only for active/complete, phase number for inactive */}
         {isComplete ? (
-          <Check className="w-5 h-5" strokeWidth={3} />
+          <Check className="w-4 h-4" strokeWidth={3} />
+        ) : isActive ? (
+          <Icon className="w-5 h-5" />
         ) : (
-          <Icon className={cn(
-            isActive ? 'w-6 h-6' : 'w-5 h-5',
-            isActive && PHASE_COLORS[phase.id]
-          )} />
+          <span className="text-xs font-medium">{index + 1}</span>
         )}
       </div>
       
@@ -100,7 +93,7 @@ const PhaseStep = memo(({
         'transition-all duration-200',
         isActive && 'text-brand font-bold text-sm',
         isComplete && 'text-text-primary font-medium',
-        !isActive && !isComplete && 'text-text-muted/60 font-normal'
+        !isActive && !isComplete && 'text-text-muted/40 font-normal'
       )}>
         {phase.label}
       </span>
@@ -126,35 +119,16 @@ const PhaseStep = memo(({
 PhaseStep.displayName = 'PhaseStep';
 
 /**
- * Connecting line between phases with animation
+ * Connecting line between phases
+ * ECD: Thinner lines (1px), reduced spacing for subtlety
  */
-const ConnectingLine = memo(({ isComplete, isActive, isAnimating }) => (
-  <div className="flex-1 h-0.5 mx-3 sm:mx-4 min-w-[32px] sm:min-w-[48px] relative overflow-hidden">
-    {/* Base line */}
+const ConnectingLine = memo(({ isComplete }) => (
+  <div className="flex-1 h-px mx-2 sm:mx-3 min-w-[24px] sm:min-w-[32px] relative overflow-hidden">
+    {/* Base line - ECD: simple, no competing animations */}
     <div className={cn(
       'absolute inset-0 transition-colors duration-500',
-      isComplete ? 'bg-brand' : 'bg-arena-border'
+      isComplete ? 'bg-brand' : 'bg-arena-border/50'
     )} />
-    
-    {/* Animated gradient for active transition */}
-    {isAnimating && (
-      <div 
-        className="absolute inset-0 bg-gradient-to-r from-brand via-brand/50 to-transparent"
-        style={{
-          animation: 'shimmer 1.5s infinite',
-        }}
-      />
-    )}
-    
-    {/* Pulse dot for active phase */}
-    {isActive && !isComplete && (
-      <div 
-        className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-brand"
-        style={{
-          animation: 'pulse-dot 1.5s infinite',
-        }}
-      />
-    )}
   </div>
 ));
 
@@ -205,7 +179,6 @@ const PhaseIndicator = memo(({
         const phase = phases[phaseKey];
         const isActive = index === currentIndex;
         const isComplete = index < currentIndex;
-        const isAnimating = index === currentIndex - 1; // Line leading to current
         
         return (
           <div key={phaseKey} className="flex items-center">
@@ -219,28 +192,11 @@ const PhaseIndicator = memo(({
             
             {/* Connecting line (except after last phase) */}
             {index < phaseKeys.length - 1 && (
-              <ConnectingLine 
-                isComplete={isComplete}
-                isActive={isActive}
-                isAnimating={isAnimating}
-              />
+              <ConnectingLine isComplete={isComplete} />
             )}
           </div>
         );
       })}
-      
-      {/* CSS for animations */}
-      <style>{`
-        @keyframes shimmer {
-          0% { transform: translateX(-100%); }
-          100% { transform: translateX(100%); }
-        }
-        
-        @keyframes pulse-dot {
-          0%, 100% { opacity: 1; transform: translateY(-50%) scale(1); }
-          50% { opacity: 0.5; transform: translateY(-50%) scale(1.5); }
-        }
-      `}</style>
     </div>
   );
 });

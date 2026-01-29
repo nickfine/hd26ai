@@ -22,6 +22,7 @@ export {
   LiveBadge,
   // New capsule badge system
   HeartbeatDot,
+  StatusDot,
   UserCapsule,
   SkillChip,
   StatusCapsule,
@@ -76,7 +77,11 @@ export {
 // StatCard
 export { 
   default as StatCard, 
-  StatCardGroup 
+  StatCardGroup,
+  HeroStatCard,
+  MiniStatCard,
+  HeroStatGrid,
+  FigmaMetricsCard,
 } from './StatCard';// LiveActivityFeed
 export { 
   default as LiveActivityFeed,

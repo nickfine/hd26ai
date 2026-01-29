@@ -23,68 +23,74 @@ import {
   Users,
   LogIn
 } from 'lucide-react';
-import { cn, formatNameWithCallsign } from '../../lib/design-system';
-import { CallsignBadge } from './Badge';
+import { cn } from '../../lib/design-system';
 import useReducedMotion from '../../hooks/useReducedMotion';
 
-// Activity type configuration with icons and colors
+// Activity type configuration with Lucide icons and semantic colors
+// ECD: Icons clarify meaning, no decorative emojis
 const ACTIVITY_CONFIG = {
   join: {
     icon: UserPlus,
     label: 'joined',
     color: 'var(--status-success)',
     bgColor: 'var(--status-success-subtle)',
-    emoji: '👋',
   },
   create: {
     icon: Lightbulb,
     label: 'created',
     color: 'var(--status-info)',
     bgColor: 'var(--status-info-subtle)',
-    emoji: '🆕',
   },
   submit: {
     icon: Upload,
     label: 'submitted',
     color: 'var(--accent-brand)',
     bgColor: 'var(--accent-brand-subtle)',
-    emoji: '📤',
   },
   vote: {
     icon: Vote,
     label: 'voted for',
     color: 'var(--status-warning)',
     bgColor: 'var(--status-warning-subtle)',
-    emoji: '🗳️',
   },
   comment: {
     icon: MessageSquare,
     label: 'commented on',
     color: 'var(--text-secondary)',
     bgColor: 'var(--surface-secondary)',
-    emoji: '💬',
   },
   award: {
     icon: Award,
     label: 'won',
-    color: '#FFD700', // Gold
+    color: '#FFD700', // Gold - semantic for awards
     bgColor: 'rgba(255, 215, 0, 0.15)',
-    emoji: '🏆',
   },
   team_full: {
     icon: Users,
     label: 'team is now full:',
     color: 'var(--status-success)',
     bgColor: 'var(--status-success-subtle)',
-    emoji: '✅',
   },
   login: {
     icon: LogIn,
     label: 'logged in',
     color: 'var(--text-secondary)',
     bgColor: 'var(--surface-secondary)',
-    emoji: '👤',
   },
+};
+
+// Activity type left border indicators (very muted)
+// ECD: One accent per component - left borders replace coloured icon backgrounds
+const ACTIVITY_BORDER = {
+  join: 'border-l-2 border-l-emerald-500/30',
+  create: 'border-l-2 border-l-blue-500/30',
+  submit: 'border-l-2 border-l-amber-500/30',
+  vote: 'border-l-2 border-l-purple-500/30',
+  comment: 'border-l-2 border-l-slate-500/30',
+  award: 'border-l-2 border-l-yellow-500/30',
+  team_full: 'border-l-2 border-l-emerald-500/30',
+  login: 'border-l-2 border-l-slate-500/30',
+  default: 'border-l-2 border-l-[var(--border-default)]',
 };
 
 /**
@@ -161,7 +167,7 @@ export const LivePulse = memo(function LivePulse({ className }) {
         'relative inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider',
         className
       )}
-      style={{ color: 'var(--status-success)' }}
+      style={{ color: 'var(--text-secondary)' }}
     >
       <span className="relative flex h-2 w-2">
         <span 
@@ -191,22 +197,19 @@ const ActivityItem = memo(function ActivityItem({
   const Icon = config.icon;
   const relativeTime = formatRelativeTime(activity.time);
   const absoluteTime = getAbsoluteTime(activity.time);
-  const formatted = formatNameWithCallsign(activity.user, activity.callsign);
   
   return (
     <div 
       className={cn(
-        'flex items-start gap-3 py-3 px-3 rounded-lg transition-colors',
+        'flex items-start gap-3 py-3 pr-3 pl-3 rounded-lg transition-colors',
+        ACTIVITY_BORDER[activity.type] || ACTIVITY_BORDER.default,
         'hover:bg-[var(--surface-secondary)]',
         isNew && !prefersReducedMotion && 'animate-fade-in'
       )}
     >
-      {/* Activity type icon */}
+      {/* Activity type icon - neutral background, coloured icon stroke */}
       {showIcon && (
-        <div 
-          className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center"
-          style={{ backgroundColor: config.bgColor }}
-        >
+        <div className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center bg-[var(--surface-secondary)]">
           <Icon className="w-4 h-4" style={{ color: config.color }} />
         </div>
       )}
@@ -214,20 +217,12 @@ const ActivityItem = memo(function ActivityItem({
       {/* Content */}
       <div className="flex-1 min-w-0">
         <p className="text-sm leading-relaxed">
-          {/* User name with callsign */}
+          {/* User name - ECD: Plain names, no decorative callsign badges */}
           <span 
             className="font-semibold"
             style={{ color: 'var(--text-primary)' }}
           >
-            {formatted.hasCallsign ? (
-              <>
-                {formatted.firstName}{' '}
-                <CallsignBadge>{formatted.callsign}</CallsignBadge>
-                {formatted.lastName && ` ${formatted.lastName}`}
-              </>
-            ) : (
-              activity.user
-            )}
+            {activity.user}
           </span>
           
           {/* Action */}

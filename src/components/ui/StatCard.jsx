@@ -1,14 +1,16 @@
 /**
  * StatCard Component
  * 
- * Engaging metric card with count-up animation triggered by Intersection Observer.
- * Uses semantic design tokens for theming support.
+ * ECD-compliant stat cards with hierarchy through scale.
+ * HeroStatCard: Large, prominent countdown or primary metric (3x size)
+ * StatCard: Standard metric card with icon
+ * MiniStatCard: Compact inline stat for secondary metrics
  * 
  * Features:
  * - Count-up animation on scroll into view (800ms ease-out)
  * - Respects prefers-reduced-motion
- * - Optional trend indicator
- * - Icon support with brand accent
+ * - Monospace numbers for mission control aesthetic
+ * - Clear visual hierarchy through size differentiation
  */
 
 import { useState, useEffect, useRef, memo } from 'react';
@@ -92,26 +94,39 @@ const formatNumber = (num, format = 'default') => {
 };
 
 /**
- * Trend indicator component
+ * Trend indicator component - Figma style
  */
-const TrendIndicator = memo(function TrendIndicator({ value, label }) {
-  if (!value) return null;
+const TrendIndicator = memo(function TrendIndicator({ value, label, showPercentage = true }) {
+  if (value === undefined || value === null) return null;
   
   const isPositive = value > 0;
   const isNegative = value < 0;
   
   return (
-    <div 
-      className={cn(
-        'inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full',
-        isPositive && 'bg-[var(--status-success-subtle)] text-[var(--status-success)]',
-        isNegative && 'bg-[var(--status-danger-subtle)] text-[var(--status-danger)]',
-        !isPositive && !isNegative && 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]'
+    <div className="flex items-center gap-1 text-sm">
+      <span 
+        className={cn(
+          'font-medium',
+          isPositive && 'text-trend-up',
+          isNegative && 'text-trend-down',
+          !isPositive && !isNegative && 'text-[var(--text-secondary)]'
+        )}
+      >
+        {isPositive ? '↑' : isNegative ? '↓' : '–'}
+      </span>
+      <span 
+        className={cn(
+          'font-medium',
+          isPositive && 'text-trend-up',
+          isNegative && 'text-trend-down',
+          !isPositive && !isNegative && 'text-[var(--text-secondary)]'
+        )}
+      >
+        {showPercentage ? `${Math.abs(value)}%` : Math.abs(value)}
+      </span>
+      {label && (
+        <span className="text-[var(--text-muted)]">{label}</span>
       )}
-    >
-      <span>{isPositive ? '↑' : isNegative ? '↓' : '–'}</span>
-      <span>{Math.abs(value)}</span>
-      {label && <span className="text-[var(--text-secondary)]">{label}</span>}
     </div>
   );
 });
@@ -226,6 +241,201 @@ export const StatCardGroup = memo(function StatCardGroup({ children, className }
       )}
     >
       {children}
+    </div>
+  );
+});
+
+/**
+ * HeroStatCard - Large, prominent stat card for primary metrics
+ * ECD: Creates clear visual hierarchy by being 3x the size of other stats
+ * ECD: No decorative icon or sublabel - let the number speak for itself
+ */
+export const HeroStatCard = memo(function HeroStatCard({
+  value,
+  label,
+  className,
+  isUrgent = false,
+}) {
+  const { count, elementRef, hasAnimated } = useCountUp(
+    typeof value === 'number' ? value : 0,
+    1200
+  );
+  
+  // For string values (like countdown), display directly
+  const displayValue = typeof value === 'string' ? value : formatNumber(count);
+
+  return (
+    <div
+      ref={elementRef}
+      className={cn(
+        'relative p-8 rounded-2xl transition-all duration-300',
+        'bg-[var(--surface-primary)] border-2 border-t-2 border-t-brand',
+        isUrgent 
+          ? 'border-[var(--accent-brand)] shadow-lg shadow-[var(--accent-brand)]/10' 
+          : 'border-[var(--border-default)]',
+        'hover:shadow-xl',
+        className
+      )}
+    >
+      <div className="flex flex-col items-center text-center gap-3">
+        {/* Value - Large monospace for mission control aesthetic */}
+        <div 
+          className={cn(
+            'text-5xl sm:text-6xl font-black font-mono tracking-tight transition-opacity duration-500',
+            hasAnimated || typeof value === 'string' ? 'opacity-100' : 'opacity-0',
+            isUrgent ? 'text-[var(--accent-brand)]' : 'text-[var(--text-primary)]'
+          )}
+          style={{ fontVariantNumeric: 'tabular-nums' }}
+        >
+          {displayValue}
+        </div>
+        
+        {/* Label */}
+        <p 
+          className="text-sm font-bold uppercase tracking-wider"
+          style={{ color: 'var(--text-secondary)' }}
+        >
+          {label}
+        </p>
+      </div>
+    </div>
+  );
+});
+
+/**
+ * MiniStatCard - Compact inline stat for secondary metrics
+ * ECD: Demoted visual weight for non-primary stats
+ */
+export const MiniStatCard = memo(function MiniStatCard({
+  value,
+  label,
+  className,
+}) {
+  const { count, elementRef, hasAnimated } = useCountUp(value, 600);
+
+  return (
+    <div
+      ref={elementRef}
+      className={cn(
+        'flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-200',
+        'bg-[var(--surface-secondary)] border border-[var(--border-subtle)]',
+        'hover:bg-[var(--surface-primary)] hover:border-brand/30',
+        className
+      )}
+    >
+      {/* Value - Medium monospace */}
+      <span 
+        className={cn(
+          'text-2xl font-bold font-mono tabular-nums transition-opacity duration-300',
+          hasAnimated ? 'opacity-100' : 'opacity-0'
+        )}
+        style={{ 
+          color: 'var(--text-primary)',
+          fontVariantNumeric: 'tabular-nums',
+        }}
+      >
+        {formatNumber(count)}
+      </span>
+      
+      {/* Label */}
+      <span 
+        className="text-xs font-medium uppercase tracking-wider mt-1"
+        style={{ color: 'var(--text-secondary)' }}
+      >
+        {label}
+      </span>
+    </div>
+  );
+});
+
+/**
+ * HeroStatGrid - Asymmetric grid for hero + mini stats
+ * ECD: Clear hierarchy with 1 large card + 4 small cards
+ */
+export const HeroStatGrid = memo(function HeroStatGrid({ 
+  heroStat,
+  miniStats = [],
+  className,
+}) {
+  return (
+    <div className={cn('grid grid-cols-2 md:grid-cols-4 gap-4', className)}>
+      {/* Hero stat takes 2 columns on mobile, 2 columns + 2 rows on desktop */}
+      <div className="col-span-2 md:row-span-2">
+        {heroStat}
+      </div>
+      
+      {/* Mini stats fill remaining space */}
+      {miniStats.map((stat, index) => (
+        <div key={stat.key || index}>
+          {stat}
+        </div>
+      ))}
+    </div>
+  );
+});
+
+/**
+ * FigmaMetricsCard - Figma-style metrics card with trend indicator
+ * Matches the HD26-New-Design Figma layout
+ */
+export const FigmaMetricsCard = memo(function FigmaMetricsCard({
+  title,
+  value,
+  subtitle,
+  trend,
+  trendLabel = 'from last event',
+  icon: Icon,
+  iconBgClass = 'bg-cyan-accent',
+  className,
+}) {
+  const { count, elementRef, hasAnimated } = useCountUp(value, 800);
+
+  return (
+    <div
+      ref={elementRef}
+      className={cn(
+        'relative p-5 rounded-2xl transition-all duration-200',
+        'bg-[var(--surface-primary)] border border-[var(--border-default)]',
+        'hover:border-[var(--border-subtle)] hover:shadow-lg',
+        className
+      )}
+    >
+      <div className="flex items-start justify-between">
+        <div className="flex-1 min-w-0">
+          {/* Title - small, muted */}
+          <p className="text-xs font-medium uppercase tracking-wider mb-2 text-[var(--text-muted)]">
+            {title}
+          </p>
+          
+          {/* Value - large number */}
+          <p 
+            className={cn(
+              'text-4xl font-bold tabular-nums mb-1 transition-opacity duration-300',
+              hasAnimated ? 'opacity-100' : 'opacity-0'
+            )}
+            style={{ color: 'var(--text-primary)' }}
+          >
+            {formatNumber(count)}
+          </p>
+          
+          {/* Subtitle description */}
+          <p className="text-sm text-[var(--text-secondary)] mb-3">
+            {subtitle}
+          </p>
+          
+          {/* Trend indicator */}
+          {trend !== undefined && (
+            <TrendIndicator value={trend} label={trendLabel} />
+          )}
+        </div>
+        
+        {/* Icon */}
+        {Icon && (
+          <div className={cn('flex-shrink-0 w-12 h-12 rounded-xl flex items-center justify-center', iconBgClass)}>
+            <Icon className="w-6 h-6" style={{ color: 'var(--text-primary)' }} />
+          </div>
+        )}
+      </div>
     </div>
   );
 });

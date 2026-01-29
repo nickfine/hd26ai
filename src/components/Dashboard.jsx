@@ -1,6 +1,7 @@
 /**
- * Dashboard Page
+ * Dashboard Page - Figma HD26-New-Design Implementation
  * Main hub showing activity feed, schedule, awards, and quick actions.
+ * Layout matches the Figma design with vertical sections.
  */
 
 import { useState, memo, useCallback, useMemo } from 'react';
@@ -15,7 +16,6 @@ import {
   ChevronUp,
   Vote,
   Activity,
-  Image as ImageIcon,
   Zap,
   Sparkles,
   UserPlus,
@@ -25,605 +25,644 @@ import {
   CheckCircle,
   MessageSquare,
   Plus,
-  Eye,
   Lightbulb,
-  UserCheck,
+  MapPin,
+  Award,
+  Star,
+  Info,
+  FileText,
+  Send,
 } from 'lucide-react';
 import AppLayout from './AppLayout';
 import Button from './ui/Button';
 import Card from './ui/Card';
-import Badge, { HeartbeatDot, CallsignBadge } from './ui/Badge';
-import StatCard, { StatCardGroup } from './ui/StatCard';
+import Badge, { HeartbeatDot } from './ui/Badge';
+import { FigmaMetricsCard } from './ui/StatCard';
 import LiveActivityFeed from './ui/LiveActivityFeed';
 import { DashboardSkeleton } from './ui/Skeleton';
 import { HStack, VStack } from './layout';
-import { cn, formatNameWithCallsign } from '../lib/design-system';
-import { PROMO_IMAGES } from '../data/mockData';
-import { StatusBanner } from './shared';
-import FreeAgentReminderBanner from './shared/FreeAgentReminderBanner';
+import { cn } from '../lib/design-system';
 
 // ============================================================================
 // MOCK DATA
 // ============================================================================
 
 const MOCK_ACTIVITY_FEED = [
-  { id: 1, type: 'join', user: 'Maya Rodriguez', callsign: 'HTML Hotshot', team: 'Neural Nexus', time: '2 min ago' },
-  { id: 2, type: 'create', user: 'Jordan Lee', callsign: 'Prompt Wizard', team: 'Quantum Collective', time: '5 min ago' },
-  { id: 3, type: 'join', user: 'Casey Brooks', callsign: 'CSS Wizard', team: 'Human Touch', time: '12 min ago' },
-  { id: 4, type: 'create', user: 'Pat O\'Brien', callsign: 'Circuit Breaker', team: 'Carbon Coalition', time: '23 min ago' },
-  { id: 5, type: 'join', user: 'Skyler Vance', callsign: 'Data Drifter', team: 'Digital Overlords', time: '31 min ago' },
+  { id: 1, type: 'join', user: 'Maya Rodriguez', team: 'Rescue House', time: '2m ago' },
+  { id: 2, type: 'create', user: 'Jordan Lee', team: 'Quantum Collective', time: '5m ago' },
+  { id: 3, type: 'join', user: 'Casey Bento', team: 'Meteor Touch', time: '12m ago' },
+  { id: 4, type: 'create', user: "Pat O'Brien", team: 'Carbon Cockfox', time: '18m ago' },
+  { id: 5, type: 'join', user: 'Skylar Moore', team: 'Digital Overlords', time: '23m ago' },
 ];
 
 const MOCK_SCHEDULE = [
-  { id: 1, time: '10:00 AM', title: 'Opening Ceremony', description: 'Kickoff & rules explanation' },
-  { id: 2, time: '10:30 AM', title: 'Team Formation Deadline', description: 'Final team submissions' },
-  { id: 3, time: '11:00 AM', title: 'Hacking Begins', description: 'Start building!' },
-  { id: 4, time: '5:00 PM', title: 'Submission Deadline', description: 'All projects due' },
+  { id: 1, date: '01.28', time: '09:00 AM', title: 'Opening Ceremony', location: 'Main Auditorium' },
+  { id: 2, date: '01.28', time: '02:00 PM', title: 'Team Formation Deadline', location: 'Building A Conference' },
+  { id: 3, date: '01.29', time: '10:00 AM', title: 'Hacking Begins', location: 'Dev Sandbox', isNow: true },
+  { id: 4, date: '01.30', time: '06:00 PM', title: 'Submission Envelope', location: 'Online Submission Portal' },
 ];
 
 const MOCK_AWARDS = [
-  { id: 1, title: 'Grand HackDay Champion', prize: 'Personalised Callsign HackDay26 T-Shirts', icon: Trophy, description: 'Custom t-shirts with your callsign + digital swag' },
-  { id: 2, title: 'People\'s Choice', prize: 'Personalised Idea Zoom Wallpaper', icon: Trophy, description: 'Custom Zoom background featuring your project idea' },
+  { id: 1, title: 'Grand HackDay Champion', description: 'Awarded to the best overall project', icon: Trophy },
+  { id: 2, title: "People's Choice", description: 'Voted on by your fellow developers', icon: Star },
+  { id: 3, title: "Judge's Selection", description: 'Recognized for technical excellence', icon: Award },
 ];
 
 const MOCK_FAQ = [
   { id: 1, question: 'How do ideas work?', answer: 'Ideas are projects teams work on. Teams can have 2-6 members. You can join an existing idea or create your own.' },
   { id: 2, question: 'What can I build?', answer: 'Anything! Web apps, mobile apps, APIs, games, tools - as long as it fits the theme.' },
-  { id: 3, question: 'How is judging done?', answer: 'Projects are judged on innovation, execution, design, and theme adherence. There will be peer voting for People\'s Choice award.' },
+  { id: 3, question: 'How is judging done?', answer: 'Projects are judged on innovation, execution, design, and theme adherence.' },
 ];
 
-// Phase-specific default messages when no custom MOTD is set
-const PHASE_DEFAULT_MOTD = {
-  registration: "Registration is open! Sign up and join or create an idea.",
-  team_formation: "Form your teams! Browse ideas or create your own.",
-  hacking: "Hacking in progress! Build something amazing.",
-  submission: "Submissions are open! Don't forget to submit your project.",
-  voting: "Voting is live! Check out the projects and cast your votes.",
-  judging: "Judging in progress. Results coming soon!",
-  results: "Results are in! Check out the winners.",
-};
-
 // ============================================================================
-// PROMO TILE COMPONENT
+// MISSION BANNER COMPONENT
 // ============================================================================
 
-const PromoTile = memo(function PromoTile({ src, alt, className }) {
-  const [imageError, setImageError] = useState(false);
-
-  // Show placeholder if no image or image failed to load
-  if (!src || imageError) {
-    return (
-      <Card 
-        variant="ghost" 
-        padding="none"
-        className={cn(
-          'border-2 border-dashed border-arena-border flex items-center justify-center min-h-[200px] bg-arena-elevated',
-          className
-        )}
-      >
-        <VStack align="center" gap="4" className="p-6">
-          <div className="w-16 h-16 rounded-full flex items-center justify-center bg-arena-card">
-            <ImageIcon className="w-8 h-8 text-text-secondary" />
-          </div>
-          <p className="text-sm font-medium text-text-secondary">Promo Graphic</p>
-          <p className="text-xs text-text-muted">Coming Soon</p>
-        </VStack>
-      </Card>
-    );
-  }
-
+const MissionBanner = memo(function MissionBanner({ userRole = 'member' }) {
   return (
-    <Card 
-      variant="ghost" 
-      padding="none"
-      className={cn(
-        'overflow-hidden min-h-[200px]',
-        className
-      )}
-    >
-      <img
-        src={src}
-        alt={alt}
-        className="w-full h-full object-cover min-h-[200px]"
-        onError={() => setImageError(true)}
-      />
+    <div className="mb-8">
+      {/* Small badge */}
+      <div className="inline-flex items-center gap-2 mb-3">
+        <div className="w-7 h-7 rounded-lg gradient-cyan-blue flex items-center justify-center">
+          <Zap className="w-4 h-4 text-white" />
+        </div>
+        <span className="text-xs font-bold uppercase tracking-wider text-cyan-primary">
+          Mission Control
+        </span>
+      </div>
+      
+      {/* Title */}
+      <h1 className="text-4xl sm:text-5xl font-black text-text-primary mb-3 tracking-tight">
+        DASHBOARD
+      </h1>
+      
+      {/* Description */}
+      <p className="text-base text-text-body max-w-2xl mb-4">
+        Your command center for HackDay 2026. Track your progress, find teammates, 
+        and stay updated on the latest events.
+      </p>
+      
+      {/* Status pills */}
+      <div className="flex flex-wrap gap-3">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full">
+          <span className="status-active-dot" />
+          <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+            Systems Nominal
+          </span>
+        </div>
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full">
+          <User className="w-4 h-4 text-text-secondary" />
+          <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
+            {userRole === 'admin' ? 'Admin' : userRole === 'judge' ? 'Judge' : 'Member'} as {userRole === 'admin' ? 'Admin' : userRole === 'judge' ? 'Judge' : 'Member'}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+// ============================================================================
+// ACTIVE IDEAS WIDGET
+// ============================================================================
+
+const ActiveIdeasWidget = memo(function ActiveIdeasWidget({ 
+  ideas = 8, 
+  participants = 27, 
+  teams = 8, 
+  freeAgents = 6 
+}) {
+  return (
+    <Card variant="default" padding="lg" className="flex-1">
+      <div className="flex flex-col items-center text-center">
+        {/* Icon at top */}
+        <div className="w-16 h-16 rounded-full gradient-cyan-blue shadow-cyan-glow flex items-center justify-center mb-6">
+          <Lightbulb className="w-8 h-8 text-white" />
+        </div>
+        
+        {/* Large number */}
+        <div className="text-7xl font-black text-gradient-cyan mb-2 tabular-nums">
+          {ideas}
+        </div>
+        
+        {/* Label */}
+        <div className="text-sm font-medium text-cyan-primary uppercase tracking-widest mb-6">
+          Active Ideas
+        </div>
+        
+        {/* Separator */}
+        <div className="w-full border-t border-cyan-subtle mb-6" />
+        
+        {/* Sub-stats */}
+        <div className="grid grid-cols-3 gap-4 w-full">
+          {/* Participants */}
+          <div className="flex flex-col items-center">
+            <div className="w-10 h-10 rounded-xl bg-cyan-accent flex items-center justify-center mb-2">
+              <Users className="w-5 h-5 text-cyan-primary" />
+            </div>
+            <div className="text-2xl font-bold text-text-primary">{participants}</div>
+            <div className="text-xs text-text-muted uppercase tracking-wider">Participants</div>
+          </div>
+          
+          {/* Teams */}
+          <div className="flex flex-col items-center">
+            <div className="w-10 h-10 rounded-xl bg-orange-accent flex items-center justify-center mb-2">
+              <Users className="w-5 h-5 text-orange-primary" />
+            </div>
+            <div className="text-2xl font-bold text-text-primary">{teams}</div>
+            <div className="text-xs text-text-muted uppercase tracking-wider">Teams</div>
+          </div>
+          
+          {/* Free Agents */}
+          <div className="flex flex-col items-center">
+            <div className="w-10 h-10 rounded-xl bg-purple-accent flex items-center justify-center mb-2">
+              <User className="w-5 h-5 text-purple-primary" />
+            </div>
+            <div className="text-2xl font-bold text-text-primary">{freeAgents}</div>
+            <div className="text-xs text-text-muted uppercase tracking-wider">Free Agents</div>
+          </div>
+        </div>
+      </div>
     </Card>
   );
 });
 
 // ============================================================================
-// FIRST-TIME USER DETECTION
+// TEAM FORMATION STATUS CARD
 // ============================================================================
 
-const isFirstTimeUser = (user, teams) => {
-  if (!user) return false;
-  
-  // Check if user is not on any team
+const TeamFormationStatus = memo(function TeamFormationStatus({ 
+  user, 
+  teams, 
+  onNavigate,
+  onNavigateToTeam 
+}) {
+  // Find user's team
   const userTeam = teams.find((team) => 
     team.captainId === user?.id || 
     team.members?.some(m => m.id === user?.id)
   );
-  const hasNoTeam = !userTeam;
   
-  // First-time user: no team
-  return hasNoTeam;
-};
-
-// ============================================================================
-// SIGNUP PROMO BOX
-// ============================================================================
-
-const SignupPromoBox = memo(function SignupPromoBox({ user, teams, onNavigate }) {
-  if (!isFirstTimeUser(user, teams)) {
-    return null;
+  const hasTeam = !!userTeam;
+  const memberCount = userTeam ? (userTeam.members?.length || 0) + (userTeam.captainId ? 1 : 0) : 0;
+  const ideasCount = userTeam?.ideas?.length || 3;
+  const hoursLeft = 12; // Could be calculated from event time
+  
+  if (!hasTeam) {
+    // Show "Find a Team" card for users without a team
+    return (
+      <Card variant="default" padding="lg" className="flex-1">
+        <div className="space-y-4">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-arena-elevated flex items-center justify-center">
+              <AlertCircle className="w-4 h-4 text-warning" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-text-primary">Team Formation Status</h3>
+              <p className="text-sm text-text-secondary">Find your squad</p>
+            </div>
+          </div>
+          
+          <p className="text-sm text-text-body">
+            You're not on a team yet. Browse available ideas or create your own to get started!
+          </p>
+          
+          <Button
+            variant="primary"
+            size="lg"
+            fullWidth
+            onClick={() => onNavigate('marketplace', { tab: 'teams' })}
+            rightIcon={<ArrowRight className="w-5 h-5" />}
+          >
+            Browse Ideas
+          </Button>
+        </div>
+      </Card>
+    );
   }
-
+  
   return (
-    <Card variant="accent" padding="md" className="animate-fade-in stagger-1">
-      <Card.Label className="text-brand">Get Started</Card.Label>
-      <Card.Title className="text-text-primary mb-3">Complete Your Setup</Card.Title>
-      <p className="text-sm text-text-body mb-4">
-        Join an idea to start participating in HackDay 2026!
-      </p>
+    <Card variant="default" padding="lg" className="flex-1">
+      <div className="space-y-4">
+        {/* Header with status */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-full bg-arena-elevated flex items-center justify-center">
+              <CheckCircle className="w-4 h-4 text-success" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-text-primary">Team Formation Status</h3>
+              <p className="text-sm text-text-secondary">You're all set!</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--status-success-subtle)]">
+            <span className="status-active-dot" />
+            <span className="text-xs font-bold text-success uppercase">Active</span>
+          </div>
+        </div>
+        
+        {/* Team info */}
+        <div className="p-4 rounded-xl bg-arena-elevated border border-arena-border">
+          <p className="text-sm text-text-body mb-2">
+            You're part of <span className="font-bold text-brand">{userTeam.name}</span> team
+          </p>
+          <div className="flex items-center gap-2 text-sm text-text-secondary">
+            <CheckCircle className="w-4 h-4 text-success" />
+            <span>Team is complete and ready to begin</span>
+          </div>
+        </div>
+        
+        {/* Team details */}
+        <div>
+          <p className="text-sm text-text-secondary mb-3">Team Details</p>
+          <div className="grid grid-cols-3 gap-4">
+            <div>
+              <div className="text-2xl font-bold text-text-primary">{memberCount}</div>
+              <div className="text-xs text-text-muted">Members</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-text-primary">{ideasCount}</div>
+              <div className="text-xs text-text-muted">Ideas</div>
+            </div>
+            <div>
+              <div className="text-2xl font-bold text-text-primary">{hoursLeft}</div>
+              <div className="text-xs text-text-muted">Hours Left</div>
+            </div>
+          </div>
+        </div>
+        
+        {/* CTA */}
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
+          onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
+        >
+          View Your Team
+        </Button>
+      </div>
+    </Card>
+  );
+});
+
+// ============================================================================
+// ACTIVITY OVERVIEW CHART
+// ============================================================================
+
+const ActivityOverviewChart = memo(function ActivityOverviewChart() {
+  // Simple SVG-based area chart visualization
+  const timeLabels = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'];
+  
+  return (
+    <Card variant="default" padding="lg" className="mb-6">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h3 className="text-xl font-bold text-text-primary">Activity Overview</h3>
+          <p className="text-sm text-text-secondary">Real-time participation metrics</p>
+        </div>
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-cyan-primary" />
+            <span className="text-sm text-text-secondary">Activity</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-3 h-3 rounded-full bg-orange-primary" />
+            <span className="text-sm text-text-secondary">Submissions</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Chart area */}
+      <div className="relative h-64">
+        <svg viewBox="0 0 1000 250" className="w-full h-full" preserveAspectRatio="none">
+          {/* Grid lines - horizontal */}
+          <line x1="50" y1="50" x2="950" y2="50" stroke="var(--color-border)" strokeWidth="1" />
+          <line x1="50" y1="100" x2="950" y2="100" stroke="var(--color-border)" strokeWidth="1" />
+          <line x1="50" y1="150" x2="950" y2="150" stroke="var(--color-border)" strokeWidth="1" />
+          <line x1="50" y1="200" x2="950" y2="200" stroke="var(--color-border)" strokeWidth="1" />
+          
+          {/* Activity area (cyan) */}
+          <defs>
+            <linearGradient id="cyanGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(0, 211, 242, 0.3)" />
+              <stop offset="100%" stopColor="rgba(0, 211, 242, 0.05)" />
+            </linearGradient>
+            <linearGradient id="orangeGradient" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stopColor="rgba(255, 105, 0, 0.3)" />
+              <stop offset="100%" stopColor="rgba(255, 105, 0, 0.05)" />
+            </linearGradient>
+          </defs>
+          
+          {/* Activity area fill */}
+          <path 
+            d="M50,200 L150,180 L300,120 L450,90 L600,60 L750,80 L900,100 L950,110 L950,200 L50,200 Z" 
+            fill="url(#cyanGradient)"
+          />
+          <path 
+            d="M50,200 L150,180 L300,120 L450,90 L600,60 L750,80 L900,100 L950,110" 
+            fill="none"
+            stroke="#00D3F2"
+            strokeWidth="2"
+          />
+          
+          {/* Submissions area fill */}
+          <path 
+            d="M50,200 L150,195 L300,185 L450,170 L600,160 L750,155 L900,150 L950,145 L950,200 L50,200 Z" 
+            fill="url(#orangeGradient)"
+          />
+          <path 
+            d="M50,200 L150,195 L300,185 L450,170 L600,160 L750,155 L900,150 L950,145" 
+            fill="none"
+            stroke="#FF6900"
+            strokeWidth="2"
+          />
+          
+          {/* Y-axis labels */}
+          <text x="40" y="55" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">100</text>
+          <text x="40" y="105" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">75</text>
+          <text x="40" y="155" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">50</text>
+          <text x="40" y="205" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">25</text>
+        </svg>
+        
+        {/* X-axis labels */}
+        <div className="absolute bottom-0 left-12 right-4 flex justify-between text-xs text-text-muted">
+          {timeLabels.map((label, i) => (
+            <span key={i}>{label}</span>
+          ))}
+        </div>
+      </div>
+    </Card>
+  );
+});
+
+// ============================================================================
+// SCHEDULE PREVIEW
+// ============================================================================
+
+const SchedulePreview = memo(function SchedulePreview({ onNavigate }) {
+  return (
+    <Card variant="default" padding="lg" className="h-full">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-full bg-arena-elevated flex items-center justify-center">
+            <Calendar className="w-5 h-5 text-text-secondary" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-text-primary">Schedule Preview</h3>
+            <p className="text-sm text-text-secondary">Upcoming milestones</p>
+          </div>
+        </div>
+        <Button
+          variant="ghost"
+          size="sm"
+          rightIcon={<ChevronRight className="w-4 h-4" />}
+          onClick={() => onNavigate('schedule')}
+        >
+          View Full Schedule
+        </Button>
+      </div>
+      
+      {/* Timeline items */}
+      <div className="space-y-0">
+        {MOCK_SCHEDULE.map((item, index) => (
+          <div key={item.id} className="flex gap-4">
+            {/* Date badge */}
+            <div className="flex-shrink-0 w-12 h-12 rounded-xl bg-arena-elevated flex items-center justify-center">
+              <span className="text-xs font-bold text-text-secondary">{item.date}</span>
+            </div>
+            
+            {/* Content with connector line */}
+            <div className={cn(
+              "flex-1 pb-4 pl-4 relative",
+              index < MOCK_SCHEDULE.length - 1 && "border-l border-arena-border"
+            )}>
+              <div className="flex items-center gap-2 mb-1">
+                <h4 className="text-base font-bold text-text-primary">{item.title}</h4>
+                {item.isNow && (
+                  <span className="px-2 py-0.5 text-xs font-bold bg-brand/20 text-brand rounded-full">
+                    Now
+                  </span>
+                )}
+              </div>
+              <div className="flex items-center gap-4 text-sm text-text-secondary">
+                <div className="flex items-center gap-1">
+                  <Clock className="w-4 h-4" />
+                  <span>{item.time}</span>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MapPin className="w-4 h-4" />
+                  <span>{item.location}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+});
+
+// ============================================================================
+// AWARDS & PRIZES
+// ============================================================================
+
+const AwardsPrizes = memo(function AwardsPrizes() {
+  return (
+    <Card variant="default" padding="lg" className="h-full">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-9 h-9 rounded-full bg-arena-elevated flex items-center justify-center">
+          <Trophy className="w-5 h-5 text-text-secondary" />
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-text-primary">Awards & Prizes</h3>
+          <p className="text-sm text-text-secondary">What you're competing for</p>
+        </div>
+      </div>
+      
+      {/* Awards list */}
+      <div className="space-y-3 mb-4">
+        {MOCK_AWARDS.map((award) => (
+          <div 
+            key={award.id}
+            className="p-4 rounded-xl bg-arena-elevated border border-arena-border flex items-start gap-3"
+          >
+            <div className="w-10 h-10 rounded-full bg-arena-card flex items-center justify-center flex-shrink-0">
+              <award.icon className="w-5 h-5 text-warning" />
+            </div>
+            <div>
+              <h4 className="font-bold text-text-primary">{award.title}</h4>
+              <p className="text-sm text-text-secondary">{award.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Special recognition note */}
+      <div className="p-4 rounded-xl border border-dashed border-arena-border">
+        <div className="flex items-start gap-3">
+          <Info className="w-5 h-5 text-text-muted flex-shrink-0 mt-0.5" />
+          <div>
+            <h4 className="font-medium text-text-secondary">Special Recognition</h4>
+            <p className="text-sm text-text-muted">
+              Additional awards may be announced during the closing ceremony
+            </p>
+          </div>
+        </div>
+      </div>
+    </Card>
+  );
+});
+
+// ============================================================================
+// NEW TO HACKDAY PROMO
+// ============================================================================
+
+const NewToHackDayPromo = memo(function NewToHackDayPromo({ onNavigate }) {
+  return (
+    <Card variant="default" padding="lg" className="h-full relative overflow-hidden">
+      {/* Background decoration */}
+      <div className="absolute top-4 right-4 w-20 h-20 rounded-full gradient-cyan-blue opacity-20" />
+      <div className="absolute bottom-4 left-4 w-16 h-16 rounded-full bg-brand/20" />
+      
+      <div className="relative flex flex-col items-center text-center py-6">
+        {/* Icons row */}
+        <div className="flex items-center justify-center gap-3 mb-6">
+          <div className="w-12 h-12 rounded-xl gradient-cyan-blue flex items-center justify-center">
+            <Lightbulb className="w-6 h-6 text-white" />
+          </div>
+          <div className="w-14 h-14 rounded-full bg-brand/20 flex items-center justify-center">
+            <Sparkles className="w-7 h-7 text-brand" />
+          </div>
+          <div className="w-12 h-12 rounded-xl bg-purple-accent flex items-center justify-center">
+            <Users className="w-6 h-6 text-purple-primary" />
+          </div>
+        </div>
+        
+        {/* Title */}
+        <h3 className="text-2xl font-black text-text-primary mb-2">
+          New to HackDay?
+        </h3>
+        
+        {/* Subtitle */}
+        <p className="text-base text-text-secondary mb-6">
+          Join us and build something amazing
+        </p>
+        
+        {/* CTA */}
+        <Button
+          variant="primary"
+          size="lg"
+          onClick={() => onNavigate('new-to-hackday')}
+          rightIcon={<ArrowRight className="w-5 h-5" />}
+        >
+          Start here
+        </Button>
+      </div>
+    </Card>
+  );
+});
+
+// ============================================================================
+// FAQ SECTION
+// ============================================================================
+
+const FAQSection = memo(function FAQSection() {
+  const [expandedFaq, setExpandedFaq] = useState(null);
+  
+  const toggleFaq = useCallback((id) => {
+    setExpandedFaq(prev => prev === id ? null : id);
+  }, []);
+  
+  return (
+    <Card variant="default" padding="lg" className="h-full">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="w-9 h-9 rounded-full bg-arena-elevated flex items-center justify-center">
+          <HelpCircle className="w-5 h-5 text-text-secondary" />
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-text-primary">Frequently Asked Questions</h3>
+          <p className="text-sm text-text-secondary">Quick answers to common queries</p>
+        </div>
+      </div>
+      
+      {/* FAQ items */}
+      <div className="space-y-2">
+        {MOCK_FAQ.map((faq) => (
+          <div 
+            key={faq.id} 
+            className="border border-arena-border rounded-xl overflow-hidden"
+          >
+            <button
+              type="button"
+              onClick={() => toggleFaq(faq.id)}
+              className="w-full px-4 py-4 flex items-center justify-between text-left hover:bg-arena-elevated transition-colors"
+            >
+              <span className="font-bold text-text-primary">{faq.question}</span>
+              {expandedFaq === faq.id 
+                ? <ChevronUp className="w-5 h-5 text-text-muted flex-shrink-0" />
+                : <ChevronDown className="w-5 h-5 text-text-muted flex-shrink-0" />
+              }
+            </button>
+            {expandedFaq === faq.id && (
+              <div className="px-4 pb-4 text-sm text-text-body border-t border-arena-border pt-3">
+                {faq.answer}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </Card>
+  );
+});
+
+// ============================================================================
+// LIVE ACTIVITY SECTION
+// ============================================================================
+
+const LiveActivitySection = memo(function LiveActivitySection({ activityFeed, onNavigate }) {
+  return (
+    <Card variant="default" padding="lg" className="h-full">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-4">
+        <div className="w-9 h-9 rounded-full bg-arena-elevated flex items-center justify-center">
+          <Activity className="w-5 h-5 text-text-secondary" />
+        </div>
+        <div className="flex-1">
+          <h3 className="text-lg font-bold text-text-primary">Live Activity</h3>
+          <div className="flex items-center gap-2">
+            <span className="status-active-dot" />
+            <span className="text-sm text-text-secondary">Real-time updates</span>
+          </div>
+        </div>
+      </div>
+      
+      {/* Activity feed */}
+      <LiveActivityFeed
+        activities={activityFeed && activityFeed.length > 0 ? activityFeed : MOCK_ACTIVITY_FEED}
+        maxItems={5}
+        showHeader={false}
+        emptyMessage="No activity yet. Be the first to join!"
+      />
+      
+      {/* View all link */}
       <Button
-        variant="primary"
+        variant="ghost"
         size="md"
         fullWidth
-        onClick={() => onNavigate('profile')}
-        leftIcon={<UserPlus className="w-4 h-4" />}
-        rightIcon={<ArrowRight className="w-4 h-4" />}
+        className="mt-4"
+        onClick={() => onNavigate('activity')}
       >
-        Complete Profile
+        View All Activity
       </Button>
     </Card>
   );
 });
 
 // ============================================================================
-// NEW TO HACKDAY PROMO BOX
-// ============================================================================
-
-const NewToHackDayPromo = memo(function NewToHackDayPromo({ onNavigate }) {
-  return (
-    <Card variant="outlined" padding="lg" className="animate-fade-in stagger-2">
-      <VStack gap="3" align="start">
-        <h3 className="text-3xl font-black text-text-primary leading-tight">
-          New to HackDay?{' '}
-          <button
-            onClick={() => onNavigate('new-to-hackday')}
-            className="text-brand hover:text-brand/80 underline underline-offset-4 transition-colors cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 focus:ring-offset-bg-primary rounded"
-          >
-            Start here
-          </button>
-        </h3>
-      </VStack>
-    </Card>
-  );
-});
-
-// ============================================================================
-// HERO BENTO COMPONENT
-// ============================================================================
-
-const HeroBento = memo(function HeroBento({ eventPhase, user, teams, event, onNavigate, onNavigateToTeam }) {
-  // Check if user has a team (as a member or captain)
-  const userTeam = teams.find((team) => 
-    team.captainId === user?.id || 
-    team.members?.some(m => m.id === user?.id)
-  );
-  const hasTeam = !!userTeam;
-  
-  // Check if user has created a team (is captain)
-  const userCreatedTeam = teams.find((team) => team.captainId === user?.id);
-  const hasCreatedTeam = !!userCreatedTeam;
-  
-  // Check if user has applied to join any team (has pending join request)
-  const hasAppliedToTeam = teams.some((team) => 
-    team.joinRequests?.some((request) => request.userId === user?.id)
-  );
-  
-  const hasSignedUp = user?.name && user.name.trim().length > 0; // User has completed signup if they have a name
-
-  // Get MOTD from event (for hacking phase)
-  const motd = event?.motd || '';
-
-  // Render based on phase
-  switch (eventPhase) {
-    case 'registration':
-      // If user has a team, show team confirmation message
-      if (hasTeam) {
-        return (
-          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-            <VStack gap="4" align="start">
-              <HStack gap="3" align="center">
-                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-brand" />
-                </div>
-                <div>
-                  <Card.Label className="text-brand mb-0">Team Confirmed</Card.Label>
-                  <Card.Title className="text-text-primary mb-0">You're All Set!</Card.Title>
-                </div>
-              </HStack>
-              <p className="text-base text-text-body">
-                {hasCreatedTeam
-                  ? `You've created ${userTeam.name}! ${userTeam.members?.length < userTeam.maxMembers ? 'Continue recruiting members to build your squad.' : 'Your team is complete and ready for HackDay!'}`
-                  : `You're part of ${userTeam.name}! Make sure your team is complete before hacking begins.`}
-              </p>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
-                leftIcon={<Users className="w-5 h-5" />}
-                rightIcon={<ArrowRight className="w-5 h-5" />}
-              >
-                View Your Team
-              </Button>
-            </VStack>
-          </Card>
-        );
-      }
-      
-      // If user has applied to join a team, show pending application message
-      if (hasAppliedToTeam) {
-        const appliedTeam = teams.find((team) => 
-          team.joinRequests?.some((request) => request.userId === user?.id)
-        );
-        return (
-          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-            <VStack gap="4" align="start">
-              <HStack gap="3" align="center">
-                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-brand" />
-                </div>
-                <div>
-                  <Card.Label className="text-brand mb-0">Application Pending</Card.Label>
-                  <Card.Title className="text-text-primary mb-0">Waiting for Approval</Card.Title>
-                </div>
-              </HStack>
-              <p className="text-base text-text-body">
-                Your application to join <span className="font-bold text-text-primary">{appliedTeam?.name}</span> is pending approval from the team captain. 
-                You'll be notified once they respond.
-              </p>
-            </VStack>
-          </Card>
-        );
-      }
-      
-      // If user has signed up but no team and no pending applications, show team joining message
-      // Skip this for observers (they are automatically assigned to Observers team)
-      if (hasSignedUp && !hasTeam) {
-        return (
-          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-            <VStack gap="4" align="start">
-              <HStack gap="3" align="center">
-                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                  <Users className="w-6 h-6 text-brand" />
-                </div>
-                <div>
-                  <Card.Label className="text-brand mb-0">Welcome to HackDay!</Card.Label>
-                  <Card.Title className="text-text-primary mb-0">Join Your Idea</Card.Title>
-                </div>
-              </HStack>
-              <p className="text-base text-text-body">
-                Find an idea that matches your interests and skill development needs, or browse ideas manually. You can also enable auto-assignment to be automatically matched with teammates.
-              </p>
-              <HStack gap="3">
-                <Button
-                  variant="primary"
-                  size="lg"
-                  onClick={() => onNavigate('marketplace', { tab: 'teams' })}
-                  leftIcon={<Users className="w-5 h-5" />}
-                >
-                  Browse Ideas
-                </Button>
-                {false && (
-                  <Button
-                    variant="secondary"
-                    size="lg"
-                    onClick={() => onNavigate('signup', { step: 4 })}
-                    leftIcon={<Zap className="w-5 h-5" />}
-                  >
-                    Enable Auto-Assign
-                  </Button>
-                )}
-              </HStack>
-            </VStack>
-          </Card>
-        );
-      }
-      // User hasn't signed up yet - show signup message
-      return (
-        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                <UserPlus className="w-6 h-6 text-brand" />
-              </div>
-              <div>
-                <Card.Label className="text-brand mb-0">Registration Open</Card.Label>
-                <Card.Title className="text-text-primary mb-0">Join HackDay 2026</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              Sign up now to participate in HackDay 2026! Create your profile and get ready to build something amazing.
-            </p>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => onNavigate('signup')}
-              leftIcon={<UserPlus className="w-5 h-5" />}
-              rightIcon={<ArrowRight className="w-5 h-5" />}
-            >
-              Sign Up Now
-            </Button>
-          </VStack>
-        </Card>
-      );
-
-    case 'team_formation':
-      // If user has a team, show team confirmation message
-      if (hasTeam) {
-        return (
-          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-            <VStack gap="4" align="start">
-              <HStack gap="3" align="center">
-                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-brand" />
-                </div>
-                <div>
-                  <Card.Label className="text-brand mb-0">Team Confirmed</Card.Label>
-                  <Card.Title className="text-text-primary mb-0">You're All Set!</Card.Title>
-                </div>
-              </HStack>
-              <p className="text-base text-text-body">
-                {hasCreatedTeam
-                  ? `You've created ${userTeam.name}! ${userTeam.members?.length < userTeam.maxMembers ? 'Continue recruiting members to build your squad.' : 'Your team is complete and ready for HackDay!'}`
-                  : `You're part of ${userTeam.name}! Make sure your team is complete before hacking begins.`}
-              </p>
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
-                leftIcon={<Users className="w-5 h-5" />}
-                rightIcon={<ArrowRight className="w-5 h-5" />}
-              >
-                View Your Team
-              </Button>
-            </VStack>
-          </Card>
-        );
-      }
-      
-      // If user has applied to join a team, show pending application message
-      if (hasAppliedToTeam) {
-        const appliedTeam = teams.find((team) => 
-          team.joinRequests?.some((request) => request.userId === user?.id)
-        );
-        return (
-          <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-            <VStack gap="4" align="start">
-              <HStack gap="3" align="center">
-                <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-brand" />
-                </div>
-                <div>
-                  <Card.Label className="text-brand mb-0">Application Pending</Card.Label>
-                  <Card.Title className="text-text-primary mb-0">Waiting for Approval</Card.Title>
-                </div>
-              </HStack>
-              <p className="text-base text-text-body">
-                Your application to join <span className="font-bold text-text-primary">{appliedTeam?.name}</span> is pending approval from the team captain. 
-                You'll be notified once they respond.
-              </p>
-            </VStack>
-          </Card>
-        );
-      }
-      
-      // User doesn't have a team and hasn't applied - show team formation message
-      return (
-        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                <Users className="w-6 h-6 text-brand" />
-              </div>
-              <div>
-                <Card.Label className="text-brand mb-0">Team Formation</Card.Label>
-                <Card.Title className="text-text-primary mb-0">Find Your Squad</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              Join an idea to start participating! Teams can have 2-6 members.
-            </p>
-            <HStack gap="3">
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => onNavigate('marketplace', { tab: 'teams' })}
-                leftIcon={<Users className="w-5 h-5" />}
-              >
-                Browse Ideas
-              </Button>
-              <Button
-                variant="secondary"
-                size="lg"
-                onClick={() => onNavigate('marketplace', { tab: 'teams' })}
-                leftIcon={<Plus className="w-5 h-5" />}
-              >
-                Create Idea
-              </Button>
-            </HStack>
-          </VStack>
-        </Card>
-      );
-      return (
-        <Card variant="default" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-success/20 flex items-center justify-center">
-                <CheckCircle className="w-6 h-6 text-success" />
-              </div>
-              <div>
-                <Card.Label className="mb-0">Team Formation</Card.Label>
-                <Card.Title className="mb-0">You're All Set!</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              You're part of <span className="font-bold text-text-primary">{userTeam.name}</span>. 
-              Make sure your team is complete before hacking begins!
-            </p>
-          </VStack>
-        </Card>
-      );
-
-    case 'hacking':
-      return (
-        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                <Zap className="w-6 h-6 text-brand" />
-              </div>
-              <div>
-                <Card.Label className="text-brand mb-0">Build Mode Active</Card.Label>
-                <Card.Title className="text-text-primary mb-0">Hacking in Progress</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              The hackathon is underway! Build something amazing with your team. 
-              Remember to submit your project before the deadline.
-            </p>
-            {hasTeam && (
-              <Button
-                variant="primary"
-                size="lg"
-                onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
-                leftIcon={<Users className="w-5 h-5" />}
-                rightIcon={<ArrowRight className="w-5 h-5" />}
-              >
-                View Your Team
-              </Button>
-            )}
-          </VStack>
-        </Card>
-      );
-
-    case 'submission':
-      return (
-        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-warning/20 flex items-center justify-center">
-                <AlertCircle className="w-6 h-6 text-warning" />
-              </div>
-              <div>
-                <Card.Label className="text-warning mb-0">Submission Deadline</Card.Label>
-                <Card.Title className="text-text-primary mb-0">Time is Running Out!</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              The submission deadline is approaching! Make sure your project is complete, 
-              your demo video is ready, and all submission materials are uploaded.
-            </p>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => onNavigate('submission')}
-              leftIcon={<ArrowRight className="w-5 h-5" />}
-            >
-              Submit Your Project
-            </Button>
-          </VStack>
-        </Card>
-      );
-
-    case 'voting':
-      return (
-        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                <Vote className="w-6 h-6 text-brand" />
-              </div>
-              <div>
-                <Card.Label className="text-brand mb-0">Voting Open</Card.Label>
-                <Card.Title className="text-text-primary mb-0">Choose Your Favorites</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              All projects have been submitted! Browse the project gallery and vote for your 
-              favorite projects. You can vote for up to 5 projects.
-            </p>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => onNavigate('voting')}
-              leftIcon={<Vote className="w-5 h-5" />}
-              rightIcon={<ArrowRight className="w-5 h-5" />}
-            >
-              Browse & Vote
-            </Button>
-          </VStack>
-        </Card>
-      );
-
-    case 'results':
-      return (
-        <Card variant="accent" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                <Trophy className="w-6 h-6 text-brand" />
-              </div>
-              <div>
-                <Card.Label className="text-brand mb-0">HackDay 2026 Complete</Card.Label>
-                <Card.Title className="text-text-primary mb-0">Thank You for Participating!</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              HackDay 2026 has come to an end. Thank you to all participants for your amazing 
-              projects and contributions! Check out the results and winners.
-            </p>
-            <Button
-              variant="primary"
-              size="lg"
-              onClick={() => onNavigate('results')}
-              leftIcon={<Trophy className="w-5 h-5" />}
-              rightIcon={<ArrowRight className="w-5 h-5" />}
-            >
-              View Results
-            </Button>
-          </VStack>
-        </Card>
-      );
-
-    default:
-      // Fallback for other phases
-      return (
-        <Card variant="default" padding="lg" className="md:col-span-2 animate-fade-in">
-          <VStack gap="4" align="start">
-            <HStack gap="3" align="center">
-              <div className="w-12 h-12 rounded-full bg-brand/20 flex items-center justify-center">
-                <Zap className="w-6 h-6 text-brand" />
-              </div>
-              <div>
-                <Card.Label className="mb-0">HackDay 2026</Card.Label>
-                <Card.Title className="mb-0">Welcome to Mission Control</Card.Title>
-              </div>
-            </HStack>
-            <p className="text-base text-text-body">
-              Your command center for HackDay 2026. Track your progress, find teammates, 
-              and stay updated on the latest events.
-            </p>
-          </VStack>
-        </Card>
-      );
-  }
-});
-
-// ============================================================================
-// COMPONENT
+// MAIN DASHBOARD COMPONENT
 // ============================================================================
 
 function Dashboard({
@@ -631,17 +670,17 @@ function Dashboard({
   teams = [],
   onNavigate,
   onNavigateToTeam,
-  eventPhase = 'voting',
+  eventPhase = 'hacking',
   event,
-  activityFeed = null, // Real-time activity feed from Supabase (null in demo mode)
-  userInvites = [], // Pending team invites for the current user
+  activityFeed = null,
+  userInvites = [],
   devRoleOverride = null,
   onDevRoleChange = null,
   onPhaseChange = null,
   eventPhases = {},
-  onAutoAssignOptIn = null, // Handler for auto-assign opt-in
-  registrations = [], // All registered users for stats
-  isLoading = false, // Show skeleton loading state
+  onAutoAssignOptIn = null,
+  registrations = [],
+  isLoading = false,
   simulateLoading = false,
   onSimulateLoadingChange = null,
 }) {
@@ -666,14 +705,6 @@ function Dashboard({
       </AppLayout>
     );
   }
-  const [expandedFaq, setExpandedFaq] = useState(null);
-
-  const toggleFaq = useCallback((id) => {
-    setExpandedFaq(prev => prev === id ? null : id);
-  }, []);
-  
-  const showSignupPromo = isFirstTimeUser(user, teams);
-  const isRegistrationPhase = eventPhase === 'registration';
   
   // Calculate dashboard stats
   const stats = useMemo(() => {
@@ -685,16 +716,20 @@ function Dashboard({
       !teams.some(t => 
         t.captainId === r.id || t.members?.some(m => m.id === r.id)
       )
-    ).length || Math.floor(participantsCount * 0.15); // Estimate if no registrations
+    ).length || Math.floor(participantsCount * 0.15);
     const submissionsCount = teams.filter(t => t.hasSubmitted || t.submission).length;
     
     return {
       ideas: ideasCount || 8,
-      participants: participantsCount || 32,
-      freeAgents: freeAgentsCount || 5,
-      submissions: submissionsCount || 6,
+      participants: participantsCount || 27,
+      teams: ideasCount || 8,
+      freeAgents: freeAgentsCount || 6,
+      submissions: submissionsCount || 8,
     };
   }, [teams, registrations]);
+
+  // Determine user role for display
+  const userRole = devRoleOverride || user?.role || 'member';
 
   return (
     <AppLayout
@@ -711,256 +746,83 @@ function Dashboard({
       simulateLoading={simulateLoading}
       onSimulateLoadingChange={onSimulateLoadingChange}
     >
-      <div className="p-4 sm:p-6">
-        {/* Page Header with orange pulse animation */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 glass-card rounded-full mb-4 animate-orange-pulse">
-            <Zap className="w-5 h-5 text-brand icon-orange" />
-            <span className="font-bold text-sm text-text-primary">MISSION CONTROL</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-black text-brand mb-3 font-display animate-orange-pulse-delay-1">
-            DASHBOARD
-          </h1>
-          <p className="text-text-body max-w-2xl mx-auto">
-            Your command center for HackDay 2026. Track your progress, find teammates, 
-            and stay updated on the latest events.
-          </p>
-        </div>
-
-        {/* Status Banner */}
-        <div className="mb-6">
-          <StatusBanner
+      <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+        {/* Section 1: Mission Banner */}
+        <MissionBanner userRole={userRole} />
+        
+        {/* Section 2: Active Ideas Widget + Team Status (2 columns) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <ActiveIdeasWidget 
+            ideas={stats.ideas}
+            participants={stats.participants}
+            teams={stats.teams}
+            freeAgents={stats.freeAgents}
+          />
+          <TeamFormationStatus 
             user={user}
             teams={teams}
-            userInvites={userInvites}
-            onNavigate={onNavigate}
-            eventPhase={eventPhase}
-          />
-        </div>
-
-        {/* Free Agent Reminder Banner */}
-        {onAutoAssignOptIn && (
-          <div className="mb-6">
-            <FreeAgentReminderBanner
-              user={user}
-              event={event}
-              onOptIn={onAutoAssignOptIn}
-              isOptingIn={false}
-            />
-          </div>
-        )}
-
-        {/* MOTD Banner - Shown in all phases */}
-        <div className="mb-6">
-          <Card variant="accent" padding="md" className="animate-fade-in">
-            <HStack gap="3" align="center">
-              <div className="w-10 h-10 rounded-full bg-brand/20 flex items-center justify-center">
-                <MessageSquare className="w-5 h-5 text-brand" />
-              </div>
-              <div className="flex-1">
-                <div className="text-xs font-bold text-brand uppercase tracking-wider mb-1">Message of the Day</div>
-                <p className="text-sm text-text-body">
-                  {event?.motd || PHASE_DEFAULT_MOTD[eventPhase] || "Welcome to HackDay 2026!"}
-                </p>
-              </div>
-            </HStack>
-          </Card>
-        </div>
-
-        {/* Dashboard Stats - Engaging metric cards with count-up animation */}
-        <div className="mb-6">
-          <StatCardGroup>
-            <StatCard
-              value={stats.ideas}
-              label="Ideas"
-              icon={Lightbulb}
-              accentColor="brand"
-              trend={2}
-              trendLabel="new today"
-            />
-            <StatCard
-              value={stats.participants}
-              label="Participants"
-              icon={Users}
-              accentColor="success"
-              trend={5}
-              trendLabel="this week"
-            />
-            <StatCard
-              value={stats.freeAgents}
-              label="Free Agents"
-              icon={UserCheck}
-              accentColor="info"
-            />
-            <StatCard
-              value={stats.submissions}
-              label="Submissions"
-              icon={Trophy}
-              accentColor="warning"
-            />
-          </StatCardGroup>
-        </div>
-
-        {/* Bento Grid - 24px gap for premium breathing room */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Hero Bento - Double width, phase-specific messages */}
-          <HeroBento 
-            eventPhase={eventPhase} 
-            user={user} 
-            teams={teams} 
-            event={event}
             onNavigate={onNavigate}
             onNavigateToTeam={onNavigateToTeam}
           />
-          
-          {/* New to HackDay Promo Box - Show when not in registration phase */}
-          {!isRegistrationPhase && !showSignupPromo && (
-            <NewToHackDayPromo onNavigate={onNavigate} />
-          )}
-
-          {/* Project Gallery Feature Box - Only show during voting phase */}
-          {eventPhase === 'voting' && (
-            <Card variant="accent" padding="md" className="animate-fade-in stagger-3">
-              <Card.Label className="text-brand">Project Gallery</Card.Label>
-              <Card.Title className="text-text-primary mb-3">Vote for Projects</Card.Title>
-              <p className="text-sm text-text-body mb-4">
-                Browse all submitted hackathon projects and vote for your favorites!
-              </p>
-              <Button
-                variant="primary"
-                size="md"
-                fullWidth
-                onClick={() => onNavigate('voting')}
-                leftIcon={<Vote className="w-4 h-4" />}
-              >
-                Browse &amp; Vote
-              </Button>
-            </Card>
-          )}
-
-          {/* Live Activity Feed Widget - Enhanced with distinct icons */}
-          <Card variant="default" padding="md" className="animate-fade-in stagger-3">
-            <LiveActivityFeed
-              activities={activityFeed && activityFeed.length > 0 ? activityFeed : MOCK_ACTIVITY_FEED}
-              maxItems={5}
-              showHeader={true}
-              emptyMessage="No activity yet. Be the first to join!"
-            />
-          </Card>
-
-          {/* Schedule Preview Widget */}
-          <Card variant="default" padding="md" className="animate-fade-in stagger-4">
-            <HStack justify="between" align="center" className="mb-4">
-              <Card.Label className="mb-0">Schedule Preview</Card.Label>
-              <Calendar className="w-4 h-4 icon-orange" />
-            </HStack>
-            <VStack gap="3">
-              {MOCK_SCHEDULE.map((item, index) => (
-                <HStack 
-                  key={item.id} 
-                  gap="3"
-                  className={cn('pb-3', index < MOCK_SCHEDULE.length - 1 && 'border-b border-arena-border divider-glow')}
-                >
-                  <div className="w-16 flex-shrink-0">
-                    <div className="text-xs font-mono font-bold text-brand">{item.time}</div>
-                  </div>
-                  <div>
-                    <div className="text-sm font-bold text-text-primary">{item.title}</div>
-                    <div className="text-xs text-text-body">{item.description}</div>
-                  </div>
-                </HStack>
-              ))}
-            </VStack>
-            <Button
-              variant="ghost"
-              size="sm"
-              fullWidth
-              className="mt-4"
-              rightIcon={<ChevronRight className="w-4 h-4" />}
-            >
-              View Full Schedule
-            </Button>
-          </Card>
-
-          {/* Awards List Widget */}
-          <Card variant="default" padding="md" className="animate-fade-in stagger-5">
-            <HStack justify="between" align="center" className="mb-4">
-              <Card.Label className="mb-0">Awards & Prizes</Card.Label>
-              <Trophy className="w-4 h-4 icon-orange" />
-            </HStack>
-            <VStack gap="3">
-              {MOCK_AWARDS.map((award, index) => {
-                const Icon = award.icon;
-                const isAI = award.title.includes('AI');
-                const isHuman = award.title.includes('Human');
-                const isChampion = award.title.includes('Champion');
-                return (
-                  <Card
-                    key={award.id}
-                    variant={isChampion ? 'accent' : isAI ? 'ai' : isHuman ? 'human' : 'default'}
-                    padding="sm"
-                    hoverable
-                    className={cn('flex items-center gap-3', isChampion && 'animate-orange-pulse')}
-                  >
-                    <Icon className={cn(
-                      'w-8 h-8 flex-shrink-0 transition-all duration-200',
-                      isAI ? 'text-ai opacity-80 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(0,229,255,0.5)]' 
-                        : isHuman ? 'text-human opacity-80 hover:opacity-100 hover:drop-shadow-[0_0_8px_rgba(255,69,0,0.5)]' 
-                        : 'icon-orange'
-                    )} />
-                    <div className="min-w-0">
-                      <div className={cn(
-                        'font-bold text-sm',
-                        isAI ? 'text-ai' : isHuman ? 'text-human' : 'text-text-primary'
-                      )}>
-                        {award.title}
-                      </div>
-                      <div className="text-xs text-text-body">{award.prize}</div>
-                    </div>
-                  </Card>
-                );
-              })}
-            </VStack>
-          </Card>
-
-          {/* Promo Tile 2 - Shows in last slot when voting tile is hidden */}
-          {eventPhase !== 'voting' && (
-            <PromoTile 
-              src={PROMO_IMAGES.promo2} 
-              alt="Promo Banner 2" 
-              colorScheme="special"
-            />
-          )}
-
-          {/* FAQ Widget */}
-          <Card variant="default" padding="md" className="md:col-span-2 animate-fade-in stagger-6">
-            <HStack justify="between" align="center" className="mb-4">
-              <Card.Label className="mb-0">Frequently Asked Questions</Card.Label>
-              <HelpCircle className="w-4 h-4 icon-orange" />
-            </HStack>
-            <VStack gap="2">
-              {MOCK_FAQ.map((faq) => (
-                <div key={faq.id} className="border border-arena-border rounded-card overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => toggleFaq(faq.id)}
-                    className="w-full px-4 py-3 flex items-center justify-between text-left hover:bg-arena-elevated transition-colors"
-                  >
-                    <span className="font-bold text-sm text-text-primary">{faq.question}</span>
-                    {expandedFaq === faq.id 
-                      ? <ChevronUp className="w-4 h-4 text-text-muted" />
-                      : <ChevronDown className="w-4 h-4 text-text-muted" />
-                    }
-                  </button>
-                  {expandedFaq === faq.id && (
-                    <div className="px-4 pb-4 text-sm text-text-body border-t border-arena-border pt-3">
-                      {faq.answer}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </VStack>
-          </Card>
+        </div>
+        
+        {/* Section 3: Metrics Cards Row (4 columns) */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <FigmaMetricsCard
+            title="Participants"
+            value={stats.participants}
+            subtitle="Active members"
+            trend={15}
+            trendLabel="from last event"
+            icon={Users}
+            iconBgClass="bg-cyan-accent"
+          />
+          <FigmaMetricsCard
+            title="Free Agents"
+            value={stats.freeAgents}
+            subtitle="Looking for teams"
+            trend={-8}
+            trendLabel="from last event"
+            icon={User}
+            iconBgClass="bg-purple-accent"
+          />
+          <FigmaMetricsCard
+            title="Submissions"
+            value={stats.submissions}
+            subtitle="Projects submitted"
+            trend={25}
+            trendLabel="from last event"
+            icon={Send}
+            iconBgClass="bg-orange-accent"
+          />
+          <FigmaMetricsCard
+            title="Teams"
+            value={stats.teams}
+            subtitle="Active squads"
+            trend={12}
+            trendLabel="from last event"
+            icon={Users}
+            iconBgClass="bg-cyan-accent"
+          />
+        </div>
+        
+        {/* Section 4: Activity Overview Chart */}
+        <ActivityOverviewChart />
+        
+        {/* Section 5: Live Activity + Schedule Preview (2 columns) */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <LiveActivitySection 
+            activityFeed={activityFeed}
+            onNavigate={onNavigate}
+          />
+          <SchedulePreview onNavigate={onNavigate} />
+        </div>
+        
+        {/* Section 6: Awards + Promo + FAQ (3 columns) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <AwardsPrizes />
+          <NewToHackDayPromo onNavigate={onNavigate} />
+          <FAQSection />
         </div>
       </div>
     </AppLayout>

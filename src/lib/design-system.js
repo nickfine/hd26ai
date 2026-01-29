@@ -224,11 +224,20 @@ export const BUTTON_VARIANTS = {
   },
 };
 
+// ECD Card System - 3 states for clear hierarchy
 export const CARD_VARIANTS = {
+  // Primary: Hero content, user's team status - elevated with subtle emphasis
+  primary: 'bg-arena-card border-2 border-arena-border-strong rounded-card shadow-lg',
+  // Secondary: Standard content blocks - default styling
+  secondary: 'bg-arena-card border border-arena-border rounded-card',
+  // Interactive: Clickable items with hover states
+  interactive: 'bg-arena-card border border-arena-border rounded-card hover:shadow-card-hover hover:-translate-y-0.5 cursor-pointer',
+  // Legacy aliases for backwards compatibility
   default: 'bg-arena-card border border-arena-border rounded-card',
   outlined: 'bg-arena-card border-2 border-arena-border-strong rounded-card',
   elevated: 'bg-arena-elevated border border-arena-border rounded-card shadow-lg',
   ghost: 'bg-transparent border border-transparent rounded-card',
+  accent: 'bg-arena-card border-l-4 border-l-brand border border-arena-border rounded-card',
 };
 
 export const BADGE_VARIANTS = {
