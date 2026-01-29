@@ -51,6 +51,9 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
   // Determine if team is full
   const isTeamFull = team.members.length >= team.maxMembers;
 
+  // Check if user has completed signup (has name and at least one skill)
+  const hasCompletedSignup = user?.name && user?.skills?.length > 0;
+
   // Handle request submission
   const handleSubmitRequest = () => {
     if (!user) return;
@@ -805,6 +808,25 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
             className="glass-card w-full py-3 sm:py-4 text-center font-bold text-base sm:text-lg rounded-card text-text-muted"
           >
             TEAM IS FULL
+          </div>
+        ) : !hasCompletedSignup ? (
+          <div className="space-y-3">
+            <div
+              className="glass-card w-full py-3 sm:py-4 text-center font-medium text-sm rounded-card text-text-secondary border border-warning/50"
+            >
+              Complete your profile to request to join teams
+            </div>
+            <button
+              type="button"
+              onClick={() => onNavigate('signup')}
+              className={`w-full py-3 sm:py-4 flex items-center justify-center gap-2
+                         font-bold text-base sm:text-lg transition-all duration-300
+                         hover:-translate-y-1 hover:shadow-2xl rounded-card
+                         bg-brand text-white hover:bg-brand/90`}
+            >
+              COMPLETE SIGNUP
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
         ) : (
           <button
