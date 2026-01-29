@@ -253,6 +253,17 @@ const getNavItems = (userRole, eventPhase = 'voting', user = null) => {
   const showSignup = !hasCompletedRegistration && (
     eventPhase === 'registration' || (user && !user.teamId)
   );
+  
+  // DEBUG: Log registration check details (always log in dev)
+  console.log('[AppLayout] Registration Check:', {
+    user: user ? { id: user.id, name: userName, hasSkills: !!user.skills, skillsLength: user.skills?.length || 0, teamId: user.teamId, skills: user.skills } : null,
+    userName,
+    hasCompletedRegistration,
+    eventPhase,
+    showSignup,
+    userObject: user, // Full user object for inspection
+  });
+  
   if (showSignup) {
     baseItems.push({ id: 'signup', label: 'Sign Up', icon: UserPlus });
   }
