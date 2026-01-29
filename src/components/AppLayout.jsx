@@ -308,14 +308,36 @@ function AppLayout({
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
   
+  // DEV MODE - Toggle state stored in localStorage
+  const [devModeEnabled, setDevModeEnabled] = useState(() => {
+    try {
+      return localStorage.getItem('hd26ai_dev_mode_enabled') !== 'false';
+    } catch {
+      return true; // Default to enabled during development
+    }
+  });
+  
+  // Update localStorage when dev mode is toggled
+  useEffect(() => {
+    try {
+      localStorage.setItem('hd26ai_dev_mode_enabled', devModeEnabled ? 'true' : 'false');
+      // Clear role override when disabling dev mode
+      if (!devModeEnabled && devRoleOverride && onDevRoleChange) {
+        onDevRoleChange(null);
+      }
+    } catch {
+      // Ignore localStorage errors
+    }
+  }, [devModeEnabled, devRoleOverride, onDevRoleChange]);
+  
   // DEV MODE - Show for all users during development
   // TODO: REVERT BEFORE BETA - Change back to admin-only:
   //   const isRealAdmin = (realUserRole || user?.role) === 'admin';
   //   const devModeActive = isRealAdmin && (devRoleOverride || isDevMode);
   const isRealAdmin = true; // TEMPORARY: Show dev controls for all users
   
-  // Dev mode is active when impersonating or in dev mode
-  const devModeActive = devRoleOverride || isDevMode;
+  // Dev mode is active when enabled AND (impersonating or in dev mode)
+  const devModeActive = devModeEnabled && (devRoleOverride || isDevMode);
 
   // Mouse-reactive breathing vignette (throttled for performance)
   useEffect(() => {
@@ -392,7 +414,7 @@ function AppLayout({
       </a>
       
       {/* DEV MODE BANNER */}
-      {devModeActive && (
+      {devModeEnabled && devModeActive && (
         <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-bold sticky top-0 z-50">
           🔧 DEVELOPMENT MODE ACTIVE - Testing with real data
         </div>
@@ -400,7 +422,7 @@ function AppLayout({
       {/* ================================================================== */}
       {/* STICKY HEADER + EVENT BAR CONTAINER */}
       {/* ================================================================== */}
-      <div className={`${devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40 bg-arena-black`}>
+      <div className={`${devModeEnabled && devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40 bg-arena-black`}>
       {/* HEADER */}
       <header className="px-4 sm:px-6 py-4">
         <Container size="xl" padding="none">
@@ -445,8 +467,8 @@ function AppLayout({
             {/* Theme Toggle */}
             <ThemeToggle />
 
-            {/* DEV MODE CONTROLS - Single button with dropdown (visible to real admins, even when impersonating) */}
-            {isRealAdmin && (
+            {/* DEV MODE CONTROLS - Single button with dropdown (visible when dev mode is enabled) */}
+            {isRealAdmin && devModeEnabled && (
               <div className="relative z-[60]">
                 <button
                   type="button"
@@ -476,6 +498,29 @@ function AppLayout({
                         <div className="flex items-center gap-2 mb-3 pb-3 border-b border-arena-border">
                           <Wrench className="w-5 h-5 text-yellow-500" />
                           <span className="font-bold text-text-primary">Dev Controls</span>
+                        </div>
+                        
+                        {/* Dev Mode Toggle */}
+                        <div className="pb-3 border-b border-arena-border">
+                          <label className="flex items-center gap-3 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={devModeEnabled}
+                              onChange={(e) => {
+                                setDevModeEnabled(e.target.checked);
+                                if (!e.target.checked) {
+                                  setDevControlsOpen(false);
+                                }
+                              }}
+                              className="w-4 h-4 rounded border-arena-border bg-arena-elevated accent-yellow-500"
+                            />
+                            <span className="text-sm font-bold text-text-primary">Dev Mode Enabled</span>
+                          </label>
+                          {!devModeEnabled && (
+                            <p className="mt-1 text-xs text-yellow-500">
+                              Disable to hide dev controls
+                            </p>
+                          )}
                         </div>
                         
                         {/* Role Impersonation */}
