@@ -761,6 +761,7 @@ function Dashboard({
             stats={stats}
             hasPostedIdea={false} // TODO: wire up from user data
             hasSubmitted={teams.find(t => t.captainId === user?.id || t.members?.some(m => m.id === user?.id))?.hasSubmitted || false}
+            isRegistered={devRoleOverride !== 'participant_guest'}
             phaseEndDate={event?.phaseEndDate}
             onNavigate={onNavigate}
             onNavigateToTeam={onNavigateToTeam}

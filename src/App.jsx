@@ -51,19 +51,19 @@ import DesignSystemTest from './pages/DesignSystemTest';
 const DEFAULT_MAX_VOTES = 5;
 
 // Check if we're in demo mode (no Supabase configured)
-const isDemoMode = !import.meta.env.VITE_SUPABASE_URL || 
-                   import.meta.env.VITE_SUPABASE_URL === 'https://placeholder.supabase.co';
+const isDemoMode = !import.meta.env.VITE_SUPABASE_URL ||
+  import.meta.env.VITE_SUPABASE_URL === 'https://placeholder.supabase.co';
 
 function App() {
   // ============================================================================
   // AUTH STATE (Supabase or Demo)
   // ============================================================================
   const auth = useAuth();
-  
+
   // Demo mode state (fallback when Supabase not configured)
   const [demoUser, setDemoUser] = useState(null);
   const [useDemoMode, setUseDemoMode] = useState(isDemoMode);
-  
+
   // DEV MODE - Remove before production
   // Dev mode allows testing controls (role impersonation, phase switching) with real Supabase data
   const [devRoleOverride, setDevRoleOverride] = useState(null);
@@ -99,19 +99,27 @@ function App() {
         callsign: auth.profile.callsign || '',
         autoAssignOptIn: auth.profile.autoAssignOptIn || false,
       };
-      
+
       // DEV MODE: Apply role override for any user during development
       // TODO: REVERT BEFORE BETA - Change back to admin-only:
       //   if (realUserRole === 'admin' && devRoleOverride) {
       if (devRoleOverride) {
+        if (devRoleOverride === 'participant_guest') {
+          return {
+            ...baseUser,
+            role: 'participant',
+            id: `GUEST_${baseUser.id}`, // Change ID to simulate not being on any team/list
+            teamId: null
+          };
+        }
         return { ...baseUser, role: devRoleOverride };
       }
-      
+
       return baseUser;
     }
     return null;
   }, [useDemoMode, demoUser, auth.profile, devRoleOverride, realUserRole]);
-  
+
   // DEV MODE: Check if dev mode is active
   // TODO: REVERT BEFORE BETA - Change back to admin-only:
   //   return realUserRole === 'admin';
@@ -129,29 +137,29 @@ function App() {
   // ============================================================================
   // DATA STATE (Supabase hooks or Mock data)
   // ============================================================================
-  
+
   // Supabase data hooks
   const { event, updatePhase: updateEventPhase, updateEventSettings } = useEvent();
   const { teams: supabaseTeams, loading: teamsLoading, refetch: refetchTeams } = useTeams(event?.id);
   const { freeAgents: supabaseFreeAgents, refetch: refetchFreeAgents } = useFreeAgents();
-  const { 
-    userVotes: supabaseUserVotes, 
-    voteCounts, 
+  const {
+    userVotes: supabaseUserVotes,
+    voteCounts,
     vote: supabaseVote,
-    remainingVotes 
+    remainingVotes
   } = useVotes(effectiveUser?.id);
   const { scores: judgeScores, submitScore } = useJudgeScores();
-  
+
   // Mutations
   const teamMutations = useTeamMutations();
   const submissionMutations = useSubmissionMutations();
 
   // Users (for admin panel)
-  const { 
-    users: supabaseUsers, 
-    loading: usersLoading, 
-    refetch: refetchUsers, 
-    updateUserRole: supabaseUpdateUserRole 
+  const {
+    users: supabaseUsers,
+    loading: usersLoading,
+    refetch: refetchUsers,
+    updateUserRole: supabaseUpdateUserRole
   } = useUsers();
 
   // Team invites
@@ -171,7 +179,7 @@ function App() {
   const [mockUserVotes, setMockUserVotes] = useState([]);
   const [mockEventPhase, setMockEventPhase] = useState('voting');
   const [mockEventMotd, setMockEventMotd] = useState(''); // MOTD for demo mode
-  
+
   // Flatten mock users for admin panel
   const [mockAllUsers, setMockAllUsers] = useState(() => [
     ...MOCK_USERS.participants,
@@ -203,7 +211,7 @@ function App() {
   // Effective data (Supabase or mock)
   const teams = useMemo(() => {
     if (useDemoMode) return mockTeams;
-    
+
     // Merge vote counts and judge scores into teams
     return supabaseTeams.map(team => {
       const teamScores = judgeScores.filter(s => s.projectId === team.submission?.projectId);
@@ -226,7 +234,7 @@ function App() {
 
   const freeAgents = useDemoMode ? mockFreeAgents : supabaseFreeAgents;
   const eventPhase = useDemoMode ? mockEventPhase : (event?.phase || 'voting');
-  
+
   // Effective event (Supabase or mock)
   const effectiveEvent = useMemo(() => {
     if (useDemoMode) {
@@ -242,7 +250,7 @@ function App() {
   // Convert project IDs to team IDs for voting component compatibility
   const userVotes = useMemo(() => {
     if (useDemoMode) return mockUserVotes;
-    
+
     // Map project IDs back to team IDs
     return supabaseUserVotes.map(projectId => {
       const team = supabaseTeams.find(t => t.submission?.projectId === projectId);
@@ -255,7 +263,7 @@ function App() {
   // ============================================================================
   const getUserPermissions = useCallback(() => {
     if (!effectiveUser?.role) return USER_ROLES.participant;
-    
+
     // Map database roles to app roles
     const roleMap = {
       user: 'participant',
@@ -264,7 +272,7 @@ function App() {
       judge: 'judge',
       admin: 'admin',
     };
-    
+
     const mappedRole = roleMap[effectiveUser.role.toLowerCase()] || 'participant';
     return USER_ROLES[mappedRole] || USER_ROLES.participant;
   }, [effectiveUser?.role]);
@@ -294,25 +302,25 @@ function App() {
 
   const leaveTeam = useCallback(async (teamId) => {
     if (!effectiveUser) return;
-    
+
     try {
       if (useDemoMode) {
         // Remove user from team
         setMockTeams(prev =>
           prev.map(team => {
             if (team.id !== teamId) return team;
-            
+
             // Remove user from members array
             const updatedMembers = team.members.filter(
               m => m.id !== effectiveUser.id && m.name !== effectiveUser.name
             );
-            
+
             // If user was captain and there are remaining members, promote the first one
             let newCaptainId = team.captainId;
             if (team.captainId === effectiveUser.id && updatedMembers.length > 0) {
               newCaptainId = updatedMembers[0].id;
             }
-            
+
             return {
               ...team,
               members: updatedMembers,
@@ -329,7 +337,7 @@ function App() {
             return true;
           })
         );
-        
+
         // Add user to free agents list
         setMockFreeAgents(prev => {
           // Check if already in the list
@@ -519,7 +527,7 @@ function App() {
       if (useDemoMode) {
         // Generate a unique ID for the new team
         const newTeamId = Date.now();
-        
+
         const newTeam = {
           id: newTeamId,
           name: teamData.name,
@@ -575,11 +583,11 @@ function App() {
   // ============================================================================
   const handleAutoAssign = useCallback(async (optIn) => {
     if (!effectiveUser) return { success: false, error: 'No user logged in' };
-    
+
     // Check if user is already on a team
     const userTeam = teams.find(
-      team => team.captainId === effectiveUser.id || 
-              team.members?.some(m => m.id === effectiveUser.id || m.name === effectiveUser.name)
+      team => team.captainId === effectiveUser.id ||
+        team.members?.some(m => m.id === effectiveUser.id || m.name === effectiveUser.name)
     );
     if (userTeam) {
       return { success: false, error: 'You are already on a team' };
@@ -599,8 +607,8 @@ function App() {
 
     // Find existing auto-created team with room
     const existingAutoTeam = teams.find(
-      team => team.isAutoCreated && 
-              team.members.length < 6
+      team => team.isAutoCreated &&
+        team.members.length < 6
     );
 
     if (existingAutoTeam) {
@@ -612,7 +620,7 @@ function App() {
           callsign: effectiveUser.callsign || '',
           skills: effectiveUser.skills || [],
         };
-        
+
         setMockTeams(prev =>
           prev.map(team =>
             team.id === existingAutoTeam.id
@@ -620,7 +628,7 @@ function App() {
               : team
           )
         );
-        
+
         return { success: true, teamId: existingAutoTeam.id, teamName: existingAutoTeam.name };
       } else {
         // In Supabase mode, add member to team
@@ -748,7 +756,7 @@ function App() {
   const handlePhaseChange = useCallback(async (newPhase) => {
     // TODO: REVERT BEFORE BETA - Restore admin check:
     //   if (!effectiveUser || effectiveUser.role !== 'admin') return;
-    
+
     // Allow phase changes in demo mode or when dev mode is active (now enabled for all users)
     if (useDemoMode) {
       setMockEventPhase(newPhase);
@@ -760,7 +768,7 @@ function App() {
 
   const handleAutoAssignOptIn = useCallback(async (optIn) => {
     if (!effectiveUser) return;
-    
+
     if (useDemoMode) {
       setDemoUser(prev => prev ? { ...prev, autoAssignOptIn: optIn } : prev);
     } else {
@@ -772,7 +780,7 @@ function App() {
     if (!effectiveUser || effectiveUser.role !== 'admin') {
       return { error: 'Only admins can update MOTD' };
     }
-    
+
     if (useDemoMode) {
       setMockEventMotd(motd);
       return { error: null };
@@ -818,7 +826,7 @@ function App() {
       setCurrentView('landing');
       return;
     }
-    
+
     if (view === 'marketplace' && options.tab) {
       setMarketplaceInitialTab(options.tab);
     } else if (view === 'marketplace') {
@@ -845,7 +853,7 @@ function App() {
       if (updates.callsign !== undefined) dbUpdates.callsign = updates.callsign;
       if (updates.autoAssignOptIn !== undefined) dbUpdates.autoAssignOptIn = updates.autoAssignOptIn;
       if (updates.isFreeAgent !== undefined) dbUpdates.isFreeAgent = updates.isFreeAgent;
-      
+
       await auth.updateProfile(dbUpdates);
     }
   }, [useDemoMode, auth]);
@@ -884,7 +892,7 @@ function App() {
   const handleDemoOnboarding = useCallback((phase) => {
     // Always force 'registration' phase for new user onboarding to show signup hero bento
     setMockEventPhase('registration');
-    
+
     // Create user with empty name (hasn't signed up yet)
     createUser({
       id: Date.now(),
@@ -894,7 +902,7 @@ function App() {
       role: 'participant',
       autoAssignOptIn: false,
     });
-    
+
     // Navigate to dashboard - state updates will be batched by React
     setCurrentView('dashboard');
   }, [createUser]);
@@ -925,10 +933,10 @@ function App() {
         setCurrentView(hash);
       }
     };
-    
+
     // Check on mount
     handleHashChange();
-    
+
     // Listen for hash changes
     window.addEventListener('hashchange', handleHashChange);
     return () => window.removeEventListener('hashchange', handleHashChange);
@@ -942,7 +950,7 @@ function App() {
     switch (currentView) {
       case 'landing':
         return <Landing onNavigate={setCurrentView} />;
-      
+
       case 'login':
         return (
           <Login
@@ -955,7 +963,7 @@ function App() {
             authError={auth.error}
           />
         );
-      
+
       case 'signup':
         return (
           <Signup
@@ -968,7 +976,7 @@ function App() {
             onCreateTeam={handleCreateTeam}
           />
         );
-      
+
       case 'dashboard':
         return (
           <Dashboard
@@ -991,7 +999,7 @@ function App() {
             onSimulateLoadingChange={setSimulateLoading}
           />
         );
-      
+
       case 'marketplace':
         return (
           <Marketplace
@@ -1016,7 +1024,7 @@ function App() {
             onSimulateLoadingChange={setSimulateLoading}
           />
         );
-      
+
       case 'profile':
         return (
           <Profile
@@ -1038,7 +1046,7 @@ function App() {
             onSimulateLoadingChange={setSimulateLoading}
           />
         );
-      
+
       case 'rules':
         return (
           <Rules
@@ -1048,7 +1056,7 @@ function App() {
             eventPhase={eventPhase}
           />
         );
-      
+
       case 'new-to-hackday':
         return (
           <NewToHackDay
@@ -1058,7 +1066,7 @@ function App() {
             eventPhase={eventPhase}
           />
         );
-      
+
       case 'submission':
         return (
           <Submission
@@ -1069,7 +1077,7 @@ function App() {
             eventPhase={eventPhase}
           />
         );
-      
+
       case 'voting':
         return (
           <Voting
@@ -1083,7 +1091,7 @@ function App() {
             maxVotes={effectiveEvent?.maxVotesPerUser || DEFAULT_MAX_VOTES}
           />
         );
-      
+
       case 'analytics':
         return (
           <VotingAnalytics
@@ -1095,7 +1103,7 @@ function App() {
             awards={AWARDS}
           />
         );
-      
+
       case 'judge-scoring':
         return (
           <JudgeScoring
@@ -1107,7 +1115,7 @@ function App() {
             eventPhase={eventPhase}
           />
         );
-      
+
       case 'admin':
         return (
           <AdminPanel
@@ -1121,7 +1129,7 @@ function App() {
             onUpdateUserRole={handleUpdateUserRole}
             allUsers={useDemoMode ? mockAllUsers : supabaseUsers}
             usersLoading={useDemoMode ? false : usersLoading}
-            onRefreshUsers={useDemoMode ? () => {} : refetchUsers}
+            onRefreshUsers={useDemoMode ? () => { } : refetchUsers}
             event={effectiveEvent}
             onUpdateMotd={handleUpdateMotd}
             isDevMode={devModeActive}
@@ -1129,7 +1137,7 @@ function App() {
             devRoleOverride={devRoleOverride}
           />
         );
-      
+
       case 'results':
         return (
           <Results
@@ -1140,7 +1148,7 @@ function App() {
             awards={AWARDS}
           />
         );
-      
+
       case 'schedule':
         return (
           <Schedule
@@ -1151,7 +1159,7 @@ function App() {
             event={event}
           />
         );
-      
+
       case 'team-detail': {
         const selectedTeam = teams.find(t => t.id === selectedTeamId);
         if (!selectedTeam) {
@@ -1171,14 +1179,14 @@ function App() {
           />
         );
       }
-      
+
       case 'design-system':
         return (
           <DesignSystemTest
             onNavigate={handleNavigate}
           />
         );
-      
+
       default:
         return <Landing onNavigate={setCurrentView} />;
     }

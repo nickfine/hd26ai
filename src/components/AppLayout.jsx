@@ -539,7 +539,8 @@ function AppLayout({
                                 className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
                               >
                                 <option value={realUserRole || 'participant'}>Real: {realUserRole || 'participant'}</option>
-                                <option value="participant">Participant</option>
+                                <option value="participant">Participant (Joined)</option>
+                                <option value="participant_guest">Participant (Not Joined)</option>
                                 <option value="ambassador">Ambassador</option>
                                 <option value="judge">Judge</option>
                                 <option value="admin">Admin</option>

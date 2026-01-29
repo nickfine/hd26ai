@@ -92,6 +92,7 @@ function MissionBrief({
     stats = {},
     hasPostedIdea = false,
     hasSubmitted = false,
+    isRegistered = true,
     phaseEndDate,
     onNavigate,
     onNavigateToTeam,
@@ -99,8 +100,8 @@ function MissionBrief({
 }) {
     // Compute user state
     const userState = useMemo(() =>
-        computeUserState({ userTeam, hasPostedIdea, hasSubmitted }),
-        [userTeam, hasPostedIdea, hasSubmitted]
+        computeUserState({ userTeam, hasPostedIdea, hasSubmitted, isRegistered }),
+        [userTeam, hasPostedIdea, hasSubmitted, isRegistered]
     );
 
     // Get content for current phase and user state

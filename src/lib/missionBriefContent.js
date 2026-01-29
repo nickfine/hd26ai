@@ -16,6 +16,7 @@ export const USER_STATES = {
   ON_TEAM_FULL: 'on_team_full',
   SUBMITTED: 'submitted',
   NOT_SUBMITTED: 'not_submitted',
+  NOT_REGISTERED: 'not_registered',
 };
 
 /**
@@ -26,18 +27,22 @@ export const USER_STATES = {
  * @param {boolean} params.hasSubmitted - Whether team has submitted
  * @returns {string} One of USER_STATES
  */
-export function computeUserState({ userTeam, hasPostedIdea, hasSubmitted }) {
+export function computeUserState({ userTeam, hasPostedIdea, hasSubmitted, isRegistered = true }) {
+  if (!isRegistered) {
+    return USER_STATES.NOT_REGISTERED;
+  }
+
   if (!userTeam) {
     return hasPostedIdea ? USER_STATES.FREE_AGENT_HAS_IDEA : USER_STATES.FREE_AGENT_NO_IDEA;
   }
-  
+
   const memberCount = userTeam.memberCount || (userTeam.members?.length || 0) + 1;
   const isFull = memberCount >= 6;
-  
+
   if (hasSubmitted) {
     return USER_STATES.SUBMITTED;
   }
-  
+
   return isFull ? USER_STATES.ON_TEAM_FULL : USER_STATES.ON_TEAM_NOT_FULL;
 }
 
@@ -59,6 +64,14 @@ export const MISSION_CONTENT = {
   // TEAM FORMATION PHASE
   // ============================================================================
   team_formation: {
+    [USER_STATES.NOT_REGISTERED]: {
+      headline: 'JOIN THE HACKATHON',
+      status: "Registration is open!",
+      context: () => "Sign up to join a team or post your idea",
+      primaryCTA: { label: 'Register Now', action: 'signup' },
+      secondaryCTA: { label: 'Browse Ideas', action: 'marketplace', params: { tab: 'ideas' } },
+      footerPrefix: 'Registration closes in',
+    },
     [USER_STATES.FREE_AGENT_NO_IDEA]: {
       headline: 'FORM YOUR SQUAD',
       status: "You're currently a Free Agent",
@@ -97,6 +110,14 @@ export const MISSION_CONTENT = {
   // HACKING PHASE
   // ============================================================================
   hacking: {
+    [USER_STATES.NOT_REGISTERED]: {
+      headline: 'HACKING IN PROGRESS',
+      status: "You are spectating this event",
+      context: (stats) => `${stats.teams || 0} teams are currently building`,
+      primaryCTA: { label: 'View Teams', action: 'marketplace', params: { tab: 'teams' } },
+      secondaryCTA: { label: 'View Schedule', action: 'schedule' },
+      footerPrefix: 'Submissions due in',
+    },
     [USER_STATES.ON_TEAM_NOT_FULL]: {
       headline: 'BUILD SOMETHING EPIC',
       status: (ctx) => `Team ${ctx.teamName || 'Unknown'} • Building`,
@@ -135,6 +156,14 @@ export const MISSION_CONTENT = {
   // SUBMISSION PHASE
   // ============================================================================
   submission: {
+    [USER_STATES.NOT_REGISTERED]: {
+      headline: 'SUBMISSIONS OPEN',
+      status: "Watch the projects roll in",
+      context: (stats) => `${stats.submissions || 0} teams have submitted projects`,
+      primaryCTA: { label: 'View Submissions', action: 'voting' },
+      secondaryCTA: null,
+      footerPrefix: 'Voting opens in',
+    },
     [USER_STATES.NOT_SUBMITTED]: {
       headline: 'SUBMIT YOUR PROJECT',
       status: (ctx) => `Team ${ctx.teamName || 'Unknown'} • Not yet submitted`,
@@ -174,6 +203,14 @@ export const MISSION_CONTENT = {
   // VOTING PHASE
   // ============================================================================
   voting: {
+    [USER_STATES.NOT_REGISTERED]: {
+      headline: 'VOTING IS LIVE',
+      status: "Check out the submissions",
+      context: (stats) => `${stats.submissions || 0} projects competing`,
+      primaryCTA: { label: 'View Submissions', action: 'voting' },
+      secondaryCTA: null,
+      footerPrefix: 'Voting closes in',
+    },
     [USER_STATES.SUBMITTED]: {
       headline: 'VOTING IS LIVE',
       status: (ctx) => `Your project: ${ctx.projectTitle || 'Submitted'}`,
@@ -197,6 +234,14 @@ export const MISSION_CONTENT = {
   // JUDGING PHASE
   // ============================================================================
   judging: {
+    [USER_STATES.NOT_REGISTERED]: {
+      headline: 'JUDGING IN PROGRESS',
+      status: "Judges are reviewing submissions",
+      context: (stats) => `${stats.submissions || 0} projects under review`,
+      primaryCTA: { label: 'View Submissions', action: 'voting' },
+      secondaryCTA: null,
+      footerPrefix: 'Results announced in',
+    },
     [USER_STATES.SUBMITTED]: {
       headline: 'JUDGING IN PROGRESS',
       status: (ctx) => `Your project: ${ctx.projectTitle || 'Submitted'}`,
@@ -220,6 +265,14 @@ export const MISSION_CONTENT = {
   // RESULTS PHASE
   // ============================================================================
   results: {
+    [USER_STATES.NOT_REGISTERED]: {
+      headline: 'RESULTS ARE IN',
+      status: "The winners have been announced",
+      context: () => "See who won HackDay 2026",
+      primaryCTA: { label: 'View Results', action: 'results' },
+      secondaryCTA: null,
+      footerPrefix: '',
+    },
     [USER_STATES.SUBMITTED]: {
       headline: 'RESULTS ARE IN',
       status: (ctx) => `Your project: ${ctx.projectTitle || 'Submitted'}`,
@@ -261,9 +314,9 @@ export function getMissionContent(phase, userState) {
   }
 
   // Try exact match, then fallbacks
-  return phaseContent[userState] || 
-         phaseContent[USER_STATES.FREE_AGENT_NO_IDEA] ||
-         Object.values(phaseContent)[0];
+  return phaseContent[userState] ||
+    phaseContent[USER_STATES.FREE_AGENT_NO_IDEA] ||
+    Object.values(phaseContent)[0];
 }
 
 export default MISSION_CONTENT;
