@@ -807,10 +807,7 @@ function Dashboard({
           />
         </div>
 
-        {/* Section 4: Activity Overview Chart */}
-        <ActivityOverviewChart />
-
-        {/* Section 5: Live Activity + Schedule Preview (2 columns) */}
+        {/* Section 4: Live Activity + Schedule Preview (2 columns) */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <LiveActivitySection
             activityFeed={activityFeed}
