@@ -42,12 +42,12 @@ import NotificationCenter from './shared/NotificationCenter';
 import { useNotifications } from '../hooks/useNotifications';
 import { useTheme } from '../hooks/useTheme';
 import { USER_ROLES, EVENT_PHASE_ORDER, EVENT_PHASES as EVENT_PHASES_CONFIG } from '../data/mockData';
-import { 
-  createUKDate, 
-  convertUKTimeToLocal, 
-  getUserTimezone, 
+import {
+  createUKDate,
+  convertUKTimeToLocal,
+  getUserTimezone,
   getTimezoneAbbr,
-  EVENT_TIMEZONE 
+  EVENT_TIMEZONE
 } from '../lib/timezone';
 
 // ============================================================================
@@ -63,7 +63,7 @@ const calculateTimeRemaining = () => {
   const now = new Date();
   const userTimezone = getUserTimezone();
   const userTzAbbr = getTimezoneAbbr();
-  
+
   if (now < EVENT_START) {
     const diff = EVENT_START - now;
     const totalDays = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -72,7 +72,7 @@ const calculateTimeRemaining = () => {
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    
+
     let display;
     if (months > 0) {
       display = `${months}mo ${days}d ${hours}h ${minutes}m ${seconds}s`;
@@ -81,7 +81,7 @@ const calculateTimeRemaining = () => {
     } else {
       display = `${hours}h ${minutes}m ${seconds}s`;
     }
-    
+
     // Get event start time in user's local timezone
     const localStart = convertUKTimeToLocal('2026-06-21', '09:00', userTimezone);
     const userLocale = navigator.language || 'en-US';
@@ -92,32 +92,32 @@ const calculateTimeRemaining = () => {
       day: 'numeric',
     });
     const localStartTime = localStart.time;
-    
+
     // Format label with timezone info
     // If user is in UK, show simple label. Otherwise show both local and UK times
     const label = userTimezone === EVENT_TIMEZONE
       ? 'Until HackDay 2026 (09:00 UK)'
       : `Until ${localStartDate} ${localStartTime} (${userTzAbbr}) / 09:00 UK`;
-    
-    return { 
-      status: 'countdown', 
-      display, 
+
+    return {
+      status: 'countdown',
+      display,
       label,
       localStartDate,
       localStartTime,
       userTzAbbr,
     };
   }
-  
+
   if (now >= EVENT_START && now < EVENT_END) {
     const diff = EVENT_END - now;
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
     const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-    
+
     return { status: 'live', display: `${hours}h ${minutes}m ${seconds}s`, label: '⚡ EVENT LIVE ⚡' };
   }
-  
+
   return { status: 'ended', display: '0h 0m 0s', label: 'Event Complete' };
 };
 
@@ -133,16 +133,16 @@ const WarTimer = memo(function WarTimer() {
   }, []);
 
   return (
-    <div 
+    <div
       className={cn(
         'hidden md:flex items-center gap-3 px-4 py-2 rounded-card border border-arena-border',
-        timeRemaining.status === 'live' 
-          ? 'bg-arena-elevated animate-pulse' 
+        timeRemaining.status === 'live'
+          ? 'bg-arena-elevated animate-pulse'
           : timeRemaining.status === 'ended'
             ? 'bg-arena-card'
             : 'bg-arena-card'
       )}
-      title={timeRemaining.status === 'countdown' && timeRemaining.localStartDate 
+      title={timeRemaining.status === 'countdown' && timeRemaining.localStartDate
         ? `Event starts: ${timeRemaining.localStartDate} at ${timeRemaining.localStartTime} (${timeRemaining.userTzAbbr})`
         : undefined
       }
@@ -199,8 +199,8 @@ const ThemeToggle = memo(function ThemeToggle() {
       {/* Theme dropdown */}
       {isOpen && (
         <>
-          <div 
-            className="fixed inset-0 z-40" 
+          <div
+            className="fixed inset-0 z-40"
             onClick={() => setIsOpen(false)}
           />
           <div className="absolute right-0 top-full mt-2 w-36 bg-arena-card border border-arena-border rounded-lg shadow-xl z-50 py-1 overflow-hidden">
@@ -217,8 +217,8 @@ const ThemeToggle = memo(function ThemeToggle() {
                   }}
                   className={cn(
                     'w-full flex items-center gap-3 px-3 py-2 text-sm transition-colors',
-                    isActive 
-                      ? 'bg-brand/10 text-brand' 
+                    isActive
+                      ? 'bg-brand/10 text-brand'
                       : 'text-text-secondary hover:text-text-primary hover:bg-arena-elevated'
                   )}
                 >
@@ -307,7 +307,7 @@ function AppLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [devControlsOpen, setDevControlsOpen] = useState(false);
-  
+
   // DEV MODE - Toggle state stored in localStorage
   const [devModeEnabled, setDevModeEnabled] = useState(() => {
     try {
@@ -316,7 +316,7 @@ function AppLayout({
       return true; // Default to enabled during development
     }
   });
-  
+
   // Update localStorage when dev mode is toggled
   useEffect(() => {
     try {
@@ -329,13 +329,13 @@ function AppLayout({
       // Ignore localStorage errors
     }
   }, [devModeEnabled, devRoleOverride, onDevRoleChange]);
-  
+
   // DEV MODE - Show for all users during development
   // TODO: REVERT BEFORE BETA - Change back to admin-only:
   //   const isRealAdmin = (realUserRole || user?.role) === 'admin';
   //   const devModeActive = isRealAdmin && (devRoleOverride || isDevMode);
   const isRealAdmin = true; // TEMPORARY: Show dev controls for all users
-  
+
   // Dev mode is active when enabled AND (impersonating or in dev mode)
   const devModeActive = devModeEnabled && (devRoleOverride || isDevMode);
 
@@ -344,12 +344,12 @@ function AppLayout({
     let rafId = null;
     let lastX = 0;
     let lastY = 0;
-    
+
     const handleMouseMove = (e) => {
       // Only update if significant movement (throttle)
       const newX = (e.clientX / window.innerWidth) * 100;
       const newY = (e.clientY / window.innerHeight) * 100;
-      
+
       if (Math.abs(newX - lastX) > 2 || Math.abs(newY - lastY) > 2) {
         if (rafId) cancelAnimationFrame(rafId);
         rafId = requestAnimationFrame(() => {
@@ -360,7 +360,7 @@ function AppLayout({
         });
       }
     };
-    
+
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
@@ -369,23 +369,23 @@ function AppLayout({
   }, []);
 
   // Memoize expensive calculations
-  const captainedTeam = useMemo(() => 
-    teams.find((team) => team.captainId === user?.id), 
+  const captainedTeam = useMemo(() =>
+    teams.find((team) => team.captainId === user?.id),
     [teams, user?.id]
   );
-  
-  const userTeam = useMemo(() => 
-    teams.find((team) => 
-      team.captainId === user?.id || 
+
+  const userTeam = useMemo(() =>
+    teams.find((team) =>
+      team.captainId === user?.id ||
       team.members?.some(m => m.id === user?.id)
     ),
     [teams, user?.id]
   );
-  
+
   const userCallsign = user?.callsign || userTeam?.members?.find(m => m.id === user?.id)?.callsign;
 
   const navItems = useMemo(() => getNavItems(user?.role, eventPhase, user), [user?.role, eventPhase, user]);
-  
+
   // Team stats
   const teamStats = useMemo(() => {
     const totalTeams = teams.length;
@@ -393,7 +393,7 @@ function AppLayout({
       totalTeams,
     };
   }, [teams]);
-  
+
   // Notifications
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications(user?.id);
 
@@ -412,7 +412,7 @@ function AppLayout({
       <a href="#main-content" className="skip-link">
         Skip to main content
       </a>
-      
+
       {/* DEV MODE BANNER */}
       {devModeEnabled && devModeActive && (
         <div className="bg-yellow-500 text-black px-4 py-2 text-center text-sm font-bold sticky top-0 z-50">
@@ -423,273 +423,273 @@ function AppLayout({
       {/* STICKY HEADER + EVENT BAR CONTAINER */}
       {/* ================================================================== */}
       <div className={`${devModeEnabled && devModeActive ? 'sticky top-[38px]' : 'sticky top-0'} z-40 bg-arena-black`}>
-      {/* HEADER */}
-      <header className="px-4 sm:px-6 py-4">
-        <Container size="xl" padding="none">
-          <HStack justify="between" align="center">
-            {/* Mobile menu button */}
-            {showSidebar && (
-              <button
-                type="button"
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="lg:hidden p-2 -ml-2 text-text-secondary hover:text-text-primary"
-              >
-                <Menu className="w-5 h-5" />
-              </button>
-            )}
-
-            {/* Logo */}
-            <button
-              type="button"
-              onClick={() => onNavigate('dashboard')}
-              className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
-            >
-              <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
-              <div className="hidden sm:block">
-                <div className="font-black text-lg tracking-tight text-text-primary">HACKDAY 2026</div>
-              </div>
-            </button>
-
-            {/* War Timer - Isolated component to prevent parent re-renders */}
-            <WarTimer />
-
-            {/* Notification Center */}
-            {user?.id && (
-              <NotificationCenter
-                notifications={notifications}
-                unreadCount={unreadCount}
-                onMarkAsRead={markAsRead}
-                onMarkAllAsRead={markAllAsRead}
-                onNavigate={onNavigate}
-              />
-            )}
-
-            {/* Theme Toggle */}
-            <ThemeToggle />
-
-            {/* DEV MODE CONTROLS - Single button with dropdown (visible when dev mode is enabled) */}
-            {isRealAdmin && devModeEnabled && (
-              <div className="relative z-[60]">
+        {/* HEADER */}
+        <header className="px-4 sm:px-6 py-4">
+          <Container size="xl" padding="none">
+            <HStack justify="between" align="center">
+              {/* Mobile menu button */}
+              {showSidebar && (
                 <button
                   type="button"
-                  onClick={() => setDevControlsOpen(!devControlsOpen)}
-                  className={cn(
-                    'flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all',
-                    devModeActive
-                      ? 'bg-yellow-500 text-black hover:bg-yellow-400'
-                      : 'bg-arena-card border border-arena-border text-text-secondary hover:text-text-primary'
-                  )}
-                  title="Dev Controls"
+                  onClick={() => setSidebarOpen(!sidebarOpen)}
+                  className="lg:hidden p-2 -ml-2 text-text-secondary hover:text-text-primary"
                 >
-                  <Wrench className="w-3 h-3" />
-                  <span className="hidden sm:inline">DEV</span>
-                  <ChevronDown className={cn('w-3 h-3 transition-transform', devControlsOpen && 'rotate-180')} />
+                  <Menu className="w-5 h-5" />
                 </button>
+              )}
 
-                {/* Dev Controls Dropdown */}
-                {devControlsOpen && (
-                  <>
-                    <div 
-                      className="fixed inset-0 z-[55]" 
-                      onClick={() => setDevControlsOpen(false)}
-                    />
-                    <div className="absolute left-0 top-full mt-2 w-64 bg-arena-card border-2 border-yellow-500 rounded-lg shadow-xl z-[60] p-4">
-                      <div className="space-y-4">
-                        <div className="flex items-center gap-2 mb-3 pb-3 border-b border-arena-border">
-                          <Wrench className="w-5 h-5 text-yellow-500" />
-                          <span className="font-bold text-text-primary">Dev Controls</span>
-                        </div>
-                        
-                        {/* Dev Mode Toggle */}
-                        <div className="pb-3 border-b border-arena-border">
-                          <label className="flex items-center gap-3 cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={devModeEnabled}
-                              onChange={(e) => {
-                                setDevModeEnabled(e.target.checked);
-                                if (!e.target.checked) {
-                                  setDevControlsOpen(false);
-                                }
-                              }}
-                              className="w-4 h-4 rounded border-arena-border bg-arena-elevated accent-yellow-500"
-                            />
-                            <span className="text-sm font-bold text-text-primary">Dev Mode Enabled</span>
-                          </label>
-                          {!devModeEnabled && (
-                            <p className="mt-1 text-xs text-yellow-500">
-                              Disable to hide dev controls
-                            </p>
-                          )}
-                        </div>
-                        
-                        {/* Role Impersonation */}
-                        {onDevRoleChange && (
-                          <div>
-                            <label className="text-xs font-bold text-text-muted mb-2 block">
-                              Role Impersonation
-                            </label>
-                            <select
-                              value={devRoleOverride || realUserRole || 'participant'}
-                              onChange={(e) => {
-                                const newRole = e.target.value;
-                                const actualRole = realUserRole || 'participant';
-                                onDevRoleChange?.(newRole === actualRole ? null : newRole);
-                              }}
-                              className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
-                            >
-                              <option value={realUserRole || 'participant'}>Real: {realUserRole || 'participant'}</option>
-                              <option value="participant">Participant</option>
-                              <option value="ambassador">Ambassador</option>
-                              <option value="judge">Judge</option>
-                              <option value="admin">Admin</option>
-                            </select>
-                            {devRoleOverride && (
-                              <p className="mt-1 text-xs text-yellow-500">
-                                Impersonating: {devRoleOverride}
-                              </p>
-                            )}
+              {/* Logo */}
+              <button
+                type="button"
+                onClick={() => onNavigate('dashboard')}
+                className="flex items-center gap-3 hover:opacity-80 transition-opacity cursor-pointer"
+              >
+                <img src={adaptLogo} alt="Adaptavist" className="h-10 w-auto" />
+                <div className="hidden sm:block">
+                  <div className="font-black text-lg tracking-tight text-text-primary">HACKDAY 2026</div>
+                </div>
+              </button>
+
+              {/* War Timer - Isolated component to prevent parent re-renders */}
+              <WarTimer />
+
+              {/* Notification Center */}
+              {user?.id && (
+                <NotificationCenter
+                  notifications={notifications}
+                  unreadCount={unreadCount}
+                  onMarkAsRead={markAsRead}
+                  onMarkAllAsRead={markAllAsRead}
+                  onNavigate={onNavigate}
+                />
+              )}
+
+              {/* Theme Toggle */}
+              <ThemeToggle />
+
+              {/* DEV MODE CONTROLS - Single button with dropdown (visible when dev mode is enabled) */}
+              {isRealAdmin && (
+                <div className="relative z-[60]">
+                  <button
+                    type="button"
+                    onClick={() => setDevControlsOpen(!devControlsOpen)}
+                    className={cn(
+                      'flex items-center gap-1 px-2 py-1 rounded text-xs font-semibold transition-all',
+                      devModeActive
+                        ? 'bg-yellow-500 text-black hover:bg-yellow-400'
+                        : 'bg-arena-card border border-arena-border text-text-secondary hover:text-text-primary'
+                    )}
+                    title="Dev Controls"
+                  >
+                    <Wrench className="w-3 h-3" />
+                    <span className="hidden sm:inline">DEV</span>
+                    <ChevronDown className={cn('w-3 h-3 transition-transform', devControlsOpen && 'rotate-180')} />
+                  </button>
+
+                  {/* Dev Controls Dropdown */}
+                  {devControlsOpen && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-[55]"
+                        onClick={() => setDevControlsOpen(false)}
+                      />
+                      <div className="absolute left-0 top-full mt-2 w-64 bg-arena-card border-2 border-yellow-500 rounded-lg shadow-xl z-[60] p-4">
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2 mb-3 pb-3 border-b border-arena-border">
+                            <Wrench className="w-5 h-5 text-yellow-500" />
+                            <span className="font-bold text-text-primary">Dev Controls</span>
                           </div>
-                        )}
-                        
-                        {/* Phase Switcher */}
-                        {onPhaseChange && (
-                          <div>
-                            <label className="text-xs font-bold text-text-muted mb-2 block">
-                              Event Phase
-                            </label>
-                            <select
-                              value={eventPhase}
-                              onChange={(e) => {
-                                onPhaseChange(e.target.value);
-                                setDevControlsOpen(false);
-                              }}
-                              className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
-                            >
-                              {Object.entries(eventPhases).map(([key, phase]) => (
-                                <option key={key} value={key}>{phase.label}</option>
-                              ))}
-                            </select>
-                          </div>
-                        )}
-                        
-                        {/* Simulate Loading Toggle */}
-                        {onSimulateLoadingChange && (
-                          <div className="pt-3 border-t border-arena-border">
+
+                          {/* Dev Mode Toggle */}
+                          <div className="pb-3 border-b border-arena-border">
                             <label className="flex items-center gap-3 cursor-pointer">
                               <input
                                 type="checkbox"
-                                checked={simulateLoading}
-                                onChange={(e) => onSimulateLoadingChange(e.target.checked)}
+                                checked={devModeEnabled}
+                                onChange={(e) => {
+                                  setDevModeEnabled(e.target.checked);
+                                  if (!e.target.checked) {
+                                    setDevControlsOpen(false);
+                                  }
+                                }}
                                 className="w-4 h-4 rounded border-arena-border bg-arena-elevated accent-yellow-500"
                               />
-                              <span className="text-sm text-text-primary">Simulate Loading</span>
+                              <span className="text-sm font-bold text-text-primary">Dev Mode Enabled</span>
                             </label>
-                            {simulateLoading && (
+                            {!devModeEnabled && (
                               <p className="mt-1 text-xs text-yellow-500">
-                                Showing skeleton loading states
+                                Disable to hide dev controls
                               </p>
                             )}
                           </div>
-                        )}
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
 
-            {/* User Quick Access */}
-            <button
-              type="button"
-              onClick={() => onNavigate('profile')}
-              className={cn(
-                'bg-arena-card border border-arena-border flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-2 sm:py-3 rounded-2xl cursor-pointer',
-                'transition-all duration-300 group',
-                'hover:-translate-y-0.5'
+                          {/* Role Impersonation */}
+                          {onDevRoleChange && (
+                            <div>
+                              <label className="text-xs font-bold text-text-muted mb-2 block">
+                                Role Impersonation
+                              </label>
+                              <select
+                                value={devRoleOverride || realUserRole || 'participant'}
+                                onChange={(e) => {
+                                  const newRole = e.target.value;
+                                  const actualRole = realUserRole || 'participant';
+                                  onDevRoleChange?.(newRole === actualRole ? null : newRole);
+                                }}
+                                className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
+                              >
+                                <option value={realUserRole || 'participant'}>Real: {realUserRole || 'participant'}</option>
+                                <option value="participant">Participant</option>
+                                <option value="ambassador">Ambassador</option>
+                                <option value="judge">Judge</option>
+                                <option value="admin">Admin</option>
+                              </select>
+                              {devRoleOverride && (
+                                <p className="mt-1 text-xs text-yellow-500">
+                                  Impersonating: {devRoleOverride}
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Phase Switcher */}
+                          {onPhaseChange && (
+                            <div>
+                              <label className="text-xs font-bold text-text-muted mb-2 block">
+                                Event Phase
+                              </label>
+                              <select
+                                value={eventPhase}
+                                onChange={(e) => {
+                                  onPhaseChange(e.target.value);
+                                  setDevControlsOpen(false);
+                                }}
+                                className="w-full px-3 py-2 bg-arena-elevated border border-arena-border rounded text-text-primary text-sm focus:outline-none focus:border-yellow-500"
+                              >
+                                {Object.entries(eventPhases).map(([key, phase]) => (
+                                  <option key={key} value={key}>{phase.label}</option>
+                                ))}
+                              </select>
+                            </div>
+                          )}
+
+                          {/* Simulate Loading Toggle */}
+                          {onSimulateLoadingChange && (
+                            <div className="pt-3 border-t border-arena-border">
+                              <label className="flex items-center gap-3 cursor-pointer">
+                                <input
+                                  type="checkbox"
+                                  checked={simulateLoading}
+                                  onChange={(e) => onSimulateLoadingChange(e.target.checked)}
+                                  className="w-4 h-4 rounded border-arena-border bg-arena-elevated accent-yellow-500"
+                                />
+                                <span className="text-sm text-text-primary">Simulate Loading</span>
+                              </label>
+                              {simulateLoading && (
+                                <p className="mt-1 text-xs text-yellow-500">
+                                  Showing skeleton loading states
+                                </p>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               )}
-            >
-              {/* Team info - hidden on mobile */}
-              {userTeam && (
-                <div className="hidden sm:flex items-center gap-3">
-                  <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center shadow-lg bg-arena-elevated">
-                    <Users className="w-5 h-5 text-text-secondary" />
+
+              {/* User Quick Access */}
+              <button
+                type="button"
+                onClick={() => onNavigate('profile')}
+                className={cn(
+                  'bg-arena-card border border-arena-border flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-2 sm:py-3 rounded-2xl cursor-pointer',
+                  'transition-all duration-300 group',
+                  'hover:-translate-y-0.5'
+                )}
+              >
+                {/* Team info - hidden on mobile */}
+                {userTeam && (
+                  <div className="hidden sm:flex items-center gap-3">
+                    <div className="w-10 h-10 lg:w-11 lg:h-11 rounded-xl flex items-center justify-center shadow-lg bg-arena-elevated">
+                      <Users className="w-5 h-5 text-text-secondary" />
+                    </div>
+                    <div className="text-left">
+                      <p className="font-bold text-text-primary text-sm">
+                        {userTeam.name}
+                      </p>
+                      <p className="text-xs text-text-secondary">
+                        {captainedTeam ? 'Team Captain' : 'Team Member'}
+                      </p>
+                    </div>
+                    {/* Divider */}
+                    <div className="hidden lg:block h-10 w-px bg-arena-border/50 mx-1" />
                   </div>
-                  <div className="text-left">
-                    <p className="font-bold text-text-primary text-sm">
-                      {userTeam.name}
+                )}
+
+                {/* User avatar + name */}
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <div className="relative">
+                    <Avatar user={user} size="md" />
+                    {/* Join requests badge (for captains) */}
+                    {captainedTeam?.joinRequests?.length > 0 && (
+                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
+                        {captainedTeam.joinRequests.length}
+                      </div>
+                    )}
+                    {/* Team invites badge (for free agents) */}
+                    {!userTeam && userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length > 0 && (
+                      <div
+                        className="absolute -top-1 -right-1 w-5 h-5 bg-brand text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse cursor-pointer"
+                        title={`${userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length} pending invite${userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length !== 1 ? 's' : ''}`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onNavigate('marketplace', { tab: 'teams' });
+                        }}
+                      >
+                        {userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length}
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-left sm:text-right">
+                    <p className="font-semibold text-text-primary text-sm">
+                      {user?.name || 'User'}
                     </p>
                     <p className="text-xs text-text-secondary">
-                      {captainedTeam ? 'Team Captain' : 'Team Member'}
+                      {userCallsign || (userTeam ? 'Team Member' : 'Free Agent')}
                     </p>
                   </div>
-                  {/* Divider */}
-                  <div className="hidden lg:block h-10 w-px bg-arena-border/50 mx-1" />
                 </div>
-              )}
 
-              {/* User avatar + name */}
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="relative">
-                  <Avatar user={user} size="md" />
-                  {/* Join requests badge (for captains) */}
-                  {captainedTeam?.joinRequests?.length > 0 && (
-                    <div className="absolute -top-1 -right-1 w-5 h-5 bg-error text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse">
-                      {captainedTeam.joinRequests.length}
-                    </div>
-                  )}
-                  {/* Team invites badge (for free agents) */}
-                  {!userTeam && userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length > 0 && (
-                    <div 
-                      className="absolute -top-1 -right-1 w-5 h-5 bg-brand text-white text-xs font-bold rounded-full flex items-center justify-center animate-pulse cursor-pointer"
-                      title={`${userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length} pending invite${userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length !== 1 ? 's' : ''}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onNavigate('marketplace', { tab: 'teams' });
-                      }}
-                    >
-                      {userInvites.filter(inv => inv.status === 'PENDING' && !inv.isExpired).length}
-                    </div>
-                  )}
-                </div>
-                <div className="text-left sm:text-right">
-                  <p className="font-semibold text-text-primary text-sm">
-                    {user?.name || 'User'}
-                  </p>
-                  <p className="text-xs text-text-secondary">
-                    {userCallsign || (userTeam ? 'Team Member' : 'Free Agent')}
-                  </p>
-                </div>
-              </div>
+                {/* Chevron arrow */}
+                <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1 text-text-secondary" />
+              </button>
+            </HStack>
+          </Container>
+        </header>
 
-              {/* Chevron arrow */}
-              <ChevronRight className="w-5 h-5 transition-transform group-hover:translate-x-1 text-text-secondary" />
-            </button>
-          </HStack>
-        </Container>
-      </header>
+        {/* EVENT STATUS BAR - Enhanced Phase Timeline */}
+        <div className="border-b border-arena-border bg-arena-card px-4 sm:px-6 py-3">
+          <Container size="xl" padding="none">
+            {/* Mobile: Compact phase indicator */}
+            <div className="sm:hidden">
+              <PhaseIndicator
+                phases={EVENT_PHASES_CONFIG}
+                currentPhase={eventPhase}
+                compact
+              />
+            </div>
 
-      {/* EVENT STATUS BAR - Enhanced Phase Timeline */}
-      <div className="border-b border-arena-border bg-arena-card px-4 sm:px-6 py-3">
-        <Container size="xl" padding="none">
-          {/* Mobile: Compact phase indicator */}
-          <div className="sm:hidden">
-            <PhaseIndicator 
-              phases={EVENT_PHASES_CONFIG}
-              currentPhase={eventPhase}
-              compact
-            />
-          </div>
-
-          {/* Desktop: Full animated phase timeline */}
-          <div className="hidden sm:block">
-            <PhaseIndicator 
-              phases={EVENT_PHASES_CONFIG}
-              currentPhase={eventPhase}
-            />
-          </div>
-        </Container>
-      </div>
+            {/* Desktop: Full animated phase timeline */}
+            <div className="hidden sm:block">
+              <PhaseIndicator
+                phases={EVENT_PHASES_CONFIG}
+                currentPhase={eventPhase}
+              />
+            </div>
+          </Container>
+        </div>
       </div>
       {/* END STICKY HEADER + EVENT BAR CONTAINER */}
 
@@ -700,7 +700,7 @@ function AppLayout({
         <div className="flex flex-col lg:flex-row">
           {/* Mobile sidebar overlay */}
           {sidebarOpen && showSidebar && (
-            <div 
+            <div
               className="fixed inset-0 bg-black/50 z-40 lg:hidden"
               onClick={() => setSidebarOpen(false)}
             />
@@ -783,8 +783,8 @@ function AppLayout({
           {/* ================================================================ */}
           {/* MAIN CONTENT */}
           {/* ================================================================ */}
-          <main 
-            id="main-content" 
+          <main
+            id="main-content"
             className={cn('flex-1', showSidebar && 'min-h-[calc(100vh-200px)]')}
             tabIndex={-1}
           >
