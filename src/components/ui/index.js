@@ -13,11 +13,11 @@ export { default as Button, IconButton, ButtonGroup, FillButton } from './Button
 export { default as Card, useCardContext } from './Card';
 
 // Badge
-export { 
-  default as Badge, 
-  SkillBadge, 
-  StatusBadge, 
-  RoleBadge, 
+export {
+  default as Badge,
+  SkillBadge,
+  StatusBadge,
+  RoleBadge,
   CountBadge,
   LiveBadge,
   // New capsule badge system
@@ -30,23 +30,23 @@ export {
 } from './Badge';
 
 // Input
-export { 
-  default as Input, 
-  SearchInput, 
-  TextArea, 
-  FormField 
+export {
+  default as Input,
+  SearchInput,
+  TextArea,
+  FormField
 } from './Input';
 
 // Avatar
-export { 
-  default as Avatar, 
+export {
+  default as Avatar,
   AvatarGroup
 } from './Avatar';
 
 // Progress
-export { 
-  default as Progress, 
-  CircularProgress, 
+export {
+  default as Progress,
+  CircularProgress,
   ProgressSteps
 } from './Progress';
 
@@ -60,30 +60,30 @@ export { default as Tabs, useTabs } from './Tabs';
 export { default as Select, MultiSelect } from './Select';
 
 // Alert
-export { 
-  default as Alert, 
-  InlineAlert, 
-  Toast, 
-  Banner 
+export {
+  default as Alert,
+  InlineAlert,
+  Toast,
+  Banner
 } from './Alert';
 
 // Countdown
-export { 
-  default as Countdown, 
+export {
+  default as Countdown,
   CompactCountdown,
-  MiniCountdown 
+  MiniCountdown
 } from './Countdown';
 
 // StatCard
-export { 
-  default as StatCard, 
+export {
+  default as StatCard,
   StatCardGroup,
   HeroStatCard,
   MiniStatCard,
   HeroStatGrid,
   FigmaMetricsCard,
 } from './StatCard';// LiveActivityFeed
-export { 
+export {
   default as LiveActivityFeed,
   LivePulse
 } from './LiveActivityFeed';// Skeleton (loading placeholders)
@@ -118,3 +118,6 @@ export {
   PhaseStep,
   ConnectingLine,
 } from './PhaseIndicator';
+
+// MissionBrief (unified hero component)
+export { default as MissionBrief } from './MissionBrief';

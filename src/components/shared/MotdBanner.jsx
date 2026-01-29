@@ -2,6 +2,9 @@
  * MotdBanner Component
  * Displays Message of the Day based on current event phase and user role
  * 
+ * @deprecated For the Dashboard hero, use MissionBrief component instead.
+ * This component is retained for other use cases (e.g., embedded in pages other than Dashboard).
+ * 
  * @example
  * <MotdBanner 
  *   eventPhase="hacking"
@@ -88,9 +91,9 @@ function MotdBanner({ eventPhase, userRole, className }) {
   const styles = getVariantStyles(motd.variant);
 
   return (
-    <Card 
-      variant="default" 
-      padding="md" 
+    <Card
+      variant="default"
+      padding="md"
       className={cn(
         'animate-fade-in',
         styles.card,
@@ -115,7 +118,7 @@ function MotdBanner({ eventPhase, userRole, className }) {
               {motd.title}
             </span>
           </div>
-          
+
           {/* Message */}
           <p className="text-sm text-text-body leading-relaxed">
             {motd.message}
