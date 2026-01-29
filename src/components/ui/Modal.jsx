@@ -114,7 +114,7 @@ function Modal({
     >
       {/* Backdrop */}
       <div
-        className="absolute inset-0 bg-black/50 animate-fade-in"
+        className="absolute inset-0 bg-black/75 animate-fade-in"
         onClick={handleBackdropClick}
         aria-hidden="true"
       />
