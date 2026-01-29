@@ -42,7 +42,7 @@ import LiveActivityFeed from './ui/LiveActivityFeed';
 import { DashboardSkeleton } from './ui/Skeleton';
 import { HStack, VStack } from './layout';
 import { cn } from '../lib/design-system';
-import { MotdBanner } from './shared';
+// MotdBanner replaced by MissionBrief
 import { MissionBrief } from './ui';
 
 // ============================================================================
@@ -80,322 +80,25 @@ const MOCK_FAQ = [
 // MISSION BANNER COMPONENT
 // ============================================================================
 
-const MissionBanner = memo(function MissionBanner({ userRole = 'member' }) {
-  return (
-    <div className="mb-8">
-      {/* Small badge */}
-      <div className="inline-flex items-center gap-2 mb-3">
-        <div className="w-7 h-7 rounded-lg gradient-cyan-blue flex items-center justify-center">
-          <Zap className="w-4 h-4 text-white" />
-        </div>
-        <span className="text-xs font-bold uppercase tracking-wider text-cyan-primary">
-          Mission Control
-        </span>
-      </div>
 
-      {/* Title */}
-      <h1 className="text-4xl sm:text-5xl font-black text-text-primary mb-3 tracking-tight">
-        DASHBOARD
-      </h1>
-
-      {/* Description */}
-      <p className="text-base text-text-body max-w-2xl mb-4">
-        Your command center for HackDay 2026. Track your progress, find teammates,
-        and stay updated on the latest events.
-      </p>
-
-      {/* Status pills */}
-      <div className="flex flex-wrap gap-3">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full">
-          <span className="status-active-dot" />
-          <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
-            Systems Nominal
-          </span>
-        </div>
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-arena-card border border-arena-border rounded-full">
-          <User className="w-4 h-4 text-text-secondary" />
-          <span className="text-xs font-medium text-text-secondary uppercase tracking-wider">
-            {userRole === 'admin' ? 'Admin' : userRole === 'judge' ? 'Judge' : 'Member'} as {userRole === 'admin' ? 'Admin' : userRole === 'judge' ? 'Judge' : 'Member'}
-          </span>
-        </div>
-      </div>
-    </div>
-  );
-});
 
 // ============================================================================
 // ACTIVE IDEAS WIDGET
 // ============================================================================
 
-const ActiveIdeasWidget = memo(function ActiveIdeasWidget({
-  ideas = 8,
-  participants = 27,
-  teams = 8,
-  freeAgents = 6
-}) {
-  return (
-    <Card variant="default" padding="lg" className="flex-1">
-      <div className="flex flex-col items-center text-center">
-        {/* Icon at top */}
-        <div className="w-16 h-16 rounded-full gradient-cyan-blue shadow-cyan-glow flex items-center justify-center mb-6">
-          <Lightbulb className="w-8 h-8 text-white" />
-        </div>
 
-        {/* Large number */}
-        <div className="text-7xl font-black text-gradient-cyan mb-2 tabular-nums">
-          {ideas}
-        </div>
-
-        {/* Label */}
-        <div className="text-sm font-medium text-cyan-primary uppercase tracking-widest mb-6">
-          Active Ideas
-        </div>
-
-        {/* Separator */}
-        <div className="w-full border-t border-cyan-subtle mb-6" />
-
-        {/* Sub-stats */}
-        <div className="grid grid-cols-3 gap-4 w-full">
-          {/* Participants */}
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-xl bg-cyan-accent flex items-center justify-center mb-2">
-              <Users className="w-5 h-5 text-cyan-primary" />
-            </div>
-            <div className="text-2xl font-bold text-text-primary">{participants}</div>
-            <div className="text-xs text-text-muted uppercase tracking-wider">Participants</div>
-          </div>
-
-          {/* Teams */}
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-xl bg-orange-accent flex items-center justify-center mb-2">
-              <Users className="w-5 h-5 text-orange-primary" />
-            </div>
-            <div className="text-2xl font-bold text-text-primary">{teams}</div>
-            <div className="text-xs text-text-muted uppercase tracking-wider">Teams</div>
-          </div>
-
-          {/* Free Agents */}
-          <div className="flex flex-col items-center">
-            <div className="w-10 h-10 rounded-xl bg-purple-accent flex items-center justify-center mb-2">
-              <User className="w-5 h-5 text-purple-primary" />
-            </div>
-            <div className="text-2xl font-bold text-text-primary">{freeAgents}</div>
-            <div className="text-xs text-text-muted uppercase tracking-wider">Free Agents</div>
-          </div>
-        </div>
-      </div>
-    </Card>
-  );
-});
 
 // ============================================================================
 // TEAM FORMATION STATUS CARD
 // ============================================================================
 
-const TeamFormationStatus = memo(function TeamFormationStatus({
-  user,
-  teams,
-  onNavigate,
-  onNavigateToTeam
-}) {
-  // Find user's team
-  const userTeam = teams.find((team) =>
-    team.captainId === user?.id ||
-    team.members?.some(m => m.id === user?.id)
-  );
 
-  const hasTeam = !!userTeam;
-  const memberCount = userTeam ? (userTeam.members?.length || 0) + (userTeam.captainId ? 1 : 0) : 0;
-  const ideasCount = userTeam?.ideas?.length || 3;
-  const hoursLeft = 12; // Could be calculated from event time
-
-  if (!hasTeam) {
-    // Show "Find a Team" card for users without a team
-    return (
-      <Card variant="default" padding="lg" className="flex-1">
-        <div className="space-y-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-arena-elevated flex items-center justify-center">
-              <AlertCircle className="w-4 h-4 text-warning" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-text-primary">Team Formation Status</h3>
-              <p className="text-sm text-text-secondary">Find your squad</p>
-            </div>
-          </div>
-
-          <p className="text-sm text-text-body">
-            You're not on a team yet. Browse available ideas or create your own to get started!
-          </p>
-
-          <Button
-            variant="primary"
-            size="lg"
-            fullWidth
-            onClick={() => onNavigate('marketplace', { tab: 'teams' })}
-            rightIcon={<ArrowRight className="w-5 h-5" />}
-          >
-            Browse Ideas
-          </Button>
-        </div>
-      </Card>
-    );
-  }
-
-  return (
-    <Card variant="default" padding="lg" className="flex-1">
-      <div className="space-y-4">
-        {/* Header with status */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-arena-elevated flex items-center justify-center">
-              <CheckCircle className="w-4 h-4 text-success" />
-            </div>
-            <div>
-              <h3 className="text-lg font-bold text-text-primary">Team Formation Status</h3>
-              <p className="text-sm text-text-secondary">You're all set!</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--status-success-subtle)]">
-            <span className="status-active-dot" />
-            <span className="text-xs font-bold text-success uppercase">Active</span>
-          </div>
-        </div>
-
-        {/* Team info */}
-        <div className="p-4 rounded-xl bg-arena-elevated border border-arena-border">
-          <p className="text-sm text-text-body mb-2">
-            You're part of <span className="font-bold text-brand">{userTeam.name}</span> team
-          </p>
-          <div className="flex items-center gap-2 text-sm text-text-secondary">
-            <CheckCircle className="w-4 h-4 text-success" />
-            <span>Team is complete and ready to begin</span>
-          </div>
-        </div>
-
-        {/* Team details */}
-        <div>
-          <p className="text-sm text-text-secondary mb-3">Team Details</p>
-          <div className="grid grid-cols-3 gap-4">
-            <div>
-              <div className="text-2xl font-bold text-text-primary">{memberCount}</div>
-              <div className="text-xs text-text-muted">Members</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-text-primary">{ideasCount}</div>
-              <div className="text-xs text-text-muted">Ideas</div>
-            </div>
-            <div>
-              <div className="text-2xl font-bold text-text-primary">{hoursLeft}</div>
-              <div className="text-xs text-text-muted">Hours Left</div>
-            </div>
-          </div>
-        </div>
-
-        {/* CTA */}
-        <Button
-          variant="primary"
-          size="lg"
-          fullWidth
-          onClick={() => onNavigateToTeam ? onNavigateToTeam(userTeam.id) : onNavigate('teams', { teamId: userTeam.id })}
-        >
-          View Your Team
-        </Button>
-      </div>
-    </Card>
-  );
-});
 
 // ============================================================================
 // ACTIVITY OVERVIEW CHART
 // ============================================================================
 
-const ActivityOverviewChart = memo(function ActivityOverviewChart() {
-  // Simple SVG-based area chart visualization
-  const timeLabels = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'];
 
-  return (
-    <Card variant="default" padding="lg" className="mb-6">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h3 className="text-xl font-bold text-text-primary">Activity Overview</h3>
-          <p className="text-sm text-text-secondary">Real-time participation metrics</p>
-        </div>
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-cyan-primary" />
-            <span className="text-sm text-text-secondary">Activity</span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-3 h-3 rounded-full bg-orange-primary" />
-            <span className="text-sm text-text-secondary">Submissions</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Chart area */}
-      <div className="relative h-64">
-        <svg viewBox="0 0 1000 250" className="w-full h-full" preserveAspectRatio="none">
-          {/* Grid lines - horizontal */}
-          <line x1="50" y1="50" x2="950" y2="50" stroke="var(--color-border)" strokeWidth="1" />
-          <line x1="50" y1="100" x2="950" y2="100" stroke="var(--color-border)" strokeWidth="1" />
-          <line x1="50" y1="150" x2="950" y2="150" stroke="var(--color-border)" strokeWidth="1" />
-          <line x1="50" y1="200" x2="950" y2="200" stroke="var(--color-border)" strokeWidth="1" />
-
-          {/* Activity area (cyan) */}
-          <defs>
-            <linearGradient id="cyanGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="rgba(0, 211, 242, 0.3)" />
-              <stop offset="100%" stopColor="rgba(0, 211, 242, 0.05)" />
-            </linearGradient>
-            <linearGradient id="orangeGradient" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stopColor="rgba(255, 105, 0, 0.3)" />
-              <stop offset="100%" stopColor="rgba(255, 105, 0, 0.05)" />
-            </linearGradient>
-          </defs>
-
-          {/* Activity area fill */}
-          <path
-            d="M50,200 L150,180 L300,120 L450,90 L600,60 L750,80 L900,100 L950,110 L950,200 L50,200 Z"
-            fill="url(#cyanGradient)"
-          />
-          <path
-            d="M50,200 L150,180 L300,120 L450,90 L600,60 L750,80 L900,100 L950,110"
-            fill="none"
-            stroke="#00D3F2"
-            strokeWidth="2"
-          />
-
-          {/* Submissions area fill */}
-          <path
-            d="M50,200 L150,195 L300,185 L450,170 L600,160 L750,155 L900,150 L950,145 L950,200 L50,200 Z"
-            fill="url(#orangeGradient)"
-          />
-          <path
-            d="M50,200 L150,195 L300,185 L450,170 L600,160 L750,155 L900,150 L950,145"
-            fill="none"
-            stroke="#FF6900"
-            strokeWidth="2"
-          />
-
-          {/* Y-axis labels */}
-          <text x="40" y="55" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">100</text>
-          <text x="40" y="105" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">75</text>
-          <text x="40" y="155" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">50</text>
-          <text x="40" y="205" textAnchor="end" fill="var(--color-text-muted)" fontSize="12">25</text>
-        </svg>
-
-        {/* X-axis labels */}
-        <div className="absolute bottom-0 left-12 right-4 flex justify-between text-xs text-text-muted">
-          {timeLabels.map((label, i) => (
-            <span key={i}>{label}</span>
-          ))}
-        </div>
-      </div>
-    </Card>
-  );
-});
 
 // ============================================================================
 // SCHEDULE PREVIEW

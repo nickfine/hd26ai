@@ -43,7 +43,8 @@ function TeamDetail({ team, user, teams, onNavigate, onUpdateTeam, onJoinRequest
   };
   
   // Check if user is already a member
-  const isMember = team.members.some((m) => m.name === user?.name);
+  // Note: Use ID-only matching to avoid false positives with duplicate names
+  const isMember = team.members?.some((m) => m.id === user?.id);
   
   // Check if user has a pending request
   const hasPendingRequest = team.joinRequests?.some((r) => r.userName === user?.name);

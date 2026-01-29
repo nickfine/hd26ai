@@ -585,9 +585,10 @@ function App() {
     if (!effectiveUser) return { success: false, error: 'No user logged in' };
 
     // Check if user is already on a team
+    // Note: Use ID-only matching to avoid false positives with duplicate names
     const userTeam = teams.find(
       team => team.captainId === effectiveUser.id ||
-        team.members?.some(m => m.id === effectiveUser.id || m.name === effectiveUser.name)
+        team.members?.some(m => m.id === effectiveUser.id)
     );
     if (userTeam) {
       return { success: false, error: 'You are already on a team' };

@@ -237,10 +237,11 @@ function Profile({
   const [autoAssignSuccess, setAutoAssignSuccess] = useState(null);
 
   // Find the team the user is on (as captain or member)
+  // Note: Use ID-only matching to avoid false positives with duplicate names
   const userTeam = teams.find(
     (team) =>
       team.captainId === user?.id ||
-      team.members.some((m) => m.id === user?.id || m.name === user?.name)
+      team.members?.some((m) => m.id === user?.id)
   );
 
   // Check if user is captain
