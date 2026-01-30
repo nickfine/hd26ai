@@ -662,11 +662,12 @@ async function autoAssignFreeAgentsToObservers(eventId) {
 
 /**
  * Check if hack start is within 24-48 hours and send reminders to free agents
+ * Creates REMINDER notifications for eligible free agents (with duplicate prevention)
  * @param {string} eventId - Event ID
  * @param {string} startDate - Event start date (ISO string)
  * @returns {Promise<{notified: number, error: string|null}>}
  */
-async function checkAndSendFreeAgentReminders(eventId, startDate) {
+export async function checkAndSendFreeAgentReminders(eventId, startDate) {
   try {
     if (!startDate) {
       console.warn('No start date set for event, skipping reminders');
@@ -706,14 +707,47 @@ async function checkAndSendFreeAgentReminders(eventId, startDate) {
     const usersOnTeams = new Set((existingMembers || []).map(m => m.userId));
     const usersToNotify = freeAgents.filter(u => !usersOnTeams.has(u.id));
 
-    // Store reminder sent timestamp (we'll add a field or use a separate table)
-    // For now, we'll just log it - in-app notifications will be handled by UI
-    console.log(`Reminder check: ${usersToNotify.length} free agents to notify`);
+    if (usersToNotify.length === 0) {
+      return { notified: 0, error: null };
+    }
 
-    // TODO: Send email reminders (requires email service setup)
-    // For now, in-app notifications will be shown via UI component
+    const hoursUntilHackRounded = Math.floor(hoursUntilHack);
+    let notifiedCount = 0;
 
-    return { notified: usersToNotify.length, error: null };
+    // Create REMINDER notifications for each eligible free agent
+    for (const user of usersToNotify) {
+      // Check if user already has an unread REMINDER notification (prevent duplicates)
+      const { data: existingReminder } = await supabase
+        .from('Notification')
+        .select('id')
+        .eq('userId', user.id)
+        .eq('type', 'REMINDER')
+        .eq('read', false)
+        .maybeSingle();
+
+      if (!existingReminder) {
+        // Create new REMINDER notification
+        const { error: insertError } = await supabase
+          .from('Notification')
+          .insert({
+            id: crypto.randomUUID(),
+            userId: user.id,
+            type: 'REMINDER',
+            title: 'Team Formation Reminder',
+            message: `Hack starts in ${hoursUntilHackRounded} hours! Join a team or opt-in for auto-assignment.`,
+            actionUrl: 'marketplace',
+          });
+
+        if (!insertError) {
+          notifiedCount++;
+        } else {
+          console.warn(`Failed to create reminder for user ${user.id}:`, insertError);
+        }
+      }
+    }
+
+    console.log(`Reminder check: ${notifiedCount} of ${usersToNotify.length} free agents notified`);
+    return { notified: notifiedCount, error: null };
   } catch (err) {
     console.error('Error checking reminders:', err);
     return { notified: 0, error: err.message };

@@ -154,6 +154,4 @@ vercel --prod
 The app uses a consistent design system with:
 - CSS custom properties in `styles/tokens.css`
 - Tailwind configuration in `tailwind.config.js`
-- Reusable UI components in `components/ui/`
-
-## LicenseMIT
+- Reusable UI components in `components/ui/`## LicenseMIT

@@ -98,9 +98,7 @@ export {
   DashboardSkeleton,
   MarketplaceSkeleton,
   ProfileSkeleton,
-} from './Skeleton';
-
-// Loading State
+} from './Skeleton';// Loading State
 export {
   default as LoadingState,
   LoadingOverlay,

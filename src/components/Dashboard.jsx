@@ -4,7 +4,8 @@
  * Layout matches the Figma design with vertical sections.
  */
 
-import { useState, memo, useCallback, useMemo } from 'react';
+import { useState, memo, useCallback, useMemo, useEffect, useRef } from 'react';
+import { checkAndSendFreeAgentReminders } from '../hooks/useSupabase';
 import {
   Users,
   User,
@@ -390,6 +391,37 @@ function Dashboard({
   simulateLoading = false,
   onSimulateLoadingChange = null,
 }) {
+  // Track if reminder check has been done this session
+  const reminderCheckDone = useRef(false);
+
+  // Check for free agent reminders when dashboard loads
+  useEffect(() => {
+    // Only check once per session
+    if (reminderCheckDone.current) return;
+    
+    // Only check for free agents during team_formation with a start date
+    const isFreeAgent = user?.isFreeAgent || 
+      (user && !teams.some(t => t.captainId === user.id || t.members?.some(m => m.id === user.id)));
+    
+    if (!isFreeAgent || eventPhase !== 'team_formation' || !event?.startDate) return;
+
+    const now = new Date();
+    const hackStart = new Date(event.startDate);
+    const hoursUntilHack = (hackStart - now) / (1000 * 60 * 60);
+
+    // Only check if within 24-48h window
+    if (hoursUntilHack >= 24 && hoursUntilHack <= 48) {
+      reminderCheckDone.current = true;
+      checkAndSendFreeAgentReminders(event.id, event.startDate)
+        .then(result => {
+          if (result.notified > 0) {
+            console.log(`[Dashboard] Created ${result.notified} reminder notifications`);
+          }
+        })
+        .catch(err => console.error('[Dashboard] Error checking reminders:', err));
+    }
+  }, [user, teams, eventPhase, event?.startDate, event?.id]);
+
   // Show skeleton while loading
   if (isLoading) {
     return (
