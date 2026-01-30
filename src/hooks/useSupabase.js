@@ -783,7 +783,7 @@ export function useEvent() {
 
     try {
       // Map app phase (lowercase) to DB enum (uppercase)
-      const dbPhase = REVERSE_PHASE_MAP[newPhase] || 'REGISTRATION';
+      const dbPhase = REVERSE_PHASE_MAP[newPhase] || 'TEAM_FORMATION';
       
       const { error: updateError } = await supabase
         .from('Event')
