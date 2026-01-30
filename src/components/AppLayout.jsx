@@ -246,12 +246,12 @@ const getNavItems = (userRole, eventPhase = 'voting', user = null) => {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
   ];
 
-  // Add Sign Up navigation item during registration phase or for users without a team
+  // Add Sign Up navigation item during team_formation phase or for users without a team
   // Only show if user hasn't completed registration (has name/displayName and skills)
   const userName = user?.name || user?.displayName;
   const hasCompletedRegistration = user && userName && user.skills && user.skills.length > 0;
   const showSignup = !hasCompletedRegistration && (
-    eventPhase === 'registration' || (user && !user.teamId)
+    eventPhase === 'team_formation' || (user && !user.teamId)
   );
   
   // DEBUG: Log registration check details (always log in dev)

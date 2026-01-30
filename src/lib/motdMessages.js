@@ -6,7 +6,7 @@
  * 
  * Structure: MOTD_MESSAGES[phase][role] = message
  * 
- * Phases: registration, team_formation, hacking, submission, voting, judging, results
+ * Phases: team_formation, hacking, submission, voting, judging, results
  * Roles: guest, participant, ambassador, judge, admin
  * 
  * Note: 'guest' role is for unregistered visitors who haven't signed up yet.
@@ -14,44 +14,13 @@
 
 export const MOTD_MESSAGES = {
   // ============================================================================
-  // REGISTRATION PHASE
-  // ============================================================================
-  registration: {
-    guest: {
-      title: 'Welcome to HackDay 2026!',
-      message: 'Join the ultimate hackathon experience! Register now to form teams, build innovative projects, and compete for amazing prizes. Don\'t miss out!',
-      variant: 'info',
-    },
-    participant: {
-      title: 'Welcome to HackDay 2026!',
-      message: 'Registration is open! Complete your profile and add your skills to help team captains find you. Browse existing ideas or start thinking about your own project.',
-      variant: 'info',
-    },
-    ambassador: {
-      title: 'Ambassador Registration Open',
-      message: 'Welcome, Ambassador! Registration is open. Start recruiting participants for your side. Share the event link and help build excitement for HackDay 2026!',
-      variant: 'info',
-    },
-    judge: {
-      title: 'Judge Registration',
-      message: 'Thank you for volunteering to judge! Registration is currently open for participants. Your scoring panel will become available during the judging phase.',
-      variant: 'info',
-    },
-    admin: {
-      title: 'Registration Phase Active',
-      message: 'Registration is open. Monitor sign-ups in the Admin Panel. Consider sending reminder communications as the team formation deadline approaches.',
-      variant: 'warning',
-    },
-  },
-
-  // ============================================================================
   // TEAM FORMATION PHASE
   // ============================================================================
   team_formation: {
     guest: {
-      title: 'Teams Are Forming Now!',
-      message: 'HackDay 2026 is heating up! Teams are forming right now. Register to join a team, pitch your own idea, or connect with other participants.',
-      variant: 'warning',
+      title: 'Welcome to HackDay 2026!',
+      message: 'Join the ultimate hackathon experience! Register now to form teams, build innovative projects, and compete for amazing prizes. Don\'t miss out!',
+      variant: 'info',
     },
     participant: {
       title: 'Team Formation in Progress',

@@ -4,7 +4,7 @@
  */
 
 import { useState } from 'react';
-import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User, UserPlus, UsersRound, Code, Send, Vote, Scale, Trophy, Sparkles } from 'lucide-react';
+import { ArrowLeft, Crown, Gavel, Megaphone, Shield, Users, Loader2, User, UsersRound, Code, Send, Vote, Scale, Trophy, Sparkles } from 'lucide-react';
 import adaptLogo from '../../adaptlogo.png';
 import Button from './ui/Button';
 import Card from './ui/Card';
@@ -14,7 +14,6 @@ import { cn } from '../lib/design-system';
 
 // Event phases for demo mode
 const EVENT_PHASES = [
-  { id: 'registration', label: 'Register', icon: UserPlus },
   { id: 'team_formation', label: 'Teams', icon: UsersRound },
   { id: 'hacking', label: 'Hacking', icon: Code },
   { id: 'submission', label: 'Submit', icon: Send },
@@ -203,7 +202,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                           email: 'new.user@company.com',
                           skills: [],
                           role: 'participant',
-                          phase: 'registration',
+                          phase: 'team_formation',
                         });
                         // Navigate to dashboard in signup mode
                         onNavigate('dashboard');

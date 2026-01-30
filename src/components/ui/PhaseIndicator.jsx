@@ -12,7 +12,6 @@
 
 import { memo, useState } from 'react';
 import { 
-  UserPlus, 
   Users, 
   Code2, 
   Send, 
@@ -25,7 +24,6 @@ import { cn } from '../../lib/design-system';
 
 // Phase icons mapping
 const PHASE_ICONS = {
-  registration: UserPlus,
   team_formation: Users,
   hacking: Code2,
   submission: Send,
@@ -49,7 +47,7 @@ const PhaseStep = memo(({
   onClick
 }) => {
   const [isHovered, setIsHovered] = useState(false);
-  const Icon = PHASE_ICONS[phase.id] || UserPlus;
+  const Icon = PHASE_ICONS[phase.id] || Users;
   
   return (
     <div 

@@ -891,8 +891,8 @@ function App() {
 
   // Demo onboarding handler - creates a new user and goes to dashboard in signup mode
   const handleDemoOnboarding = useCallback((phase) => {
-    // Always force 'registration' phase for new user onboarding to show signup hero bento
-    setMockEventPhase('registration');
+    // Always force 'team_formation' phase for new user onboarding to show signup hero
+    setMockEventPhase('team_formation');
 
     // Create user with empty name (hasn't signed up yet)
     createUser({

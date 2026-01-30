@@ -24,7 +24,7 @@ import { HStack, VStack } from '../layout';
  * @property {Array} teams - All teams array
  * @property {Array} userInvites - Pending team invites for user
  * @property {(view: string, options?: Object) => void} onNavigate - Navigation handler
- * @property {string} eventPhase - Current event phase ('registration' | 'hacking' | 'voting' | etc.)
+ * @property {string} eventPhase - Current event phase ('team_formation' | 'hacking' | 'voting' | etc.)
  */
 
 const OBSERVERS_TEAM_ID = 'team-observers';
@@ -54,8 +54,8 @@ function StatusBanner({ user, teams = [], userInvites = [], onNavigate, eventPha
     return userInvites.filter(invite => invite.status === 'PENDING' || !invite.status).length;
   }, [userInvites]);
 
-  // Only show team role during registration/teams/team_formation phase (before hack starts)
-  const showTeamRole = eventPhase === 'registration' || eventPhase === 'teams' || eventPhase === 'team_formation';
+  // Only show team role during teams/team_formation phase (before hack starts)
+  const showTeamRole = eventPhase === 'teams' || eventPhase === 'team_formation';
 
   // Don't render if user has no team and no invites (edge case - not registered)
   if (!userTeam && pendingInviteCount === 0 && !user?.isFreeAgent) {

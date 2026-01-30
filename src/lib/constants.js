@@ -10,9 +10,10 @@
 export const DEMO_EVENT_ID = 'demo-event-2026';
 
 // Phase mapping: DB enum (uppercase) -> app format (lowercase)
+// Note: REGISTRATION maps to team_formation for backwards compatibility
 export const PHASE_MAP = {
   SETUP: 'setup',
-  REGISTRATION: 'registration',
+  REGISTRATION: 'team_formation', // Legacy: treat as team_formation
   TEAM_FORMATION: 'team_formation',
   HACKING: 'hacking',
   SUBMISSION: 'submission',
@@ -24,7 +25,6 @@ export const PHASE_MAP = {
 // Reverse phase mapping: app format (lowercase) -> DB enum (uppercase)
 export const REVERSE_PHASE_MAP = {
   setup: 'SETUP',
-  registration: 'REGISTRATION',
   team_formation: 'TEAM_FORMATION',
   hacking: 'HACKING',
   submission: 'SUBMISSION',
