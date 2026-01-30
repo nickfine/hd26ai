@@ -188,7 +188,7 @@ function Login({ onNavigate, onLogin, onDemoLogin, onDemoOnboarding, onOAuthSign
                 </div>
                 
                 <VStack gap="3">
-                  {/* New User - Goes to Dashboard in signup mode (registration phase) */}
+                  {/* New User - Goes to Dashboard in signup mode (team_formation phase) */}
                   <DemoRoleButton
                     icon={Sparkles}
                     label="New User (Onboarding)"

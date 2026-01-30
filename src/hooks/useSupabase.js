@@ -812,7 +812,6 @@ export function useEvent() {
 
       if (allUsers && allUsers.length > 0) {
         const phaseLabels = {
-          registration: 'Registration',
           team_formation: 'Team Formation',
           hacking: 'Hacking',
           submission: 'Submission',
