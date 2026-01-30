@@ -7,7 +7,9 @@
  * Structure: MOTD_MESSAGES[phase][role] = message
  * 
  * Phases: registration, team_formation, hacking, submission, voting, judging, results
- * Roles: participant, ambassador, judge, admin
+ * Roles: guest, participant, ambassador, judge, admin
+ * 
+ * Note: 'guest' role is for unregistered visitors who haven't signed up yet.
  */
 
 export const MOTD_MESSAGES = {
@@ -15,6 +17,11 @@ export const MOTD_MESSAGES = {
   // REGISTRATION PHASE
   // ============================================================================
   registration: {
+    guest: {
+      title: 'Welcome to HackDay 2026!',
+      message: 'Join the ultimate hackathon experience! Register now to form teams, build innovative projects, and compete for amazing prizes. Don\'t miss out!',
+      variant: 'info',
+    },
     participant: {
       title: 'Welcome to HackDay 2026!',
       message: 'Registration is open! Complete your profile and add your skills to help team captains find you. Browse existing ideas or start thinking about your own project.',
@@ -41,6 +48,11 @@ export const MOTD_MESSAGES = {
   // TEAM FORMATION PHASE
   // ============================================================================
   team_formation: {
+    guest: {
+      title: 'Teams Are Forming Now!',
+      message: 'HackDay 2026 is heating up! Teams are forming right now. Register to join a team, pitch your own idea, or connect with other participants.',
+      variant: 'warning',
+    },
     participant: {
       title: 'Team Formation in Progress',
       message: "It's time to form your team! Join an existing idea, create your own, or stay as a Free Agent. Teams can have 2-6 members. Don't wait too long—the hack starts soon!",
@@ -67,6 +79,11 @@ export const MOTD_MESSAGES = {
   // HACKING PHASE
   // ============================================================================
   hacking: {
+    guest: {
+      title: 'Hacking Has Begun!',
+      message: 'Teams are building amazing projects right now! While registration for this event has closed, check out the activity feed and come back for the next HackDay.',
+      variant: 'info',
+    },
     participant: {
       title: 'Hacking Has Begun!',
       message: 'The clock is ticking! Work with your team to build something amazing. Remember to save your progress regularly and prepare your submission before the deadline.',
@@ -93,6 +110,11 @@ export const MOTD_MESSAGES = {
   // SUBMISSION PHASE
   // ============================================================================
   submission: {
+    guest: {
+      title: 'Submissions Are Open!',
+      message: 'Teams are submitting their incredible projects. Watch the submissions roll in and see what participants have built!',
+      variant: 'info',
+    },
     participant: {
       title: 'Submission Window Open',
       message: 'Time to submit your project! Include your demo video, repository link, and project description. Make sure all required fields are complete before the deadline.',
@@ -119,6 +141,11 @@ export const MOTD_MESSAGES = {
   // VOTING PHASE
   // ============================================================================
   voting: {
+    guest: {
+      title: 'Voting is Live!',
+      message: 'The community is voting for their favorite projects. Browse the amazing submissions and see what teams have built during HackDay 2026!',
+      variant: 'info',
+    },
     participant: {
       title: "Vote for People's Champion!",
       message: 'Review the submitted projects and cast your votes. You can vote for up to 5 projects. Help decide who wins the People\'s Champion award!',
@@ -130,13 +157,13 @@ export const MOTD_MESSAGES = {
       variant: 'info',
     },
     judge: {
-      title: 'Judging Time!',
-      message: 'The judging phase is here. Please review all submissions and provide your scores. Your evaluations help determine the Grand Champion.',
-      variant: 'warning',
+      title: 'Review Submissions',
+      message: 'Participants are voting for People\'s Champion. Use this time to review all submissions and prepare your evaluations. Your scoring panel will open during the judging phase.',
+      variant: 'info',
     },
     admin: {
       title: 'Voting Phase Active',
-      message: 'Voting is open for participants. Monitor voting progress and ensure judges are completing their evaluations. Prepare for the results announcement.',
+      message: 'Voting is open for participants. Monitor voting progress and remind judges to prepare for the upcoming judging phase.',
       variant: 'info',
     },
   },
@@ -145,6 +172,11 @@ export const MOTD_MESSAGES = {
   // JUDGING PHASE
   // ============================================================================
   judging: {
+    guest: {
+      title: 'Judging in Progress',
+      message: 'Our judges are evaluating all the amazing submissions. Check back soon for the results!',
+      variant: 'info',
+    },
     participant: {
       title: 'Judging in Progress',
       message: 'The judges are reviewing all submissions. Sit tight while they evaluate the projects. Results will be announced soon!',
@@ -171,6 +203,11 @@ export const MOTD_MESSAGES = {
   // RESULTS PHASE
   // ============================================================================
   results: {
+    guest: {
+      title: 'Results Are In!',
+      message: 'HackDay 2026 has concluded! Check out the winning projects and see what amazing things were built. Join us for the next HackDay!',
+      variant: 'success',
+    },
     participant: {
       title: 'Results Are In!',
       message: 'Congratulations to all participants! Check out the Results page to see the winners and celebrate the amazing projects built during HackDay 2026.',
@@ -196,29 +233,37 @@ export const MOTD_MESSAGES = {
 
 /**
  * Get MOTD for a specific phase and role
+ * Falls back to guest message for unregistered users
  * Falls back to participant message if role-specific message not found
- * Falls back to generic message if phase not found
+ * Falls back to generic welcome message if phase not found
  * 
  * @param {string} phase - Current event phase
- * @param {string} role - User role (participant, ambassador, judge, admin)
+ * @param {string} role - User role (guest, participant, ambassador, judge, admin)
+ * @param {boolean} isRegistered - Whether the user is registered (defaults to true)
  * @returns {Object} MOTD object with title, message, and variant
  */
-export function getMotdForPhaseAndRole(phase, role) {
-  // Default fallback message
+export function getMotdForPhaseAndRole(phase, role, isRegistered = true) {
+  // Default fallback message for guests/newcomers
   const defaultMotd = {
     title: 'Welcome to HackDay 2026!',
-    message: 'Check the schedule for upcoming events and milestones.',
+    message: 'Join the ultimate hackathon experience! Register now to form teams, build innovative projects, and compete for amazing prizes.',
     variant: 'info',
   };
+
+  // If not registered, use guest role
+  const effectiveRole = isRegistered ? (role || 'participant') : 'guest';
 
   // Check if phase exists
   if (!MOTD_MESSAGES[phase]) {
     return defaultMotd;
   }
 
-  // Try to get role-specific message, fall back to participant
+  // Try to get role-specific message
   const phaseMessages = MOTD_MESSAGES[phase];
-  const motd = phaseMessages[role] || phaseMessages.participant || defaultMotd;
+  const motd = phaseMessages[effectiveRole] || 
+               phaseMessages.guest || 
+               phaseMessages.participant || 
+               defaultMotd;
 
   return motd;
 }

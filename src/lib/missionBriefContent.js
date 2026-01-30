@@ -61,6 +61,36 @@ export function computeUserState({ userTeam, hasPostedIdea, hasSubmitted, isRegi
  */
 export const MISSION_CONTENT = {
   // ============================================================================
+  // REGISTRATION PHASE
+  // ============================================================================
+  registration: {
+    [USER_STATES.NOT_REGISTERED]: {
+      headline: 'WELCOME TO HACKDAY 2026',
+      status: "Join the ultimate hackathon experience!",
+      context: () => "Register now to form teams, build innovative projects, and compete for amazing prizes",
+      primaryCTA: { label: 'Register Now', action: 'signup' },
+      secondaryCTA: { label: 'Learn More', action: 'new-to-hackday' },
+      footerPrefix: 'Registration closes in',
+    },
+    [USER_STATES.FREE_AGENT_NO_IDEA]: {
+      headline: 'REGISTRATION COMPLETE',
+      status: "You're all set!",
+      context: () => "Complete your profile and add your skills while you wait for team formation to begin",
+      primaryCTA: { label: 'Edit Profile', action: 'profile' },
+      secondaryCTA: { label: 'View Schedule', action: 'schedule' },
+      footerPrefix: 'Team formation begins in',
+    },
+    [USER_STATES.FREE_AGENT_HAS_IDEA]: {
+      headline: 'REGISTRATION COMPLETE',
+      status: "You're all set!",
+      context: () => "Your profile is ready. Team formation will begin soon!",
+      primaryCTA: { label: 'View Schedule', action: 'schedule' },
+      secondaryCTA: { label: 'Edit Profile', action: 'profile' },
+      footerPrefix: 'Team formation begins in',
+    },
+  },
+
+  // ============================================================================
   // TEAM FORMATION PHASE
   // ============================================================================
   team_formation: {
